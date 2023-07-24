@@ -91,7 +91,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_IMGUI;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;C:\Users\2220036\Desktop\描画エンジン\0 先　描画エンジン\学生配布\x3dgp.00\cereal-master\include;C:\Users\2220036\Desktop\描画エンジン\0先_描画エンジン\学生配布\x3dgp.00\cereal-master\include;C:\Users\2220036\Desktop\x3dgp.00\cereal-master\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;.\External\Effekseer162a\include;.\External\Effekseer162a\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;.\External\Effekseer162a\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;C:\Users\2220036\Desktop\描画エンジン\0 先　描画エンジン\学生配布\x3dgp.00\cereal-master\include;C:\Users\2220036\Desktop\描画エンジン\0先_描画エンジン\学生配布\x3dgp.00\cereal-master\include;C:\Users\2220036\Desktop\x3dgp.00\cereal-master\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;.\External\Effekseer162a\include;.\External\Effekseer162a\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;.\External\Effekseer162a\include;%(AdditionalIncludeDirectories);.\External\Effekseer170b\include\Effekseer;.\External\Effekseer170b\include\EffekseerRendererDX11</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -104,7 +104,7 @@
       </IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
-      <AdditionalLibraryDirectories>$(VC_LibraryPath_x86);.\External\Effekseer162a\lib\vs2019\MT$(PaltformTarget)\$(Configuration);.\External\Effekseer162a\lib\vs2019\MT\$(PlatformTarget)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(VC_LibraryPath_x86);.\External\Effekseer162a\lib\vs2019\MT$(PaltformTarget)\$(Configuration);.\External\Effekseer162a\lib\vs2019\MT\$(PlatformTarget)\$(Configuration);%(AdditionalLibraryDirectories);.|External\Effekseer170b\lib\vs2019\MT\$(PlatformTarget)\$(Configuration);.¥External¥Effekseer170b¥lib¥vs2019¥MT¥$(PlatformTarget)¥$(Configuration)</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -119,14 +119,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;USE_IMGUI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>.\External\DirectXTK-main\Inc;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;.\External\cereal-master\include;.\External\Effekseer162a\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\External\DirectXTK-main\Inc;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;.\External\cereal-master\include;%(AdditionalIncludeDirectories);.\External\Effekseer170b\include\Effekseer;.\External\Effekseer170b\include\EffekseerRendererDX11</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>.\External\DirectXTK-main\Bin\Desktop_2019\x64\Debug;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\x64\debug;.\External\Effekseer162a\lib\vs2019\MD\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\External\DirectXTK-main\Bin\Desktop_2019\x64\Debug;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\x64\debug;%(AdditionalLibraryDirectories);.\External\Effekseer170b\lib\vs2019\MD\x64\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>d3d11.lib;zlib-md.lib;libxml2-md.lib;libfbxsdk-md.lib;DirectXTK.lib;Effekseer.lib;EffekseerRendererDX11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
@@ -146,7 +146,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;C:\Users\2220036\Desktop\描画エンジン\0 先　描画エンジン\学生配布\x3dgp.00\cereal-master\include;C:\Users\2220036\Desktop\描画エンジン\0先_描画エンジン\学生配布\x3dgp.00\cereal-master\include;C:\Users\2220036\Desktop\x3dgp.00\cereal-master\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;.\External\Effekseer162a\include;.\External\Effekseer162a\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;.\External\Effekseer162a\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;C:\Users\2220036\Desktop\描画エンジン\0 先　描画エンジン\学生配布\x3dgp.00\cereal-master\include;C:\Users\2220036\Desktop\描画エンジン\0先_描画エンジン\学生配布\x3dgp.00\cereal-master\include;C:\Users\2220036\Desktop\x3dgp.00\cereal-master\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;.\External\Effekseer162a\include;.\External\Effekseer162a\include;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;.\External\Effekseer162a\include;%(AdditionalIncludeDirectories);.\External\Effekseer170b\include\Effekseer;.\External\Effekseer170b\include\EffekseerRendererDX11</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -156,7 +156,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>;.\External\Effekseer162a\lib\vs2019\MT$(PaltformTarget)\$(Configuration);.\External\Effekseer162a\lib\vs2019\MT\$(PlatformTarget)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>;.\External\Effekseer162a\lib\vs2019\MT$(PaltformTarget)\$(Configuration);.\External\Effekseer162a\lib\vs2019\MT\$(PlatformTarget)\$(Configuration);%(AdditionalLibraryDirectories);.|External\Effekseer170b\lib\vs2019\MT\$(PlatformTarget)\$(Configuration);.¥External¥Effekseer170b¥lib¥vs2019¥MT¥$(PlatformTarget)¥$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>zlib-md.lib;libxml2-md.lib;libfbxsdk-md.lib;;Effekseer.lib;EffekseerRendererDX11.lib;zlib-md.lib;libxml2-md.lib;libfbxsdk-md.lib</AdditionalDependencies>
     </Link>
     <FxCompile>
@@ -174,7 +174,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;.\External\cereal-master\include;.\External\DirectXTK-main\Inc;.\External\Effekseer162a\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;.\External\cereal-master\include;.\External\DirectXTK-main\Inc;%(AdditionalIncludeDirectories);.\External\Effekseer170b\include\Effekseer;.\External\Effekseer170b\include\EffekseerRendererDX11</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -183,7 +183,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\x64\release;.\External\DirectXTK-main\Bin\Desktop_2019\x64\Release;.\External\Effekseer162a\lib\vs2019\MD\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\x64\release;.\External\DirectXTK-main\Bin\Desktop_2019\x64\Release;%(AdditionalLibraryDirectories);.\External\Effekseer170b\lib\vs2019\MD\x64\Release</AdditionalLibraryDirectories>
       <AdditionalDependencies>d3d11.lib;zlib-md.lib;libxml2-md.lib;libfbxsdk-md.lib;DirectXTK.lib;Effekseer.lib;EffekseerRendererDX11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>

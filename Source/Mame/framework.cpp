@@ -66,7 +66,9 @@ bool framework::initialize()
         shaderResourceViews[3].GetAddressOf(), &texture2dDesc);
 
     // sprite
-    sprite = std::make_unique<Sprite>(graphics.GetDevice(), L"./Resources/Image/sanaImage/load2.png");
+    sprite = std::make_unique<Sprite>(graphics.GetDevice(), L"./Resources/Image/sanaImage/load.png",
+        "./Resources/Shader/sprite_dissolve_ps.cso");
+    //sprite->Initialize(DirectX::XMFLOAT2(0, 0), DirectX::XMFLOAT2(900, 367), DirectX::XMFLOAT2(900, 367));
 
 #ifndef _DEBUG
     ShowCursor(!FULLSCREEN);	// フルスクリーン時はカーソルを消す
@@ -86,6 +88,10 @@ void framework::update(float elapsed_time/*Elapsed seconds from last frame*/)
 
     // シーン更新処理
     Mame::Scene::SceneManager::Instance().Update(elapsed_time);
+
+    // spriteAnimation
+    sprite->Update(elapsed_time);
+    //sprite->PlayAnimation(elapsed_time, 30, 30, true);
 
     // gltfModel
     gltfModels[0]->Update(elapsed_time);
@@ -112,7 +118,6 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
 
     // sprite
     {
-        shader->SetState(graphics.GetDeviceContext(), 3, 3, 0);
         sprite->DrawDebug();
         sprite->Render();
     }

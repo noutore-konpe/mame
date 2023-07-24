@@ -3,6 +3,18 @@
 #include <d3d11.h>
 #include <directxmath.h>
 #include <wrl.h>
+#include <string>
+
+// spriteAnimationの使い方
+// Initializeでpos,size,texSizeを指定する。
+// PlayAnimation関数を呼び出すだけ
+
+// spriteDissolveの使い方
+// コンストラクタの第三引数にディゾルブ用のピクセルシェーダーをセットする
+// ---> ("./Resources/Shader/sprite_dissolve_ps.cso")
+// Update関数を呼び出す。
+// spriteDissolve.dissolveBlackValueの値をいじればいい感じに動く
+// ---> 後で関数作ります。。。
 
 class Sprite
 {
@@ -39,7 +51,67 @@ public:
         DirectX::XMFLOAT2 GetTexSize() { return texSize; }
     };
 
+    struct SpriteDissolve
+    {
+    private:
+        int maskTextureValue = 0;           // テクスチャ番号
+        float dissolveValue = 0.0f;         // ディゾルブ適応量
+        float dissolveBlackValue = 0.0f;    // 黒色
+
+        float edgeThreshold = 0.2f; // 縁の閾値
+        DirectX::XMFLOAT4 edgeColor = { 0.0f, 1.0f, 0.0f, 1.0f }; // 縁の色
+
+        float delay = 0.4f;
+        int dissolveType = 0;
+
+    public:
+        void DrawDebug();
+
+        void AddDissolveBlackValue(float value) { dissolveBlackValue += value; }
+        void SubtractDissolveBlackValue(float value) { dissolveBlackValue -= value; }
+
+        void SetMaskTextureValue(int value) { maskTextureValue = value; }
+        void SetDissolveValue(float value) { dissolveValue = value; }
+        void SetDissolveBlackValue(float value) { dissolveBlackValue = value; }
+        void SetEdgeThreshold(float threshold) { edgeThreshold = threshold; }
+        void SetEdgeColor(DirectX::XMFLOAT4 color) { edgeColor = color; }
+        void SetDelay(float d) { delay = d; }
+        void SetDissolveType(float type) { dissolveType = type; }
+
+        int GetMaskTextureValue() { return maskTextureValue; }
+        float GetDissolveValue() { return dissolveValue; }
+        float GetDissolveBlackValue() { return dissolveBlackValue; }
+        float GetEdgeThreshold() { return edgeThreshold; }
+        DirectX::XMFLOAT4 GetEdgeColor() { return edgeColor; }
+        float GetDelay() { return delay; }
+        float GetDissolveType() { return dissolveType; }
+    };
 public:
+    void Initialize();
+    void Initialize(DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size,
+        DirectX::XMFLOAT2 texSize, DirectX::XMFLOAT2 texPos = { 0,0 },
+        DirectX::XMFLOAT4 color = { 1,1,1,1 }, float angle = 0);
+
+    void Update(const float& elapsedTime);
+
+    void UpdateSpriteDissolve(const float& elapsedTime);
+    bool FadeIn(const float& elapsedTime);
+    bool FadeOut(const float& elapsedTime);
+
+    /// <summary>
+    /// アニメーション更新関数
+    /// </summary>
+    /// <param name="elapsedTime">フレーム経過時間</param>
+    /// <param name="frameSpeed">アニメーションする速さ</param>
+    /// <param name="totalAnimationFrame">アニメーションフレーム数</param>
+    /// <param name="animationVertical">縦アニメーションの場合true</param>
+    void PlayAnimation(
+        const float elapsedTime,
+        const float frameSpeed,
+        const float totalAnimationFrame,
+        const bool animationVertical
+    );
+
     void Render();
     void Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size);
     void Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size, DirectX::XMFLOAT4 color);
@@ -49,9 +121,34 @@ public:
     void DrawDebug();
 
     SpriteTransform* GetSpriteTransform() { return &spriteTransform; }
+    SpriteDissolve* GetSpriteDissolve() { return &spriteDissolve; }
+
+    void SetIsFade(bool fade) { isFade = fade; }
+    bool GetIsFade() { return isFade; }
 
 private:
     SpriteTransform spriteTransform;
+    SpriteDissolve spriteDissolve;
+
+    // Animation
+    float animationTime = 0.0f;
+    float animationFrame = 0.0f;
+
+    // Dissolve
+    bool isDissolve = false;
+    bool isFade = false;
+
+public:
+    //---ImGui名前かぶり防止用---//
+    static int nameNum;
+    const char* GetName() { return name.c_str(); }
+    void SetName(const char* n) { name = n; }
+    //---ImGui名前かぶり防止用---//
+
+private:
+    //---ImGui名前かぶり防止用---//
+    std::string name;
+    //---ImGui名前かぶり防止用---//
 
 private:
     Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
@@ -59,7 +156,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
     Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceView;
-    D3D11_TEXTURE2D_DESC texture2d_desc;
+    D3D11_TEXTURE2D_DESC texture2dDesc;
 
     struct Vertex
     {
@@ -67,4 +164,17 @@ private:
         DirectX::XMFLOAT4 color;
         DirectX::XMFLOAT2 texcord;
     };
-};
+
+    Microsoft::WRL::ComPtr<ID3D11Buffer> dissolveConstantBuffer = nullptr;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> maskTexture[20] = {};
+    D3D11_TEXTURE2D_DESC maskTexture2dDesc[20] = {};
+
+    struct DissolveConstants
+    {
+        DirectX::XMFLOAT4 parameters = {};  // x: ディゾルブ適応量
+                                            // y: 黒色
+                                            // z: 縁の閾値
+                                            // w: 空き
+        DirectX::XMFLOAT4 edgeColor = {};   // 縁の色
+    };                                      
+};                                          
