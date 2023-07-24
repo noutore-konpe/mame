@@ -1,0 +1,9 @@
+x64/
+tinygltf-release/
+External/
+Release/
+.vs/
+Resources/
+3dgp.sln
+3dgp.rc
+icon1.ico

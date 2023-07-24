@@ -1,0 +1,411 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <FxCompile Include="Source\Shader\blur_ps.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\fullscreen_quad_ps.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\fullscreen_quad_vs.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\geometric_primitive_ps.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\geometric_primitive_vs.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\luminance_extraction_ps.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\skinned_mesh_ps.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\skinned_mesh_vs.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\sprite_change_ps.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\sprite_dissolve_ps.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\sprite_dissolve_vs.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\sprite_fade_ps.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\sprite_fade_vs.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\sprite_ps.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\sprite_vs.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\static_mesh_ps.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\static_mesh_vs.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\UVScroll_ps.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\UVScroll_vs.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\InstancingVS.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\InstancingPS.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\gltfModelPs.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\gltfModelVs.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Mame\Scene\BaseScene.cpp">
+      <Filter>mamelib\Mame\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\Camera.cpp">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\EffectManager.cpp">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\Graphics.cpp">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\Model.cpp">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\ModelResource.cpp">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Input\Input.cpp">
+      <Filter>mamelib\Mame\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Input\Mouse.cpp">
+      <Filter>mamelib\Mame\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Input\GamePad.cpp">
+      <Filter>mamelib\Mame\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Transform.cpp">
+      <Filter>mamelib\Mame</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Scene\SceneTitle.cpp">
+      <Filter>mamelib\Mame\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Scene\SceneManager.cpp">
+      <Filter>mamelib\Mame\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Scene\SceneLoading.cpp">
+      <Filter>mamelib\Mame\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Scene\SceneGame.cpp">
+      <Filter>mamelib\Mame\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\Effect.cpp">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\ResourceManager.cpp" />
+    <ClCompile Include="Source\Mame\Graphics\Effect.cpp">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\ResourceManager.cpp">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="External\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\imgui\imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\imgui\imgui_impl_dx11.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\imgui\imgui_impl_win32.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\imgui\imgui_ja_gryph_ranges.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\imgui\imgui_tables.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\imgui\imgui_widgets.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\imgui\ImGuiCtrl.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\framebuffer.cpp">
+      <Filter>mamelib\default</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\framework.cpp">
+      <Filter>mamelib\default</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\fullscreen_quad.cpp">
+      <Filter>mamelib\default</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\main.cpp">
+      <Filter>mamelib\default</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Resource\Audio.cpp">
+      <Filter>mamelib\Mame\Resource\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Resource\AudioManager.cpp">
+      <Filter>mamelib\Mame\Resource\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Resource\shader.cpp">
+      <Filter>mamelib\Mame\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Resource\skinned_mesh.cpp">
+      <Filter>mamelib\Mame\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Resource\sprite.cpp">
+      <Filter>mamelib\Mame\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Resource\sprite_batch.cpp">
+      <Filter>mamelib\Mame\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Resource\static_mesh.cpp">
+      <Filter>mamelib\Mame\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Resource\texture.cpp">
+      <Filter>mamelib\Mame\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Resource\GeometricPrimitive.cpp">
+      <Filter>mamelib\Mame\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Resource\GltfModel.cpp">
+      <Filter>mamelib\Mame\Resource</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Mame\Scene\BaseScene.h">
+      <Filter>mamelib\Mame\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\Camera.h">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\EffectManager.h">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\Graphics.h">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\Model.h">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\ModelResource.h">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\RenderContext.h">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Input\Input.h">
+      <Filter>mamelib\Mame\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Input\Mouse.h">
+      <Filter>mamelib\Mame\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Input\GamePad.h">
+      <Filter>mamelib\Mame\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Mame.h">
+      <Filter>mamelib\Mame</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Transform.h">
+      <Filter>mamelib\Mame</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Scene\SceneTitle.h">
+      <Filter>mamelib\Mame\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Scene\SceneManager.h">
+      <Filter>mamelib\Mame\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Scene\SceneLoading.h">
+      <Filter>mamelib\Mame\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Scene\SceneGame.h">
+      <Filter>mamelib\Mame\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Source\Mame\Graphics\Effect.h">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\ResourceManager.h" />
+    <ClInclude Include="Source\Mame\Graphics\Effect.h">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\ResourceManager.h">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="External\imgui\imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\imgui\imgui_impl_dx11.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\imgui\imgui_impl_win32.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\imgui\ImGuiCtrl.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\imgui\imstb_rectpack.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\imgui\imstb_textedit.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\imgui\imstb_truetype.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\framebuffer.h">
+      <Filter>mamelib\default</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\framework.h">
+      <Filter>mamelib\default</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\fullscreen_quad.h">
+      <Filter>mamelib\default</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\high_resolution_timer.h">
+      <Filter>mamelib\default</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Resource\Audio.h">
+      <Filter>mamelib\Mame\Resource\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Resource\AudioManager.h">
+      <Filter>mamelib\Mame\Resource\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Other\misc.h">
+      <Filter>mamelib\Mame\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Resource\shader.h">
+      <Filter>mamelib\Mame\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Resource\skinned_mesh.h">
+      <Filter>mamelib\Mame\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Resource\sprite.h">
+      <Filter>mamelib\Mame\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Resource\sprite_batch.h">
+      <Filter>mamelib\Mame\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Resource\static_mesh.h">
+      <Filter>mamelib\Mame\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Resource\texture.h">
+      <Filter>mamelib\Mame\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Resource\GeometricPrimitive.h">
+      <Filter>mamelib\Mame\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Resource\GltfModel.h">
+      <Filter>mamelib\Mame\Resource</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\Shader\fullscreen_quad.hlsli">
+      <Filter>mamelib\Shader</Filter>
+    </None>
+    <None Include="Source\Shader\geometric_primitive.hlsli">
+      <Filter>mamelib\Shader</Filter>
+    </None>
+    <None Include="Source\Shader\skinned_mesh.hlsli">
+      <Filter>mamelib\Shader</Filter>
+    </None>
+    <None Include="Source\Shader\sprite_dissolve.hlsli">
+      <Filter>mamelib\Shader</Filter>
+    </None>
+    <None Include="Source\Shader\sprite_fade.hlsli">
+      <Filter>mamelib\Shader</Filter>
+    </None>
+    <None Include="Source\Shader\UVScroll.hlsli">
+      <Filter>mamelib\Shader</Filter>
+    </None>
+    <None Include="Source\Shader\static_mesh.hlsli">
+      <Filter>mamelib\Shader</Filter>
+    </None>
+    <None Include="Source\Shader\sprite.hlsli">
+      <Filter>mamelib\Shader</Filter>
+    </None>
+    <None Include="Source\Shader\Instancing.hlsli">
+      <Filter>mamelib\Shader</Filter>
+    </None>
+    <None Include="Source\Shader\gltfModel.hlsli">
+      <Filter>mamelib\Shader</Filter>
+    </None>
+    <None Include="Source\Shader\bidirectionalReflectanceDistributionFunction.hlsli">
+      <Filter>mamelib\Shader</Filter>
+    </None>
+    <None Include="Source\Shader\imageBasedLighting.hlsli">
+      <Filter>mamelib\Shader</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="mamelib">
+      <UniqueIdentifier>{70fa8b00-8763-4e40-93ac-b0d270e1b7b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Shader">
+      <UniqueIdentifier>{c482086c-fa03-4816-aa19-070cf94e5e0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{576faab2-b681-4899-afde-5d4eab13b405}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame">
+      <UniqueIdentifier>{bd440eba-c716-4ef4-bdd0-6104495cc1ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Graphics">
+      <UniqueIdentifier>{5048d925-6e70-41f9-bf1d-7d6da71c92ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Input">
+      <UniqueIdentifier>{1ba2b1fe-c5a6-47e2-996f-3889c6aeef6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Scene">
+      <UniqueIdentifier>{8a58c012-6aa2-4dfe-a8f7-3c8e10923e3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\default">
+      <UniqueIdentifier>{d34a1004-d746-40d1-98e8-fc58038dc616}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Other">
+      <UniqueIdentifier>{12d833cb-2acd-4c22-9544-d7d8a1b54621}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Resource">
+      <UniqueIdentifier>{25f8d082-a82b-40d1-8021-d42d33e344de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Resource\Audio">
+      <UniqueIdentifier>{28a48904-7b5d-4850-8db8-75727193a2fb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="3dgp.rc" />
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico" />
+    <Image Include="icon1.ico" />
+  </ItemGroup>
+</Project>
