@@ -204,6 +204,7 @@ void Sprite::Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 pos, D
     //---Ç±ÇÍÇÊÇËâ∫Ç…âΩÇ©Ç¢ÇƒÇ‡à”ñ°Ç»Ç¢---//
 }
 
+// debugópä÷êî
 void Sprite::DrawDebug()
 {
     ImGui::Begin("sprite");
@@ -213,6 +214,7 @@ void Sprite::DrawDebug()
     ImGui::End();
 }
 
+// SpriteTransform
 void Sprite::SpriteTransform::DrawDebug()
 {
     ImGui::DragFloat2("pos", &pos.x);
