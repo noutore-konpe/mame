@@ -13,8 +13,9 @@
 // コンストラクタの第三引数にディゾルブ用のピクセルシェーダーをセットする
 // ---> ("./Resources/Shader/sprite_dissolve_ps.cso")
 // Update関数を呼び出す。
-// spriteDissolve.dissolveBlackValueの値をいじればいい感じに動く
-// ---> 後で関数作ります。。。
+// Fadeの仕方↓
+// 外からspriteDissolve.dissolveTypeの値をいじって(0:FadeIn,1:FadeOut)
+// FadeをしたいときにisFadeをtrueにする(SetIsFade(true))
 
 class Sprite
 {
@@ -76,7 +77,7 @@ public:
         void SetEdgeThreshold(float threshold) { edgeThreshold = threshold; }
         void SetEdgeColor(DirectX::XMFLOAT4 color) { edgeColor = color; }
         void SetDelay(float d) { delay = d; }
-        void SetDissolveType(float type) { dissolveType = type; }
+        void SetDissolveType(int type) { dissolveType = type; }
 
         int GetMaskTextureValue() { return maskTextureValue; }
         float GetDissolveValue() { return dissolveValue; }
@@ -84,7 +85,7 @@ public:
         float GetEdgeThreshold() { return edgeThreshold; }
         DirectX::XMFLOAT4 GetEdgeColor() { return edgeColor; }
         float GetDelay() { return delay; }
-        float GetDissolveType() { return dissolveType; }
+        int GetDissolveType() { return dissolveType; }
     };
 public:
     void Initialize();

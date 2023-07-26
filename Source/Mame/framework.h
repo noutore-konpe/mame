@@ -47,11 +47,13 @@ public:
 
 	// gltfModel(test)
 	std::unique_ptr<GltfModel>gltfModels[8];
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceViews[8];
 
 	// sprite(test)
 	std::unique_ptr<Sprite>sprite;
 
+	std::unique_ptr<Model> model;
 
 	std::unique_ptr<framebuffer> framebuffers[8];
 

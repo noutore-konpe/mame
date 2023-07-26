@@ -64,24 +64,30 @@ Shader::Shader(ID3D11Device* device)
     {
         HRESULT hr{ S_OK };
 
-        D3D11_BUFFER_DESC buffer_desc{};
-        buffer_desc.ByteWidth = sizeof(CbScene);
-        buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-        buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-        buffer_desc.CPUAccessFlags = 0;
-        buffer_desc.MiscFlags = 0;
-        buffer_desc.StructureByteStride = 0;
-        hr = device->CreateBuffer(&buffer_desc, nullptr, sceneConstantBuffer[0].GetAddressOf());
+        D3D11_BUFFER_DESC bufferDesc{};
+        bufferDesc.ByteWidth = sizeof(SceneConstants);
+        bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        bufferDesc.CPUAccessFlags = 0;
+        bufferDesc.MiscFlags = 0;
+        bufferDesc.StructureByteStride = 0;
+        hr = device->CreateBuffer(&bufferDesc, nullptr, sceneConstantBuffer[0].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-        buffer_desc.ByteWidth = sizeof(CBParametric);
-        buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-        buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-        buffer_desc.CPUAccessFlags = 0;
-        buffer_desc.MiscFlags = 0;
-        buffer_desc.StructureByteStride = 0;
-        hr = device->CreateBuffer(&buffer_desc, nullptr, sceneConstantBuffer[1].GetAddressOf());
+        bufferDesc.ByteWidth = sizeof(CBParametric);
+        bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        bufferDesc.CPUAccessFlags = 0;
+        bufferDesc.MiscFlags = 0;
+        bufferDesc.StructureByteStride = 0;
+        hr = device->CreateBuffer(&bufferDesc, nullptr, sceneConstantBuffer[1].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+        {
+            bufferDesc.ByteWidth = sizeof(LightConstants);
+            hr = device->CreateBuffer(&bufferDesc, nullptr, lightConstantBuffer.GetAddressOf());
+            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+        }
     }
 
     // ブレンドステート
@@ -220,20 +226,20 @@ void Shader::Initialize()
     camera.Initialize();
 }
 
-void Shader::Begin(ID3D11DeviceContext* dc, const RenderContext& rc)
+void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc)
 {
     Camera& camera = Camera::Instance();
 
     // サンプラーステート
-    dc->PSSetSamplers(0, 1, samplerState[0].GetAddressOf());
-    dc->PSSetSamplers(1, 1, samplerState[1].GetAddressOf());
-    dc->PSSetSamplers(2, 1, samplerState[2].GetAddressOf());
+    deviceContext->PSSetSamplers(0, 1, samplerState[0].GetAddressOf());
+    deviceContext->PSSetSamplers(1, 1, samplerState[1].GetAddressOf());
+    deviceContext->PSSetSamplers(2, 1, samplerState[2].GetAddressOf());
 
-    dc->OMSetDepthStencilState(depthStencilState[0].Get(), 1);
+    deviceContext->OMSetDepthStencilState(depthStencilState[0].Get(), 1);
 
-    dc->OMSetBlendState(blendState.Get(), nullptr, 0xFFFFFFFF);
+    deviceContext->OMSetBlendState(blendState.Get(), nullptr, 0xFFFFFFFF);
 
-    dc->RSSetState(rasterizerState[0].Get());
+    deviceContext->RSSetState(rasterizerState[0].Get());
 
     // ビュープロジェクション変換行列を計算し、それを定数バッファにセットする
 #if 0
@@ -250,19 +256,29 @@ void Shader::Begin(ID3D11DeviceContext* dc, const RenderContext& rc)
     DirectX::XMVECTOR up{ DirectX::XMVectorSet(0.0f,1.0f,0.0f,0.0f) };
     DirectX::XMMATRIX V{ DirectX::XMMatrixLookAtLH(eye,focus,up) };
 #else
-    camera.SetPerspectiveFov(dc);
+    camera.SetPerspectiveFov(deviceContext);
 #endif
     
 
-    CbScene data{};
+    SceneConstants scene{};
     //DirectX::XMStoreFloat4x4(&data.viewProjection, V * P);
-    DirectX::XMStoreFloat4x4(&data.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
+    DirectX::XMStoreFloat4x4(&scene.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
     
-    data.lightDirection = { view.position.x,view.position.y,view.position.z,view.position.w };
-    data.camera_position = { view.camera.x,view.camera.y,view.camera.z,view.camera.w };
-    dc->UpdateSubresource(sceneConstantBuffer[0].Get(), 0, 0, &data, 0, 0);
-    dc->VSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
-    dc->PSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
+    scene.lightDirection = { view.position.x,view.position.y,view.position.z,view.position.w };
+    scene.cameraPosition = { view.camera.x,view.camera.y,view.camera.z,view.camera.w };
+    deviceContext->UpdateSubresource(sceneConstantBuffer[0].Get(), 0, 0, &scene, 0, 0);
+    deviceContext->VSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
+    deviceContext->PSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
+
+    // light
+    LightConstants lights{};
+    lights.ambientColor = ambientColor;
+    lights.directionalLightDirection = directionalLightDirection;
+    lights.directionalLightColor = directionalLightColor;
+    deviceContext->UpdateSubresource(lightConstantBuffer.Get(), 0, 0, &lights, 0, 0);
+    deviceContext->VSSetConstantBuffers(2, 1, lightConstantBuffer.GetAddressOf());
+    deviceContext->PSSetConstantBuffers(2, 1, lightConstantBuffer.GetAddressOf());
+
 
 #ifdef USE_IMGUI
     //DrawDebug();
@@ -286,10 +302,10 @@ void Shader::Begin(ID3D11DeviceContext* dc, const RenderContext& rc, int state)
     
     camera.SetPerspectiveFov(dc);
 
-    CbScene data{};
+    SceneConstants data{};
     DirectX::XMStoreFloat4x4(&data.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
     data.lightDirection = { view.position.x,view.position.y,view.position.z,view.position.w };
-    data.camera_position = { view.camera.x,view.camera.y,view.camera.z,view.camera.w };
+    data.cameraPosition = { view.camera.x,view.camera.y,view.camera.z,view.camera.w };
     dc->UpdateSubresource(sceneConstantBuffer[0].Get(), 0, 0, &data, 0, 0);
     dc->VSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
     dc->PSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
@@ -329,6 +345,16 @@ void Shader::DrawDebug()
         ImGui::TreePop();
     }
 
+    if (ImGui::TreeNode("phong"))
+    {
+        
+        ImGui::Separator();
+        ImGui::ColorEdit3("ambientColor", &ambientColor.x);
+        ImGui::SliderFloat3("directionalLightDirection", &directionalLightDirection.x, -1.0f, 1.0f);
+        ImGui::ColorEdit3("directionalLightColor", &directionalLightColor.x);
+
+        ImGui::TreePop();
+    }
     
     camera.DrawDebug();
 

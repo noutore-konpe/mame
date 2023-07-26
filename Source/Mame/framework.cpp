@@ -37,7 +37,7 @@ bool framework::initialize()
 
     hr = audioManager.xAudio2->CreateMasteringVoice(&audioManager.masterVoice);
     _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
+    
     // 音楽読み込み
     //audioManager.LoadAudio();
     //audioManager.StopAllAudio(); // 全音楽停止
@@ -69,6 +69,9 @@ bool framework::initialize()
     sprite = std::make_unique<Sprite>(graphics.GetDevice(), L"./Resources/Image/sanaImage/load.png",
         "./Resources/Shader/sprite_dissolve_ps.cso");
     //sprite->Initialize(DirectX::XMFLOAT2(0, 0), DirectX::XMFLOAT2(900, 367), DirectX::XMFLOAT2(900, 367));
+
+    // model
+    model = std::make_unique<Model>(graphics.GetDevice(), "./Resources/Model/sanaModel/1.fbx");
 
 #ifndef _DEBUG
     ShowCursor(!FULLSCREEN);	// フルスクリーン時はカーソルを消す
@@ -121,7 +124,15 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
         sprite->DrawDebug();
         sprite->Render();
     }
-
+    
+    // model
+    {
+        ImGui::Begin("model");
+        model->DrawDebug();
+        ImGui::End();
+        model->Render(0.01f);
+    }
+    
     // ImGui表示
     IMGUI_CTRL_DISPLAY();
 

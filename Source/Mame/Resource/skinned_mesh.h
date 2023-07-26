@@ -238,7 +238,10 @@ public:
     struct constants
     {
         DirectX::XMFLOAT4X4 world;
-        DirectX::XMFLOAT4 material_color;
+        //DirectX::XMFLOAT4 material_color;
+        DirectX::XMFLOAT4 Ka;
+        DirectX::XMFLOAT4 Kd;
+        DirectX::XMFLOAT4 Ks;
         DirectX::XMFLOAT4X4 bone_transforms[MAX_BONES]{
             {
                 1,0,0,0,
@@ -386,21 +389,13 @@ public:
     float dissolve_value1{ 0.0f };
     Microsoft::WRL::ComPtr<ID3D11Buffer> dissolve_constant_buffer;
 
-
-
-
-
 protected:
     scene scene_view;
-    // メッシュ
+    
     void fetch_meshes(FbxScene* fbx_scene, std::vector<mesh>& meshes);
-    // マテリアル
     void fetch_materials(FbxScene* fbx_scene, std::unordered_map<uint64_t, material>& materials);
-    // スケルトン
     void fetch_skeleton(FbxMesh* fbx_mesh, skeleton& bind_pose);
-    // アニメーション
     void fetch_animations(FbxScene* fbx_scene, std::vector<animation>& animation_clips, float sampling_rate/*If this value is 0, the animation data will be sampled at the default frame rate.*/);
-    // シーン
     void fetch_scene(const char* fbx_filename, bool triangulate, float sampling_rate/*If this value is 0, the animation data will be sampled at the default frame rate.*/);
 
 public:

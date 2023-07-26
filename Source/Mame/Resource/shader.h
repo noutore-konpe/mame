@@ -53,12 +53,25 @@ private:
 
     static const int MaxBones = 128;
 
-    struct CbScene
+    struct SceneConstants
     {
         DirectX::XMFLOAT4X4 viewProjection;
         DirectX::XMFLOAT4 lightDirection;
-        DirectX::XMFLOAT4 camera_position;
+        DirectX::XMFLOAT4 cameraPosition;
     };
+    Microsoft::WRL::ComPtr<ID3D11Buffer> sceneConstantBuffer[2];
+
+    struct LightConstants
+    {
+        DirectX::XMFLOAT4 ambientColor;
+        DirectX::XMFLOAT4 directionalLightDirection;
+        DirectX::XMFLOAT4 directionalLightColor;
+    };
+    Microsoft::WRL::ComPtr<ID3D11Buffer> lightConstantBuffer;
+
+    DirectX::XMFLOAT4 ambientColor{ 0.2f, 0.2f ,0.2f, 0.2f };
+    DirectX::XMFLOAT4 directionalLightDirection{ 0.0f,-1.0f,1.0f,1.0f };
+    DirectX::XMFLOAT4 directionalLightColor{ 1.0f, 1.0f, 1.0f, 1.0f };
 
     struct CBMesh
     {
@@ -79,7 +92,6 @@ private:
     };
 
 
-    Microsoft::WRL::ComPtr<ID3D11Buffer> sceneConstantBuffer[2];
     Microsoft::WRL::ComPtr<ID3D11Buffer> meshConstantBuffer;
     Microsoft::WRL::ComPtr<ID3D11Buffer> subsetConstantBuffer;
 

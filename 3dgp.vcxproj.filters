@@ -70,6 +70,12 @@
     <FxCompile Include="Source\Shader\gltfModelVs.hlsl">
       <Filter>mamelib\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\Shader\phongShaderVS.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shader\phongShaderPS.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Mame\Scene\BaseScene.cpp">
@@ -362,6 +368,9 @@
       <Filter>mamelib\Shader</Filter>
     </None>
     <None Include="Source\Shader\imageBasedLighting.hlsli">
+      <Filter>mamelib\Shader</Filter>
+    </None>
+    <None Include="Resources\Shader\phongShader.hlsli">
       <Filter>mamelib\Shader</Filter>
     </None>
   </ItemGroup>

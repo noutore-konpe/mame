@@ -228,7 +228,7 @@ void GltfModel::Animate(size_t animationIndex, float time, std::vector<Node>& an
                 if (loopback)
                 {
                     //if(time>=1.0f)
-                    if (timelines.at(keyframeCount - 1) != 0)
+                    //if (timelines.at(keyframeCount - 1) != 0)
                         time = fmodf(time, timelines.at(keyframeCount - 1));
                 }
                 else

@@ -1,5 +1,6 @@
 #include "Model.h"
 #include "ResourceManager.h"
+#include "Graphics.h"
 
 // TODO: リソースマネージャーの使用
 #define USE_RESOURCE_MANAGER
@@ -27,6 +28,35 @@ Model::Model(ID3D11Device* device, const char* fbx_filename, std::vector<std::st
         triangulate, 
         sampling_rate
     );
+}
+
+// 描画
+void Model::Render(const float& scale)
+{
+    Graphics& graphics = Graphics::Instance();
+    Shader* shader = graphics.GetShader();
+
+    // world行列更新
+    DirectX::XMFLOAT4X4 world = {};
+    DirectX::XMStoreFloat4x4(&world, GetTransform()->CalcWorldMatrix(scale));
+
+    // ステートセット
+    shader->SetState(graphics.GetDeviceContext(), 3, 0, 0);
+
+    // Model描画
+    if (&keyframe)
+    {
+        skinned_meshes->render(graphics.GetDeviceContext(), world, GetModelColor(), &keyframe);
+    }
+    else
+    {
+        skinned_meshes->render(graphics.GetDeviceContext(), world, GetModelColor(), nullptr);
+    }
+}
+
+void Model::DrawDebug()
+{
+    GetTransform()->DrawDebug();
 }
 
 

@@ -21,6 +21,8 @@ cbuffer OBJECT_CONSTANT_BUFFER : register(b0)
 {
     row_major float4x4 world;
     float4 material_color;
+    float4 dummy;
+    float4 dummy2;
     row_major float4x4 bone_transforms[MAX_BONES];
 };
 cbuffer SCENE_CONSTANT_BUFFER : register(b1)

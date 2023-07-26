@@ -13,14 +13,18 @@
 class Model
 {
 public:
-    Model(ID3D11Device* device, const char* fbx_filename, bool triangulate = false, float sampling_rate = 0);
-    Model(ID3D11Device* device, const char* fbx_filename, std::vector<std::string>& animation_filenames, bool triangulate = false, float sampling_rate = 0);
+    Model(ID3D11Device* device, const char* fbx_filename, bool triangulate = true, float sampling_rate = 0);
+    Model(ID3D11Device* device, const char* fbx_filename, std::vector<std::string>& animation_filenames, bool triangulate = true, float sampling_rate = 0);
     ~Model() {}
 
-    Transform* GetTransform() { return &transform; }
-
-    //const skinned_mesh* GetSkinnedMesh()const { return &skinned_meshes; }
+    void Render(const float& scale);
      
+    void DrawDebug();
+
+    Transform* GetTransform() { return &transform; }
+    
+    void SetModelColor(DirectX::XMFLOAT4 c) { color = c; }
+    DirectX::XMFLOAT4 GetModelColor() { return color; }
     
 public: // 取得・設定関数関連
     // アニメーションデータ取得
@@ -61,6 +65,7 @@ public:
     Transform    transform;
 
     animation::keyframe keyframe = {};
+    DirectX::XMFLOAT4 color = { 1,1,1,1 };
 
 private:
     float       animationSpeed          = 1.0f;     // アニメーション再生速度

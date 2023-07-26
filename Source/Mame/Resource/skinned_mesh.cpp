@@ -372,9 +372,16 @@ void skinned_mesh::create_com_objects(ID3D11Device* device, const char* fbx_file
         { "WEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT },
         { "BONES", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT },
     };
+#if 0 // Shader
+    create_vs_from_cso(device, "./resources/Shader/phongShaderVS.cso", vertex_shader.ReleaseAndGetAddressOf(),
+        input_layout.ReleaseAndGetAddressOf(), input_element_desc, ARRAYSIZE(input_element_desc));
+    create_ps_from_cso(device, "./resources/Shader/phongShaderPS.cso", pixel_shader.ReleaseAndGetAddressOf());
+#else
     create_vs_from_cso(device, "./resources/Shader/skinned_mesh_vs.cso", vertex_shader.ReleaseAndGetAddressOf(),
         input_layout.ReleaseAndGetAddressOf(), input_element_desc, ARRAYSIZE(input_element_desc));
     create_ps_from_cso(device, "./resources/Shader/skinned_mesh_ps.cso", pixel_shader.ReleaseAndGetAddressOf());
+#endif // Shader
+
 #else
     // Instancing
     {
@@ -413,11 +420,11 @@ void skinned_mesh::create_com_objects(ID3D11Device* device, const char* fbx_file
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
         // load_texture
-        load_texture_from_file(device, L"./resources/mask/dissolve_animation.png",
+        load_texture_from_file(device, L"./Resources/Image/Mask/dissolve_animation.png",
             mask_texture[0].GetAddressOf(), &mask_texture2dDesc);
-        load_texture_from_file(device, L"./resources/mask/dissolve_animation2.png",
+        load_texture_from_file(device, L"./Resources/Image/Mask/dissolve_animation2.png",
             mask_texture[1].GetAddressOf(), &mask_texture2dDesc);
-        load_texture_from_file(device, L"./resources/mask/noise.png",
+        load_texture_from_file(device, L"./Resources/Image/Mask/noise.png",
             mask_texture[2].GetAddressOf(), &mask_texture2dDesc);
     }
 
@@ -430,34 +437,34 @@ void skinned_mesh::create_com_objects(ID3D11Device* device, const char* fbx_file
 }
 
 // 描画
-void skinned_mesh::render(ID3D11DeviceContext* immediate_context,
+void skinned_mesh::render(ID3D11DeviceContext* deviceContext,
     const DirectX::XMFLOAT4X4 world, const DirectX::XMFLOAT4& material_color,
     const animation::keyframe* keyframe,
     ID3D11PixelShader* alternative_pixel_shader)
 {
-    immediate_context->PSSetShaderResources(15, 1, mask_texture[mask_texture_value].GetAddressOf());
+    deviceContext->PSSetShaderResources(15, 1, mask_texture[mask_texture_value].GetAddressOf());
 
     //// 定数バッファの更新
     {
         dissolve_constants dissolve{};
         dissolve.parameters.x = dissolve_value;
-        immediate_context->UpdateSubresource(dissolve_constant_buffer.Get(), 0, 0, &dissolve, 0, 0);
-        immediate_context->VSSetConstantBuffers(3, 1, dissolve_constant_buffer.GetAddressOf());
-        immediate_context->PSSetConstantBuffers(3, 1, dissolve_constant_buffer.GetAddressOf());
+        deviceContext->UpdateSubresource(dissolve_constant_buffer.Get(), 0, 0, &dissolve, 0, 0);
+        deviceContext->VSSetConstantBuffers(3, 1, dissolve_constant_buffer.GetAddressOf());
+        deviceContext->PSSetConstantBuffers(3, 1, dissolve_constant_buffer.GetAddressOf());
     }
 
     for (const mesh& mesh : meshes)
     {
         uint32_t stride{ sizeof(vertex) };
         uint32_t offset{ 0 };
-        immediate_context->IASetVertexBuffers(0, 1, mesh.vertex_buffer.GetAddressOf(), &stride, &offset);
-        immediate_context->IASetIndexBuffer(mesh.index_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-        immediate_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        immediate_context->IASetInputLayout(input_layout.Get());
+        deviceContext->IASetVertexBuffers(0, 1, mesh.vertex_buffer.GetAddressOf(), &stride, &offset);
+        deviceContext->IASetIndexBuffer(mesh.index_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+        deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        deviceContext->IASetInputLayout(input_layout.Get());
 
-        immediate_context->VSSetShader(vertex_shader.Get(), nullptr, 0);
+        deviceContext->VSSetShader(vertex_shader.Get(), nullptr, 0);
         //immediate_context->PSSetShader(pixel_shader.Get(), nullptr, 0);
-        alternative_pixel_shader ? immediate_context->PSSetShader(alternative_pixel_shader, nullptr, 0) : immediate_context->PSSetShader(pixel_shader.Get(), nullptr, 0);
+        alternative_pixel_shader ? deviceContext->PSSetShader(alternative_pixel_shader, nullptr, 0) : deviceContext->PSSetShader(pixel_shader.Get(), nullptr, 0);
 
         constants data;
 
@@ -501,15 +508,20 @@ void skinned_mesh::render(ID3D11DeviceContext* immediate_context,
         {
             const material& material{ materials.at(subset.material_unique_id) };
 
-            DirectX::XMStoreFloat4(&data.material_color,
+            DirectX::XMStoreFloat4(&data.Ka, 
                 DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&material_color), DirectX::XMLoadFloat4(&material.Kd)));
-            immediate_context->UpdateSubresource(constant_buffer.Get(), 0, 0, &data, 0, 0);
-            immediate_context->VSSetConstantBuffers(0, 1, constant_buffer.GetAddressOf());
+            data.Kd = material.Kd;
+            data.Ks = material.Ks;
+            //DirectX::XMStoreFloat4(&data.material_color,
+            //    DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&material_color), DirectX::XMLoadFloat4(&material.Kd)));
+            deviceContext->UpdateSubresource(constant_buffer.Get(), 0, 0, &data, 0, 0);
+            deviceContext->VSSetConstantBuffers(0, 1, constant_buffer.GetAddressOf());
+            deviceContext->PSSetConstantBuffers(0, 1, constant_buffer.GetAddressOf());
 
-            immediate_context->PSSetShaderResources(0, 1, material.shader_resource_views[0].GetAddressOf());
-            immediate_context->PSSetShaderResources(1, 1, material.shader_resource_views[1].GetAddressOf());
+            deviceContext->PSSetShaderResources(0, 1, material.shader_resource_views[0].GetAddressOf());
+            deviceContext->PSSetShaderResources(1, 1, material.shader_resource_views[1].GetAddressOf());
 
-            immediate_context->DrawIndexed(subset.index_count, subset.start_index_location, 0);
+            deviceContext->DrawIndexed(subset.index_count, subset.start_index_location, 0);
         }
     }
 }
