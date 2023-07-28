@@ -12,6 +12,10 @@
 #include "../Resource/texture.h"
 
 
+void SceneTitle::CreateResource()
+{
+}
+
 // ‰Šú‰»
 void SceneTitle::Initialize()
 {

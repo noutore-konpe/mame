@@ -14,7 +14,7 @@ public:
     SceneLoading(BaseScene* nextScene);
     ~SceneLoading() override {}
 
-
+    void CreateResource()override;                  // リソース生成
     void Initialize()   override;                   // 初期化
     void Finalize()     override;                   // 終了化
     void Begin()        override;                   // 毎フレーム一番最初に呼ばれる

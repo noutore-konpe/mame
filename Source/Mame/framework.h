@@ -44,17 +44,7 @@ private:
 	Input input;
 
 public:
-
-	// gltfModel(test)
-	std::unique_ptr<GltfModel>gltfModels[8];
-
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceViews[8];
-
-	// sprite(test)
-	std::unique_ptr<Sprite>sprite;
-
-	std::unique_ptr<Model> model;
-
+	
 	std::unique_ptr<framebuffer> framebuffers[8];
 
 	std::unique_ptr<fullscreen_quad> bit_block_transfer;
@@ -148,7 +138,7 @@ public:
 			if (wparam == VK_ESCAPE)
 			{
 				// ESCで落とす
-				//PostMessage(hwnd, WM_CLOSE, 0, 0);
+				PostMessage(hwnd, WM_CLOSE, 0, 0);
 			}
 			break;
 		case WM_ENTERSIZEMOVE:

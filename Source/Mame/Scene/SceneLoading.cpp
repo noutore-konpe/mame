@@ -11,6 +11,10 @@ SceneLoading::SceneLoading(BaseScene* nextScene) :nextScene(nextScene)
     SetSceneType(static_cast<int>(Mame::Scene::TYPE::LOAD));
 }
 
+void SceneLoading::CreateResource()
+{
+}
+
 // 初期化
 void SceneLoading::Initialize()
 {
@@ -75,6 +79,7 @@ void SceneLoading::LoadingThread(SceneLoading* scene)
     std::ignore = CoInitialize(nullptr); // std::ignoreで返り値警告解消
 
     // 次のシーンの初期化を行う
+    scene->nextScene->CreateResource();
     scene->nextScene->Initialize();
 
     // スレッドが終わる前にCOM関連の終了化

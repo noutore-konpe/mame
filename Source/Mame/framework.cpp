@@ -4,6 +4,7 @@
 
 #include "Graphics/EffectManager.h"
 #include "Scene/SceneTitle.h"
+#include "Scene/SceneDemo.h"
 #include "Scene/SceneManager.h"
 
 #include "Resource/AudioManager.h"
@@ -44,34 +45,7 @@ bool framework::initialize()
 
     Mame::Scene::SceneManager::Instance().Initialize();
     // シーンタイトル
-    Mame::Scene::SceneManager::Instance().ChangeScene(new SceneTitle);
-
-    // gltfModel
-    gltfModels[0] = std::make_unique<GltfModel>(graphics.GetDevice(),
-        //"./External/glTF-Sample-Models-master/2.0/ToyCar/glTF/ToyCar.gltf");
-        //"./External/glTF-Sample-Models-master/2.0/ABeautifulGame/glTF/ABeautifulGame.gltf");
-        //"./External/glTF-Sample-Models-master/2.0/BrainStem/glTF/BrainStem.gltf");
-        //"./External/glTF-Sample-Models-master/2.0/CesiumMan/glTF/CesiumMan.gltf");
-        "./External/glTF-Sample-Models-master/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf");
-        //"./External/glTF-Sample-Models-master/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf");
-
-    D3D11_TEXTURE2D_DESC texture2dDesc;
-    load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/environments/sunset_jhbcentral_4k/sunset_jhbcentral_4k.dds",
-        shaderResourceViews[0].GetAddressOf(), &texture2dDesc);
-    load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/environments/sunset_jhbcentral_4k/diffuse_iem.dds",
-        shaderResourceViews[1].GetAddressOf(), &texture2dDesc);
-    load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/environments/sunset_jhbcentral_4k/specular_pmrem.dds",
-        shaderResourceViews[2].GetAddressOf(), &texture2dDesc);
-    load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/environments/lut_ggx.dds",
-        shaderResourceViews[3].GetAddressOf(), &texture2dDesc);
-
-    // sprite
-    sprite = std::make_unique<Sprite>(graphics.GetDevice(), L"./Resources/Image/sanaImage/load.png",
-        "./Resources/Shader/sprite_dissolve_ps.cso");
-    //sprite->Initialize(DirectX::XMFLOAT2(0, 0), DirectX::XMFLOAT2(900, 367), DirectX::XMFLOAT2(900, 367));
-
-    // model
-    model = std::make_unique<Model>(graphics.GetDevice(), "./Resources/Model/sanaModel/1.fbx");
+    Mame::Scene::SceneManager::Instance().ChangeScene(new SceneDemo);
 
 #ifndef _DEBUG
     ShowCursor(!FULLSCREEN);	// フルスクリーン時はカーソルを消す
@@ -91,47 +65,14 @@ void framework::update(float elapsed_time/*Elapsed seconds from last frame*/)
 
     // シーン更新処理
     Mame::Scene::SceneManager::Instance().Update(elapsed_time);
-
-    // spriteAnimation
-    sprite->Update(elapsed_time);
-    //sprite->PlayAnimation(elapsed_time, 30, 30, true);
-
-    // gltfModel
-    gltfModels[0]->Update(elapsed_time);
-    gltfModels[0]->DrawDebug();
 }
 
 void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
 {
     Graphics& graphics = Graphics::Instance();
-    Shader* shader = graphics.GetShader();
  
     // todo scenemanager
     Mame::Scene::SceneManager::Instance().Render(elapsed_time);
-
-    // gltfModel
-    {
-        graphics.GetDeviceContext()->PSSetShaderResources(32, 1, shaderResourceViews[0].GetAddressOf());
-        graphics.GetDeviceContext()->PSSetShaderResources(33, 1, shaderResourceViews[1].GetAddressOf());
-        graphics.GetDeviceContext()->PSSetShaderResources(34, 1, shaderResourceViews[2].GetAddressOf());
-        graphics.GetDeviceContext()->PSSetShaderResources(35, 1, shaderResourceViews[3].GetAddressOf());
-
-        gltfModels[0]->Render(1.0f);
-    }
-
-    // sprite
-    {
-        sprite->DrawDebug();
-        sprite->Render();
-    }
-    
-    // model
-    {
-        ImGui::Begin("model");
-        model->DrawDebug();
-        ImGui::End();
-        model->Render(0.01f);
-    }
     
     // ImGui表示
     IMGUI_CTRL_DISPLAY();

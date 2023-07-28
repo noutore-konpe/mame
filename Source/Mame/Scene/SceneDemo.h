@@ -1,13 +1,17 @@
 #pragma once
 #include "BaseScene.h"
 
-#include "../Game/spriteDissolve.h"
+#include "../Resource/sprite.h"
+#include "../Resource/GltfModel.h"
+#include "../Graphics/Model.h"
 
-class SceneGame : public Mame::Scene::BaseScene
+#include <memory>
+
+class SceneDemo : public Mame::Scene::BaseScene
 {
 public:
-    SceneGame() {}
-    ~SceneGame()override {}
+    SceneDemo() {}
+    ~SceneDemo()override {}
 
     void CreateResource()override;                  // ÉäÉ\Å[ÉXê∂ê¨
     void Initialize()   override;                   // èâä˙âª
@@ -18,5 +22,22 @@ public:
     void Render(const float& elapsedTime) override; // ï`âÊèàóù
 
     void DrawDebug()    override;
+
+public:
+    
+
+private:
+    bool isDebugCamera = false;
+
+private:
+    // GltfModel test
+    std::unique_ptr<GltfModel> gltfModels[8];
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceViews[8];
+
+    // Model test
+    std::unique_ptr<Model> model;
+
+    // Sprite test
+    std::unique_ptr<Sprite>sprite;
 };
 

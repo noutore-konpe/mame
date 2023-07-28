@@ -17,6 +17,7 @@ namespace Mame::Scene
         BaseScene() {}
         virtual ~BaseScene() {}
 
+        virtual void CreateResource() = 0;                  // ¶¬
         virtual void Initialize()   = 0;                    // ‰Šú‰»
         virtual void Finalize()     = 0;                    // I—¹‰»
         virtual void Begin()        = 0;                    // –ˆƒtƒŒ[ƒ€ˆê”ÔÅ‰‚ÉŒÄ‚Î‚ê‚é

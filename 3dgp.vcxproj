@@ -226,6 +226,7 @@
     <ClCompile Include="Source\Mame\Resource\static_mesh.cpp" />
     <ClCompile Include="Source\Mame\Resource\texture.cpp" />
     <ClCompile Include="Source\Mame\Scene\BaseScene.cpp" />
+    <ClCompile Include="Source\Mame\Scene\SceneDemo.cpp" />
     <ClCompile Include="Source\Mame\Scene\SceneGame.cpp" />
     <ClCompile Include="Source\Mame\Scene\SceneLoading.cpp" />
     <ClCompile Include="Source\Mame\Scene\SceneManager.cpp" />
@@ -271,6 +272,7 @@
     <ClInclude Include="Source\Mame\Resource\static_mesh.h" />
     <ClInclude Include="Source\Mame\Resource\texture.h" />
     <ClInclude Include="Source\Mame\Scene\BaseScene.h" />
+    <ClInclude Include="Source\Mame\Scene\SceneDemo.h" />
     <ClInclude Include="Source\Mame\Scene\SceneGame.h" />
     <ClInclude Include="Source\Mame\Scene\SceneLoading.h" />
     <ClInclude Include="Source\Mame\Scene\SceneManager.h" />

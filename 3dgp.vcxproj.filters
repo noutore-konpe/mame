@@ -199,6 +199,7 @@
     <ClCompile Include="Source\Mame\Resource\GltfModel.cpp">
       <Filter>mamelib\Mame\Resource</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Scene\SceneDemo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -332,6 +333,7 @@
     <ClInclude Include="Source\Mame\Resource\GltfModel.h">
       <Filter>mamelib\Mame\Resource</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Scene\SceneDemo.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">

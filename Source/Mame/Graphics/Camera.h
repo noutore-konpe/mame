@@ -22,6 +22,7 @@ public:
 
     void Initialize();
 
+    void UpdateDebug(const float& elapsedTime);
 
     void SetPerspectiveFov(ID3D11DeviceContext* dc);
     
@@ -35,6 +36,11 @@ public:
     // ImGuiópä÷êî
     void DrawDebug();
     void Reset();
+
+private: // Debugóp
+    float moveSpeed = 0.01f;
+    float rotationSpeed = 60.0f;
+
 
 public:
     Transform* GetTransform() { return &transform; }        // transforméÊìæ

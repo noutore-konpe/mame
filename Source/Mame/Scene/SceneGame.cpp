@@ -7,6 +7,10 @@
 #include "SceneLoading.h"
 #include "SceneTitle.h"
 
+void SceneGame::CreateResource()
+{
+}
+
 // ‰Šú‰»
 void SceneGame::Initialize()
 {

@@ -31,6 +31,7 @@ namespace Mame::Scene
             // シーン初期化処理(マルチスレッド処理をしていない場合に行う)
             if (!currentScene->IsReady())
             {
+                currentScene->CreateResource();
                 currentScene->Initialize();
             }
         }
