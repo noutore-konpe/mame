@@ -4,6 +4,7 @@
 #include "../Resource/sprite.h"
 #include "../Resource/GltfModel.h"
 #include "../Graphics/Model.h"
+#include "../Graphics/Effect.h"
 
 #include <memory>
 
@@ -39,5 +40,8 @@ private:
 
     // Sprite test
     std::unique_ptr<Sprite>sprite;
+
+    // Effekt test
+    std::unique_ptr<Effect> effect[4];
 };
 

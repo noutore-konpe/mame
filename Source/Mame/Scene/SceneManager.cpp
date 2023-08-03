@@ -40,7 +40,7 @@ namespace Mame::Scene
         {
             // 経過時間が60フレーム以内なら更新処理を行う
             constexpr float frame60 = (0.0166666666666667f);
-            if (elapsedTime <= frame60)
+            //if (elapsedTime <= frame60)
             {
 
                 currentScene->Begin();

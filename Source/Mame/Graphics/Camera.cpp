@@ -12,7 +12,7 @@ void Camera::Initialize()
     transform.SetRotation(DirectX::XMFLOAT4(0.0f, DirectX::XMConvertToRadians(180), 0.0f, 0.0f));
 }
 
-void Camera::UpdateDebug(const float& elapsedTime)
+void Camera::UpdateDebug(const float& elapsedTime, DirectX::XMFLOAT2 moveVector)
 {
 #if 1
     GamePad& gamePad = Input::Instance().GetGamePad();
@@ -26,20 +26,12 @@ void Camera::UpdateDebug(const float& elapsedTime)
 
     float ax = gamePad.GetAxisLX() * moveSpeed;
     float ay = gamePad.GetAxisLY() * moveSpeed;
-    
-    DirectX::XMFLOAT2 nowPosition{ static_cast<float>(mouse.GetPositionX()),static_cast<float>(mouse.GetPositionY()) };
-    DirectX::XMFLOAT2 oldPosition{ static_cast<float>(mouse.GetOldPositionX()),static_cast<float>(mouse.GetOldPositionY()) };
-    DirectX::XMVECTOR nowVector = DirectX::XMLoadFloat2(&nowPosition);
-    DirectX::XMVECTOR oldVector = DirectX::XMLoadFloat2(&oldPosition);
-    DirectX::XMVECTOR moveVector = DirectX::XMVectorSubtract(nowVector, oldVector);
-    DirectX::XMFLOAT2 moveVectorFloat2;
-    DirectX::XMStoreFloat2(&moveVectorFloat2, moveVector);
 
-    moveVectorFloat2.x *= elapsedTime * rotationSpeed;
-    moveVectorFloat2.y *= elapsedTime * rotationSpeed;
+    moveVector.x *= elapsedTime * rotationSpeed;
+    moveVector.y *= elapsedTime * rotationSpeed;
 
-    rotation.x += DirectX::XMConvertToRadians(moveVectorFloat2.y);
-    rotation.y += DirectX::XMConvertToRadians(moveVectorFloat2.x);
+    rotation.x += DirectX::XMConvertToRadians(moveVector.y);
+    rotation.y += DirectX::XMConvertToRadians(moveVector.x);
 
     forward.x *= ay;
     forward.y *= ay;

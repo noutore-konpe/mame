@@ -4,6 +4,8 @@
 #include "../Resource/texture.h"
 #include "../Input/Input.h"
 
+#include "../Graphics/EffectManager.h"
+
 #define GLTF_MODEL 1
 #define MODEL 1
 #define SPRITE 1
@@ -22,7 +24,9 @@ void SceneDemo::CreateResource()
             //"./External/glTF-Sample-Models-master/2.0/BrainStem/glTF/BrainStem.gltf");
             //"./External/glTF-Sample-Models-master/2.0/CesiumMan/glTF/CesiumMan.gltf");
             "./External/glTF-Sample-Models-master/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf");
-        //"./External/glTF-Sample-Models-master/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf");
+            //"./External/glTF-Sample-Models-master/2.0/2CylinderEngine/glTF/2CylinderEngine.gltf");
+            //"./Resources/tree.gltf");
+            //"./Resources/Model/misuzuModel/ie.gltf");
 
         D3D11_TEXTURE2D_DESC texture2dDesc;
         load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/environments/sunset_jhbcentral_4k/sunset_jhbcentral_4k.dds",
@@ -33,6 +37,8 @@ void SceneDemo::CreateResource()
             shaderResourceViews[2].GetAddressOf(), &texture2dDesc);
         load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/environments/lut_ggx.dds",
             shaderResourceViews[3].GetAddressOf(), &texture2dDesc);
+
+        //gltfModels[0]->GetTransform()->SetScale(DirectX::XMFLOAT3(10.0f, 10.0f, 10.0f));
 #endif // GLTF_MODEL
     }
 
@@ -40,18 +46,34 @@ void SceneDemo::CreateResource()
     {
 #if MODEL
 
-        model = std::make_unique<Model>(graphics.GetDevice(), "./Resources/Model/sanaModel/1.fbx");
+        model = std::make_unique<Model>(graphics.GetDevice(),
+            //"./Resources/tree.fbx");
+            //"./Resources/Model/sanaModel/1.fbx");
+            "./Resources/Model/sanaModel/mameoall.fbx");
 #endif // MODEL
     }
 
     // Sprite
     {
 #if SPRITE
-        sprite = std::make_unique<Sprite>(graphics.GetDevice(), L"./Resources/Image/sanaImage/load.png",
+        sprite = std::make_unique<Sprite>(graphics.GetDevice(),
+            //L"./Resources/Image/sanaImage/hipDrop.png",
+            L"./Resources/Image/sanaImage/load.png",
             "./Resources/Shader/sprite_dissolve_ps.cso");
+        //sprite->Initialize(DirectX::XMFLOAT2(0, 0), DirectX::XMFLOAT2(1280, 720), DirectX::XMFLOAT2(1280, 720));
+        //sprite->Initialize(DirectX::XMFLOAT2(0, 0), DirectX::XMFLOAT2(1280, 720), DirectX::XMFLOAT2(1452, 771));
         //sprite->Initialize(DirectX::XMFLOAT2(0, 0), DirectX::XMFLOAT2(900, 367), DirectX::XMFLOAT2(900, 367));
 #endif // SPRITE
     }
+
+    // Effect
+    {
+        //effect[0] = std::make_unique<Effect>("./Resources/Effect/ring.efk");
+        effect[0] = std::make_unique<Effect>("./Resources/Effect/sample/lightningv002.efk");
+        //effect[0] = std::make_unique<Effect>("./Resources/Effect/ring2.efk");
+        //effect[0] = std::make_unique<Effect>("./Resources/Effect/old/ring.efk");
+    }
+
 }
 
 // 初期化
@@ -76,6 +98,15 @@ void SceneDemo::Update(const float& elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
 
+    if (gamePad.GetButtonDown() & GamePad::BTN_A)
+    {
+        //for (int i = 0; i < 5; ++i)
+        {
+            effect[0]->Play({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f });
+        }
+        //effect[0]->Play({ 0.0f, 0.0f, 0.0f }, { 10.0f,10.0f,10.0f });
+    }
+
     // GltfModel
     {
 #if GLTF_MODEL
@@ -93,15 +124,37 @@ void SceneDemo::Update(const float& elapsedTime)
     {
 #if SPRITE
         sprite->Update(elapsedTime);
-        //sprite->PlayAnimation(elapsed_time, 30, 30, true);
+        sprite->PlayAnimation(elapsedTime, 30, 11, true);
 #endif // SPRITE
     }
 
 #ifdef _DEBUG
     // Debug用カメラ
     if (gamePad.GetButtonDown() & GamePad::BTN_X)isDebugCamera = isDebugCamera ? false : true;
-    if(isDebugCamera)Camera::Instance().UpdateDebug(elapsedTime);
+    if (isDebugCamera)
+    {        
+        int posX = 1980 / 2;
+        int posY = 1080 / 2;
+
+        POINT pos;
+        GetCursorPos(&pos);
+
+        DirectX::XMFLOAT2 nowPosition{ static_cast<float>(pos.x),static_cast<float>(pos.y) };
+        DirectX::XMFLOAT2 oldPosition{ static_cast<float>(posX),static_cast<float>(posY) };
+        DirectX::XMVECTOR nowVector = DirectX::XMLoadFloat2(&nowPosition);
+        DirectX::XMVECTOR oldVector = DirectX::XMLoadFloat2(&oldPosition);
+        DirectX::XMVECTOR moveVector = DirectX::XMVectorSubtract(nowVector, oldVector);
+        DirectX::XMFLOAT2 moveVectorFloat2;
+        DirectX::XMStoreFloat2(&moveVectorFloat2, moveVector);
+
+        Camera::Instance().UpdateDebug(elapsedTime, moveVectorFloat2);        
+
+        SetCursorPos(posX, posY);
+    }
 #endif // _DEBUG
+
+    // エフェクト更新処理
+    EffectManager::Instance().Update(elapsedTime);
 }
 
 void SceneDemo::End()
@@ -155,6 +208,16 @@ void SceneDemo::Render(const float& elapsedTime)
 #if SPRITE
         sprite->Render();
 #endif // SPRITE
+    }
+
+    // 3Dエフェクト描画
+    {
+        Camera& camera = Camera::Instance();
+        DirectX::XMFLOAT4X4 view, projection;
+        DirectX::XMStoreFloat4x4(&view, camera.GetViewMatrix());
+        DirectX::XMStoreFloat4x4(&projection, camera.GetProjectionMatrix());
+
+        EffectManager::Instance().Render(view, projection);
     }
 }
 

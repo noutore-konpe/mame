@@ -13,7 +13,8 @@ float4 main(VS_OUT pin) :SV_TARGET
     //float alpha = color.a;
 #if 1
     // Inverse gamma process
-    const float GAMMA = 2.2;
+    const float GAMMA = 1.0;
+    //const float GAMMA = 2.2;
     color.rgb = pow(color.rgb, GAMMA);
 #endif
 

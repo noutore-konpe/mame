@@ -19,6 +19,8 @@ void SceneLoading::CreateResource()
 void SceneLoading::Initialize()
 {
     // スレッド開始
+    // std::thread(LoadingThread, this);
+    // 二個目の引数はLoadingThreadの引数になるu
     thread = new std::thread(LoadingThread, this);
 }
 

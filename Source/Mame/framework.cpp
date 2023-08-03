@@ -13,7 +13,7 @@
 
 framework::framework(HWND hwnd)
     : hwnd(hwnd),
-    graphics(hwnd),
+    graphics(hwnd,FALSE),
     input(hwnd)
 {
 }

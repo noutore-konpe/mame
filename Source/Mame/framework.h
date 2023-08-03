@@ -1,13 +1,12 @@
 ﻿#pragma once
-//#pragma comment (lib,"External/Effekseer162a/lib/vs2019/MT/x64/Debug/Effekseer.lib")
 
 #include <d3d11.h>
 
 #include <windows.h>
 #include <tchar.h>
 #include <sstream>
-
 #include <wrl.h>
+#include <dxgi1_6.h>
 
 #include "Other/misc.h"
 
@@ -32,10 +31,12 @@
 #include "../../External/imgui/ImGuiCtrl.h"
 #endif // USE_IMGUI
 
+#if 1	// todo : フルスクリーン実装完了したらいらなくなる
 CONST LONG SCREEN_WIDTH{ 1280 };
 CONST LONG SCREEN_HEIGHT{ 720 };
 CONST BOOL FULLSCREEN{ FALSE };
 CONST LPCWSTR APPLICATION_NAME{ L"MAMEO" };
+#endif
 
 class framework
 {
@@ -44,11 +45,9 @@ private:
 	Input input;
 
 public:
-	
+
 	std::unique_ptr<framebuffer> framebuffers[8];
-
 	std::unique_ptr<fullscreen_quad> bit_block_transfer;
-
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixel_shaders[8];
 
 	struct parametric_constants
@@ -60,6 +59,8 @@ public:
 	};
 
 	CONST HWND hwnd;
+
+
 
 	framework(HWND hwnd);
 	~framework();
@@ -92,7 +93,7 @@ public:
 			else
 			{
 				tictoc.tick();
-				calculate_frame_stats();
+				CalculateFrameStats();
 				update(tictoc.time_interval());
 				render(tictoc.time_interval());
 			}
@@ -147,6 +148,15 @@ public:
 		case WM_EXITSIZEMOVE:
 			tictoc.start();
 			break;
+		case WM_SIZE:
+		{
+#if 1
+			RECT clientRect{};
+			GetClientRect(hwnd, &clientRect);
+			Graphics::Instance().OnSizeChanged(static_cast<UINT64>(clientRect.right - clientRect.left), clientRect.bottom - clientRect.top, hwnd);
+#endif
+			break;
+		}
 		default:
 			return DefWindowProc(hwnd, msg, wparam, lparam);
 		}
@@ -162,19 +172,32 @@ private:
 private:
 	high_resolution_timer tictoc;
 	uint32_t frames{ 0 };
-	float elapsed_time{ 0.0f };
-	void calculate_frame_stats()
+	float elapsedTime{ 0.0f };
+	//void calculate_frame_stats()
+	//{
+	//	if (++frames, (tictoc.time_stamp() - elapsed_time) >= 1.0f)
+	//	{
+	//		float fps = static_cast<float>(frames);
+	//		std::wostringstream outs;
+	//		outs.precision(6);
+	//		outs << APPLICATION_NAME << L" : FPS : " << fps << L" / " << L"Frame Time : " << 1000.0f / fps << L" (ms)";
+	//		SetWindowTextW(hwnd, outs.str().c_str());
+	//		frames = 0;
+	//		elapsed_time += 1.0f;
+	//	}
+	//}
+	void CalculateFrameStats()
 	{
-		if (++frames, (tictoc.time_stamp() - elapsed_time) >= 1.0f)
+		if (++frames, (tictoc.time_stamp() - elapsedTime) >= 1.0f)
 		{
 			float fps = static_cast<float>(frames);
 			std::wostringstream outs;
 			outs.precision(6);
-			outs << APPLICATION_NAME << L" : FPS : " << fps << L" / " << L"Frame Time : " << 1000.0f / fps << L" (ms)";
+			outs << L"FPS : " << fps << L" / " << L"Frame Time : " << 1000.0f / fps << L" (ms)";
 			SetWindowTextW(hwnd, outs.str().c_str());
 
 			frames = 0;
-			elapsed_time += 1.0f;
+			elapsedTime += 1.0f;
 		}
 	}
 };

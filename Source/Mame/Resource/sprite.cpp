@@ -112,6 +112,9 @@ Sprite::Sprite(ID3D11Device* device, const wchar_t* filename, const char* psFile
                 maskTexture[5].GetAddressOf(), &maskTexture2dDesc[5]);
             load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/Mask/noise4.png",
                 maskTexture[6].GetAddressOf(), &maskTexture2dDesc[6]);
+
+            load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/Mask/noise10.png",
+                maskTexture[7].GetAddressOf(), &maskTexture2dDesc[7]);
         }
     }
 
@@ -392,7 +395,7 @@ void Sprite::SpriteDissolve::DrawDebug()
 {
     if (ImGui::TreeNode("spriteDissolve"))
     {
-        ImGui::SliderInt("textureValue", &maskTextureValue, 0, 6);
+        ImGui::SliderInt("textureValue", &maskTextureValue, 0, 7);
         ImGui::SliderFloat("dissolveValue", &dissolveValue, 0.0f, 2.0f);
         ImGui::SliderFloat("dissolveBlackValue", &dissolveBlackValue, 0.0f, 2.0f);
         ImGui::SliderFloat("edgeThreshold", &edgeThreshold, 0.0f, 1.0f);

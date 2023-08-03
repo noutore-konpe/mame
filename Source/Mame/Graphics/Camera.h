@@ -22,7 +22,7 @@ public:
 
     void Initialize();
 
-    void UpdateDebug(const float& elapsedTime);
+    void UpdateDebug(const float& elapsedTime, DirectX::XMFLOAT2 moveVector);
 
     void SetPerspectiveFov(ID3D11DeviceContext* dc);
     
