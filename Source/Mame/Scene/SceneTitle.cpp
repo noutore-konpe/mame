@@ -64,7 +64,7 @@ void SceneTitle::Render(const float& elapsedTime)
     rc.lightDirection = { 0.0f, -1.0f, 0.0f, 0.0f };
 
     Shader* shader = graphics.GetShader();
-    shader->Begin(graphics.GetDeviceContext(), rc, 0);
+    //shader->Begin(graphics.GetDeviceContext(), rc, 0);
 }
 
 

@@ -6,49 +6,49 @@ VS_OUT main(VS_IN vin)
     float sigma = vin.tangent.w;
     vin.tangent.w = 0;
 
-    float4 blended_position = { 0,0,0,1 };
-    float4 blended_normal = { 0,0,0,0 };
-    float4 blended_tangent = { 0,0,0,0 };
-    for (int bone_index = 0; bone_index < 4; ++bone_index)
+    float4 blendedPosition = { 0,0,0,1 };
+    float4 blendedNormal = { 0,0,0,0 };
+    float4 blendedTangent = { 0,0,0,0 };
+    for (int boneIndex = 0; boneIndex < 4; ++boneIndex)
     {
-        blended_position += vin.bone_weights[bone_index]
-            * mul(vin.position, bone_transforms[vin.bone_indices[bone_index]]);
-        blended_normal += vin.bone_weights[bone_index]
-            * mul(vin.normal, bone_transforms[vin.bone_indices[bone_index]]);
-        blended_tangent += vin.bone_weights[bone_index]
-            * mul(vin.tangent, bone_transforms[vin.bone_indices[bone_index]]);
+        blendedPosition += vin.boneWeights[boneIndex]
+            * mul(vin.position, boneTransforms[vin.boneIndices[boneIndex]]);
+        blendedNormal += vin.boneWeights[boneIndex]
+            * mul(vin.normal, boneTransforms[vin.boneIndices[boneIndex]]);
+        blendedTangent += vin.boneWeights[boneIndex]
+            * mul(vin.tangent, boneTransforms[vin.boneIndices[boneIndex]]);
     }
-    vin.position = float4(blended_position.xyz, 1.0f);
-    vin.normal = float4(blended_normal.xyz, 0.0f);
-    vin.tangent = float4(blended_tangent.xyz, 0.0f);
+    vin.position = float4(blendedPosition.xyz, 1.0f);
+    vin.normal = float4(blendedNormal.xyz, 0.0f);
+    vin.tangent = float4(blendedTangent.xyz, 0.0f);
 
 
     VS_OUT vout;
-    vout.position = mul(vin.position, mul(world, view_projection));
+    vout.position = mul(vin.position, mul(world, viewProjection));
 
-    vout.world_position = mul(vin.position, world);
-    vout.world_normal = normalize(mul(vin.normal, world));
-    vout.world_tangent = normalize(mul(vin.tangent, world));
-    vout.world_tangent.w = sigma;
+    vout.worldPosition = mul(vin.position, world);
+    vout.worldNormal = normalize(mul(vin.normal, world));
+    vout.worldTangent = normalize(mul(vin.tangent, world));
+    vout.worldTangent.w = sigma;
 
     
     vout.texcoord = vin.texcoord;
     
 #if 1
-    vout.color = material_color;
+    vout.color = materialColor;
 #else
     vout.color = 0;
-    const float4 bone_colors[4] = {
+    const float4 boneColors[4] = {
         { 1, 0, 0, 1 },
         { 0, 1, 0, 1 },
         { 0, 0, 1, 1 },
         { 1, 1, 1, 1 },
     };
 
-    for (int bone_index = 0; bone_index < 4; ++bone_index)
+    for (int boneIndex = 0; boneIndex < 4; ++boneIndex)
     {
-        vout.color += bone_colors[vin.bone_indices[bone_index] % 4]
-            * vin.bone_weights[bone_index];
+        vout.color += boneColors[vin.boneIndices[boneIndex] % 4]
+            * vin.boneWeights[bone_index];
     }
 #endif
 

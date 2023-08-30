@@ -4,7 +4,6 @@
 #include <DirectXMath.h>
 
 #include "../Transform.h"
-#include "../Game/Common.h"
 
 class Camera
 {
@@ -21,6 +20,8 @@ public:
     }
 
     void Initialize();
+
+    void Update();
 
     void UpdateDebug(const float& elapsedTime, DirectX::XMFLOAT2 moveVector);
 

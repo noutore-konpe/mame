@@ -111,9 +111,9 @@ GeometricPrimitive::GeometricPrimitive(ID3D11Device* device)
             D3D11_APPEND_ALIGNED_ELEMENT,D3D11_INPUT_PER_VERTEX_DATA,0},
 
     };
-    create_vs_from_cso(device, "./resources/Shader/geometric_primitive_vs.cso", vertex_shader.GetAddressOf(),
+    CreateVsFromCso(device, "./resources/Shader/geometric_primitive_vs.cso", vertex_shader.GetAddressOf(),
         input_layout.GetAddressOf(), input_element_desc, ARRAYSIZE(input_element_desc));
-    create_ps_from_cso(device, "./resources/Shader/geometric_primitive_ps.cso", pixel_shader.GetAddressOf());
+    CreatePsFromCso(device, "./resources/Shader/geometric_primitive_ps.cso", pixel_shader.GetAddressOf());
 
     D3D11_BUFFER_DESC buffer_desc{};
     buffer_desc.ByteWidth = sizeof(constants);
@@ -228,9 +228,9 @@ GeometricPrimitive::GeometricPrimitive(ID3D11Device* device, DirectX::XMFLOAT3 c
             D3D11_APPEND_ALIGNED_ELEMENT,D3D11_INPUT_PER_VERTEX_DATA,0},
 
     };
-    create_vs_from_cso(device, "./resources/Shader/geometric_primitive_vs.cso", vertex_shader.GetAddressOf(),
+    CreateVsFromCso(device, "./resources/Shader/geometric_primitive_vs.cso", vertex_shader.GetAddressOf(),
         input_layout.GetAddressOf(), input_element_desc, ARRAYSIZE(input_element_desc));
-    create_ps_from_cso(device, "./resources/Shader/geometric_primitive_ps.cso", pixel_shader.GetAddressOf());
+    CreatePsFromCso(device, "./resources/Shader/geometric_primitive_ps.cso", pixel_shader.GetAddressOf());
 
     D3D11_BUFFER_DESC buffer_desc{};
     buffer_desc.ByteWidth = sizeof(constants);
@@ -321,7 +321,7 @@ void GeometricPrimitive::create_com_buffers(
 
 
 GeometricAABB::GeometricAABB(
-    NO_CONST ID3D11Device* device,
+    ID3D11Device* device,
     const DirectX::XMFLOAT3& min,
     const DirectX::XMFLOAT3& max)
     : GeometricPrimitive(device)

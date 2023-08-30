@@ -4,9 +4,6 @@
 
 #include <thread>
 
-#include "../Game/spriteDissolve.h"
-
-#include "../Game/SpriteAnimation.h"
 
 class SceneLoading : public Mame::Scene::BaseScene
 {

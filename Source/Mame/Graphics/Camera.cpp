@@ -3,13 +3,62 @@
 #include "../Input/Input.h"
 
 #include "../Game/PlayerManager.h"
-#include "../Game/EnemyManager.h"
 
 void Camera::Initialize()
 {
     transform.SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 10.0f));
     transform.SetScale(DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
     transform.SetRotation(DirectX::XMFLOAT4(0.0f, DirectX::XMConvertToRadians(180), 0.0f, 0.0f));
+}
+
+void Camera::Update()
+{
+#if 0
+    Transform* playerTransform = PlayerManager::Instance().GetPlayer()->GetTransform();
+    DirectX::XMFLOAT3 playerPos = playerTransform->GetPosition();
+    DirectX::XMFLOAT4 playerRot = playerTransform->GetRotation();
+
+    playerPos.y += 2;
+    playerPos.z -= 5;
+    playerRot.x += DirectX::XMConvertToRadians(15.0f);
+
+    GetTransform()->SetPosition(playerPos);
+    GetTransform()->SetRotation(DirectX::XMFLOAT4(DirectX::XMConvertToRadians(10),0,0,0));
+    //GetTransform()->SetRotation(playerRot);
+#else
+    Transform* playerTransform = PlayerManager::Instance().GetPlayer()->GetTransform();
+    const DirectX::XMFLOAT3 playerPos = playerTransform->GetPosition();
+    const DirectX::XMFLOAT4 playerRot = playerTransform->GetRotation();
+    const DirectX::XMFLOAT3 playerFrontVec = playerTransform->CalcForward();
+    
+    // カメラ位置をプレイヤーの後ろにしたい
+    {
+        float length = 5.0f;
+
+        // プレイヤーの上に高さを合わせる
+        DirectX::XMFLOAT3 offset{ 0, 2, 0 };
+
+        // プレイヤーの後ろ向きベクトル
+        DirectX::XMFLOAT3 playerBack =
+        {
+            playerPos.x - playerFrontVec.x * length + offset.x,
+            playerPos.y - playerFrontVec.y * length + offset.y,
+            playerPos.z - playerFrontVec.z * length + offset.z
+        };
+
+        GetTransform()->SetPosition(playerBack);
+    }
+
+    // カメラの角度調整
+    {
+        // 斜めで見えるようにする
+        DirectX::XMFLOAT4 cameraRot = playerRot;
+        cameraRot.x += DirectX::XMConvertToRadians(15.0f);
+
+        GetTransform()->SetRotation(cameraRot);
+    }
+
+#endif
 }
 
 void Camera::UpdateDebug(const float& elapsedTime, DirectX::XMFLOAT2 moveVector)
@@ -103,34 +152,35 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
 
 void Camera::DrawDebug()
 {
-    ImGui::Begin("Camera");
-
-    transform.DrawDebug();
-
-    if (ImGui::TreeNode("DebugCamera"))
+    if (ImGui::BeginMenu("Camera"))
     {
-        ImGui::DragFloat("moveSpeed", &moveSpeed);
-        ImGui::DragFloat("rotationSpeed", &rotationSpeed);
-        ImGui::TreePop();
+        transform.DrawDebug();
+
+        if (ImGui::TreeNode("DebugCamera"))
+        {
+            ImGui::DragFloat("moveSpeed", &moveSpeed);
+            ImGui::DragFloat("rotationSpeed", &rotationSpeed);
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("camera_information"))
+        {
+            ImGui::DragFloat3("eye", &camera.eye.x);
+            ImGui::DragFloat3("focus", &camera.focus.x);
+            ImGui::DragFloat3("up", &camera.up.x);
+            ImGui::TreePop();
+        }
+
+        // todo : camera
+        // デバッグ用にカメラを動かしやすいようにしている
+        ImGui::DragFloat("camera_position.x", &camera.eye.x);
+        ImGui::DragFloat("camera_position.y", &camera.eye.y);
+
+
+        if (ImGui::Button("Reset"))Camera::Reset();
+
+        ImGui::EndMenu();
     }
-
-    if (ImGui::TreeNode("camera_information"))
-    {
-        ImGui::DragFloat3("eye", &camera.eye.x);
-        ImGui::DragFloat3("focus", &camera.focus.x);
-        ImGui::DragFloat3("up", &camera.up.x);
-        ImGui::TreePop();
-    }
-
-    // todo : camera
-    // デバッグ用にカメラを動かしやすいようにしている
-    ImGui::DragFloat("camera_position.x", &camera.eye.x);
-    ImGui::DragFloat("camera_position.y", &camera.eye.y);
-
-
-    if (ImGui::Button("Reset"))Camera::Reset();
-
-    ImGui::End();
 }
 
 void Camera::Reset()

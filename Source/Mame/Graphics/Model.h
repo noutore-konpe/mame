@@ -8,8 +8,6 @@
 
 #include "../Resource/skinned_mesh.h"
 
-#include "../Game/Common.h"
-
 class Model
 {
 public:
@@ -18,6 +16,7 @@ public:
     ~Model() {}
 
     void Render(const float& scale);
+    void Render(const float& scale, int rastarizeState);
      
     void DrawDebug();
 
@@ -48,7 +47,7 @@ public: // アニメーション関数関連
     );
 
     // ブレンド率の計算更新処理
-    void UpdateBlendRate(NO_CONST float& blendRate, const float& elapsedTime);
+    void UpdateBlendRate(float blendRate, const float& elapsedTime);
 
     // アニメーション更新処理
     void UpdateAnimation(const float& elapsedTime);

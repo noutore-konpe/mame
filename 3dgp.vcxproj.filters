@@ -76,6 +76,30 @@
     <FxCompile Include="Resources\Shader\phongShaderPS.hlsl">
       <Filter>mamelib\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Source\Shader\glowExtractionPs.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\gaussianBlurDownsamplingPs.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\gaussianBlurHorizontalPs.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\gaussianBlurVerticalPs.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\gaussianBlurUpsamplingPs.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\finalPassPs.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SkyBoxVS.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SkyBoxPS.hlsl">
+      <Filter>mamelib\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Mame\Scene\BaseScene.cpp">
@@ -157,13 +181,13 @@
     <ClCompile Include="External\imgui\ImGuiCtrl.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\framebuffer.cpp">
+    <ClCompile Include="Source\Mame\FrameBuffer.cpp">
       <Filter>mamelib\default</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\framework.cpp">
       <Filter>mamelib\default</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\fullscreen_quad.cpp">
+    <ClCompile Include="Source\Mame\FullscreenQuad.cpp">
       <Filter>mamelib\default</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\main.cpp">
@@ -201,6 +225,54 @@
     </ClCompile>
     <ClCompile Include="Source\Mame\Scene\SceneDemo.cpp">
       <Filter>mamelib\Mame\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\ShadowMap.cpp">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\Character.cpp">
+      <Filter>mamelib\Mame\Game\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\Collision.cpp">
+      <Filter>mamelib\Mame\Game\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\Enemy.cpp">
+      <Filter>mamelib\Mame\Game\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemySlime.cpp">
+      <Filter>mamelib\Mame\Game\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\Bloom.cpp">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\Player.cpp">
+      <Filter>mamelib\Mame\Game\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\Stage.cpp">
+      <Filter>mamelib\Mame\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\Item.cpp">
+      <Filter>mamelib\Mame\Game\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\PlayerManager.cpp">
+      <Filter>mamelib\Mame\Game\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\Book.cpp">
+      <Filter>mamelib\Mame\Game\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\Projectile.cpp">
+      <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\ItemManager.cpp">
+      <Filter>mamelib\Mame\Game\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\ProjectileManager.cpp">
+      <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\ProjectileStraite.cpp">
+      <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\SkyBox.cpp">
+      <Filter>mamelib\Mame\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -290,13 +362,13 @@
     <ClInclude Include="External\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\framebuffer.h">
+    <ClInclude Include="Source\Mame\FrameBuffer.h">
       <Filter>mamelib\default</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\framework.h">
       <Filter>mamelib\default</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\fullscreen_quad.h">
+    <ClInclude Include="Source\Mame\FullscreenQuad.h">
       <Filter>mamelib\default</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\high_resolution_timer.h">
@@ -337,6 +409,54 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Scene\SceneDemo.h">
       <Filter>mamelib\Mame\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\ShadowMap.h">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\Character.h">
+      <Filter>mamelib\Mame\Game\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\Collision.h">
+      <Filter>mamelib\Mame\Game\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\Enemy.h">
+      <Filter>mamelib\Mame\Game\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemySlime.h">
+      <Filter>mamelib\Mame\Game\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\Bloom.h">
+      <Filter>mamelib\Mame\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\Player.h">
+      <Filter>mamelib\Mame\Game\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\Stage.h">
+      <Filter>mamelib\Mame\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\Item.h">
+      <Filter>mamelib\Mame\Game\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\PlayerManager.h">
+      <Filter>mamelib\Mame\Game\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\Book.h">
+      <Filter>mamelib\Mame\Game\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\Projectile.h">
+      <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\ItemManager.h">
+      <Filter>mamelib\Mame\Game\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\ProjectileManager.h">
+      <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\ProjectileStraite.h">
+      <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\SkyBox.h">
+      <Filter>mamelib\Mame\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -379,6 +499,12 @@
     <None Include="Resources\Shader\phongShader.hlsli">
       <Filter>mamelib\Shader</Filter>
     </None>
+    <None Include="Source\Shader\bloom.hlsli">
+      <Filter>mamelib\Shader</Filter>
+    </None>
+    <None Include="Source\Shader\SkyBox.hlsli">
+      <Filter>mamelib\Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="mamelib">
@@ -413,6 +539,24 @@
     </Filter>
     <Filter Include="mamelib\Mame\Resource\Audio">
       <UniqueIdentifier>{28a48904-7b5d-4850-8db8-75727193a2fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game">
+      <UniqueIdentifier>{09aee98d-7120-4b23-8f56-717032a7aeae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Character">
+      <UniqueIdentifier>{34d6df40-8b91-41a0-9241-2646c16213a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Collision">
+      <UniqueIdentifier>{51241da3-bee1-46de-89ce-e8521929338f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Character\Player">
+      <UniqueIdentifier>{4d67feb4-639f-43ce-b872-72f7a89e23cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Item">
+      <UniqueIdentifier>{4b971f0d-dbee-4960-9104-e6d56d2e488d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Item\Projectile">
+      <UniqueIdentifier>{cfcadece-4858-4161-aed4-eae407deb988}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -21,15 +21,16 @@
 #include "Resource/GeometricPrimitive.h"
 #include "Resource/static_mesh.h"
 #include "Resource/skinned_mesh.h"
-#include "framebuffer.h"
-#include "fullscreen_quad.h"
+#include "FrameBuffer.h"
+#include "FullscreenQuad.h"
 
 #include "Resource/Audio.h"
 #include "Resource/GltfModel.h"
 
-#ifdef USE_IMGUI
+// BLOOM
+#include "Graphics/Bloom.h"
+
 #include "../../External/imgui/ImGuiCtrl.h"
-#endif // USE_IMGUI
 
 #if 1	// todo : フルスクリーン実装完了したらいらなくなる
 CONST LONG SCREEN_WIDTH{ 1280 };
@@ -45,10 +46,8 @@ private:
 	Input input;
 
 public:
+	CONST HWND hwnd;
 
-	std::unique_ptr<framebuffer> framebuffers[8];
-	std::unique_ptr<fullscreen_quad> bit_block_transfer;
-	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixel_shaders[8];
 
 	struct parametric_constants
 	{
@@ -58,7 +57,12 @@ public:
 		float exposure{ 1.0f };
 	};
 
-	CONST HWND hwnd;
+	//// BLOOM
+	//std::unique_ptr<Bloom> bloomer;
+	//Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;
+
+
+
 
 
 
@@ -130,6 +134,7 @@ public:
 			EndPaint(hwnd, &ps);
 		}
 		break;
+
 		case WM_DESTROY:			
 			PostQuitMessage(0);
 			break;

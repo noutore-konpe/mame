@@ -201,9 +201,23 @@
     <ClCompile Include="External\imgui\imgui_ja_gryph_ranges.cpp" />
     <ClCompile Include="External\imgui\imgui_tables.cpp" />
     <ClCompile Include="External\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="Source\Mame\framebuffer.cpp" />
+    <ClCompile Include="Source\Mame\FrameBuffer.cpp" />
     <ClCompile Include="Source\Mame\framework.cpp" />
-    <ClCompile Include="Source\Mame\fullscreen_quad.cpp" />
+    <ClCompile Include="Source\Mame\FullscreenQuad.cpp" />
+    <ClCompile Include="Source\Mame\Game\Book.cpp" />
+    <ClCompile Include="Source\Mame\Game\Character.cpp" />
+    <ClCompile Include="Source\Mame\Game\Collision.cpp" />
+    <ClCompile Include="Source\Mame\Game\Enemy.cpp" />
+    <ClCompile Include="Source\Mame\Game\EnemySlime.cpp" />
+    <ClCompile Include="Source\Mame\Game\Item.cpp" />
+    <ClCompile Include="Source\Mame\Game\ItemManager.cpp" />
+    <ClCompile Include="Source\Mame\Game\Player.cpp" />
+    <ClCompile Include="Source\Mame\Game\PlayerManager.cpp" />
+    <ClCompile Include="Source\Mame\Game\Projectile.cpp" />
+    <ClCompile Include="Source\Mame\Game\ProjectileManager.cpp" />
+    <ClCompile Include="Source\Mame\Game\ProjectileStraite.cpp" />
+    <ClCompile Include="Source\Mame\Game\Stage.cpp" />
+    <ClCompile Include="Source\Mame\Graphics\Bloom.cpp" />
     <ClCompile Include="Source\Mame\Graphics\Camera.cpp" />
     <ClCompile Include="Source\Mame\Graphics\Effect.cpp" />
     <ClCompile Include="Source\Mame\Graphics\EffectManager.cpp" />
@@ -211,6 +225,8 @@
     <ClCompile Include="Source\Mame\Graphics\Model.cpp" />
     <ClCompile Include="Source\Mame\Graphics\ModelResource.cpp" />
     <ClCompile Include="Source\Mame\Graphics\ResourceManager.cpp" />
+    <ClCompile Include="Source\Mame\Graphics\ShadowMap.cpp" />
+    <ClCompile Include="Source\Mame\Graphics\SkyBox.cpp" />
     <ClCompile Include="Source\Mame\Input\GamePad.cpp" />
     <ClCompile Include="Source\Mame\Input\Input.cpp" />
     <ClCompile Include="Source\Mame\Input\Mouse.cpp" />
@@ -244,9 +260,23 @@
     <ClInclude Include="External\imgui\imstb_textedit.h" />
     <ClInclude Include="External\imgui\imstb_truetype.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Source\Mame\framebuffer.h" />
+    <ClInclude Include="Source\Mame\FrameBuffer.h" />
     <ClInclude Include="Source\Mame\framework.h" />
-    <ClInclude Include="Source\Mame\fullscreen_quad.h" />
+    <ClInclude Include="Source\Mame\FullscreenQuad.h" />
+    <ClInclude Include="Source\Mame\Game\Book.h" />
+    <ClInclude Include="Source\Mame\Game\Character.h" />
+    <ClInclude Include="Source\Mame\Game\Collision.h" />
+    <ClInclude Include="Source\Mame\Game\Enemy.h" />
+    <ClInclude Include="Source\Mame\Game\EnemySlime.h" />
+    <ClInclude Include="Source\Mame\Game\Item.h" />
+    <ClInclude Include="Source\Mame\Game\ItemManager.h" />
+    <ClInclude Include="Source\Mame\Game\Player.h" />
+    <ClInclude Include="Source\Mame\Game\PlayerManager.h" />
+    <ClInclude Include="Source\Mame\Game\Projectile.h" />
+    <ClInclude Include="Source\Mame\Game\ProjectileManager.h" />
+    <ClInclude Include="Source\Mame\Game\ProjectileStraite.h" />
+    <ClInclude Include="Source\Mame\Game\Stage.h" />
+    <ClInclude Include="Source\Mame\Graphics\Bloom.h" />
     <ClInclude Include="Source\Mame\Graphics\Camera.h" />
     <ClInclude Include="Source\Mame\Graphics\Effect.h" />
     <ClInclude Include="Source\Mame\Graphics\EffectManager.h" />
@@ -255,6 +285,8 @@
     <ClInclude Include="Source\Mame\Graphics\ModelResource.h" />
     <ClInclude Include="Source\Mame\Graphics\RenderContext.h" />
     <ClInclude Include="Source\Mame\Graphics\ResourceManager.h" />
+    <ClInclude Include="Source\Mame\Graphics\ShadowMap.h" />
+    <ClInclude Include="Source\Mame\Graphics\SkyBox.h" />
     <ClInclude Include="Source\Mame\high_resolution_timer.h" />
     <ClInclude Include="Source\Mame\Input\GamePad.h" />
     <ClInclude Include="Source\Mame\Input\Input.h" />
@@ -298,6 +330,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
+    <FxCompile Include="Source\Shader\finalPassPs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="Source\Shader\fullscreen_quad_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -310,6 +348,30 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="Source\Shader\gaussianBlurDownsamplingPs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\gaussianBlurHorizontalPs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\gaussianBlurUpsamplingPs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\gaussianBlurVerticalPs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="Source\Shader\geometric_primitive_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -321,6 +383,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\glowExtractionPs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Source\Shader\gltfModelPs.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
@@ -359,6 +427,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SkyBoxPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SkyBoxVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="Source\Shader\sprite_change_ps.hlsl">
@@ -431,12 +511,14 @@
   <ItemGroup>
     <None Include="Resources\Shader\phongShader.hlsli" />
     <None Include="Source\Shader\bidirectionalReflectanceDistributionFunction.hlsli" />
+    <None Include="Source\Shader\bloom.hlsli" />
     <None Include="Source\Shader\fullscreen_quad.hlsli" />
     <None Include="Source\Shader\geometric_primitive.hlsli" />
     <None Include="Source\Shader\gltfModel.hlsli" />
     <None Include="Source\Shader\imageBasedLighting.hlsli" />
     <None Include="Source\Shader\Instancing.hlsli" />
     <None Include="Source\Shader\skinned_mesh.hlsli" />
+    <None Include="Source\Shader\SkyBox.hlsli" />
     <None Include="Source\Shader\sprite.hlsli" />
     <None Include="Source\Shader\sprite_dissolve.hlsli" />
     <None Include="Source\Shader\sprite_fade.hlsli" />

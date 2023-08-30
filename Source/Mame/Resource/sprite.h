@@ -151,6 +151,17 @@ private:
     std::string name;
     //---ImGui–¼‘O‚©‚Ô‚è–hŽ~—p---//
 
+public:
+    struct Vertex
+    {
+        DirectX::XMFLOAT3 position;
+        DirectX::XMFLOAT4 color;
+        DirectX::XMFLOAT2 texcord;
+    };
+
+    Microsoft::WRL::ComPtr<ID3D11Buffer> GetVertexBuffer() { return vertexBuffer; }
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResourceView() { return shaderResourceView; }
+
 private:
     Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
     Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;
@@ -158,13 +169,6 @@ private:
     Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceView;
     D3D11_TEXTURE2D_DESC texture2dDesc;
-
-    struct Vertex
-    {
-        DirectX::XMFLOAT3 position;
-        DirectX::XMFLOAT4 color;
-        DirectX::XMFLOAT2 texcord;
-    };
 
     Microsoft::WRL::ComPtr<ID3D11Buffer> dissolveConstantBuffer = nullptr;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> maskTexture[20] = {};

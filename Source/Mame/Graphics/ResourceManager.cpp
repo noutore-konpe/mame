@@ -1,7 +1,7 @@
 #include "ResourceManager.h"
 
 const std::shared_ptr<skinned_mesh> ResourceManager::LoadModelResource(
-    NO_CONST ID3D11Device*  device, 
+    ID3D11Device*  device, 
     const char* const       fbx_filename, 
     const bool              triangulate,
     const float             sampling_rate)
@@ -34,9 +34,9 @@ const std::shared_ptr<skinned_mesh> ResourceManager::LoadModelResource(
 }
 
 const std::shared_ptr<skinned_mesh> ResourceManager::LoadModelResource(
-    NO_CONST ID3D11Device*             device, 
+    ID3D11Device*             device, 
     const char* const                  fbx_filename, 
-    NO_CONST std::vector<std::string>& animation_filenames, 
+    std::vector<std::string> animation_filenames, 
     const bool                         triangulate, 
     const float                        sampling_rate)
 {
@@ -67,3 +67,4 @@ const std::shared_ptr<skinned_mesh> ResourceManager::LoadModelResource(
 
     return model;
 }
+

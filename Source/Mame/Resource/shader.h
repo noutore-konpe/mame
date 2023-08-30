@@ -10,8 +10,38 @@
 #include "../Graphics/RenderContext.h"
 #include "../Graphics/Model.h"
 
+// SHADOW
+#include "../Graphics/ShadowMap.h"
+
 class Shader
 {
+public: // enumŠÖ˜A
+    enum class SAMPLER_STATE { POINT, LINEAR, ANISOTROPIC, LINEAR_BORDER_BLACK, LINEAR_BORDER_WHITE, COMPARISON_LINEAR_BORDER_WHITE/*SHADOW*/ };
+    enum class DEPTH_STATE { ZT_ON_ZW_ON, ZT_ON_ZW_OFF, ZT_OFF_ZW_ON, ZT_OFF_ZW_OFF };
+    enum class BLEND_STATE { NONE, ALPHA, ADD, MULTIPLY };
+    enum class RASTER_STATE { SOLID, WIREFRAME, CULL_NONE, WIREFRAME_CULL_NONE };
+
+public:
+    struct View
+    {
+        float viewWitdh = 100;
+        float viewHeight = 100;
+        float nearZ = 0;
+        float farZ = 100;
+
+        DirectX::XMFLOAT4 position{ 0, -4, -5, 0 };
+        DirectX::XMFLOAT4 camera{ 0, 0, 1, 0 };
+    }view;
+
+    struct SceneConstants
+    {
+        DirectX::XMFLOAT4X4 viewProjection;
+        DirectX::XMFLOAT4 lightDirection;
+        DirectX::XMFLOAT4 cameraPosition;
+        // SHADOW
+        DirectX::XMFLOAT4X4 lightViewProjection;
+    };
+
 public:
     Shader(ID3D11Device* device);
     ~Shader() {}
@@ -20,7 +50,7 @@ public:
 
     // •`‰æŠJŽn
     void Begin(ID3D11DeviceContext* dc, const RenderContext& rc);
-    void Begin(ID3D11DeviceContext* dc, const RenderContext& rc, int state);
+    void Begin(ID3D11DeviceContext* dc, const RenderContext& rc, const SceneConstants& sceneConstant);
     void SetState(ID3D11DeviceContext* dc,
         int RastarizeState, int DepthStencilState, int SamplerState);
 
@@ -32,33 +62,15 @@ public:
 
     void DrawDebug();
 
-    struct View
-    {
-        float viewWitdh = 100;
-        float viewHeight = 100;
-        float nearZ = 0;
-        float farZ = 100;
 
-        DirectX::XMFLOAT4 position{ 0,0,-1,0 };
-        DirectX::XMFLOAT4 camera{ 0,0,1,0 };
-    }view;
 
 private:
-    //Camera camera;
-
     DirectX::XMFLOAT3 eye{ 0.0f,0.0f,-10.0f };
     DirectX::XMFLOAT3 focus{ 0.0f,0.0f,0.0f };
     DirectX::XMFLOAT3 up{ 0.0f,1.0f,0.0f };
 
-
     static const int MaxBones = 128;
 
-    struct SceneConstants
-    {
-        DirectX::XMFLOAT4X4 viewProjection;
-        DirectX::XMFLOAT4 lightDirection;
-        DirectX::XMFLOAT4 cameraPosition;
-    };
     Microsoft::WRL::ComPtr<ID3D11Buffer> sceneConstantBuffer[2];
 
     struct LightConstants
@@ -92,6 +104,7 @@ private:
     };
 
 
+
     Microsoft::WRL::ComPtr<ID3D11Buffer> meshConstantBuffer;
     Microsoft::WRL::ComPtr<ID3D11Buffer> subsetConstantBuffer;
 
@@ -103,11 +116,11 @@ private:
     Microsoft::WRL::ComPtr<ID3D11RasterizerState>   rasterizerState[4];
     Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilState[4];
 
-    Microsoft::WRL::ComPtr<ID3D11SamplerState>  samplerState[3];
+    Microsoft::WRL::ComPtr<ID3D11SamplerState>  samplerState[6];
 };
 
 
-HRESULT create_vs_from_cso(ID3D11Device* device, const char* cso_name, ID3D11VertexShader** vertex_shader,
+HRESULT CreateVsFromCso(ID3D11Device* device, const char* cso_name, ID3D11VertexShader** vertex_shader,
     ID3D11InputLayout** input_layout, D3D11_INPUT_ELEMENT_DESC* input_element_desc, UINT num_elements);
 
-HRESULT create_ps_from_cso(ID3D11Device* device, const char* cso_name, ID3D11PixelShader** pixel_shader);
+HRESULT CreatePsFromCso(ID3D11Device* device, const char* cso_name, ID3D11PixelShader** pixel_shader);

@@ -377,9 +377,9 @@ void skinned_mesh::create_com_objects(ID3D11Device* device, const char* fbx_file
         input_layout.ReleaseAndGetAddressOf(), input_element_desc, ARRAYSIZE(input_element_desc));
     create_ps_from_cso(device, "./resources/Shader/phongShaderPS.cso", pixel_shader.ReleaseAndGetAddressOf());
 #else
-    create_vs_from_cso(device, "./resources/Shader/skinned_mesh_vs.cso", vertex_shader.ReleaseAndGetAddressOf(),
+    CreateVsFromCso(device, "./resources/Shader/skinned_mesh_vs.cso", vertex_shader.ReleaseAndGetAddressOf(),
         input_layout.ReleaseAndGetAddressOf(), input_element_desc, ARRAYSIZE(input_element_desc));
-    create_ps_from_cso(device, "./resources/Shader/skinned_mesh_ps.cso", pixel_shader.ReleaseAndGetAddressOf());
+    CreatePsFromCso(device, "./resources/Shader/skinned_mesh_ps.cso", pixel_shader.ReleaseAndGetAddressOf());
 #endif // Shader
 
 #else

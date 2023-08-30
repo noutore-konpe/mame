@@ -4,7 +4,7 @@
 
 #include <wrl.h>
 
-#include "../Game/Common.h"
+
 
 class GeometricPrimitive
 {
@@ -51,7 +51,7 @@ class GeometricAABB : public GeometricPrimitive
 {
 public:
     GeometricAABB(
-        NO_CONST ID3D11Device* device,
+        ID3D11Device* device,
         const DirectX::XMFLOAT3& min,
         const DirectX::XMFLOAT3& max
     );

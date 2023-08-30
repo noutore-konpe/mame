@@ -8,7 +8,7 @@
 #include "skinned_mesh.h"
 
 
-HRESULT create_vs_from_cso(ID3D11Device* device, const char* cso_name, ID3D11VertexShader** vertex_shader,
+HRESULT CreateVsFromCso(ID3D11Device* device, const char* cso_name, ID3D11VertexShader** vertex_shader,
     ID3D11InputLayout** input_layout, D3D11_INPUT_ELEMENT_DESC* input_element_desc, UINT num_elements)
 {
     FILE* fp{ nullptr };
@@ -37,7 +37,7 @@ HRESULT create_vs_from_cso(ID3D11Device* device, const char* cso_name, ID3D11Ver
     return hr;
 }
 
-HRESULT create_ps_from_cso(ID3D11Device* device, const char* cso_name, ID3D11PixelShader** pixel_shader)
+HRESULT CreatePsFromCso(ID3D11Device* device, const char* cso_name, ID3D11PixelShader** pixel_shader)
 {
     FILE* fp{ nullptr };
     fopen_s(&fp, cso_name, "rb");
@@ -187,38 +187,74 @@ Shader::Shader(ID3D11Device* device)
     {
         HRESULT hr{ S_OK };
 
-        D3D11_SAMPLER_DESC sampler_desc{};
-        sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-        sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-        sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-        sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-        sampler_desc.MipLODBias = 0;
-        sampler_desc.MaxAnisotropy = 16;
-        sampler_desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-        sampler_desc.BorderColor[0] = 0;
-        sampler_desc.BorderColor[1] = 0;
-        sampler_desc.BorderColor[2] = 0;
-        sampler_desc.BorderColor[3] = 0;
-        sampler_desc.MinLOD = 0;
-        sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
-        hr = device->CreateSamplerState(&sampler_desc, samplerState[0].GetAddressOf());
+        D3D11_SAMPLER_DESC samplerDesc{};
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.MipLODBias = 0;
+        samplerDesc.MaxAnisotropy = 16;
+        samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+        samplerDesc.BorderColor[0] = 0;
+        samplerDesc.BorderColor[1] = 0;
+        samplerDesc.BorderColor[2] = 0;
+        samplerDesc.BorderColor[3] = 0;
+        samplerDesc.MinLOD = 0;
+        samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+        hr = device->CreateSamplerState(&samplerDesc, samplerState[static_cast<size_t>(SAMPLER_STATE::POINT)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-        sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-        sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-        sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-        sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-        hr = device->CreateSamplerState(&sampler_desc, samplerState[1].GetAddressOf());
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+        hr = device->CreateSamplerState(&samplerDesc, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-        sampler_desc.Filter = D3D11_FILTER_ANISOTROPIC;
-        sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-        sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-        sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-        hr = device->CreateSamplerState(&sampler_desc, samplerState[2].GetAddressOf());
+        samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+        hr = device->CreateSamplerState(&samplerDesc, samplerState[static_cast<size_t>(SAMPLER_STATE::ANISOTROPIC)].GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+        samplerDesc.BorderColor[0] = 0;
+        samplerDesc.BorderColor[1] = 0;
+        samplerDesc.BorderColor[2] = 0;
+        samplerDesc.BorderColor[3] = 0;
+        hr = device->CreateSamplerState(&samplerDesc, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_BLACK)].GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+        samplerDesc.BorderColor[0] = 1;
+        samplerDesc.BorderColor[1] = 1;
+        samplerDesc.BorderColor[2] = 1;
+        samplerDesc.BorderColor[3] = 1;
+        hr = device->CreateSamplerState(&samplerDesc, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_WHITE)].GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+        // SHADOW
+        samplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+        samplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL; // D3D11_COMPARISON_LESS_EQUAL
+        samplerDesc.BorderColor[0] = 1;
+        samplerDesc.BorderColor[1] = 1;
+        samplerDesc.BorderColor[2] = 1;
+        samplerDesc.BorderColor[3] = 1;
+        hr = device->CreateSamplerState(&samplerDesc, samplerState[static_cast<size_t>(SAMPLER_STATE::COMPARISON_LINEAR_BORDER_WHITE)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
-}
+
+    }
 
 void Shader::Initialize()
 {
@@ -231,9 +267,11 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc)
     Camera& camera = Camera::Instance();
 
     // サンプラーステート
-    deviceContext->PSSetSamplers(0, 1, samplerState[0].GetAddressOf());
-    deviceContext->PSSetSamplers(1, 1, samplerState[1].GetAddressOf());
-    deviceContext->PSSetSamplers(2, 1, samplerState[2].GetAddressOf());
+    deviceContext->PSSetSamplers(0, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::POINT)].GetAddressOf());
+    deviceContext->PSSetSamplers(1, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR)].GetAddressOf());
+    deviceContext->PSSetSamplers(2, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::ANISOTROPIC)].GetAddressOf());
+    deviceContext->PSSetSamplers(3, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_BLACK)].GetAddressOf());
+    deviceContext->PSSetSamplers(4, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_WHITE)].GetAddressOf());
 
     deviceContext->OMSetDepthStencilState(depthStencilState[0].Get(), 1);
 
@@ -242,26 +280,10 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc)
     deviceContext->RSSetState(rasterizerState[0].Get());
 
     // ビュープロジェクション変換行列を計算し、それを定数バッファにセットする
-#if 0
-    D3D11_VIEWPORT viewport{};
-    UINT unm_viewports{ 1 };
-    dc->RSGetViewports(&unm_viewports, &viewport);
-
-    float aspect_ratio{ viewport.Width / viewport.Height };
-    DirectX::XMMATRIX P{ DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(30),aspect_ratio,0.1f,100.0f) };
-    //DirectX::XMMATRIX P{ DirectX::XMMatrixOrthographicLH(view.viewWitdh,view.viewHeight,view.nearZ,view.farZ) };
-
-    DirectX::XMVECTOR eye{ DirectX::XMVectorSet(0.0f,0.0f,-10.0f,1.0f) };
-    DirectX::XMVECTOR focus{ DirectX::XMVectorSet(0.0f,0.0f,0.0f,1.0f) };
-    DirectX::XMVECTOR up{ DirectX::XMVectorSet(0.0f,1.0f,0.0f,0.0f) };
-    DirectX::XMMATRIX V{ DirectX::XMMatrixLookAtLH(eye,focus,up) };
-#else
     camera.SetPerspectiveFov(deviceContext);
-#endif
-    
+        
 
     SceneConstants scene{};
-    //DirectX::XMStoreFloat4x4(&data.viewProjection, V * P);
     DirectX::XMStoreFloat4x4(&scene.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
     
     scene.lightDirection = { view.position.x,view.position.y,view.position.z,view.position.w };
@@ -285,30 +307,41 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc)
 #endif
 }
 
-void Shader::Begin(ID3D11DeviceContext* dc, const RenderContext& rc, int state)
+void Shader::Begin(ID3D11DeviceContext* dc, const RenderContext& rc, const SceneConstants& sceneConstant)
 {
     Camera& camera = Camera::Instance();
 
     // サンプラーステート
-    dc->PSSetSamplers(0, 1, samplerState[0].GetAddressOf());
-    dc->PSSetSamplers(1, 1, samplerState[1].GetAddressOf());
-    dc->PSSetSamplers(2, 1, samplerState[2].GetAddressOf());
+    {
+        dc->PSSetSamplers(0, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::POINT)].GetAddressOf());
+        dc->PSSetSamplers(1, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR)].GetAddressOf());
+        dc->PSSetSamplers(2, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::ANISOTROPIC)].GetAddressOf());
+        dc->PSSetSamplers(3, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_BLACK)].GetAddressOf());
+        dc->PSSetSamplers(4, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_WHITE)].GetAddressOf());
+        // SHADOW
+        dc->PSSetSamplers(5, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::COMPARISON_LINEAR_BORDER_WHITE)].GetAddressOf());
+    }
 
     dc->OMSetDepthStencilState(depthStencilState[0].Get(), 1);
 
     dc->OMSetBlendState(blendState.Get(), nullptr, 0xFFFFFFFF);
 
     dc->RSSetState(rasterizerState[0].Get());
-    
+
+    // ビュープロジェクション変換行列を計算し、それを定数バッファにセットする
     camera.SetPerspectiveFov(dc);
+
 
     SceneConstants data{};
     DirectX::XMStoreFloat4x4(&data.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
-    data.lightDirection = { view.position.x,view.position.y,view.position.z,view.position.w };
-    data.cameraPosition = { view.camera.x,view.camera.y,view.camera.z,view.camera.w };
+
+    data.lightDirection = sceneConstant.lightDirection;
+    data.cameraPosition = sceneConstant.cameraPosition;
+    data.lightViewProjection = sceneConstant.lightViewProjection;
     dc->UpdateSubresource(sceneConstantBuffer[0].Get(), 0, 0, &data, 0, 0);
     dc->VSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
     dc->PSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
+
 }
 
 void Shader::SetState(ID3D11DeviceContext* dc, int RastarizeState, int DepthStencilState, int SamplerState)
@@ -320,6 +353,7 @@ void Shader::SetState(ID3D11DeviceContext* dc, int RastarizeState, int DepthSten
 
 void Shader::Draw(ID3D11DeviceContext* dc, Model* model)
 {
+
 }
 
 void Shader::End(ID3D11DeviceContext* dc)

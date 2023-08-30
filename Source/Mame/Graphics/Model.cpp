@@ -33,6 +33,11 @@ Model::Model(ID3D11Device* device, const char* fbx_filename, std::vector<std::st
 // 描画
 void Model::Render(const float& scale)
 {
+    Render(scale, 3);
+}
+
+void Model::Render(const float& scale, int rastarizeState)
+{
     Graphics& graphics = Graphics::Instance();
     Shader* shader = graphics.GetShader();
 
@@ -41,7 +46,7 @@ void Model::Render(const float& scale)
     DirectX::XMStoreFloat4x4(&world, GetTransform()->CalcWorldMatrix(scale));
 
     // ステートセット
-    shader->SetState(graphics.GetDeviceContext(), 3, 0, 0);
+    shader->SetState(graphics.GetDeviceContext(), rastarizeState, 0, 0);
 
     // Model描画
     if (&keyframe)
@@ -80,7 +85,7 @@ void Model::PlayAnimation(
 }
 
 
-void Model::UpdateBlendRate(NO_CONST float& blendRate, const float& elapsedTime)
+void Model::UpdateBlendRate(float blendRate, const float& elapsedTime)
 {
     if (animationBlendTime < animationBlendSeconds)
     {
@@ -112,7 +117,7 @@ void Model::UpdateAnimation(const float& elapsedTime)
     currentAnimationSeconds += elapsedTime;
 
     // 指定のアニメーションデータを取得
-    NO_CONST animation& animation = GetAnimation()->at(currentAnimationIndex);
+    animation& animation = GetAnimation()->at(currentAnimationIndex);
 
     // 現在のフレームを取得
     const float  frameIndex_float = (currentAnimationSeconds * animation.sampling_rate) * animationSpeed; // 警告がじゃまなので一時的にfloat変数に格納
@@ -142,7 +147,7 @@ void Model::UpdateAnimation(const float& elapsedTime)
     else if (isDebugBlendAnimation && (keyframe.nodes.size() > 0) && frameIndex < frameEnd)
     {
         // ブレンド率の計算
-        NO_CONST float blendRate = 1.0f;
+        float blendRate = 1.0f;
         UpdateBlendRate(blendRate, elapsedTime);
 
         // キーフレーム取得

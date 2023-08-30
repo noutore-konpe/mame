@@ -61,9 +61,9 @@ GltfModel::GltfModel(ID3D11Device* device, const std::string& filename) : filena
         { "JOINTS", 0, vertexBufferViews.at("JOINTS_0").format, 4, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "WEIGHTS", 0, vertexBufferViews.at("WEIGHTS_0").format, 5, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
-    create_vs_from_cso(device, "./resources/Shader/gltfModelVs.cso", vertexShader.ReleaseAndGetAddressOf(),
+    CreateVsFromCso(device, "./resources/Shader/gltfModelVs.cso", vertexShader.ReleaseAndGetAddressOf(),
         inputLayout.ReleaseAndGetAddressOf(), inputElementDesc, _countof(inputElementDesc));
-    create_ps_from_cso(device, "./resources/Shader/gltfModelPs.cso", pixelShader.ReleaseAndGetAddressOf());
+    CreatePsFromCso(device, "./resources/Shader/gltfModelPs.cso", pixelShader.ReleaseAndGetAddressOf());
 
     // 定数バッファ生成
     {

@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "../Resource/skinned_mesh.h"
-#include "../Game/Common.h"
+
 
 class ResourceManager
 {
@@ -22,7 +22,7 @@ public:
 
     // モデルリソース読み込み
     const std::shared_ptr<skinned_mesh> LoadModelResource(
-        NO_CONST ID3D11Device* device, 
+        ID3D11Device* device, 
         const char* const      fbx_filename, 
         const bool             triangulate      = false, 
         const float            sampling_rate    = 0
@@ -30,9 +30,9 @@ public:
 
     // モデルリソース読み込み(アニメーション)
     const std::shared_ptr<skinned_mesh> LoadModelResource(
-        NO_CONST ID3D11Device*             device, 
+        ID3D11Device*             device, 
         const char* const                  fbx_filename, 
-        NO_CONST std::vector<std::string>& animation_filenames, 
+        std::vector<std::string> animation_filenames, 
         const bool                         triangulate     = false, 
         const float                        sampling_rate   = 0
     );

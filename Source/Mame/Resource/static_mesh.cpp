@@ -221,9 +221,9 @@ static_mesh::static_mesh(ID3D11Device* device, const wchar_t* obj_filename,bool 
         {"TEXCOORD",0,DXGI_FORMAT_R32G32B32_FLOAT,0,
             D3D11_APPEND_ALIGNED_ELEMENT,D3D11_INPUT_PER_VERTEX_DATA,0},
     };
-    create_vs_from_cso(device, "static_mesh_vs.cso", vertex_shader.GetAddressOf(),
+    CreateVsFromCso(device, "static_mesh_vs.cso", vertex_shader.GetAddressOf(),
         input_layout.GetAddressOf(), input_element_desc, ARRAYSIZE(input_element_desc));
-    create_ps_from_cso(device, "static_mesh_ps.cso", pixel_shader.GetAddressOf());
+    CreatePsFromCso(device, "static_mesh_ps.cso", pixel_shader.GetAddressOf());
 
     D3D11_BUFFER_DESC buffer_desc{};
     buffer_desc.ByteWidth = sizeof(constants);

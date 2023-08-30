@@ -83,8 +83,8 @@ Sprite::Sprite(ID3D11Device* device, const wchar_t* filename, const char* psFile
 
 
     // シェーダー関連
-    create_vs_from_cso(device, "./Resources/Shader/sprite_vs.cso", vertexShader.GetAddressOf(), inputLayout.GetAddressOf(), input_element_desc, _countof(input_element_desc));
-    create_ps_from_cso(device,
+    CreateVsFromCso(device, "./Resources/Shader/sprite_vs.cso", vertexShader.GetAddressOf(), inputLayout.GetAddressOf(), input_element_desc, _countof(input_element_desc));
+    CreatePsFromCso(device,
         (psFilename != nullptr) ? psFilename : "./Resources/Shader/sprite_ps.cso", pixelShader.GetAddressOf());
 
     //create_vs_from_cso(device, "UVScroll_vs.cso", vertex_shader.GetAddressOf(), input_layout.GetAddressOf(), input_element_desc, _countof(input_element_desc));
@@ -362,17 +362,18 @@ void Sprite::Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 pos, D
 // debug用関数
 void Sprite::DrawDebug()
 {
-    ImGui::Begin(GetName());
+    if (ImGui::BeginMenu(GetName()))
+    {
+        spriteTransform.DrawDebug();
 
-    spriteTransform.DrawDebug();
+        if (isDissolve)spriteDissolve.DrawDebug();
 
-    if (isDissolve)spriteDissolve.DrawDebug();
+        ImGui::DragFloat("animationFrame", &animationFrame);
 
-    ImGui::DragFloat("animationFrame", &animationFrame);
+        if (ImGui::Button("Fade"))SetIsFade(true);
 
-    if (ImGui::Button("Fade"))SetIsFade(true);
-
-    ImGui::End();
+        ImGui::EndMenu();
+    }
 }
 
 // SpriteTransform

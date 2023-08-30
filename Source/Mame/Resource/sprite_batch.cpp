@@ -558,9 +558,9 @@ sprite_batch::sprite_batch(ID3D11Device* device, const wchar_t* filename, size_t
 #endif
 
     // シェーダー関連
-    create_vs_from_cso(device, "sprite_vs.cso", vertex_shader.GetAddressOf(), input_layout.GetAddressOf(), input_element_desc, _countof(input_element_desc));
-    create_ps_from_cso(device, "sprite_ps.cso", pixel_shader.GetAddressOf());
-    create_ps_from_cso(device, "sprite_change_ps.cso", c_pixel_shader.GetAddressOf());
+    CreateVsFromCso(device, "sprite_vs.cso", vertex_shader.GetAddressOf(), input_layout.GetAddressOf(), input_element_desc, _countof(input_element_desc));
+    CreatePsFromCso(device, "sprite_ps.cso", pixel_shader.GetAddressOf());
+    CreatePsFromCso(device, "sprite_change_ps.cso", c_pixel_shader.GetAddressOf());
 
     // テクスチャのロード
     load_texture_from_file(device, filename, shader_resource_view[0].GetAddressOf(), &texture2d_desc);

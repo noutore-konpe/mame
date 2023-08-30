@@ -40,6 +40,83 @@ Graphics::Graphics(HWND hWnd, BOOL fullscreen)
 	_ASSERT_EXPR(instance == nullptr, "already instantiated");
 	instance = this;
 
+	HRESULT hr = S_OK;
+
+	// フルスク失敗した時のための動くデータ
+	{
+		// スワップチェーンの作成
+		UINT createDeviceFlags = 0;
+#ifdef _DEBUG
+		createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif // _DEBUG
+
+		D3D_FEATURE_LEVEL featureLevels = D3D_FEATURE_LEVEL_11_0;
+
+		DXGI_SWAP_CHAIN_DESC swapChainDesc{};
+		swapChainDesc.BufferCount = 1;
+		swapChainDesc.BufferDesc.Width = SCREEN_WIDTH;
+		swapChainDesc.BufferDesc.Height = SCREEN_HEIGHT;
+		swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
+		swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
+		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		swapChainDesc.OutputWindow = hWnd;
+		swapChainDesc.SampleDesc.Count = 1;
+		swapChainDesc.SampleDesc.Quality = 0;
+		swapChainDesc.Windowed = !FULLSCREEN;
+
+		hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, createDeviceFlags,
+			&featureLevels, 1, D3D11_SDK_VERSION, &swapChainDesc,
+			&swapchain0, &device, NULL, &deviceContext);
+		_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+		// レンダーターゲットビューの作成
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> backBuffer{};
+		hr = swapchain0->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<LPVOID*>(backBuffer.GetAddressOf()));
+		_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+		hr = device->CreateRenderTargetView(backBuffer.Get(), NULL, &renderTargetView);
+		_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+
+		// 深度ステンシルビューの作成
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencilBuffer{};
+		D3D11_TEXTURE2D_DESC texture2dDesc{};
+		texture2dDesc.Width = SCREEN_WIDTH;
+		texture2dDesc.Height = SCREEN_HEIGHT;
+		texture2dDesc.MipLevels = 1;
+		texture2dDesc.ArraySize = 1;
+		texture2dDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		texture2dDesc.SampleDesc.Count = 1;
+		texture2dDesc.SampleDesc.Quality = 0;
+		texture2dDesc.Usage = D3D11_USAGE_DEFAULT;
+		texture2dDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		texture2dDesc.CPUAccessFlags = 0;
+		texture2dDesc.MiscFlags = 0;
+		hr = device->CreateTexture2D(&texture2dDesc, NULL, depthStencilBuffer.GetAddressOf());
+		_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
+		depthStencilViewDesc.Format = texture2dDesc.Format;
+		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		depthStencilViewDesc.Texture2D.MipSlice = 0;
+		hr = device->CreateDepthStencilView(depthStencilBuffer.Get(), &depthStencilViewDesc, depthStencilView.GetAddressOf());
+		_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+		// ビューポートの設定
+		D3D11_VIEWPORT viewport{};
+		viewport.TopLeftX = 0;
+		viewport.TopLeftY = 0;
+		viewport.Width = static_cast<float>(SCREEN_WIDTH);
+		viewport.Height = static_cast<float>(SCREEN_HEIGHT);
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
+		deviceContext->RSSetViewports(1, &viewport);
+	}
+
+	// フルスク挑戦中
+#if 0
+
 #if FULLSCREEN_CREATE
 	// 画面のサイズを取得する。
 	RECT rc;
@@ -211,6 +288,8 @@ Graphics::Graphics(HWND hWnd, BOOL fullscreen)
 #ifdef ENABLE_DIRECT2D
 	CreateDirext2dObjects();
 #endif // ENABLE_DIRECT2D
+
+#endif
 
 #endif
 
