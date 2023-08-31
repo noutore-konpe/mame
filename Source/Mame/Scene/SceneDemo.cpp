@@ -296,6 +296,7 @@ void SceneDemo::End()
 void SceneDemo::Render(const float& elapsedTime)
 {
     // scaleFactor
+    //float enemyScaleFactor = 0.01f;
     float enemyScaleFactor = 0.001f;
     float playerScaleFactor = 0.01f;
 

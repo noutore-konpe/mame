@@ -4,7 +4,7 @@
 #define LINEAR 1
 #define ANISOTROPIC 2
 SamplerState samplerStates[5] : register(s0);
-Texture2D textureMaps[4]:register(t0);
+Texture2D textureMaps[4] : register(t0);
 
 // SHADOW
 SamplerComparisonState comparisonSamplerState : register(s5);
@@ -13,7 +13,7 @@ Texture2D shadowMap : register(t8);
 // DISSOLVE
 Texture2D maskTexture : register(t15);
 
-float4 main(VS_OUT pin) :SV_TARGET
+float4 main(VS_OUT pin) : SV_TARGET
 {
     float mask_value = maskTexture.Sample(samplerStates[0],pin.texcoord) * pin.color;
 
@@ -47,8 +47,9 @@ float4 main(VS_OUT pin) :SV_TARGET
     float3 L = normalize(-lightDirection.xyz);
     float3 diffuse = color.rgb * max(0, dot(N, L));
 #if 1
+    // todo : 256の部分をconstantで操作したい
     float3 V = normalize(cameraPosition.xyz - pin.worldPosition.xyz);
-    float3 specular = pow(max(0, dot(N, normalize(V + L))),256);
+    float3 specular = pow(max(0, dot(N, normalize(V + L))), 256);
 #else
     // 魔導書をお手本に作ってみた
     float3 refVec = reflect(L, N);
@@ -64,7 +65,7 @@ float4 main(VS_OUT pin) :SV_TARGET
 
     // SHADOW
 #if 1
-    const float shadowDepthBias = 0.001;
+    const float shadowDepthBias = 0.01;
 #else
     // ここでは、サーフェスの法線と光の方向に基づいて、バイアスの最大値が 0.01、最小値が 0.001 になっています。
     const float shadowDepthBias = max(0.01 * (1.0 - dot(N, L)), 0.001);
@@ -76,9 +77,32 @@ float4 main(VS_OUT pin) :SV_TARGET
     lightViewTexcoord.x = lightViewPosition.x * 0.5 + 0.5;
     lightViewTexcoord.y = lightViewPosition.y * -0.5 + 0.5;
     float depth = saturate(lightViewPosition.z - shadowDepthBias);
+     
+    
+    // SHADOW
+    float shadowWidth;
+    float shadowHight;
+    shadowMap.GetDimensions(shadowWidth, shadowHight);
 
+    float shadowWidthOffset = 1 / shadowWidth;
+    float shadowHightOffset = 1 / shadowHight;
+    
     float3 shadowFactor = 1.0f;
-    shadowFactor = shadowMap.SampleCmpLevelZero(comparisonSamplerState, lightViewTexcoord, depth).xxx;
+    // shdowFactorひとつだけだと、まわりを取って平均値を出すことできれいに見せる。
+    {
+        shadowFactor = shadowMap.SampleCmpLevelZero(comparisonSamplerState, lightViewTexcoord, depth).xxx;
+        shadowFactor += shadowMap.SampleCmpLevelZero(comparisonSamplerState, float2(lightViewTexcoord.x + shadowWidthOffset, lightViewTexcoord.y), depth).xxx; // 右
+        shadowFactor += shadowMap.SampleCmpLevelZero(comparisonSamplerState, float2(lightViewTexcoord.x - shadowWidthOffset, lightViewTexcoord.y), depth).xxx; // 左
+        shadowFactor += shadowMap.SampleCmpLevelZero(comparisonSamplerState, float2(lightViewTexcoord.x, lightViewTexcoord.y - shadowHightOffset), depth).xxx; // 上
+        shadowFactor += shadowMap.SampleCmpLevelZero(comparisonSamplerState, float2(lightViewTexcoord.x, lightViewTexcoord.y + shadowHightOffset), depth).xxx; // 下
+        
+        shadowFactor += shadowMap.SampleCmpLevelZero(comparisonSamplerState, float2(lightViewTexcoord.x + shadowWidthOffset, lightViewTexcoord.y - shadowHightOffset), depth).xxx; // 右上
+        shadowFactor += shadowMap.SampleCmpLevelZero(comparisonSamplerState, float2(lightViewTexcoord.x - shadowWidthOffset, lightViewTexcoord.y - shadowHightOffset), depth).xxx; // 左上
+        shadowFactor += shadowMap.SampleCmpLevelZero(comparisonSamplerState, float2(lightViewTexcoord.x + shadowWidthOffset, lightViewTexcoord.y + shadowHightOffset), depth).xxx; // 右下
+        shadowFactor += shadowMap.SampleCmpLevelZero(comparisonSamplerState, float2(lightViewTexcoord.x - shadowWidthOffset, lightViewTexcoord.y + shadowHightOffset), depth).xxx; // 左下
+        
+        shadowFactor /= 9;
+    }
 
     // ここではモデルの二次反射光を疑似的に出す
     float3 finalColor = diffuse + specular;
