@@ -358,7 +358,7 @@ void SceneDemo::Render(const float& elapsedTime)
             shadow.shadowMap->Clear(deviceContext, 1.0f);
             shadow.shadowMap->Activate(deviceContext);
 
-            // ‰e‚Â‚¯‚½‚¢ƒ‚ƒfƒ‹‚Í‚±‚±‚ÉRender‚·‚é
+            // SHADOW : ‰e‚Â‚¯‚½‚¢ƒ‚ƒfƒ‹‚Í‚±‚±‚ÉRender‚·‚é
             {
                 PlayerManager::Instance().Render(elapsedTime, playerScaleFactor);
 
