@@ -13,6 +13,12 @@ Texture2D shadowMap : register(t8);
 // DISSOLVE
 Texture2D maskTexture : register(t15);
 
+/////////////////////////
+//      関数宣言        //
+/////////////////////////
+float3 CalcLambertDiffuse(float3 lightDirection, float3 lightColor, float3 normal);
+float3 CalcPhongSpecular(float3 lightDirection, float3 lightColor, float3 worldPos, float3 normal);
+
 float4 main(VS_OUT pin) : SV_TARGET
 {
     float mask_value = maskTexture.Sample(samplerStates[0],pin.texcoord) * pin.color;
@@ -33,7 +39,7 @@ float4 main(VS_OUT pin) : SV_TARGET
 
     float3 N = normalize(pin.worldNormal.xyz);
 
-#if 0
+#if 1
     float3 T = normalize(pin.worldTangent.xyz);
     float sigma = pin.worldTangent.w;
     T = normalize(T - N * dot(N, T));
@@ -50,6 +56,8 @@ float4 main(VS_OUT pin) : SV_TARGET
     // todo : 256の部分をconstantで操作したい
     float3 V = normalize(cameraPosition.xyz - pin.worldPosition.xyz);
     float3 specular = pow(max(0, dot(N, normalize(V + L))), 256);
+    // SPECULAR
+    specular *= 0.1;
 #else
     // 魔導書をお手本に作ってみた
     float3 refVec = reflect(L, N);
@@ -103,16 +111,70 @@ float4 main(VS_OUT pin) : SV_TARGET
         
         shadowFactor /= 9;
     }
+    
+
+    // POINT_LIGHT
+    float3 light; // 最終的な結果を入れる
+    {
+        // サーフェイスに入射するポイントライトの光の向きを計算する
+        float3 lightDirection = pin.worldPosition.xyz - ptPosition;
+        
+        // 正規化する
+        lightDirection = normalize(lightDirection);
+
+        // 減衰なしのLambert拡散反射光を計算する
+        float3 diffusePoint = CalcLambertDiffuse(
+            lightDirection,     // ライトの方向
+            ptColor,            // ライトの色
+            pin.worldNormal.xyz // サーフェイスの法線
+        );
+        
+        // 減衰なしのPhong鏡面反射光を計算する
+        float3 specularPoint = CalcPhongSpecular(
+            lightDirection,         // ライトの方向
+            ptColor,                // ライトのカラー
+            pin.worldPosition.xyz,  // サーフェイスのワールド座標
+            pin.worldNormal.xyz     // サーフェイスの法線
+        );
+
+        // ポイントライトとの距離を計算する
+        float distance = length(pin.worldPosition.xyz - ptPosition);
+        
+        // 影響率は距離に比例して小さくなっていく
+        float affect = 1.0f - 1.0f / ptRange * distance;
+        
+        // 影響力がマイナスにならないように修正をかける
+        affect = max(0.0f, affect);
+        
+        // 影響を指数関数的にする。今回は3乗してる
+        affect = pow(affect, 3.0f);
+        
+        // 拡散反射光と鏡面反射光に影響率を乗算して影響を弱める
+        diffusePoint *= affect;
+        specularPoint *= affect;
+        
+        // 2つの反射光を合算して最終的な反射光を求める
+        float3 diffuseLight = diffusePoint + diffuse;
+        float3 specularLight = specularPoint + specular;
+        
+        light = diffuseLight + specularLight;
+    }
+    
 
     // ここではモデルの二次反射光を疑似的に出す
-    float3 finalColor = diffuse + specular;
+#if 1
+    // float3 finalColor = diffuse + specular;
+    float3 finalColor = light;   // ポイントライト考慮
+#else
+    float3 finalColor = diffuse;
+#endif
     finalColor.x += 0.2f;
     finalColor.y += 0.2f;
     finalColor.z += 0.2f;
 
     return float4(finalColor * shadowFactor, alpha) * pin.color;
 
-    return float4((diffuse + specular) * shadowFactor/*SHADOW*/, alpha) * pin.color;
+    //return float4((diffuse + specular) * shadowFactor/*SHADOW*/, alpha) * pin.color;
 
     //color.a *= alpha;
     //return color;
@@ -122,6 +184,43 @@ float4 main(VS_OUT pin) : SV_TARGET
     //return float4(diffuse, alpha) * pin.color;
     
     //return float4(diffuse + specular, alpha) * pin.color;
+}
+
+
+// Lambert拡散反射光を計算する
+float3 CalcLambertDiffuse(float3 lightDirection, float3 lightColor, float3 normal)
+{
+    // ピクセルの法線とライトの方向の内積を計算する
+    float t = dot(normal, lightDirection) * -1.0f;
+    
+    // 内積の値を0以上の値にする
+    t = max(0.0f, t);
+    
+    // 拡散反射光を計算する
+    return lightColor * t;
+}
+
+// Phong鏡面反射光を計算する
+float3 CalcPhongSpecular(float3 lightDirection, float3 lightColor, float3 worldPos, float3 normal)
+{
+    // 反射ベクトルを求める
+    float3 refVec = reflect(lightDirection, normal);
+    
+    // 光が当たったサーフェイスから視点に伸びるベクトルを求める
+    float3 toEye = cameraPosition.xyz - worldPos;
+    toEye = normalize(toEye);
+    
+    // 鏡面反射の強さを求める
+    float t = dot(refVec, toEye);
+    
+    // 鏡面反射の強さを0以上にする
+    t = max(0.0f, t);
+    
+    // 鏡面反射の強さを絞る
+    t = pow(t, 5.0f);
+    
+    // 鏡面反射光を求める
+    return lightColor * t;
 }
 
 #if 0

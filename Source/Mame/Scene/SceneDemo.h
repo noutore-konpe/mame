@@ -41,7 +41,7 @@ public:
     void DrawDebug()    override;
 
     static bool isDebugRender;
-
+    
 public:
     enum class SAMPLER_STATE { POINT, LINEAR, ANISOTROPIC, LINEAR_BORDER_BLACK, LINEAR_BORDER_WHITE };
     Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerStates[5];

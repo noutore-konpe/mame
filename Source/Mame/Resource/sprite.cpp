@@ -22,7 +22,7 @@ Sprite::Sprite(ID3D11Device* device, const wchar_t* filename, const char* psFile
     animationTime = 0.0f;
     animationFrame = 0.0f;
 
-    // Dissolve
+    // spriteDissolve
     if (psFilename == "./Resources/Shader/sprite_dissolve_ps.cso")
     {
         isDissolve = true;

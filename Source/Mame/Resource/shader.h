@@ -21,6 +21,8 @@ public: // enum関連
     enum class BLEND_STATE { NONE, ALPHA, ADD, MULTIPLY };
     enum class RASTER_STATE { SOLID, WIREFRAME, CULL_NONE, WIREFRAME_CULL_NONE };
 
+    enum class CONSTANT_BUFFER { SCENE_CONSTANT, CONSTANT_BUFFER_PARAMETRIC, POINT_LIGHT };
+
 public:
     struct View
     {
@@ -41,6 +43,17 @@ public:
         // SHADOW
         DirectX::XMFLOAT4X4 lightViewProjection;
     };
+
+    // POINT_LIGHT
+    struct PointLightConstants
+    {
+        DirectX::XMFLOAT3 position = {};    // ポイントライトの位置
+        float dummy = 0;                    // ダミー
+        DirectX::XMFLOAT3 color = {};       // ポイントライトの色
+        float range = 0;                    // ポイントライトの影響範囲
+    }pointLight;
+    std::unique_ptr<Model>pointLightModel = nullptr;
+
 
 public:
     Shader(ID3D11Device* device);
@@ -71,19 +84,9 @@ private:
 
     static const int MaxBones = 128;
 
-    Microsoft::WRL::ComPtr<ID3D11Buffer> sceneConstantBuffer[2];
+    Microsoft::WRL::ComPtr<ID3D11Buffer> sceneConstantBuffer[5];
 
-    struct LightConstants
-    {
-        DirectX::XMFLOAT4 ambientColor;
-        DirectX::XMFLOAT4 directionalLightDirection;
-        DirectX::XMFLOAT4 directionalLightColor;
-    };
-    Microsoft::WRL::ComPtr<ID3D11Buffer> lightConstantBuffer;
 
-    DirectX::XMFLOAT4 ambientColor{ 0.2f, 0.2f ,0.2f, 0.2f };
-    DirectX::XMFLOAT4 directionalLightDirection{ 0.0f,-1.0f,1.0f,1.0f };
-    DirectX::XMFLOAT4 directionalLightColor{ 1.0f, 1.0f, 1.0f, 1.0f };
 
     struct CBMesh
     {

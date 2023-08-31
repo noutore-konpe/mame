@@ -7,6 +7,7 @@
 
 #include "skinned_mesh.h"
 
+#include "../Graphics/Graphics.h"
 
 HRESULT CreateVsFromCso(ID3D11Device* device, const char* cso_name, ID3D11VertexShader** vertex_shader,
     ID3D11InputLayout** input_layout, D3D11_INPUT_ELEMENT_DESC* input_element_desc, UINT num_elements)
@@ -71,23 +72,25 @@ Shader::Shader(ID3D11Device* device)
         bufferDesc.CPUAccessFlags = 0;
         bufferDesc.MiscFlags = 0;
         bufferDesc.StructureByteStride = 0;
-        hr = device->CreateBuffer(&bufferDesc, nullptr, sceneConstantBuffer[0].GetAddressOf());
+        // SceneConstants
+        hr = device->CreateBuffer(&bufferDesc, nullptr,
+            sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
 
         bufferDesc.ByteWidth = sizeof(CBParametric);
-        bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-        bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-        bufferDesc.CPUAccessFlags = 0;
-        bufferDesc.MiscFlags = 0;
-        bufferDesc.StructureByteStride = 0;
-        hr = device->CreateBuffer(&bufferDesc, nullptr, sceneConstantBuffer[1].GetAddressOf());
+        // CBParametric
+        hr = device->CreateBuffer(&bufferDesc, nullptr,
+            sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::CONSTANT_BUFFER_PARAMETRIC)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-        {
-            bufferDesc.ByteWidth = sizeof(LightConstants);
-            hr = device->CreateBuffer(&bufferDesc, nullptr, lightConstantBuffer.GetAddressOf());
-            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-        }
+
+        // POINT_LIGHT
+        bufferDesc.ByteWidth = sizeof(PointLightConstants);
+        // PointLightConstants
+        hr = device->CreateBuffer(&bufferDesc, nullptr,
+            sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POINT_LIGHT)].GetAddressOf());
+
     }
 
     // ブレンドステート
@@ -254,7 +257,19 @@ Shader::Shader(ID3D11Device* device)
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
 
+    // POINT_LIGHT
+    {
+        Graphics& graphics = Graphics::Instance();
+#ifdef _DEBUG
+        pointLightModel = std::make_unique<Model>(graphics.GetDevice(),
+            "./Resources/Model/Collision/sqhere.fbx");
+#endif// _DEBUG
+
+        pointLight.position = DirectX::XMFLOAT3(0.0f, 1.5f, 3.0f);
+        pointLight.color = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f);
+        pointLight.range = 5.0f;
     }
+}
 
 void Shader::Initialize()
 {
@@ -292,14 +307,17 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc)
     deviceContext->VSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
     deviceContext->PSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
 
-    // light
-    LightConstants lights{};
-    lights.ambientColor = ambientColor;
-    lights.directionalLightDirection = directionalLightDirection;
-    lights.directionalLightColor = directionalLightColor;
-    deviceContext->UpdateSubresource(lightConstantBuffer.Get(), 0, 0, &lights, 0, 0);
-    deviceContext->VSSetConstantBuffers(2, 1, lightConstantBuffer.GetAddressOf());
-    deviceContext->PSSetConstantBuffers(2, 1, lightConstantBuffer.GetAddressOf());
+    // POINT_LIGHT
+    {
+        deviceContext->UpdateSubresource(sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POINT_LIGHT)].Get(), 0, 0, &pointLight, 0, 0);
+        deviceContext->VSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POINT_LIGHT)].GetAddressOf());
+        deviceContext->PSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POINT_LIGHT)].GetAddressOf());
+
+#ifdef _DEBUG
+        pointLightModel->GetTransform()->SetPosition(pointLight.position);
+        pointLightModel->Render(0.1f);
+#endif// _DEBUG
+    }
 
 
 #ifdef USE_IMGUI
@@ -307,29 +325,29 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc)
 #endif
 }
 
-void Shader::Begin(ID3D11DeviceContext* dc, const RenderContext& rc, const SceneConstants& sceneConstant)
+void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc, const SceneConstants& sceneConstant)
 {
     Camera& camera = Camera::Instance();
 
     // サンプラーステート
     {
-        dc->PSSetSamplers(0, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::POINT)].GetAddressOf());
-        dc->PSSetSamplers(1, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR)].GetAddressOf());
-        dc->PSSetSamplers(2, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::ANISOTROPIC)].GetAddressOf());
-        dc->PSSetSamplers(3, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_BLACK)].GetAddressOf());
-        dc->PSSetSamplers(4, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_WHITE)].GetAddressOf());
+        deviceContext->PSSetSamplers(0, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::POINT)].GetAddressOf());
+        deviceContext->PSSetSamplers(1, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR)].GetAddressOf());
+        deviceContext->PSSetSamplers(2, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::ANISOTROPIC)].GetAddressOf());
+        deviceContext->PSSetSamplers(3, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_BLACK)].GetAddressOf());
+        deviceContext->PSSetSamplers(4, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_WHITE)].GetAddressOf());
         // SHADOW
-        dc->PSSetSamplers(5, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::COMPARISON_LINEAR_BORDER_WHITE)].GetAddressOf());
+        deviceContext->PSSetSamplers(5, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::COMPARISON_LINEAR_BORDER_WHITE)].GetAddressOf());
     }
 
-    dc->OMSetDepthStencilState(depthStencilState[0].Get(), 1);
+    deviceContext->OMSetDepthStencilState(depthStencilState[0].Get(), 1);
 
-    dc->OMSetBlendState(blendState.Get(), nullptr, 0xFFFFFFFF);
+    deviceContext->OMSetBlendState(blendState.Get(), nullptr, 0xFFFFFFFF);
 
-    dc->RSSetState(rasterizerState[0].Get());
+    deviceContext->RSSetState(rasterizerState[0].Get());
 
     // ビュープロジェクション変換行列を計算し、それを定数バッファにセットする
-    camera.SetPerspectiveFov(dc);
+    camera.SetPerspectiveFov(deviceContext);
 
 
     SceneConstants data{};
@@ -338,9 +356,21 @@ void Shader::Begin(ID3D11DeviceContext* dc, const RenderContext& rc, const Scene
     data.lightDirection = sceneConstant.lightDirection;
     data.cameraPosition = sceneConstant.cameraPosition;
     data.lightViewProjection = sceneConstant.lightViewProjection;
-    dc->UpdateSubresource(sceneConstantBuffer[0].Get(), 0, 0, &data, 0, 0);
-    dc->VSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
-    dc->PSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
+    deviceContext->UpdateSubresource(sceneConstantBuffer[0].Get(), 0, 0, &data, 0, 0);
+    deviceContext->VSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
+    deviceContext->PSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
+
+    // POINT_LIGHT
+    {
+        deviceContext->UpdateSubresource(sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POINT_LIGHT)].Get(), 0, 0, &pointLight, 0, 0);
+        deviceContext->VSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POINT_LIGHT)].GetAddressOf());
+        deviceContext->PSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POINT_LIGHT)].GetAddressOf());
+
+#ifdef _DEBUG
+        pointLightModel->GetTransform()->SetPosition(pointLight.position);
+        pointLightModel->Render(0.1f);
+#endif// _DEBUG
+    }
 
 }
 
@@ -378,19 +408,17 @@ void Shader::DrawDebug()
 
         ImGui::TreePop();
     }
-
-    if (ImGui::TreeNode("phong"))
-    {
-        
-        ImGui::Separator();
-        ImGui::ColorEdit3("ambientColor", &ambientColor.x);
-        ImGui::SliderFloat3("directionalLightDirection", &directionalLightDirection.x, -1.0f, 1.0f);
-        ImGui::ColorEdit3("directionalLightColor", &directionalLightColor.x);
-
-        ImGui::TreePop();
-    }
     
     camera.DrawDebug();
+
+    ImGui::End();
+
+    // POINT_LIGHT
+    ImGui::Begin("PointLight");
+
+    ImGui::DragFloat3("position", &pointLight.position.x);
+    ImGui::ColorPicker3("color", &pointLight.color.x);
+    ImGui::DragFloat("range", &pointLight.range);
 
     ImGui::End();
 }
