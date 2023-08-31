@@ -560,8 +560,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="3dgp.rc" />
     <ResourceCompile Include="Resource.rc" />
+    <ResourceCompile Include="3dgp.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon1.ico" />

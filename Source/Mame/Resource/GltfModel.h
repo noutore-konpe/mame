@@ -4,6 +4,7 @@
 #include <wrl.h>
 #include <DirectXMath.h>
 #include "../../../tinygltf-release/tiny_gltf.h"
+#include <unordered_map>
 
 #include "../Transform.h"
 
