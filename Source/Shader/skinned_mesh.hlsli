@@ -38,13 +38,39 @@ cbuffer SCENE_CONSTANT_BUFFER : register(b1)
     row_major float4x4 lightViewProjection;
 };
 
-// ポイントライト
-cbuffer POINT_LIGHT_CONSTANT_BUFFER : register(b5)
+// ディレクションライト
+struct DirectionLight
 {
-    float3 ptPosition;    // ポイントライトの位置
-    float step;        // ダミー
-    float3 ptColor;       // ポイントライトの色
-    float  ptRange;       // ポイントライトの影響範囲
+    float4 direction;   // ライトの方向
+    float4 color;       // ライトの色
+};
+
+// ポイントライト
+struct PointLight
+{
+    float4 position; // ポイントライトの位置
+    float4 color;    // ポイントライトの色
+    float range;     // ポイントライトの影響範囲
+    float3 step;     // ダミー
+};
+
+// スポットライト
+struct SpotLight
+{
+    float4 position;    // スポットライトの位置
+    float4 color;       // スポットライトの色
+    float range;        // スポットライトの影響範囲
+    float3 step;        // ダミー
+    float3 direction;   // スポットライトの射出方向
+    float angle;        // スポットライトの射出角度
+};
+
+// ライト
+cbuffer LIGHT_CONSTANT_BUFFER : register(b5)
+{
+    DirectionLight directionLig;
+    PointLight pointLig;
+    SpotLight spotLig;
 }
 
 cbuffer DISSOLVE_CONSTANT_BUFFER : register(b3)

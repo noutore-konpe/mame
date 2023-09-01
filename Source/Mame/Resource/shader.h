@@ -21,7 +21,7 @@ public: // enum関連
     enum class BLEND_STATE { NONE, ALPHA, ADD, MULTIPLY };
     enum class RASTER_STATE { SOLID, WIREFRAME, CULL_NONE, WIREFRAME_CULL_NONE };
 
-    enum class CONSTANT_BUFFER { SCENE_CONSTANT, CONSTANT_BUFFER_PARAMETRIC, POINT_LIGHT };
+    enum class CONSTANT_BUFFER { SCENE_CONSTANT, CONSTANT_BUFFER_PARAMETRIC, LIGHT_CONSTANT };
 
 public:
     struct View
@@ -44,16 +44,40 @@ public:
         DirectX::XMFLOAT4X4 lightViewProjection;
     };
 
-    // POINT_LIGHT
-    struct PointLightConstants
+    // DIRECTION_LIGHT
+    struct DirectionLight
     {
-        DirectX::XMFLOAT3 position = {};    // ポイントライトの位置
-        float dummy = 0;                    // ダミー
-        DirectX::XMFLOAT3 color = {};       // ポイントライトの色
+        DirectX::XMFLOAT4 direction;    // ライトの方向
+        DirectX::XMFLOAT4 color;        // ライトの位置
+    };
+
+    // POINT_LIGHT
+    struct PointLight
+    {
+        DirectX::XMFLOAT4 position = {};    // ポイントライトの位置
+        DirectX::XMFLOAT4 color = {};       // ポイントライトの色
         float range = 0;                    // ポイントライトの影響範囲
-    }pointLight;
+        DirectX::XMFLOAT3 step = {};        // ダミー
+    };
     std::unique_ptr<Model>pointLightModel = nullptr;
 
+    // SPOT_LIGHT
+    struct SpotLight
+    {
+        DirectX::XMFLOAT4 position = {};    // スポットライトの位置
+        DirectX::XMFLOAT4 color = {};       // スポットライトの色
+        float range = 0;                    // スポットライトの影響範囲
+        DirectX::XMFLOAT3 step = {};        // ダミー
+        DirectX::XMFLOAT3 direction = {};   // スポットライトの射出方向
+        float angle = 0;                    // スポットライトの射出角度
+    };
+
+    struct LightConstants
+    {
+        DirectionLight directionLight;  // ディレクションライト
+        PointLight pointLight;          // ポイントライト
+        SpotLight spotLight;            // スポットライト
+    }lightConstant;
 
 public:
     Shader(ID3D11Device* device);

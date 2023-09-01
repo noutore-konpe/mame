@@ -86,10 +86,10 @@ Shader::Shader(ID3D11Device* device)
 
 
         // POINT_LIGHT
-        bufferDesc.ByteWidth = sizeof(PointLightConstants);
-        // PointLightConstants
+        bufferDesc.ByteWidth = sizeof(LightConstants);
+        // LightConstants
         hr = device->CreateBuffer(&bufferDesc, nullptr,
-            sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POINT_LIGHT)].GetAddressOf());
+            sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
 
     }
 
@@ -257,17 +257,43 @@ Shader::Shader(ID3D11Device* device)
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
 
-    // POINT_LIGHT
+    // LightConstants
     {
         Graphics& graphics = Graphics::Instance();
 #ifdef _DEBUG
+        // POINT_LIGHT
         pointLightModel = std::make_unique<Model>(graphics.GetDevice(),
             "./Resources/Model/Collision/sqhere.fbx");
 #endif// _DEBUG
 
-        pointLight.position = DirectX::XMFLOAT3(0.0f, 1.5f, 3.0f);
-        pointLight.color = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f);
-        pointLight.range = 5.0f;
+        // DIRECTION_LIGHT
+        {
+            lightConstant.directionLight.direction = DirectX::XMFLOAT4(0.0f, -1.0f, 0.0f, 0.0f);
+            lightConstant.directionLight.color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+        }
+
+        // POINT_LIGHT
+        {
+            lightConstant.pointLight.position = DirectX::XMFLOAT4(0.0f, 1.5f, 3.0f, 0.0f);
+            lightConstant.pointLight.color = DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+            lightConstant.pointLight.range = 5.0f;
+        }
+
+        // SPOT_LIGHT
+        {
+            lightConstant.spotLight.position = DirectX::XMFLOAT4(0.0f, 1.0f, 15.0f, 0.0f);
+            lightConstant.spotLight.color = DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+            lightConstant.spotLight.direction = DirectX::XMFLOAT3(1.0f, -1.0f, 1.0f);
+
+            lightConstant.spotLight.range = 10.0f;
+
+            // ³‹K‰»
+            DirectX::XMVECTOR spotLightDirectionVec = DirectX::XMLoadFloat3(&lightConstant.spotLight.direction);
+            spotLightDirectionVec = DirectX::XMVector3Normalize(spotLightDirectionVec);
+            DirectX::XMStoreFloat3(&lightConstant.spotLight.direction, spotLightDirectionVec);
+
+            lightConstant.spotLight.angle = DirectX::XMConvertToRadians(-5.0f);
+        }
     }
 }
 
@@ -309,12 +335,13 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc)
 
     // POINT_LIGHT
     {
-        deviceContext->UpdateSubresource(sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POINT_LIGHT)].Get(), 0, 0, &pointLight, 0, 0);
-        deviceContext->VSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POINT_LIGHT)].GetAddressOf());
-        deviceContext->PSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POINT_LIGHT)].GetAddressOf());
+        deviceContext->UpdateSubresource(sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].Get(), 0, 0, &lightConstant, 0, 0);
+        deviceContext->VSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
+        deviceContext->PSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
 
 #ifdef _DEBUG
-        pointLightModel->GetTransform()->SetPosition(pointLight.position);
+        DirectX::XMFLOAT3 ptPos = { lightConstant.pointLight.position.x, lightConstant.pointLight.position.y, lightConstant.pointLight.position.z };
+        pointLightModel->GetTransform()->SetPosition(ptPos);
         pointLightModel->Render(0.1f);
 #endif// _DEBUG
     }
@@ -362,12 +389,13 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc, 
 
     // POINT_LIGHT
     {
-        deviceContext->UpdateSubresource(sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POINT_LIGHT)].Get(), 0, 0, &pointLight, 0, 0);
-        deviceContext->VSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POINT_LIGHT)].GetAddressOf());
-        deviceContext->PSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POINT_LIGHT)].GetAddressOf());
+        deviceContext->UpdateSubresource(sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].Get(), 0, 0, &lightConstant, 0, 0);
+        deviceContext->VSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
+        deviceContext->PSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
 
 #ifdef _DEBUG
-        pointLightModel->GetTransform()->SetPosition(pointLight.position);
+        DirectX::XMFLOAT3 ptPos = { lightConstant.pointLight.position.x, lightConstant.pointLight.position.y, lightConstant.pointLight.position.z };
+        pointLightModel->GetTransform()->SetPosition(ptPos);
         pointLightModel->Render(0.1f);
 #endif// _DEBUG
     }
@@ -413,12 +441,38 @@ void Shader::DrawDebug()
 
     ImGui::End();
 
-    // POINT_LIGHT
-    ImGui::Begin("PointLight");
+    if (ImGui::Begin("Light"))
+    {
+        // DIRECTION_LIGHT
+        if (ImGui::TreeNode("DirectionLight"))
+        {
+            ImGui::DragFloat4("directiono", &lightConstant.directionLight.direction.x);
+            ImGui::ColorEdit4("color", &lightConstant.directionLight.color.x);
+            ImGui::TreePop();
+        }
 
-    ImGui::DragFloat3("position", &pointLight.position.x);
-    ImGui::ColorPicker3("color", &pointLight.color.x);
-    ImGui::DragFloat("range", &pointLight.range);
+        // POINT_LIGHT
+        if (ImGui::TreeNode("PointLight"))
+        {
+            ImGui::DragFloat4("position", &lightConstant.pointLight.position.x);
+            ImGui::ColorEdit4("color", &lightConstant.pointLight.color.x);
+            ImGui::DragFloat("range", &lightConstant.pointLight.range);
+            ImGui::TreePop();
+        }
 
-    ImGui::End();
+        // SPOT_LIGHT
+        if (ImGui::TreeNode("SpotLight"))
+        {
+            ImGui::DragFloat4("position", &lightConstant.spotLight.position.x);
+            ImGui::ColorEdit4("color", &lightConstant.spotLight.color.x);
+            ImGui::DragFloat("range", &lightConstant.spotLight.range);
+            ImGui::DragFloat3("direction", &lightConstant.spotLight.direction.x);
+            float angle = DirectX::XMConvertToDegrees(lightConstant.spotLight.angle);
+            ImGui::DragFloat("angle", &angle);
+            lightConstant.spotLight.angle = DirectX::XMConvertToRadians(angle);
+            ImGui::TreePop();
+        }
+
+        ImGui::End();
+    }
 }

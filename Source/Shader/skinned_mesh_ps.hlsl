@@ -13,17 +13,20 @@ Texture2D shadowMap : register(t8);
 // DISSOLVE
 Texture2D maskTexture : register(t15);
 
-/////////////////////////
-//      関数宣言        //
-/////////////////////////
+//////////////////////////////////////////////////
+//                  関数宣言                     //
+//////////////////////////////////////////////////
 float3 CalcLambertDiffuse(float3 lightDirection, float3 lightColor, float3 normal);
 float3 CalcPhongSpecular(float3 lightDirection, float3 lightColor, float3 worldPos, float3 normal);
+float3 CalcLightFromDirectionLight(VS_OUT psIn);
+float3 CalcLightFromPointLight(VS_OUT psIn);
+float3 CalcLightFormSpotLight(VS_OUT psIn);
 
-float4 main(VS_OUT pin) : SV_TARGET
+float4 main(VS_OUT psIn) : SV_TARGET
 {
-    float mask_value = maskTexture.Sample(samplerStates[0],pin.texcoord) * pin.color;
+    float mask_value = maskTexture.Sample(samplerStates[0], psIn.texcoord) * psIn.color;
 
-    float4 color = textureMaps[0].Sample(samplerStates[ANISOTROPIC],pin.texcoord);
+    float4 color = textureMaps[0].Sample(samplerStates[ANISOTROPIC], psIn.texcoord);
     float alpha = color.a;
 
 #if 1
@@ -37,33 +40,30 @@ float4 main(VS_OUT pin) : SV_TARGET
     color.rgb = pow(color.rgb, 1.0 / GAMMA);
 #endif
 
-    float3 N = normalize(pin.worldNormal.xyz);
+    float3 N = normalize(psIn.worldNormal.xyz);
 
 #if 1
-    float3 T = normalize(pin.worldTangent.xyz);
-    float sigma = pin.worldTangent.w;
+    float3 T = normalize(psIn.worldTangent.xyz);
+    float sigma = psIn.worldTangent.w;
     T = normalize(T - N * dot(N, T));
     float3 B = normalize(cross(N, T) * sigma);
 
-    float4 normal = textureMaps[1].Sample(samplerStates[LINEAR], pin.texcoord);
+    float4 normal = textureMaps[1].Sample(samplerStates[LINEAR], psIn.texcoord);
     normal = (normal * 2.0) - 1.0;
     N = normalize((normal.x * T) + (normal.y * B) + (normal.z * N));
 #endif
     
     float3 L = normalize(-lightDirection.xyz);
     float3 diffuse = color.rgb * max(0, dot(N, L));
-#if 1
+#if 0
     // todo : 256の部分をconstantで操作したい
-    float3 V = normalize(cameraPosition.xyz - pin.worldPosition.xyz);
+    float3 V = normalize(cameraPosition.xyz - psIn.worldPosition.xyz);
     float3 specular = pow(max(0, dot(N, normalize(V + L))), 256);
     // SPECULAR
     specular *= 0.1;
 #else
     // 魔導書をお手本に作ってみた
-    float3 refVec = reflect(L, N);
-    float3 toEye = cameraPosition - pin.worldPosition;
-    toEye = normalize(toEye);
-    float3 specular = color.rgb * pow(max(0, dot(refVec, toEye)), 5.0f);
+    float3 directionLight = color.rgb * CalcLightFromDirectionLight(psIn);
 #endif
 
     // dissolve
@@ -79,7 +79,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     const float shadowDepthBias = max(0.01 * (1.0 - dot(N, L)), 0.001);
 #endif
 
-    float4 lightViewPosition = mul(pin.worldPosition, lightViewProjection);
+    float4 lightViewPosition = mul(psIn.worldPosition, lightViewProjection);
     lightViewPosition = lightViewPosition / lightViewPosition.w;
     float2 lightViewTexcoord = 0;
     lightViewTexcoord.x = lightViewPosition.x * 0.5 + 0.5;
@@ -112,59 +112,18 @@ float4 main(VS_OUT pin) : SV_TARGET
         shadowFactor /= 9;
     }
     
-
     // POINT_LIGHT
-    float3 light; // 最終的な結果を入れる
-    {
-        // サーフェイスに入射するポイントライトの光の向きを計算する
-        float3 lightDirection = pin.worldPosition.xyz - ptPosition;
-        
-        // 正規化する
-        lightDirection = normalize(lightDirection);
+    float3 pointLight = CalcLightFromPointLight(psIn);
 
-        // 減衰なしのLambert拡散反射光を計算する
-        float3 diffusePoint = CalcLambertDiffuse(
-            lightDirection,     // ライトの方向
-            ptColor,            // ライトの色
-            pin.worldNormal.xyz // サーフェイスの法線
-        );
-        
-        // 減衰なしのPhong鏡面反射光を計算する
-        float3 specularPoint = CalcPhongSpecular(
-            lightDirection,         // ライトの方向
-            ptColor,                // ライトのカラー
-            pin.worldPosition.xyz,  // サーフェイスのワールド座標
-            pin.worldNormal.xyz     // サーフェイスの法線
-        );
-
-        // ポイントライトとの距離を計算する
-        float distance = length(pin.worldPosition.xyz - ptPosition);
-        
-        // 影響率は距離に比例して小さくなっていく
-        float affect = 1.0f - 1.0f / ptRange * distance;
-        
-        // 影響力がマイナスにならないように修正をかける
-        affect = max(0.0f, affect);
-        
-        // 影響を指数関数的にする。今回は3乗してる
-        affect = pow(affect, 3.0f);
-        
-        // 拡散反射光と鏡面反射光に影響率を乗算して影響を弱める
-        diffusePoint *= affect;
-        specularPoint *= affect;
-        
-        // 2つの反射光を合算して最終的な反射光を求める
-        float3 diffuseLight = diffusePoint + diffuse;
-        float3 specularLight = specularPoint + specular;
-        
-        light = diffuseLight + specularLight;
-    }
+    // SPOT_LIGHT
+    float3 spotLight = CalcLightFormSpotLight(psIn);
     
 
     // ここではモデルの二次反射光を疑似的に出す
 #if 1
     // float3 finalColor = diffuse + specular;
-    float3 finalColor = light;   // ポイントライト考慮
+    // ポイントライト考慮
+    float3 finalColor = directionLight + pointLight + spotLight;
 #else
     float3 finalColor = diffuse;
 #endif
@@ -172,18 +131,18 @@ float4 main(VS_OUT pin) : SV_TARGET
     finalColor.y += 0.2f;
     finalColor.z += 0.2f;
 
-    return float4(finalColor * shadowFactor, alpha) * pin.color;
+    return float4(finalColor * shadowFactor, alpha) * psIn.color;
 
-    //return float4((diffuse + specular) * shadowFactor/*SHADOW*/, alpha) * pin.color;
+    //return float4((diffuse + specular) * shadowFactor/*SHADOW*/, alpha) * psIn.color;
 
     //color.a *= alpha;
     //return color;
     
 
-    //return color * pin.color;
-    //return float4(diffuse, alpha) * pin.color;
+    //return color * psIn.color;
+    //return float4(diffuse, alpha) * psIn.color;
     
-    //return float4(diffuse + specular, alpha) * pin.color;
+    //return float4(diffuse + specular, alpha) * psIn.color;
 }
 
 
@@ -223,53 +182,132 @@ float3 CalcPhongSpecular(float3 lightDirection, float3 lightColor, float3 worldP
     return lightColor * t;
 }
 
-#if 0
-#include "skinned_mesh.hlsli"
-#define POINT 0
-#define LINEAR 1
-#define ANISOTROPIC 2
-SamplerState sampler_states[3]:register(s0);
-Texture2D texture_maps[4]:register(t0);
-Texture2D mask_texture : register(t15);
-float4 main(VS_OUT pin) :SV_TARGET
+// ディレクションライトによる反射光を計算
+float3 CalcLightFromDirectionLight(VS_OUT psIn)
 {
-    float mask_value = mask_texture.Sample(sampler_states[0],pin.texcoord) * pin.color;
+    // ディレクションライトによるLambert拡散反射光を計算する
+    float3 diffuseDirection = CalcLambertDiffuse(
+        directionLig.direction.xyz,
+        directionLig.color.xyz,
+        psIn.worldNormal.xyz
+    );
 
-    float4 color = texture_maps[0].Sample(sampler_states[ANISOTROPIC],pin.texcoord);
-    //float alpha = color.a;
-#if 1
-    // Inverse gamma process
-    const float GAMMA = 1.0;
-    //const float GAMMA = 2.2;
-    color.rgb = pow(color.rgb, GAMMA);
-#endif
-
-    float3 N = normalize(pin.world_normal.xyz);
-    float3 T = normalize(pin.world_tangent.xyz);
-    float sigma = pin.world_tangent.w;
-    T = normalize(T - N * dot(N, T));
-    float3 B = normalize(cross(N, T) * sigma);
-
-    float4 normal = texture_maps[1].Sample(sampler_states[LINEAR], pin.texcoord);
-    normal = (normal * 2.0) - 1.0;
-    N = normalize((normal.x * T) + (normal.y * B) + (normal.z * N));
-
-    float3 L = normalize(-light_direction.xyz);
-    float3 diffuse = color.rgb * max(0, dot(N, L));
-    float3 V = normalize(camera_position.xyz - pin.world_position.xyz);
-    float3 specular = pow(max(0, dot(N, normalize(V + L))), 128);
-
-    // dissolve
-    float alpha = step(parameters.x, mask_value);
-
-
-    //color.a *= alpha;
-    //return color;
-
-
-    return color * pin.color;
-    //return float4(diffuse, alpha) * pin.color;
-
-    return float4(diffuse + specular, alpha) * pin.color;
+    // ディレクションライトによるPhong鏡面反射光を計算する
+    float3 specularDirection = CalcPhongSpecular(
+        directionLig.direction.xyz,
+        directionLig.color.xyz,
+        psIn.worldPosition.xyz,
+        psIn.worldNormal.xyz
+    );
+    
+    return diffuseDirection + specularDirection;
 }
-#endif
+
+// ポイントライトによる反射光を計算
+float3 CalcLightFromPointLight(VS_OUT psIn)
+{   
+    // このサーフェイスに入射しているポイントライトの光の向きを計算する
+    float3 lightDirection = psIn.worldPosition.xyz - pointLig.position.xyz;
+        
+    // 正規化して大きさ1のベクトルにする
+    lightDirection = normalize(lightDirection);
+
+    // 減衰なしのLambert拡散反射光を計算する
+    float3 diffusePoint = CalcLambertDiffuse(
+        lightDirection,         // ライトの方向
+        pointLig.color.xyz, // ライトの色
+        psIn.worldNormal.xyz    // サーフェイスの法線
+    );
+        
+    // 減衰なしのPhong鏡面反射光を計算する
+    float3 specularPoint = CalcPhongSpecular(
+        lightDirection,         // ライトの方向
+        pointLig.color.xyz, // ライトのカラー
+        psIn.worldPosition.xyz, // サーフェイスのワールド座標
+        psIn.worldNormal.xyz    // サーフェイスの法線
+    );
+
+    // 距離による影響率を計算する
+    {
+        // ポイントライトとの距離を計算する
+        float distance = length(psIn.worldPosition.xyz - pointLig.position.xyz);
+        
+        // 影響率は距離に比例して小さくなっていく
+        float affect = 1.0f - 1.0f / pointLig.range * distance;
+        
+        // 影響力がマイナスにならないように修正をかける
+        affect = max(0.0f, affect);
+        
+        // 影響を指数関数的にする。今回は3乗してる
+        affect = pow(affect, 3.0f);
+        
+        // 拡散反射光と鏡面反射光に影響率を乗算して影響を弱める
+        diffusePoint *= affect;
+        specularPoint *= affect;
+    }
+    
+    return diffusePoint + specularPoint;
+}
+
+// スポットライトによる反射光を計算
+float3 CalcLightFormSpotLight(VS_OUT psIn)
+{
+    // このサーフェイスに入射するスポットライトの光の向きを計算する
+    float3 lightDirection = psIn.worldPosition.xyz - spotLig.position.xyz;
+    
+    // 正規化して大きさ１のベクトルにする
+    lightDirection = normalize(lightDirection);
+    
+    // 減衰なしのLambert拡散反射光を計算する
+    float3 diffuseSpotLight = CalcLambertDiffuse(
+        lightDirection,         // ライトの方向
+        spotLig.color.xyz, // ライトの色
+        psIn.worldPosition.xyz  // サーフェイスの法線
+    );
+
+    // 減衰なしのPhong鏡面反射光を計算する
+    float3 specularSpotLight = CalcPhongSpecular(
+        lightDirection,         // ライトの方向
+        spotLig.color.xyz, // ライトのカラー
+        psIn.worldPosition.xyz, // サーフェイスのワールド座標
+        psIn.worldNormal.xyz    // サーフェイスの法線
+    );
+
+    // 距離による減衰率を計算する
+    {
+        // スポットライトとの距離を計算する
+        float3 distance = length(psIn.worldPosition.xyz - spotLig.position.xyz);
+        
+        // 影響率は距離に比例して小さくなっていく
+        float affect = 1.0f - 1.0f / spotLig.range * distance;
+        
+        // 影響力がマイナスにならないように補正をかける
+        affect = max(0.0f, affect);
+        
+        // 影響の仕方を指数関数的にする。今回は３乗している
+        affect = pow(affect, 3.0f);
+        
+        // 影響率を乗算して反射光を弱める
+        diffuseSpotLight *= affect;
+        specularSpotLight *= affect;
+    }   
+    
+    // 角度による影響率を求める
+    {
+        // 入射光と射出方向の角度を求める
+        float angle = dot(lightDirection, spotLig.direction);
+        angle = abs(acos(angle));
+       
+        // 角度に比例して小さくなっていく影響率を計算する
+        float affect = 1.0f - 1.0f / spotLig.angle * angle;
+        
+        // 影響率がマイナスにならないように補正をかける
+        affect = max(0.0f, affect);
+        
+        // 影響の仕方を指数関数的にする。今回は0.5乗している
+        diffuseSpotLight *= affect;
+        specularSpotLight *= affect;
+    }
+
+    return diffuseSpotLight + specularSpotLight;
+}
