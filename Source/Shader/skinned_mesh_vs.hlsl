@@ -52,5 +52,8 @@ VS_OUT main(VS_IN vin)
     }
 #endif
 
+    // LIM_LIGHT
+    vout.normalInView = mul(viewProjection, vin.normal); // ƒJƒƒ‰‹óŠÔ‚Ì–@ü‚ğ‹‚ß‚é
+    
     return vout;
 }

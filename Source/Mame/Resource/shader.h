@@ -72,11 +72,20 @@ public:
         float angle = 0;                    // スポットライトの射出角度
     };
 
+    // HEMISPHERE_LIGHT
+    struct HemisphereLight
+    {
+        DirectX::XMFLOAT4 groundColor;  // 地面色
+        DirectX::XMFLOAT4 skyColor;     // 天球色
+        DirectX::XMFLOAT4 groundNormal; // 地面の法線
+    };
+
     struct LightConstants
     {
-        DirectionLight directionLight;  // ディレクションライト
-        PointLight pointLight;          // ポイントライト
-        SpotLight spotLight;            // スポットライト
+        DirectionLight directionLight;      // ディレクションライト
+        PointLight pointLight;              // ポイントライト
+        SpotLight spotLight;                // スポットライト
+        HemisphereLight hemisphereLight;    // 半球ライト
     }lightConstant;
 
 public:

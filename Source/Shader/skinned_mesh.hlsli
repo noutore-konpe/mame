@@ -15,6 +15,9 @@ struct VS_OUT
     float4 worldTangent : TANGENT;
     float2 texcoord : TEXCOORD;
     float4 color : COLOR;
+    
+    // LIM_LIGHT
+    float3 normalInView : TEXCOORD2;
 };
 
 // モデル情報
@@ -65,12 +68,21 @@ struct SpotLight
     float angle;        // スポットライトの射出角度
 };
 
+// 半球ライト
+struct HemisphereLight
+{
+    float4 groundColor;     // 照り返しのライト
+    float4 skyColor;        // 天球ライト
+    float4 groundNormal;    // 地面の法線
+};
+
 // ライト
 cbuffer LIGHT_CONSTANT_BUFFER : register(b5)
 {
-    DirectionLight directionLig;
-    PointLight pointLig;
-    SpotLight spotLig;
+    DirectionLight directionLig;    // ディレクションライト
+    PointLight pointLig;            // ポイントライト
+    SpotLight spotLig;              // スポットライト
+    HemisphereLight hemisphereLig;  // 半球ライト
 }
 
 cbuffer DISSOLVE_CONSTANT_BUFFER : register(b3)

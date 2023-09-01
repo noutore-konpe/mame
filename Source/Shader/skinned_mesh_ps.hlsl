@@ -1,5 +1,11 @@
 #include "skinned_mesh.hlsli"
 
+// 定数
+#define POINT_LIGHT 1
+#define SPOT_LIGHT 1
+#define LIM_LIGHT 0
+#define HEMISPHERE_LIGHT 1
+
 #define POINT 0
 #define LINEAR 1
 #define ANISOTROPIC 2
@@ -21,6 +27,8 @@ float3 CalcPhongSpecular(float3 lightDirection, float3 lightColor, float3 worldP
 float3 CalcLightFromDirectionLight(VS_OUT psIn);
 float3 CalcLightFromPointLight(VS_OUT psIn);
 float3 CalcLightFormSpotLight(VS_OUT psIn);
+float3 CalcLimLight(VS_OUT psIn);
+float3 CalcHemisphereLight(VS_OUT psIn);
 
 float4 main(VS_OUT psIn) : SV_TARGET
 {
@@ -112,37 +120,40 @@ float4 main(VS_OUT psIn) : SV_TARGET
         shadowFactor /= 9;
     }
     
-    // POINT_LIGHT
-    float3 pointLight = CalcLightFromPointLight(psIn);
-
-    // SPOT_LIGHT
-    float3 spotLight = CalcLightFormSpotLight(psIn);
+    // 最終的なカラー
+    float3 finalColor = directionLight;
     
+    // POINT_LIGHT
+#if POINT_LIGHT
+    float3 pointLight = CalcLightFromPointLight(psIn);
+    finalColor += pointLight;
+#endif
+    
+    // SPOT_LIGHT
+#if SPOT_LIGHT
+    float3 spotLight = CalcLightFormSpotLight(psIn);
+    finalColor += spotLight;
+#endif
+    
+    // LIM_LIGHT
+#if LIM_LIGHT
+    float3 limLight = color.rgb * CalcLimLight(psIn);
+    finalColor += limLight;
+#endif
+    
+    // HEMISPHERE_LIGHT
+#if HEMISPHERE_LIGHT
+    float3 hemisphereLight = color.rgb * CalcHemisphereLight(psIn);
+    finalColor += hemisphereLight;
+#endif
 
     // ここではモデルの二次反射光を疑似的に出す
-#if 1
-    // float3 finalColor = diffuse + specular;
-    // ポイントライト考慮
-    float3 finalColor = directionLight + pointLight + spotLight;
-#else
-    float3 finalColor = diffuse;
-#endif
     finalColor.x += 0.2f;
     finalColor.y += 0.2f;
     finalColor.z += 0.2f;
+    
 
     return float4(finalColor * shadowFactor, alpha) * psIn.color;
-
-    //return float4((diffuse + specular) * shadowFactor/*SHADOW*/, alpha) * psIn.color;
-
-    //color.a *= alpha;
-    //return color;
-    
-
-    //return color * psIn.color;
-    //return float4(diffuse, alpha) * psIn.color;
-    
-    //return float4(diffuse + specular, alpha) * psIn.color;
 }
 
 
@@ -310,4 +321,37 @@ float3 CalcLightFormSpotLight(VS_OUT psIn)
     }
 
     return diffuseSpotLight + specularSpotLight;
+}
+
+// リムライト
+float3 CalcLimLight(VS_OUT psIn)
+{
+    // サーフェイスの法線と光の入射方向に依存するリムの強さを求める
+    float power1 = 1.0f - max(0.0f, dot(directionLig.direction, psIn.worldNormal));
+
+    // サーフェイスの法線と視点の方向に依存するリムの強さを求める
+    float power2 = 1.0f - max(0.0f, psIn.normalInView * -1.0f);
+    
+    // 最終的なリムの強さを求める
+    float limPower = power1 * power2;
+    
+    // 強さの変化を指数関数的にする
+    limPower = pow(limPower, 1.3f);
+    
+    return limPower * directionLig.color;
+}
+
+// 半球ライト
+float3 CalcHemisphereLight(VS_OUT psIn)
+{
+    // サーフェイスの法線と地面の法線との内積を計算する
+    float t = dot(psIn.worldNormal, hemisphereLig.groundNormal);
+
+    // 内積の結果を０～１の範囲に変換する
+    t = (t + 1.0f) / 2.0f;
+    
+    // 地面色と天球色を補間率ｔで線形補間する
+    float3 hemisphereLight = lerp(hemisphereLig.groundColor, hemisphereLig.skyColor, t);
+        
+    return hemisphereLight;
 }

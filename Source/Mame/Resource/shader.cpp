@@ -294,6 +294,24 @@ Shader::Shader(ID3D11Device* device)
 
             lightConstant.spotLight.angle = DirectX::XMConvertToRadians(-5.0f);
         }
+
+        // HEMISPHERE_LIGHT
+        {
+            // 地面色
+            lightConstant.hemisphereLight.groundColor.x = 0.7f;
+            lightConstant.hemisphereLight.groundColor.y = 0.5f;
+            lightConstant.hemisphereLight.groundColor.z = 0.3f;
+
+            // 天球色
+            lightConstant.hemisphereLight.skyColor.x = 0.15f;
+            lightConstant.hemisphereLight.skyColor.y = 0.7f;
+            lightConstant.hemisphereLight.skyColor.z = 0.95f;
+
+            // 地面の法線を設定
+            lightConstant.hemisphereLight.groundNormal.x = 0.0f;
+            lightConstant.hemisphereLight.groundNormal.y = 1.0f;
+            lightConstant.hemisphereLight.groundNormal.z = 0.0f;
+        }
     }
 }
 
@@ -470,6 +488,15 @@ void Shader::DrawDebug()
             float angle = DirectX::XMConvertToDegrees(lightConstant.spotLight.angle);
             ImGui::DragFloat("angle", &angle);
             lightConstant.spotLight.angle = DirectX::XMConvertToRadians(angle);
+            ImGui::TreePop();
+        }
+
+        // HEMISPHERE_LIGHT
+        if (ImGui::TreeNode("HemisphereLight"))
+        {
+            ImGui::ColorEdit4("groundColor", &lightConstant.hemisphereLight.groundColor.x);
+            ImGui::ColorEdit4("skyColor", &lightConstant.hemisphereLight.skyColor.x);
+            ImGui::DragFloat4("groundNormal", &lightConstant.hemisphereLight.groundNormal.x);
             ImGui::TreePop();
         }
 
