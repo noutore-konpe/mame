@@ -82,12 +82,12 @@ void Book::End()
 }
 
 // •`‰æˆ—
-void Book::Render(const float& elapsedTime, const float& scale)
+void Book::Render(const float& scale)
 {
-    Item::Render(elapsedTime, scale);
+    Item::Render(scale);
 
     // ’eŠÛ•`‰æˆ—
-    projectileManager.Render(elapsedTime, 0.1f);
+    projectileManager.Render(0.1f);
 }
 
 // ImGui—p

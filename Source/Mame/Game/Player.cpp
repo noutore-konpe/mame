@@ -3,6 +3,8 @@
 #include "../Graphics/Graphics.h"
 #include "../Input/Input.h"
 
+#include "AbilityManager.h"
+
 // コンストラクタ
 Player::Player()
 {

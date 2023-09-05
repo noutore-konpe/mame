@@ -23,7 +23,8 @@ public:
     // モデルリソース読み込み
     const std::shared_ptr<skinned_mesh> LoadModelResource(
         ID3D11Device* device, 
-        const char* const      fbx_filename, 
+        const char* const      fbx_filename,
+        const char* const      psFilename       = nullptr,
         const bool             triangulate      = false, 
         const float            sampling_rate    = 0
     );

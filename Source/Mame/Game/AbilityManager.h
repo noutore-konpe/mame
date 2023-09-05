@@ -1,20 +1,20 @@
 #pragma once
 
-#include "Item.h"
+#include "Ability.h"
 #include <vector>
 #include <set>
 
-class ItemManager
+class AbilityManager
 {
 private:
-    ItemManager() {}
-    ~ItemManager() {}
+    AbilityManager() {}
+    ~AbilityManager() {}
 
 public:
     // 唯一のインスタンス取得
-    static ItemManager& Instance()
+    static AbilityManager& Instance()
     {
-        static ItemManager instance;
+        static AbilityManager instance;
         return instance;
     }
 
@@ -27,17 +27,17 @@ public:
     void DrawDebug();                       // ImGui用
 
 public:
-    void Register(Item* item);  // 登録
-    void Remove(Item* item);    // 削除
-    void Clear();               // 全削除
+    void Register(Ability* ability);    // 登録
+    void Remove(Ability* ability);      // 削除
+    void Clear();                       // 全削除
 
 public: // 取得・設定　関連
-    const int GetItemCount() const { return static_cast<int>(items.size()); } // アイテム数取得
+    const int GetAbilityCount() const { return static_cast<int>(abilitys.size()); } // アビリティ数取得
 
-    Item* GetItem(int index) { return items.at(index); } // アイテム取得
+    Ability* GetAbility(int index) { return abilitys.at(index); } // アビリティ取得
 
 private:
-    std::vector<Item*>  items   = {};
-    std::set<Item*>     removes = {};
+    std::vector<Ability*>  abilitys = {};
+    std::set<Ability*>     removes = {};
 };
 

@@ -357,10 +357,10 @@ private:
     Microsoft::WRL::ComPtr<ID3D11Buffer> InstancingBuffer;
 
 
-    void create_com_objects(ID3D11Device* device, const char* fbx_filename);
+    void create_com_objects(ID3D11Device* device, const char* fbx_filename, const char* psFilename);
 
 public:
-    skinned_mesh(ID3D11Device* device, const char* fbx_filename, bool triangulate = false, float sampling_rate = 0);
+    skinned_mesh(ID3D11Device* device, const char* fbx_filename, const char* psFilename=nullptr, bool triangulate = false, float sampling_rate = 0);
     skinned_mesh(ID3D11Device* device, const char* fbx_filename, std::vector<std::string>& animation_filenames, bool triangulate = false, float sampling_rate = 0);
     virtual ~skinned_mesh() = default;
 

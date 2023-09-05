@@ -2,7 +2,7 @@
 
 #include "../Graphics/Model.h"
 
-class Item
+class Ability
 {
 public: // enum関連
     enum class Tag
@@ -12,14 +12,14 @@ public: // enum関連
     };
 
 public:
-    Item() {}
-    virtual ~Item() {}
+    Ability() {}
+    virtual ~Ability() {}
 
-    virtual void Initialize() {}                        // 初期化
-    virtual void Finalize() {}                          // 終了化
-    virtual void Begin() {}                             // 毎フレーム一番最初に呼ばれる
-    virtual void Update(const float& elapsedTime) {}    // 更新処理
-    virtual void End() {}                               // 毎フレーム一番最後に呼ばれる
+    virtual void Initialize() {};                       // 初期化
+    virtual void Finalize() {};                         // 終了化
+    virtual void Begin() {};                            // 毎フレーム一番最初に呼ばれる
+    virtual void Update(const float& elapsedTime) {};   // 更新処理
+    virtual void End() {};                              // 毎フレーム一番最後に呼ばれる
     virtual void Render(const float& scale);            // 描画処理
     virtual void DrawDebug();                           // ImGui用
 

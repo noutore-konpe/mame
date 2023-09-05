@@ -13,6 +13,12 @@
 // SHADOW
 #include "../Graphics/ShadowMap.h"
 
+#define POINT_LIGHT_ONE 0
+
+#if !POINT_LIGHT_ONE
+const int pointLightMax = 8;
+#endif
+
 class Shader
 {
 public: // enum関連
@@ -83,7 +89,13 @@ public:
     struct LightConstants
     {
         DirectionLight directionLight;      // ディレクションライト
+        
+#if POINT_LIGHT_ONE
         PointLight pointLight;              // ポイントライト
+#else
+        PointLight pointLight[pointLightMax];
+#endif// POINT_LIGHT_ONE
+
         SpotLight spotLight;                // スポットライト
         HemisphereLight hemisphereLight;    // 半球ライト
     }lightConstant;
@@ -108,7 +120,10 @@ public:
 
     void DrawDebug();
 
-
+public:
+    void EntryLight(); // 登場演出に使う
+    void EntryLight2();
+    bool isEntryLight = false;
 
 private:
     DirectX::XMFLOAT3 eye{ 0.0f,0.0f,-10.0f };

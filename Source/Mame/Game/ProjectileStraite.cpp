@@ -48,9 +48,9 @@ void ProjectileStraite::Update(const float& elapsedTime)
 }
 
 // •`‰æˆ—
-void ProjectileStraite::Render(const float& elapsedTime, const float& scale)
+void ProjectileStraite::Render(const float& scale)
 {
-    Projectile::Render(elapsedTime, scale);
+    Projectile::Render(scale);
 }
 
 // ImGui—p

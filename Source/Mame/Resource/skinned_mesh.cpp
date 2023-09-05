@@ -98,7 +98,7 @@ void fetch_bone_influences(const FbxMesh* fbx_mesh,
 }
 
 
-skinned_mesh::skinned_mesh(ID3D11Device* device, const char* fbx_filename, bool triangulate, float sampling_rate)
+skinned_mesh::skinned_mesh(ID3D11Device* device, const char* fbx_filename, const char* psFilename, bool triangulate, float sampling_rate)
 {
     std::filesystem::path cereal_filename(fbx_filename);
     cereal_filename.replace_extension("cereal");
@@ -116,7 +116,7 @@ skinned_mesh::skinned_mesh(ID3D11Device* device, const char* fbx_filename, bool 
         cereal::BinaryOutputArchive serialization(ofs);
         serialization(scene_view, meshes, materials, animation_clips);
     }
-    create_com_objects(device, fbx_filename);
+    create_com_objects(device, fbx_filename, psFilename);
 
     // BOUNDING_BOX
     compute_bounding_box();
@@ -145,7 +145,7 @@ skinned_mesh::skinned_mesh(ID3D11Device* device, const char* fbx_filename, std::
         cereal::BinaryOutputArchive serialization(ofs);
         serialization(scene_view, meshes, materials, animation_clips);
     }
-    create_com_objects(device, fbx_filename);
+    create_com_objects(device, fbx_filename, nullptr);
 
     // BOUNDING_BOX
     compute_bounding_box();
@@ -306,7 +306,7 @@ void skinned_mesh::fetch_meshes(FbxScene* fbx_scene, std::vector<mesh>& meshes)
     }
 }
 
-void skinned_mesh::create_com_objects(ID3D11Device* device, const char* fbx_filename)
+void skinned_mesh::create_com_objects(ID3D11Device* device, const char* fbx_filename, const char* psFilename)
 {
     for (mesh& mesh : meshes)
     {
@@ -377,9 +377,11 @@ void skinned_mesh::create_com_objects(ID3D11Device* device, const char* fbx_file
         input_layout.ReleaseAndGetAddressOf(), input_element_desc, ARRAYSIZE(input_element_desc));
     create_ps_from_cso(device, "./resources/Shader/phongShaderPS.cso", pixel_shader.ReleaseAndGetAddressOf());
 #else
-    CreateVsFromCso(device, "./resources/Shader/skinned_mesh_vs.cso", vertex_shader.ReleaseAndGetAddressOf(),
+    CreateVsFromCso(device, "./resources/Shader/FbxModelVS.cso", vertex_shader.ReleaseAndGetAddressOf(),
         input_layout.ReleaseAndGetAddressOf(), input_element_desc, ARRAYSIZE(input_element_desc));
-    CreatePsFromCso(device, "./resources/Shader/skinned_mesh_ps.cso", pixel_shader.ReleaseAndGetAddressOf());
+    CreatePsFromCso(device,
+        (psFilename != nullptr) ? psFilename : "./resources/Shader/CharacterPS.cso",
+        pixel_shader.ReleaseAndGetAddressOf());
 #endif // Shader
 
 #else

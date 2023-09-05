@@ -10,13 +10,13 @@ public:
     Book();
     ~Book() override;
 
-    void Initialize()                                           override; // 初期化
-    void Finalize()                                             override; // 終了化
-    void Begin()                                                override; // 毎フレーム一番最初に呼ばれる
-    void Update(const float& elapsedTime)                       override; // 更新処理
-    void End()                                                  override; // 毎フレーム一番最後に呼ばれる
-    void Render(const float& elapsedTime, const float& scale)   override; // 描画処理
-    void DrawDebug()                                            override; // ImGui用
+    void Initialize()                       override; // 初期化
+    void Finalize()                         override; // 終了化
+    void Begin()                            override; // 毎フレーム一番最初に呼ばれる
+    void Update(const float& elapsedTime)   override; // 更新処理
+    void End()                              override; // 毎フレーム一番最後に呼ばれる
+    void Render(const float& scale)         override; // 描画処理
+    void DrawDebug()                        override; // ImGui用
 
 public:
     void SetTransform(const float& elapsedTime);

@@ -79,11 +79,11 @@ void ProjectileManager::End()
 }
 
 // •`‰æˆ—
-void ProjectileManager::Render(const float& elapsedTime, const float& scale)
+void ProjectileManager::Render(const float& scale)
 {
     for (Projectile*& projectile : projectiles)
     {
-        projectile->Render(elapsedTime, scale);
+        projectile->Render(scale);
     }
 }
 

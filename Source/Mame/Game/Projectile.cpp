@@ -36,7 +36,7 @@ void Projectile::End()
 }
 
 // •`‰æˆ—
-void Projectile::Render(const float& elapsedTime, const float& scale)
+void Projectile::Render(const float& scale)
 {
     model->Render(scale);
 }

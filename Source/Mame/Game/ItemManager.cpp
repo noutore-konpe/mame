@@ -70,11 +70,11 @@ void ItemManager::End()
 }
 
 // •`‰æˆ—
-void ItemManager::Render(const float& elapsedTime, const float& scale)
+void ItemManager::Render(const float& scale)
 {
     for (Item*& item : items)
     {
-        item->Render(elapsedTime, scale);
+        item->Render(scale);
     }
 }
 

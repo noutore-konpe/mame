@@ -426,7 +426,7 @@ void SceneDemo::Render(const float& elapsedTime)
 
     // item
     {
-        ItemManager::Instance().Render(elapsedTime, 0.01f);
+        ItemManager::Instance().Render(0.01f);
     }
 
     // stage

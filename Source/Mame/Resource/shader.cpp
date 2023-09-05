@@ -274,9 +274,18 @@ Shader::Shader(ID3D11Device* device)
 
         // POINT_LIGHT
         {
+#if POINT_LIGHT_ONE
             lightConstant.pointLight.position = DirectX::XMFLOAT4(0.0f, 1.5f, 3.0f, 0.0f);
             lightConstant.pointLight.color = DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
             lightConstant.pointLight.range = 5.0f;
+#else
+            for (int i = 0; i < pointLightMax; ++i)
+            {
+                lightConstant.pointLight[i].position=DirectX::XMFLOAT4(0.0f, 1.5f, 3.0f, 0.0f);
+                lightConstant.pointLight[i].color = DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+                lightConstant.pointLight[i].range = 5.0f;
+            }
+#endif// POINT_LIGHT_ONE
         }
 
         // SPOT_LIGHT
@@ -358,9 +367,11 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc)
         deviceContext->PSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
 
 #ifdef _DEBUG
+#if POINT_LIGHT_ONE
         DirectX::XMFLOAT3 ptPos = { lightConstant.pointLight.position.x, lightConstant.pointLight.position.y, lightConstant.pointLight.position.z };
         pointLightModel->GetTransform()->SetPosition(ptPos);
         pointLightModel->Render(0.1f);
+#endif// POINT_LIGHT_ONE
 #endif// _DEBUG
     }
 
@@ -412,12 +423,16 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc, 
         deviceContext->PSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
 
 #ifdef _DEBUG
+#if POINT_LIGHT_ONE
         DirectX::XMFLOAT3 ptPos = { lightConstant.pointLight.position.x, lightConstant.pointLight.position.y, lightConstant.pointLight.position.z };
         pointLightModel->GetTransform()->SetPosition(ptPos);
         pointLightModel->Render(0.1f);
+#endif// POINT_LIGHT_ONE
 #endif// _DEBUG
     }
 
+    EntryLight();
+    //EntryLight2();
 }
 
 void Shader::SetState(ID3D11DeviceContext* dc, int RastarizeState, int DepthStencilState, int SamplerState)
@@ -470,6 +485,7 @@ void Shader::DrawDebug()
         }
 
         // POINT_LIGHT
+#if POINT_LIGHT_ONE
         if (ImGui::TreeNode("PointLight"))
         {
             ImGui::DragFloat4("position", &lightConstant.pointLight.position.x);
@@ -477,6 +493,32 @@ void Shader::DrawDebug()
             ImGui::DragFloat("range", &lightConstant.pointLight.range);
             ImGui::TreePop();
         }
+#else
+        for (int i = 0; i < pointLightMax; ++i)
+        {
+            ImGui::Begin(("pointLight" + std::to_string(i)).c_str());
+            ImGui::DragFloat4("position", &lightConstant.pointLight[i].position.x);
+            ImGui::ColorEdit4("color", &lightConstant.pointLight[i].color.x);
+            ImGui::DragFloat("range", &lightConstant.pointLight[i].range);
+            ImGui::End();
+        }
+        //if (ImGui::TreeNode("PointLight"))
+        //{
+        //    for (int i = 0; i < pointLightMax; ++i)
+        //    {
+        //        //ImGui::BeginMenu(("pointLight" + std::to_string(i)).c_str());
+        //        ImGui::TreeNode(("pointLight" + std::to_string(i)).c_str());
+
+        //        ImGui::DragFloat4("position", &lightConstant.pointLight[i].position.x);
+        //        ImGui::ColorEdit4("color", &lightConstant.pointLight[i].color.x);
+        //        ImGui::DragFloat("range", &lightConstant.pointLight[i].range);
+
+        //        ImGui::TreePop();
+        //        //ImGui::EndMenu();
+        //    }
+        //    ImGui::TreePop();
+        //}
+#endif// POINT_LIGHT_ONE
 
         // SPOT_LIGHT
         if (ImGui::TreeNode("SpotLight"))
@@ -500,6 +542,87 @@ void Shader::DrawDebug()
             ImGui::TreePop();
         }
 
+        if (ImGui::Button("button"))
+        {
+            isEntryLight = true;
+        }
+
         ImGui::End();
+    }
+}
+
+void Shader::EntryLight()
+{
+    if (isEntryLight)
+    {
+        // ”ÍˆÍ‚ðL‚°‚é
+        if (lightConstant.spotLight.range <= 5.0f)lightConstant.spotLight.range += 0.01f;
+        else lightConstant.spotLight.range = 5.0f;
+
+        if (lightConstant.spotLight.range >= 5.0f)
+        {
+            // R
+            lightConstant.spotLight.color.x = 1.0f; 
+
+            // G
+            if (lightConstant.spotLight.color.y <= 0.2f)lightConstant.spotLight.color.y += 0.001f;
+            else lightConstant.spotLight.color.y = 0.2f;
+
+            // B
+            if (lightConstant.spotLight.color.z <= 0.2f)lightConstant.spotLight.color.z += 0.001f;
+            else lightConstant.spotLight.color.z = 0.2f;
+        }
+        else
+        {
+            lightConstant.spotLight.color.x = 1.0f;
+            lightConstant.spotLight.color.y = 0.0f;
+            lightConstant.spotLight.color.z = 0.0f;
+        }
+
+        if (lightConstant.spotLight.color.x == 1.0f &&
+            lightConstant.spotLight.color.y == 0.2f &&
+            lightConstant.spotLight.color.z == 0.2f)
+            isEntryLight = false;
+    }
+    else
+    {
+        lightConstant.spotLight.range = 0.0f;
+
+        // color
+        lightConstant.spotLight.color.x = 0.0f;
+        lightConstant.spotLight.color.y = 0.0f;
+        lightConstant.spotLight.color.z = 0.0f;
+    }
+}
+
+void Shader::EntryLight2()
+{
+    if (isEntryLight)
+    {
+        lightConstant.spotLight.range = 10.0f;
+
+        // color
+        // R
+        if (lightConstant.spotLight.color.x <= 1.0f)lightConstant.spotLight.color.x += 0.00078; //0.0039f;
+        else lightConstant.spotLight.color.x = 1.0f;
+
+        // G
+        if (lightConstant.spotLight.color.y <= 1.0f)lightConstant.spotLight.color.y += 0.0039f; //0.0039f * 5;
+        else lightConstant.spotLight.color.y = 1.0f;
+
+        // B
+        lightConstant.spotLight.color.z = 0.0f;
+
+        if (lightConstant.spotLight.color.x >= 0.3f &&
+            lightConstant.spotLight.color.y >= 1.0f &&
+            lightConstant.spotLight.color.z == 0.0f)
+            isEntryLight = false;
+    }
+    else
+    {
+        // color
+        lightConstant.spotLight.color.x = 0.0f;
+        lightConstant.spotLight.color.y = 0.0f;
+        lightConstant.spotLight.color.z = 0.0f;
     }
 }
