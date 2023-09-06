@@ -97,7 +97,9 @@ Sprite::Sprite(ID3D11Device* device, const wchar_t* filename, const char* psFile
         // spriteDissolve
         if (isDissolve)
         {
-            load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/Mask/dissolve_animation.png",
+            load_texture_from_file(graphics.GetDevice(), 
+                L"./Resources/Image/Mask/mask.png",
+                //L"./Resources/Image/Mask/dissolve_animation.png",
                 maskTexture[0].GetAddressOf(), &maskTexture2dDesc[0]);
             load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/Mask/dissolve_animation2.png",
                 maskTexture[1].GetAddressOf(), &maskTexture2dDesc[1]);
