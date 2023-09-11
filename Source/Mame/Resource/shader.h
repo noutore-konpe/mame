@@ -27,7 +27,14 @@ public: // enum関連
     enum class BLEND_STATE { NONE, ALPHA, ADD, MULTIPLY };
     enum class RASTER_STATE { SOLID, WIREFRAME, CULL_NONE, WIREFRAME_CULL_NONE };
 
-    enum class CONSTANT_BUFFER { SCENE_CONSTANT, CONSTANT_BUFFER_PARAMETRIC, LIGHT_CONSTANT };
+    enum class CONSTANT_BUFFER 
+    {
+        SCENE_CONSTANT,
+        CONSTANT_BUFFER_PARAMETRIC,
+        LIGHT_CONSTANT,
+        FOG_CONSTANT,
+        SHADOW_CONSTANT,
+    };
 
 public:
     struct View
@@ -46,9 +53,38 @@ public:
         DirectX::XMFLOAT4X4 viewProjection;
         DirectX::XMFLOAT4 lightDirection;
         DirectX::XMFLOAT4 cameraPosition;
+
+        // FOG
+        DirectX::XMFLOAT4X4 inverseProjection;
+        DirectX::XMFLOAT4X4 inverseViewProjection;
+        float time;
+
+        float pads[3];
+    };
+
+    // SHADOW
+    struct ShadowConstants
+    {
+        DirectX::XMFLOAT4X4 viewProjection;
+        DirectX::XMFLOAT4 lightDirection;
+        DirectX::XMFLOAT4 cameraPosition;
         // SHADOW
         DirectX::XMFLOAT4X4 lightViewProjection;
     };
+
+    // FOG
+    struct FogConstants
+    {
+        DirectX::XMFLOAT4 fogColor = { 1.000f, 1.000f, 1.000f, 0.894f }; // w: fog intensuty
+        float fogDensity = 0.0005f;
+        //float fogHeightFalloff = 0.9313f;
+        float fogHeightFalloff = 10.0f;
+        float startDistance = 5.00f;
+        float fogCutoffDistance = 500.0f;
+        float timeScale = 0.5f;
+        float speedScale = 0.2f;
+        float pads[2];
+    }fogConstants;
 
     // DIRECTION_LIGHT
     struct DirectionLight
@@ -108,9 +144,12 @@ public:
 
     // 描画開始
     void Begin(ID3D11DeviceContext* dc, const RenderContext& rc);
-    void Begin(ID3D11DeviceContext* dc, const RenderContext& rc, const SceneConstants& sceneConstant);
+    void Begin(ID3D11DeviceContext* dc, const RenderContext& rc, const ShadowConstants& shadowConstant);
     void SetState(ID3D11DeviceContext* dc,
         int RastarizeState, int DepthStencilState, int SamplerState);
+
+    void SetState(ID3D11DeviceContext* deviceContext,
+        int SamplerState, int DepthStencileState, int BlendState, int RasterizerState);
 
     // 描画
     void Draw(ID3D11DeviceContext* dc, Model* model);
@@ -119,6 +158,12 @@ public:
     void End(ID3D11DeviceContext* dc);
 
     void DrawDebug();
+
+public:// 各種ステート設定
+    void SetDepthStencileState(int depthStencileState);
+    void SetBlendState(int blendState);
+    void SetRasterizerState(int rasterizerState);
+
 
 public:
     void EntryLight(); // 登場演出に使う
@@ -163,9 +208,9 @@ private:
     Microsoft::WRL::ComPtr<ID3D11PixelShader>   pixelShader;
     Microsoft::WRL::ComPtr<ID3D11InputLayout>   inputLayout;
 
-    Microsoft::WRL::ComPtr<ID3D11BlendState>        blendState;
-    Microsoft::WRL::ComPtr<ID3D11RasterizerState>   rasterizerState[4];
-    Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilState[4];
+    Microsoft::WRL::ComPtr<ID3D11BlendState>        blendStates[4];
+    Microsoft::WRL::ComPtr<ID3D11RasterizerState>   rasterizerStates[4];
+    Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilStates[4];
 
     Microsoft::WRL::ComPtr<ID3D11SamplerState>  samplerState[6];
 };

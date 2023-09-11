@@ -50,10 +50,10 @@ void Mouse::Update()
 	// 画面のサイズを取得する。
 	RECT rc;
 	GetClientRect(hWnd, &rc);
-	UINT screenW = rc.right - rc.left;
-	UINT screenH = rc.bottom - rc.top;
-	UINT viewportW = screenWidth;
-	UINT viewportH = screenHeight;
+	UINT screenW = screenWidth;
+	UINT screenH = screenHeight;
+	UINT viewportW = rc.right - rc.left;
+	UINT viewportH = rc.bottom - rc.top;
 
 	// 画面補正
 	positionX[1] = positionX[0];

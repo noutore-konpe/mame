@@ -9,6 +9,8 @@
 
 #include "../Graphics/Graphics.h"
 
+#include "../framework.h"
+
 HRESULT CreateVsFromCso(ID3D11Device* device, const char* cso_name, ID3D11VertexShader** vertex_shader,
     ID3D11InputLayout** input_layout, D3D11_INPUT_ELEMENT_DESC* input_element_desc, UINT num_elements)
 {
@@ -91,30 +93,72 @@ Shader::Shader(ID3D11Device* device)
         hr = device->CreateBuffer(&bufferDesc, nullptr,
             sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
 
+        // SHADOW
+        bufferDesc.ByteWidth = sizeof(ShadowConstants);
+        hr = device->CreateBuffer(&bufferDesc, nullptr,
+            sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].GetAddressOf());
+
+        // FOG
+        bufferDesc.ByteWidth = sizeof(FogConstants);
+        hr = device->CreateBuffer(&bufferDesc, nullptr,
+            sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].GetAddressOf());
     }
 
     // ブレンドステート
     {
         HRESULT hr{ S_OK };
 
-        D3D11_BLEND_DESC blend_desc{};
-        // ピクセルをレンダーターゲットに設定するときに、
-        //マルチサンプリング手法としてアルファ隊カバレッジを使用するかどうかを指定します
-        blend_desc.AlphaToCoverageEnable = FALSE;
-        // 同時レンダーターゲットで独立したブレンドを有効にするかどうかを設定します。
-        // 独立したブレンドを有効にするには、TUREに設定します
-        // FALSEに設定すると、RenderTarget[0]メンバーのみが使用されます。RenderTarget[1..7]は無視されます
-        blend_desc.IndependentBlendEnable = FALSE;
-        // D3D11_RENDER_TARGET_BLEND_DESC[8]
-        blend_desc.RenderTarget[0].BlendEnable = TRUE;
-        blend_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-        blend_desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-        blend_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-        blend_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-        blend_desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-        blend_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-        blend_desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-        hr = device->CreateBlendState(&blend_desc, blendState.GetAddressOf());
+        D3D11_BLEND_DESC desc{};
+        desc.AlphaToCoverageEnable = FALSE;
+        desc.IndependentBlendEnable = FALSE;
+        desc.RenderTarget[0].BlendEnable = FALSE;
+        desc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+        desc.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
+        desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+        desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+        desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+        hr = device->CreateBlendState(&desc, blendStates[static_cast<size_t>(BLEND_STATE::NONE)].GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+        desc.AlphaToCoverageEnable = FALSE;
+        desc.IndependentBlendEnable = FALSE;
+        desc.RenderTarget[0].BlendEnable = TRUE;
+        desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+        desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+        desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+        desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+        desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+        hr = device->CreateBlendState(&desc, blendStates[static_cast<size_t>(BLEND_STATE::ALPHA)].GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+        desc.AlphaToCoverageEnable = FALSE;
+        desc.IndependentBlendEnable = FALSE;
+        desc.RenderTarget[0].BlendEnable = TRUE;
+        desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA; //D3D11_BLEND_ONE D3D11_BLEND_SRC_ALPHA
+        desc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+        desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+        desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+        desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+        hr = device->CreateBlendState(&desc, blendStates[static_cast<size_t>(BLEND_STATE::ADD)].GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+        desc.AlphaToCoverageEnable = FALSE;
+        desc.IndependentBlendEnable = FALSE;
+        desc.RenderTarget[0].BlendEnable = TRUE;
+        desc.RenderTarget[0].SrcBlend = D3D11_BLEND_ZERO; //D3D11_BLEND_DEST_COLOR
+        desc.RenderTarget[0].DestBlend = D3D11_BLEND_SRC_COLOR; //D3D11_BLEND_SRC_COLOR
+        desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_DEST_ALPHA;
+        desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+        desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+        hr = device->CreateBlendState(&desc, blendStates[static_cast<size_t>(BLEND_STATE::MULTIPLY)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
 
@@ -122,30 +166,30 @@ Shader::Shader(ID3D11Device* device)
     {
         HRESULT hr{ S_OK };
 
-        D3D11_DEPTH_STENCIL_DESC depth_stencil_desc{};
+        D3D11_DEPTH_STENCIL_DESC desc{};
         // 0 深度テスト：オン　深度ライト：オン
-        depth_stencil_desc.DepthEnable = TRUE;	// 深度テストを有効にします
-        depth_stencil_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;	// 深度データで変更できる深度ステンシルバッファーの一部を特定します
-        depth_stencil_desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; // 深度データと既存データを比較する関数
-        hr = device->CreateDepthStencilState(&depth_stencil_desc, depthStencilState[0].GetAddressOf());
+        desc.DepthEnable = TRUE;	// 深度テストを有効にします
+        desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;	// 深度データで変更できる深度ステンシルバッファーの一部を特定します
+        desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; // 深度データと既存データを比較する関数
+        hr = device->CreateDepthStencilState(&desc, depthStencilStates[0].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
         // 1 深度テスト：オン　深度ライト：オフ
-        depth_stencil_desc.DepthEnable = TRUE;
-        depth_stencil_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-        hr = device->CreateDepthStencilState(&depth_stencil_desc, depthStencilState[1].GetAddressOf());
+        desc.DepthEnable = TRUE;
+        desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+        hr = device->CreateDepthStencilState(&desc, depthStencilStates[1].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
         // 2 深度テスト：オフ　深度ライト：オン
-        depth_stencil_desc.DepthEnable = FALSE;
-        depth_stencil_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-        hr = device->CreateDepthStencilState(&depth_stencil_desc, depthStencilState[2].GetAddressOf());
+        desc.DepthEnable = FALSE;
+        desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+        hr = device->CreateDepthStencilState(&desc, depthStencilStates[2].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
         // 3 深度テスト：オフ　深度ライト：オフ
-        depth_stencil_desc.DepthEnable = FALSE;
-        depth_stencil_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-        hr = device->CreateDepthStencilState(&depth_stencil_desc, depthStencilState[3].GetAddressOf());
+        desc.DepthEnable = FALSE;
+        desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+        hr = device->CreateDepthStencilState(&desc, depthStencilStates[3].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
 
@@ -153,36 +197,36 @@ Shader::Shader(ID3D11Device* device)
     {
         HRESULT hr{ S_OK };
 
-        D3D11_RASTERIZER_DESC rasterizer_desc{};
-        rasterizer_desc.FillMode = D3D11_FILL_SOLID;    // レンダリング時に使用するフィルモード
-        rasterizer_desc.CullMode = D3D11_CULL_BACK;     // 指定した方向に面する三角形が描画されないことを示す
-        rasterizer_desc.FrontCounterClockwise = TRUE;  // 三角形が表向きかを決定する
-        rasterizer_desc.DepthBias = 0;                  // 指定されたピクセルに追加された深度値。
-        rasterizer_desc.DepthBiasClamp = 0;             // ピクセルの最大深度バイアス
-        rasterizer_desc.SlopeScaledDepthBias = 0;       // 指定されたピクセルの傾きのスカラー
-        rasterizer_desc.DepthClipEnable = TRUE;         // 距離に基づいてクリッピングを有効にします
-        rasterizer_desc.ScissorEnable = FALSE;          // ハサミ四角形カリングを有効にします。
-        rasterizer_desc.MultisampleEnable = FALSE;      // マルチサンプリングアンチエイリアシング(MSAA)レンダーターゲットで
-                                                        // 四角形またはアルファ線のアンチエイリアシングアルゴリズムを使用するかどうかを指定します
-        rasterizer_desc.AntialiasedLineEnable = FALSE;  // 回線アンチエイリアシングを有効にするかどうか
-
-        hr = device->CreateRasterizerState(&rasterizer_desc, rasterizerState[0].GetAddressOf());
+        D3D11_RASTERIZER_DESC desc{};
+        desc.FillMode = D3D11_FILL_SOLID;
+        desc.CullMode = D3D11_CULL_BACK;
+        desc.FrontCounterClockwise = TRUE;
+        desc.DepthBias = 0;
+        desc.DepthBiasClamp = 0;
+        desc.SlopeScaledDepthBias = 0;
+        desc.DepthClipEnable = TRUE;
+        desc.ScissorEnable = FALSE;
+        desc.MultisampleEnable = FALSE;
+        desc.AntialiasedLineEnable = FALSE;
+        hr = device->CreateRasterizerState(&desc, rasterizerStates[static_cast<size_t>(RASTER_STATE::SOLID)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-        rasterizer_desc.CullMode = D3D11_CULL_NONE;
-        hr = device->CreateRasterizerState(&rasterizer_desc, rasterizerState[3].GetAddressOf());
+        desc.FillMode = D3D11_FILL_WIREFRAME;
+        desc.CullMode = D3D11_CULL_BACK;
+        desc.AntialiasedLineEnable = TRUE;
+        hr = device->CreateRasterizerState(&desc, rasterizerStates[static_cast<size_t>(RASTER_STATE::WIREFRAME)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-        rasterizer_desc.FillMode = D3D11_FILL_WIREFRAME;
-        rasterizer_desc.CullMode = D3D11_CULL_BACK;
-        rasterizer_desc.AntialiasedLineEnable = TRUE;
-        hr = device->CreateRasterizerState(&rasterizer_desc, rasterizerState[1].GetAddressOf());
+        desc.FillMode = D3D11_FILL_SOLID;
+        desc.CullMode = D3D11_CULL_NONE;
+        desc.AntialiasedLineEnable = TRUE;
+        hr = device->CreateRasterizerState(&desc, rasterizerStates[static_cast<size_t>(RASTER_STATE::CULL_NONE)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-        rasterizer_desc.FillMode = D3D11_FILL_WIREFRAME;
-        rasterizer_desc.CullMode = D3D11_CULL_NONE;
-        rasterizer_desc.AntialiasedLineEnable = TRUE;
-        hr = device->CreateRasterizerState(&rasterizer_desc, rasterizerState[2].GetAddressOf());
+        desc.FillMode = D3D11_FILL_WIREFRAME;
+        desc.CullMode = D3D11_CULL_NONE;
+        desc.AntialiasedLineEnable = TRUE;
+        hr = device->CreateRasterizerState(&desc, rasterizerStates[static_cast<size_t>(RASTER_STATE::WIREFRAME_CULL_NONE)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
 
@@ -190,70 +234,70 @@ Shader::Shader(ID3D11Device* device)
     {
         HRESULT hr{ S_OK };
 
-        D3D11_SAMPLER_DESC samplerDesc{};
-        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-        samplerDesc.MipLODBias = 0;
-        samplerDesc.MaxAnisotropy = 16;
-        samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-        samplerDesc.BorderColor[0] = 0;
-        samplerDesc.BorderColor[1] = 0;
-        samplerDesc.BorderColor[2] = 0;
-        samplerDesc.BorderColor[3] = 0;
-        samplerDesc.MinLOD = 0;
-        samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-        hr = device->CreateSamplerState(&samplerDesc, samplerState[static_cast<size_t>(SAMPLER_STATE::POINT)].GetAddressOf());
+        D3D11_SAMPLER_DESC desc{};
+        desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+        desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+        desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+        desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+        desc.MipLODBias = 0;
+        desc.MaxAnisotropy = 16;
+        desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+        desc.BorderColor[0] = 0;
+        desc.BorderColor[1] = 0;
+        desc.BorderColor[2] = 0;
+        desc.BorderColor[3] = 0;
+        desc.MinLOD = 0;
+        desc.MaxLOD = D3D11_FLOAT32_MAX;
+        hr = device->CreateSamplerState(&desc, samplerState[static_cast<size_t>(SAMPLER_STATE::POINT)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-        hr = device->CreateSamplerState(&samplerDesc, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR)].GetAddressOf());
+        desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+        desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+        desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+        hr = device->CreateSamplerState(&desc, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-        samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-        hr = device->CreateSamplerState(&samplerDesc, samplerState[static_cast<size_t>(SAMPLER_STATE::ANISOTROPIC)].GetAddressOf());
+        desc.Filter = D3D11_FILTER_ANISOTROPIC;
+        desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+        desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+        desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+        hr = device->CreateSamplerState(&desc, samplerState[static_cast<size_t>(SAMPLER_STATE::ANISOTROPIC)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-        samplerDesc.BorderColor[0] = 0;
-        samplerDesc.BorderColor[1] = 0;
-        samplerDesc.BorderColor[2] = 0;
-        samplerDesc.BorderColor[3] = 0;
-        hr = device->CreateSamplerState(&samplerDesc, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_BLACK)].GetAddressOf());
+        desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+        desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+        desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+        desc.BorderColor[0] = 0;
+        desc.BorderColor[1] = 0;
+        desc.BorderColor[2] = 0;
+        desc.BorderColor[3] = 0;
+        hr = device->CreateSamplerState(&desc, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_BLACK)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-        samplerDesc.BorderColor[0] = 1;
-        samplerDesc.BorderColor[1] = 1;
-        samplerDesc.BorderColor[2] = 1;
-        samplerDesc.BorderColor[3] = 1;
-        hr = device->CreateSamplerState(&samplerDesc, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_WHITE)].GetAddressOf());
+        desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+        desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+        desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+        desc.BorderColor[0] = 1;
+        desc.BorderColor[1] = 1;
+        desc.BorderColor[2] = 1;
+        desc.BorderColor[3] = 1;
+        hr = device->CreateSamplerState(&desc, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_WHITE)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
         // SHADOW
-        samplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
-        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-        samplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL; // D3D11_COMPARISON_LESS_EQUAL
-        samplerDesc.BorderColor[0] = 1;
-        samplerDesc.BorderColor[1] = 1;
-        samplerDesc.BorderColor[2] = 1;
-        samplerDesc.BorderColor[3] = 1;
-        hr = device->CreateSamplerState(&samplerDesc, samplerState[static_cast<size_t>(SAMPLER_STATE::COMPARISON_LINEAR_BORDER_WHITE)].GetAddressOf());
+        desc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+        desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+        desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+        desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+        desc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL; // D3D11_COMPARISON_LESS_EQUAL
+        desc.BorderColor[0] = 1;
+        desc.BorderColor[1] = 1;
+        desc.BorderColor[2] = 1;
+        desc.BorderColor[3] = 1;
+        hr = device->CreateSamplerState(&desc, samplerState[static_cast<size_t>(SAMPLER_STATE::COMPARISON_LINEAR_BORDER_WHITE)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
 
@@ -281,7 +325,7 @@ Shader::Shader(ID3D11Device* device)
 #else
             for (int i = 0; i < pointLightMax; ++i)
             {
-                lightConstant.pointLight[i].position=DirectX::XMFLOAT4(0.0f, 1.5f, 3.0f, 0.0f);
+                lightConstant.pointLight[i].position=DirectX::XMFLOAT4(3.0f*i, 1.5f, 3.0f, 0.0f);
                 lightConstant.pointLight[i].color = DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
                 lightConstant.pointLight[i].range = 5.0f;
             }
@@ -341,11 +385,11 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc)
     deviceContext->PSSetSamplers(3, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_BLACK)].GetAddressOf());
     deviceContext->PSSetSamplers(4, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_WHITE)].GetAddressOf());
 
-    deviceContext->OMSetDepthStencilState(depthStencilState[0].Get(), 1);
+    deviceContext->OMSetDepthStencilState(depthStencilStates[0].Get(), 1);
 
-    deviceContext->OMSetBlendState(blendState.Get(), nullptr, 0xFFFFFFFF);
+    deviceContext->OMSetBlendState(blendStates[0].Get(), nullptr, 0xFFFFFFFF);
 
-    deviceContext->RSSetState(rasterizerState[0].Get());
+    deviceContext->RSSetState(rasterizerStates[0].Get());
 
     // ビュープロジェクション変換行列を計算し、それを定数バッファにセットする
     camera.SetPerspectiveFov(deviceContext);
@@ -356,9 +400,22 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc)
     
     scene.lightDirection = { view.position.x,view.position.y,view.position.z,view.position.w };
     scene.cameraPosition = { view.camera.x,view.camera.y,view.camera.z,view.camera.w };
+
+    // FOG
+    {
+        DirectX::XMStoreFloat4x4(&scene.inverseProjection, DirectX::XMMatrixInverse(NULL, camera.GetProjectionMatrix()));
+        DirectX::XMStoreFloat4x4(&scene.inverseViewProjection, DirectX::XMMatrixInverse(NULL, camera.GetViewMatrix() * camera.GetProjectionMatrix()));
+        scene.time = framework::tictoc.time_stamp();
+
+        deviceContext->UpdateSubresource(sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].Get(), 0, 0, &fogConstants, 0, 0);
+        deviceContext->PSSetConstantBuffers(2, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].GetAddressOf());
+    }
+
+
     deviceContext->UpdateSubresource(sceneConstantBuffer[0].Get(), 0, 0, &scene, 0, 0);
     deviceContext->VSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
     deviceContext->PSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
+
 
     // POINT_LIGHT
     {
@@ -381,7 +438,7 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc)
 #endif
 }
 
-void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc, const SceneConstants& sceneConstant)
+void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc, const ShadowConstants& shadowConstant)
 {
     Camera& camera = Camera::Instance();
 
@@ -396,25 +453,50 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc, 
         deviceContext->PSSetSamplers(5, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::COMPARISON_LINEAR_BORDER_WHITE)].GetAddressOf());
     }
 
-    deviceContext->OMSetDepthStencilState(depthStencilState[0].Get(), 1);
+    deviceContext->OMSetDepthStencilState(depthStencilStates[0].Get(), 1);
 
-    deviceContext->OMSetBlendState(blendState.Get(), nullptr, 0xFFFFFFFF);
+    deviceContext->OMSetBlendState(blendStates[0].Get(), nullptr, 0xFFFFFFFF);
 
-    deviceContext->RSSetState(rasterizerState[0].Get());
+    deviceContext->RSSetState(rasterizerStates[0].Get());
 
     // ビュープロジェクション変換行列を計算し、それを定数バッファにセットする
     camera.SetPerspectiveFov(deviceContext);
 
+    // SHADOW
+    {
+        ShadowConstants shadow{};
+        DirectX::XMStoreFloat4x4(&shadow.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
 
-    SceneConstants data{};
-    DirectX::XMStoreFloat4x4(&data.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
+        shadow.lightDirection = { view.position.x,view.position.y,view.position.z,view.position.w };
+        shadow.cameraPosition = { view.camera.x,view.camera.y,view.camera.z,view.camera.w };
+        //shadow.lightDirection = shadowConstant.lightDirection;
+        //shadow.cameraPosition = shadowConstant.cameraPosition;
+        shadow.lightViewProjection = shadowConstant.lightViewProjection;
 
-    data.lightDirection = sceneConstant.lightDirection;
-    data.cameraPosition = sceneConstant.cameraPosition;
-    data.lightViewProjection = sceneConstant.lightViewProjection;
-    deviceContext->UpdateSubresource(sceneConstantBuffer[0].Get(), 0, 0, &data, 0, 0);
-    deviceContext->VSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
-    deviceContext->PSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
+        deviceContext->UpdateSubresource(sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].Get(), 0, 0, &shadow, 0, 0);
+        deviceContext->VSSetConstantBuffers(10, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].GetAddressOf());
+        deviceContext->PSSetConstantBuffers(10, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].GetAddressOf());
+    }
+    
+    SceneConstants scene{};
+    DirectX::XMStoreFloat4x4(&scene.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
+
+    scene.lightDirection = { view.position.x,view.position.y,view.position.z,view.position.w };
+    scene.cameraPosition = { view.camera.x,view.camera.y,view.camera.z,view.camera.w };
+
+    // FOG
+    {
+        DirectX::XMStoreFloat4x4(&scene.inverseProjection, DirectX::XMMatrixInverse(NULL, camera.GetProjectionMatrix()));
+        DirectX::XMStoreFloat4x4(&scene.inverseViewProjection, DirectX::XMMatrixInverse(NULL, camera.GetViewMatrix() * camera.GetProjectionMatrix()));
+        scene.time = framework::tictoc.time_stamp();
+
+        deviceContext->UpdateSubresource(sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].Get(), 0, 0, &fogConstants, 0, 0);
+        deviceContext->PSSetConstantBuffers(2, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].GetAddressOf());
+    }
+
+    deviceContext->UpdateSubresource(sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].Get(), 0, 0, &scene, 0, 0);
+    deviceContext->VSSetConstantBuffers(1, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].GetAddressOf());
+    deviceContext->PSSetConstantBuffers(1, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].GetAddressOf());
 
     // POINT_LIGHT
     {
@@ -435,11 +517,19 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc, 
     //EntryLight2();
 }
 
-void Shader::SetState(ID3D11DeviceContext* dc, int RastarizeState, int DepthStencilState, int SamplerState)
+void Shader::SetState(ID3D11DeviceContext* dc, int RasterizerState, int DepthStencilState, int SamplerState)
 {
     dc->PSSetSamplers(SamplerState, 1, samplerState[SamplerState].GetAddressOf());
-    dc->RSSetState(rasterizerState[RastarizeState].Get());
-    dc->OMSetDepthStencilState(depthStencilState[DepthStencilState].Get(), 1);
+    dc->RSSetState(rasterizerStates[RasterizerState].Get());
+    dc->OMSetDepthStencilState(depthStencilStates[DepthStencilState].Get(), 1);
+}
+
+void Shader::SetState(ID3D11DeviceContext* deviceContext, int SamplerState, int DepthStencileState, int BlendState, int RasterizerState)
+{
+    deviceContext->PSSetSamplers(SamplerState, 1, samplerState[SamplerState].GetAddressOf());
+    deviceContext->OMSetDepthStencilState(depthStencilStates[DepthStencileState].Get(), 1);
+    deviceContext->OMSetBlendState(blendStates[BlendState].Get(), nullptr, 0xFFFFFFFF);
+    deviceContext->RSSetState(rasterizerStates[RasterizerState].Get());
 }
 
 void Shader::Draw(ID3D11DeviceContext* dc, Model* model)
@@ -542,6 +632,19 @@ void Shader::DrawDebug()
             ImGui::TreePop();
         }
 
+        if (ImGui::TreeNode("Fog"))
+        {
+            ImGui::ColorEdit4("fogColor", &fogConstants.fogColor.x);
+            ImGui::SliderFloat("fogDensity", &fogConstants.fogDensity, 0.0f, 0.005f, "%.4f");
+            ImGui::SliderFloat("fogHeightFalloff", &fogConstants.fogHeightFalloff, 0.0001f, 10.0f, "%.4f");
+            ImGui::SliderFloat("fogCutoffDistance", &fogConstants.fogCutoffDistance, 0.0f, 1000.0f, "%.4f");
+            ImGui::SliderFloat("startDistance", &fogConstants.startDistance, 0.0f, 100.0f, "%.4f");
+
+            ImGui::SliderFloat("timeScale", &fogConstants.timeScale, 0.0f, 10.0f, "%.4f");
+            ImGui::SliderFloat("speedScale", &fogConstants.speedScale, 0.0f, 0.5f, "%.4f");
+            ImGui::TreePop();
+        }
+
         if (ImGui::Button("button"))
         {
             isEntryLight = true;
@@ -549,6 +652,24 @@ void Shader::DrawDebug()
 
         ImGui::End();
     }
+}
+
+void Shader::SetDepthStencileState(int depthStencileState)
+{
+    Graphics::Instance().GetDeviceContext()->
+        OMSetDepthStencilState(depthStencilStates[depthStencileState].Get(), 1);
+}
+
+void Shader::SetBlendState(int blendState)
+{
+    Graphics::Instance().GetDeviceContext()->
+        OMSetBlendState(blendStates[blendState].Get(), nullptr, 0xFFFFFFFF);
+}
+
+void Shader::SetRasterizerState(int rasterizerState)
+{
+    Graphics::Instance().GetDeviceContext()->
+        RSSetState(rasterizerStates[rasterizerState].Get());
 }
 
 void Shader::EntryLight()

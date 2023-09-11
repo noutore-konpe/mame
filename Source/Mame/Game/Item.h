@@ -23,6 +23,25 @@ public:
     virtual void Render(const float& scale);            // 描画処理
     virtual void DrawDebug();                           // ImGui用
 
+public: // アニメーション関数関連
+// アニメーション再生設定
+// (アニメーション番号・ループするかどうか・アニメーション再生速度・スムーズ切り替え時間（速度）)
+    void PlayAnimation(
+        const int& index,
+        const bool& loop,
+        const float& speed = 1.0f,
+        const float& blendSeconds = 1.0f
+    );
+
+    // ブレンド率の計算更新処理
+    void UpdateBlendRate(float blendRate, const float& elapsedTime);
+
+    // アニメーション更新処理
+    void UpdateAnimation(const float& elapsedTime);
+
+    // アニメーションが再生中かどうか
+    bool IsPlayAnimation() const;
+
 public: // 取得・設定　関連
     Transform* GetTransform() { return model->GetTransform(); }
 

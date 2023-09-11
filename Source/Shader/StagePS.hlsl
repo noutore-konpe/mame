@@ -77,7 +77,7 @@ float4 main(PSIn psIn) : SV_TARGET
     const float shadowDepthBias = max(0.01 * (1.0 - dot(N, L)), 0.001);
 #endif
 
-    float4 lightViewPosition = mul(psIn.worldPosition, lightViewProjection);
+    float4 lightViewPosition = mul(psIn.worldPosition, shadowLightViewProjection);
     lightViewPosition = lightViewPosition / lightViewPosition.w;
     float2 lightViewTexcoord = 0;
     lightViewTexcoord.x = lightViewPosition.x * 0.5 + 0.5;
@@ -150,6 +150,12 @@ float4 main(PSIn psIn) : SV_TARGET
     finalColor.y += 0.2f;
     finalColor.z += 0.2f;
     
-
+    // EMISSIVE
+    {
+        float3 emissive = textureMaps[2].Sample(samplerStates[LINEAR], psIn.texcoord).rgb;
+        const float emissiveIntensity = 3.0f;
+        finalColor += emissive * emissiveIntensity;
+    }
+    
     return float4(finalColor * shadowFactor, alpha) * psIn.color;
 }

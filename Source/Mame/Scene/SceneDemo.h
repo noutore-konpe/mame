@@ -20,9 +20,10 @@
 
 #define GLTF_MODEL 0
 #define MODEL 0
-#define SPRITE 1
-#define BLOOM 0
+#define SPRITE 0
+#define BLOOM 1
 #define SKYBOX 1
+#define FOG 1
 
 class SceneDemo : public Mame::Scene::BaseScene
 {
@@ -43,29 +44,21 @@ public:
     static bool isDebugRender;
     
 public:
-    enum class SAMPLER_STATE { POINT, LINEAR, ANISOTROPIC, LINEAR_BORDER_BLACK, LINEAR_BORDER_WHITE };
-    Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerStates[5];
 
-    enum class DEPTH_STATE { ZT_ON_ZW_ON, ZT_ON_ZW_OFF, ZT_OFF_ZW_ON, ZT_OFF_ZW_OFF };
-    Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilStates[4];
+    std::unique_ptr<FrameBuffer> framebuffers[8];
+    std::unique_ptr<FullscreenQuad> bitBlockTransfer;
 
-    enum class BLEND_STATE { NONE, ALPHA, ADD, MULTIPLY };
-    Microsoft::WRL::ComPtr<ID3D11BlendState> blendStates[4];
-
-    enum class RASTER_STATE { SOLID, WIREFRAME, CULL_NONE, WIREFRAME_CULL_NONE };
-    Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterizerStates[4];
-
-    void SetStates();
+    Microsoft::WRL::ComPtr<ID3D11PixelShader> baseColorPS;
 
 #if BLOOM
-    std::unique_ptr<FrameBuffer> framebuffers[8];
-    std::unique_ptr<FullscreenQuad> bit_block_transfer;
-    Microsoft::WRL::ComPtr<ID3D11PixelShader> pixel_shaders[8];
-
     // BLOOM
     std::unique_ptr<Bloom> bloomer;
-    Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;
+    Microsoft::WRL::ComPtr<ID3D11PixelShader> bloomPS;
 #endif // BLOOM
+
+#if FOG
+    Microsoft::WRL::ComPtr<ID3D11PixelShader> fogPS;
+#endif// FOG
 
 private:
     bool isDebugCamera = false;

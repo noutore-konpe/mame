@@ -34,7 +34,7 @@ Model::Model(ID3D11Device* device, const char* fbx_filename, std::vector<std::st
 // •`‰æ
 void Model::Render(const float& scale)
 {
-    Render(scale, 3);
+    Render(scale, static_cast<UINT>(Shader::RASTER_STATE::SOLID));
 }
 
 void Model::Render(const float& scale, int rastarizeState)

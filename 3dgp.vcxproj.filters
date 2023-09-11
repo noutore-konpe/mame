@@ -52,24 +52,6 @@
     <FxCompile Include="Resources\Shader\phongShaderPS.hlsl">
       <Filter>mamelib\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shader\glowExtractionPs.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\gaussianBlurDownsamplingPs.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\gaussianBlurHorizontalPs.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\gaussianBlurVerticalPs.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\gaussianBlurUpsamplingPs.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\finalPassPs.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
     <FxCompile Include="Source\Shader\SkyBoxVS.hlsl">
       <Filter>mamelib\Shader</Filter>
     </FxCompile>
@@ -102,6 +84,30 @@
     </FxCompile>
     <FxCompile Include="Source\Shader\StagePS.hlsl">
       <Filter>mamelib\Shader\Fbx</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GlowExtractionPs.hlsl">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GaussianBlurDownsamplingPs.hlsl">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GaussianBlurHorizontalPs.hlsl">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GaussianBlurVerticalPs.hlsl">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GaussianBlurUpsamplingPs.hlsl">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\FinalPassPs.hlsl">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\FogPS.hlsl">
+      <Filter>mamelib\Shader\Fog</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\FogFinalPassPS.hlsl">
+      <Filter>mamelib\Shader\Fog</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -278,13 +284,16 @@
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\DemoStateDerived.cpp">
-      <Filter>mamelib\Mame\Game\Character\StateMachine</Filter>
+      <Filter>mamelib\Mame\Game\StateMachine</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\Ability.cpp">
       <Filter>mamelib\Mame\Game\Ability</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\AbilityManager.cpp">
       <Filter>mamelib\Mame\Game\Ability</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\BookState.cpp">
+      <Filter>mamelib\Mame\Game\StateMachine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -471,19 +480,22 @@
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\State.h">
-      <Filter>mamelib\Mame\Game\Character\StateMachine</Filter>
+      <Filter>mamelib\Mame\Game\StateMachine</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\StateMachine.h">
-      <Filter>mamelib\Mame\Game\Character\StateMachine</Filter>
+      <Filter>mamelib\Mame\Game\StateMachine</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\DemoStateDerived.h">
-      <Filter>mamelib\Mame\Game\Character\StateMachine</Filter>
+      <Filter>mamelib\Mame\Game\StateMachine</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\Ability.h">
       <Filter>mamelib\Mame\Game\Ability</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\AbilityManager.h">
       <Filter>mamelib\Mame\Game\Ability</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\BookState.h">
+      <Filter>mamelib\Mame\Game\StateMachine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -517,9 +529,6 @@
     <None Include="Resources\Shader\phongShader.hlsli">
       <Filter>mamelib\Shader</Filter>
     </None>
-    <None Include="Source\Shader\bloom.hlsli">
-      <Filter>mamelib\Shader</Filter>
-    </None>
     <None Include="Source\Shader\SkyBox.hlsli">
       <Filter>mamelib\Shader</Filter>
     </None>
@@ -531,6 +540,12 @@
     </None>
     <None Include="Source\Shader\FbxModel.hlsli">
       <Filter>mamelib\Shader\Fbx</Filter>
+    </None>
+    <None Include="Source\Shader\Bloom.hlsli">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </None>
+    <None Include="Source\Shader\Noise.hlsli">
+      <Filter>mamelib\Shader\Fog</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -588,9 +603,6 @@
     <Filter Include="mamelib\Mame\Game\Character\Enemy">
       <UniqueIdentifier>{ee5e556a-3f3f-4237-9cbb-ca614fe26c78}</UniqueIdentifier>
     </Filter>
-    <Filter Include="mamelib\Mame\Game\Character\StateMachine">
-      <UniqueIdentifier>{c4bf7710-61dd-420e-bf61-f6f7fce0d9ac}</UniqueIdentifier>
-    </Filter>
     <Filter Include="mamelib\Mame\Game\Ability">
       <UniqueIdentifier>{40bacefb-4ce6-4a4f-b94d-f727f9fb1c34}</UniqueIdentifier>
     </Filter>
@@ -599,6 +611,15 @@
     </Filter>
     <Filter Include="mamelib\Shader\Fbx">
       <UniqueIdentifier>{7e226544-7558-45df-94d9-47833c6d8435}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Shader\Bloom">
+      <UniqueIdentifier>{3657f708-ee44-453b-bd73-08c4838be46f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\StateMachine">
+      <UniqueIdentifier>{c4bf7710-61dd-420e-bf61-f6f7fce0d9ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Shader\Fog">
+      <UniqueIdentifier>{bd054dc7-1340-4b01-b533-521c6c32f0b9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -29,9 +29,10 @@ cbuffer OBJECT_CONSTANT_BUFFER : register(b0)
 {
     row_major float4x4 world;
     float4 materialColor;
-    float4 dummy;
-    float4 dummy2;
     row_major float4x4 boneTransforms[MAX_BONES];
+    
+    // EMISSIVE
+    float4 emissiveColor;
 };
 
 // カメラ位置、ディレクションライト情報
@@ -40,8 +41,15 @@ cbuffer SCENE_CONSTANT_BUFFER : register(b1)
     row_major float4x4 viewProjection;
     float4 lightDirection;
     float4 cameraPosition;
-    // SHADOW
-    row_major float4x4 lightViewProjection;
+};
+
+// SHADOW
+cbuffer SHADOW_CONSTANT_BUFFER : register(b10)
+{
+    row_major float4x4 shadowViewProjection;
+    float4 shadowLightDirection;
+    float4 shdowCameraPosition;
+    row_major float4x4 shadowLightViewProjection;
 };
 
 // ディレクションライト
@@ -162,6 +170,8 @@ float3 CalcLightFromDirectionLight(PSIn psIn)
     
     return diffuseDirection + specularDirection;
 }
+
+//float3 ClacLightFromDirectionLight
 
 // ポイントライトによる反射光を計算
 #if POINT_LIGHT_ONE
