@@ -10,13 +10,13 @@
 
 #include "../Game/EnemySlime.h"
 
-#include "../Graphics/Bloom.h"
-
 #include "../Game/Stage.h"
 
+#include "../Graphics/Bloom.h"
 #include "../Graphics/SkyBox.h"
-
 #include "../Graphics/ShadowMap.h"
+#include "../Graphics/Particle.h"
+
 
 #define GLTF_MODEL 0
 #define MODEL 0
@@ -24,6 +24,7 @@
 #define BLOOM 1
 #define SKYBOX 1
 #define FOG 1
+#define PARTICLE 1
 
 class SceneDemo : public Mame::Scene::BaseScene
 {
@@ -59,6 +60,11 @@ public:
 #if FOG
     Microsoft::WRL::ComPtr<ID3D11PixelShader> fogPS;
 #endif// FOG
+
+#if PARTICLE
+    bool integrateParticles = true;
+    std::unique_ptr<Particles> particles;
+#endif// PARTICLE
 
 private:
     bool isDebugCamera = false;

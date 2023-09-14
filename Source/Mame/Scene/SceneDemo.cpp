@@ -149,6 +149,11 @@ void SceneDemo::CreateResource()
         hr = graphics.GetDevice()->CreateBuffer(&desc, nullptr, SceneConstantBuffer.GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
+
+#if PARTICLE
+    particles = std::make_unique<decltype(particles)::element_type>(graphics.GetDevice(), 1000);
+    particles->Initialize(graphics.GetDeviceContext(), 0);
+#endif// PARTICLE
 }
 
 // 初期化
@@ -195,14 +200,19 @@ void SceneDemo::Update(const float& elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
 
+    //effect[0]->Play({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f });
+    
+#if PARTICLE
     if (gamePad.GetButtonDown() & GamePad::BTN_A)
     {
-        //for (int i = 0; i < 5; ++i)
-        {
-            effect[0]->Play({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f });
-        }
-        //effect[0]->Play({ 0.0f, 0.0f, 0.0f }, { 10.0f,10.0f,10.0f });
+        particles->Initialize(Graphics::Instance().GetDeviceContext(), 0);
     }
+
+    if (integrateParticles)
+    {
+        particles->Integrate(Graphics::Instance().GetDeviceContext(), elapsedTime);
+    }
+#endif// PARTICLE
 
     // GltfModel
     {
@@ -320,10 +330,6 @@ void SceneDemo::Render(const float& elapsedTime)
         graphics.GetDeviceContext()->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
         graphics.GetDeviceContext()->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 
-#if SKYBOX
-        skyBox->Render(graphics.GetDeviceContext(),
-            Camera::Instance().GetViewMatrix(), Camera::Instance().GetProjectionMatrix());
-#endif // SKYBOX
 
         // SHADOW
         shadowConstants.lightDirection = graphics.GetShader()->view.position;
@@ -442,6 +448,14 @@ void SceneDemo::Render(const float& elapsedTime)
     {
         stage->Render(elapsedTime, 1.0f);
     }
+
+#if PARTICLE
+    shader->SetDepthStencileState(static_cast<size_t>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
+    shader->SetRasterizerState(static_cast<size_t>(Shader::RASTER_STATE::CULL_NONE));
+    shader->SetBlendState(static_cast<size_t>(Shader::BLEND_STATE::ADD));
+    shader->GSSetConstantBuffer();
+    particles->Render(graphics.GetDeviceContext());
+#endif// PARTICLE
 
     // 3Dエフェクト描画
     {
@@ -589,6 +603,17 @@ void SceneDemo::DrawDebug()
         ImGui::Image(reinterpret_cast<void*>(shadow.shadowMap->shaderResourceView.Get()), ImVec2(shadow.shadowMapWidth / 5.0f, shadow.shadowMapHeight / 5.0f));
         ImGui::End();
     }
+
+#if PARTICLE
+    if (ImGui::BeginMenu("particle"))
+    {
+        particles->DrawDebug();
+        ImGui::ColorEdit4("particleDataColor", &particles->particleData.color.x);
+        ImGui::SliderFloat("particleDataSize", &particles->particleData.particleSize, 0.0f, 1.0f, "%.4f");
+
+        ImGui::EndMenu();
+    }
+#endif// PARTICLE
 
     Graphics::Instance().GetShader()->DrawDebug();
 

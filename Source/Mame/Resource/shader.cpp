@@ -61,6 +61,46 @@ HRESULT CreatePsFromCso(ID3D11Device* device, const char* cso_name, ID3D11PixelS
     return hr;
 }
 
+HRESULT CreateGsFromCso(ID3D11Device* device, const char* csoName, ID3D11GeometryShader** geometryShader) 
+{
+    FILE* fp = nullptr;
+    fopen_s(&fp, csoName, "rb");
+    _ASSERT_EXPR_A(fp, "CSO File not found");
+
+    fseek(fp, 0, SEEK_END);
+    long csoSz = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+    std::unique_ptr<unsigned char[]> csoData = std::make_unique<unsigned char[]>(csoSz);
+    fread(csoData.get(), csoSz, 1, fp);
+    fclose(fp);
+
+    HRESULT hr = device->CreateGeometryShader(csoData.get(), csoSz, nullptr, geometryShader);
+    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+    return hr;
+}
+
+HRESULT CreateCsFromCso(ID3D11Device* device, const char* csoName, ID3D11ComputeShader** computeShader)
+{
+    FILE* fp = nullptr;
+    fopen_s(&fp, csoName, "rb");
+    _ASSERT_EXPR_A(fp, "CSO File not found");
+
+    fseek(fp, 0, SEEK_END);
+    long csoSz = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+    std::unique_ptr<unsigned char[]> csoData = std::make_unique<unsigned char[]>(csoSz);
+    fread(csoData.get(), csoSz, 1, fp);
+    fclose(fp);
+
+    HRESULT hr = device->CreateComputeShader(csoData.get(), csoSz, nullptr, computeShader);
+    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+    return hr;
+}
+
 Shader::Shader(ID3D11Device* device)
 {
     // 定数バッファ
@@ -746,4 +786,9 @@ void Shader::EntryLight2()
         lightConstant.spotLight.color.y = 0.0f;
         lightConstant.spotLight.color.z = 0.0f;
     }
+}
+
+void Shader::GSSetConstantBuffer()
+{
+    Graphics::Instance().GetDeviceContext()->GSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
 }

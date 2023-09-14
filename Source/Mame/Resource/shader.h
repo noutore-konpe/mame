@@ -170,6 +170,9 @@ public:
     void EntryLight2();
     bool isEntryLight = false;
 
+public://todo:‚Ç‚¤‚É‚©‚µ‚½‚¢
+    void GSSetConstantBuffer();
+
 private:
     DirectX::XMFLOAT3 eye{ 0.0f,0.0f,-10.0f };
     DirectX::XMFLOAT3 focus{ 0.0f,0.0f,0.0f };
@@ -220,3 +223,7 @@ HRESULT CreateVsFromCso(ID3D11Device* device, const char* cso_name, ID3D11Vertex
     ID3D11InputLayout** input_layout, D3D11_INPUT_ELEMENT_DESC* input_element_desc, UINT num_elements);
 
 HRESULT CreatePsFromCso(ID3D11Device* device, const char* cso_name, ID3D11PixelShader** pixel_shader);
+
+HRESULT CreateGsFromCso(ID3D11Device* device, const char* csoName, ID3D11GeometryShader** geometryShader);
+
+HRESULT CreateCsFromCso(ID3D11Device* device, const char* csoName, ID3D11ComputeShader** computeShader);

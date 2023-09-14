@@ -106,8 +106,20 @@
     <FxCompile Include="Source\Shader\FogPS.hlsl">
       <Filter>mamelib\Shader\Fog</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shader\FogFinalPassPS.hlsl">
-      <Filter>mamelib\Shader\Fog</Filter>
+    <FxCompile Include="Source\Shader\ParticleCS.hlsl">
+      <Filter>mamelib\Shader\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ParticleGS.hlsl">
+      <Filter>mamelib\Shader\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ParticleInitializerCS.hlsl">
+      <Filter>mamelib\Shader\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ParticlePS.hlsl">
+      <Filter>mamelib\Shader\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ParticleVS.hlsl">
+      <Filter>mamelib\Shader\Particle</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -115,9 +127,6 @@
       <Filter>mamelib\Mame\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Graphics\Camera.cpp">
-      <Filter>mamelib\Mame\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Mame\Graphics\EffectManager.cpp">
       <Filter>mamelib\Mame\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Graphics\Graphics.cpp">
@@ -152,9 +161,6 @@
     </ClCompile>
     <ClCompile Include="Source\Mame\Scene\SceneGame.cpp">
       <Filter>mamelib\Mame\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Mame\Graphics\Effect.cpp">
-      <Filter>mamelib\Mame\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Graphics\ResourceManager.cpp" />
     <ClCompile Include="Source\Mame\Graphics\Effect.cpp">
@@ -235,17 +241,11 @@
     <ClCompile Include="Source\Mame\Scene\SceneDemo.cpp">
       <Filter>mamelib\Mame\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Graphics\ShadowMap.cpp">
-      <Filter>mamelib\Mame\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Mame\Game\Character.cpp">
       <Filter>mamelib\Mame\Game\Character</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\Collision.cpp">
       <Filter>mamelib\Mame\Game\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Mame\Graphics\Bloom.cpp">
-      <Filter>mamelib\Mame\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\Player.cpp">
       <Filter>mamelib\Mame\Game\Character\Player</Filter>
@@ -274,9 +274,6 @@
     <ClCompile Include="Source\Mame\Game\ProjectileStraite.cpp">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Graphics\SkyBox.cpp">
-      <Filter>mamelib\Mame\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Mame\Game\Enemy.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClCompile>
@@ -295,15 +292,30 @@
     <ClCompile Include="Source\Mame\Game\BookState.cpp">
       <Filter>mamelib\Mame\Game\StateMachine</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\Bloom.cpp">
+      <Filter>mamelib\Mame\Graphics\Bloom</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\SkyBox.cpp">
+      <Filter>mamelib\Mame\Graphics\SkyBox</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\ShadowMap.cpp">
+      <Filter>mamelib\Mame\Graphics\ShadowMap</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\Effect.cpp">
+      <Filter>mamelib\Mame\Graphics\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\EffectManager.cpp">
+      <Filter>mamelib\Mame\Graphics\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\Particle.cpp">
+      <Filter>mamelib\Mame\Graphics\Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
       <Filter>mamelib\Mame\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Graphics\Camera.h">
-      <Filter>mamelib\Mame\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Mame\Graphics\EffectManager.h">
       <Filter>mamelib\Mame\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Graphics\Graphics.h">
@@ -346,9 +358,6 @@
       <Filter>mamelib\Mame\Scene</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Source\Mame\Graphics\Effect.h">
-      <Filter>mamelib\Mame\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Mame\Graphics\ResourceManager.h" />
     <ClInclude Include="Source\Mame\Graphics\Effect.h">
       <Filter>mamelib\Mame\Graphics</Filter>
@@ -431,17 +440,11 @@
     <ClInclude Include="Source\Mame\Scene\SceneDemo.h">
       <Filter>mamelib\Mame\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\Graphics\ShadowMap.h">
-      <Filter>mamelib\Mame\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Mame\Game\Character.h">
       <Filter>mamelib\Mame\Game\Character</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\Collision.h">
       <Filter>mamelib\Mame\Game\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Mame\Graphics\Bloom.h">
-      <Filter>mamelib\Mame\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\Player.h">
       <Filter>mamelib\Mame\Game\Character\Player</Filter>
@@ -470,9 +473,6 @@
     <ClInclude Include="Source\Mame\Game\ProjectileStraite.h">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\Graphics\SkyBox.h">
-      <Filter>mamelib\Mame\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Mame\Game\Enemy.h">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClInclude>
@@ -496,6 +496,24 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\BookState.h">
       <Filter>mamelib\Mame\Game\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\Bloom.h">
+      <Filter>mamelib\Mame\Graphics\Bloom</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\SkyBox.h">
+      <Filter>mamelib\Mame\Graphics\SkyBox</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\ShadowMap.h">
+      <Filter>mamelib\Mame\Graphics\ShadowMap</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\Effect.h">
+      <Filter>mamelib\Mame\Graphics\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\EffectManager.h">
+      <Filter>mamelib\Mame\Graphics\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\Particle.h">
+      <Filter>mamelib\Mame\Graphics\Particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -546,6 +564,9 @@
     </None>
     <None Include="Source\Shader\Noise.hlsli">
       <Filter>mamelib\Shader\Fog</Filter>
+    </None>
+    <None Include="Source\Shader\Particle.hlsli">
+      <Filter>mamelib\Shader\Particle</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -620,6 +641,24 @@
     </Filter>
     <Filter Include="mamelib\Shader\Fog">
       <UniqueIdentifier>{bd054dc7-1340-4b01-b533-521c6c32f0b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Shader\Particle">
+      <UniqueIdentifier>{13521927-4ef5-4aa2-b966-57e565390fb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Graphics\Bloom">
+      <UniqueIdentifier>{417510a0-6805-4daa-841f-ca523fdafe03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Graphics\SkyBox">
+      <UniqueIdentifier>{dacced77-1e06-4411-bf91-da3ac5e1de92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Graphics\ShadowMap">
+      <UniqueIdentifier>{aa4b4569-5531-4b16-bb07-d868bcd1e03e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Graphics\Effect">
+      <UniqueIdentifier>{569e825f-f7c1-4231-8b4e-748bc10ec279}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Graphics\Particle">
+      <UniqueIdentifier>{91158c84-6ace-4d96-923d-421320438609}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
