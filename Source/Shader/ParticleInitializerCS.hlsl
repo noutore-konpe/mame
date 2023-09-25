@@ -30,8 +30,14 @@ void main(uint3 dtid : SV_DISPATCHTHREADID)
     p.color.y = f0 * 0.5;
     p.color.z = f0 * 0.05;
     p.color.xyz *= 3.0;
-#else
+#else    
     p.color.xyz = particleColor.rgb;
+    
+    //p.color.x = particleColor.x;
+    //p.color.y = f0 * particleColor.y;
+    //p.color.z = f0 * particleColor.z;
+    //p.color.xyz *= 3.0;
+    
 #endif
     p.color.w = 1.0f;
     
