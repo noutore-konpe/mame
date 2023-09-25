@@ -19,31 +19,7 @@
     <FxCompile Include="Source\Shader\luminance_extraction_ps.hlsl">
       <Filter>mamelib\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shader\skinned_mesh_ps.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\skinned_mesh_vs.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
     <FxCompile Include="Source\Shader\sprite_change_ps.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\sprite_dissolve_ps.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\sprite_dissolve_vs.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\sprite_fade_ps.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\sprite_fade_vs.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\sprite_ps.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\sprite_vs.hlsl">
       <Filter>mamelib\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\static_mesh_ps.hlsl">
@@ -76,29 +52,74 @@
     <FxCompile Include="Resources\Shader\phongShaderPS.hlsl">
       <Filter>mamelib\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shader\glowExtractionPs.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\gaussianBlurDownsamplingPs.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\gaussianBlurHorizontalPs.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\gaussianBlurVerticalPs.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\gaussianBlurUpsamplingPs.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\finalPassPs.hlsl">
-      <Filter>mamelib\Shader</Filter>
-    </FxCompile>
     <FxCompile Include="Source\Shader\SkyBoxVS.hlsl">
       <Filter>mamelib\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\SkyBoxPS.hlsl">
       <Filter>mamelib\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\sprite_dissolve_ps.hlsl">
+      <Filter>mamelib\Shader\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\sprite_dissolve_vs.hlsl">
+      <Filter>mamelib\Shader\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\sprite_fade_ps.hlsl">
+      <Filter>mamelib\Shader\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\sprite_fade_vs.hlsl">
+      <Filter>mamelib\Shader\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\sprite_ps.hlsl">
+      <Filter>mamelib\Shader\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\sprite_vs.hlsl">
+      <Filter>mamelib\Shader\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\CharacterPS.hlsl">
+      <Filter>mamelib\Shader\Fbx</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\FbxModelVS.hlsl">
+      <Filter>mamelib\Shader\Fbx</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\StagePS.hlsl">
+      <Filter>mamelib\Shader\Fbx</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GlowExtractionPs.hlsl">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GaussianBlurDownsamplingPs.hlsl">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GaussianBlurHorizontalPs.hlsl">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GaussianBlurVerticalPs.hlsl">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GaussianBlurUpsamplingPs.hlsl">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\FinalPassPs.hlsl">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\FogPS.hlsl">
+      <Filter>mamelib\Shader\Fog</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ParticleCS.hlsl">
+      <Filter>mamelib\Shader\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ParticleGS.hlsl">
+      <Filter>mamelib\Shader\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ParticleInitializerCS.hlsl">
+      <Filter>mamelib\Shader\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ParticlePS.hlsl">
+      <Filter>mamelib\Shader\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ParticleVS.hlsl">
+      <Filter>mamelib\Shader\Particle</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -106,9 +127,6 @@
       <Filter>mamelib\Mame\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Graphics\Camera.cpp">
-      <Filter>mamelib\Mame\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Mame\Graphics\EffectManager.cpp">
       <Filter>mamelib\Mame\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Graphics\Graphics.cpp">
@@ -143,9 +161,6 @@
     </ClCompile>
     <ClCompile Include="Source\Mame\Scene\SceneGame.cpp">
       <Filter>mamelib\Mame\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Mame\Graphics\Effect.cpp">
-      <Filter>mamelib\Mame\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Graphics\ResourceManager.cpp" />
     <ClCompile Include="Source\Mame\Graphics\Effect.cpp">
@@ -226,23 +241,11 @@
     <ClCompile Include="Source\Mame\Scene\SceneDemo.cpp">
       <Filter>mamelib\Mame\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Graphics\ShadowMap.cpp">
-      <Filter>mamelib\Mame\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Mame\Game\Character.cpp">
       <Filter>mamelib\Mame\Game\Character</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\Collision.cpp">
       <Filter>mamelib\Mame\Game\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Mame\Game\Enemy.cpp">
-      <Filter>mamelib\Mame\Game\Character</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Mame\Game\EnemySlime.cpp">
-      <Filter>mamelib\Mame\Game\Character</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Mame\Graphics\Bloom.cpp">
-      <Filter>mamelib\Mame\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\Player.cpp">
       <Filter>mamelib\Mame\Game\Character\Player</Filter>
@@ -271,8 +274,41 @@
     <ClCompile Include="Source\Mame\Game\ProjectileStraite.cpp">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\Enemy.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemySlime.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\DemoStateDerived.cpp">
+      <Filter>mamelib\Mame\Game\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\Ability.cpp">
+      <Filter>mamelib\Mame\Game\Ability</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\AbilityManager.cpp">
+      <Filter>mamelib\Mame\Game\Ability</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\BookState.cpp">
+      <Filter>mamelib\Mame\Game\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\Bloom.cpp">
+      <Filter>mamelib\Mame\Graphics\Bloom</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Mame\Graphics\SkyBox.cpp">
-      <Filter>mamelib\Mame\Graphics</Filter>
+      <Filter>mamelib\Mame\Graphics\SkyBox</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\ShadowMap.cpp">
+      <Filter>mamelib\Mame\Graphics\ShadowMap</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\Effect.cpp">
+      <Filter>mamelib\Mame\Graphics\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\EffectManager.cpp">
+      <Filter>mamelib\Mame\Graphics\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\Particle.cpp">
+      <Filter>mamelib\Mame\Graphics\Particle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -280,9 +316,6 @@
       <Filter>mamelib\Mame\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Graphics\Camera.h">
-      <Filter>mamelib\Mame\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Mame\Graphics\EffectManager.h">
       <Filter>mamelib\Mame\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Graphics\Graphics.h">
@@ -325,9 +358,6 @@
       <Filter>mamelib\Mame\Scene</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Source\Mame\Graphics\Effect.h">
-      <Filter>mamelib\Mame\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Mame\Graphics\ResourceManager.h" />
     <ClInclude Include="Source\Mame\Graphics\Effect.h">
       <Filter>mamelib\Mame\Graphics</Filter>
@@ -410,23 +440,11 @@
     <ClInclude Include="Source\Mame\Scene\SceneDemo.h">
       <Filter>mamelib\Mame\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\Graphics\ShadowMap.h">
-      <Filter>mamelib\Mame\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Mame\Game\Character.h">
       <Filter>mamelib\Mame\Game\Character</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\Collision.h">
       <Filter>mamelib\Mame\Game\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Mame\Game\Enemy.h">
-      <Filter>mamelib\Mame\Game\Character</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Mame\Game\EnemySlime.h">
-      <Filter>mamelib\Mame\Game\Character</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Mame\Graphics\Bloom.h">
-      <Filter>mamelib\Mame\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\Player.h">
       <Filter>mamelib\Mame\Game\Character\Player</Filter>
@@ -455,8 +473,47 @@
     <ClInclude Include="Source\Mame\Game\ProjectileStraite.h">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Game\Enemy.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemySlime.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\State.h">
+      <Filter>mamelib\Mame\Game\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\StateMachine.h">
+      <Filter>mamelib\Mame\Game\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\DemoStateDerived.h">
+      <Filter>mamelib\Mame\Game\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\Ability.h">
+      <Filter>mamelib\Mame\Game\Ability</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\AbilityManager.h">
+      <Filter>mamelib\Mame\Game\Ability</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\BookState.h">
+      <Filter>mamelib\Mame\Game\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\Bloom.h">
+      <Filter>mamelib\Mame\Graphics\Bloom</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Mame\Graphics\SkyBox.h">
-      <Filter>mamelib\Mame\Graphics</Filter>
+      <Filter>mamelib\Mame\Graphics\SkyBox</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\ShadowMap.h">
+      <Filter>mamelib\Mame\Graphics\ShadowMap</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\Effect.h">
+      <Filter>mamelib\Mame\Graphics\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\EffectManager.h">
+      <Filter>mamelib\Mame\Graphics\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\Particle.h">
+      <Filter>mamelib\Mame\Graphics\Particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -464,15 +521,6 @@
       <Filter>mamelib\Shader</Filter>
     </None>
     <None Include="Source\Shader\geometric_primitive.hlsli">
-      <Filter>mamelib\Shader</Filter>
-    </None>
-    <None Include="Source\Shader\skinned_mesh.hlsli">
-      <Filter>mamelib\Shader</Filter>
-    </None>
-    <None Include="Source\Shader\sprite_dissolve.hlsli">
-      <Filter>mamelib\Shader</Filter>
-    </None>
-    <None Include="Source\Shader\sprite_fade.hlsli">
       <Filter>mamelib\Shader</Filter>
     </None>
     <None Include="Source\Shader\UVScroll.hlsli">
@@ -499,11 +547,26 @@
     <None Include="Resources\Shader\phongShader.hlsli">
       <Filter>mamelib\Shader</Filter>
     </None>
-    <None Include="Source\Shader\bloom.hlsli">
-      <Filter>mamelib\Shader</Filter>
-    </None>
     <None Include="Source\Shader\SkyBox.hlsli">
       <Filter>mamelib\Shader</Filter>
+    </None>
+    <None Include="Source\Shader\sprite_dissolve.hlsli">
+      <Filter>mamelib\Shader\Sprite</Filter>
+    </None>
+    <None Include="Source\Shader\sprite_fade.hlsli">
+      <Filter>mamelib\Shader\Sprite</Filter>
+    </None>
+    <None Include="Source\Shader\FbxModel.hlsli">
+      <Filter>mamelib\Shader\Fbx</Filter>
+    </None>
+    <None Include="Source\Shader\Bloom.hlsli">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </None>
+    <None Include="Source\Shader\Noise.hlsli">
+      <Filter>mamelib\Shader\Fog</Filter>
+    </None>
+    <None Include="Source\Shader\Particle.hlsli">
+      <Filter>mamelib\Shader\Particle</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -557,6 +620,45 @@
     </Filter>
     <Filter Include="mamelib\Mame\Game\Item\Projectile">
       <UniqueIdentifier>{cfcadece-4858-4161-aed4-eae407deb988}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Character\Enemy">
+      <UniqueIdentifier>{ee5e556a-3f3f-4237-9cbb-ca614fe26c78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Ability">
+      <UniqueIdentifier>{40bacefb-4ce6-4a4f-b94d-f727f9fb1c34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Shader\Sprite">
+      <UniqueIdentifier>{7f880055-7beb-4c39-a982-2aa3383415a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Shader\Fbx">
+      <UniqueIdentifier>{7e226544-7558-45df-94d9-47833c6d8435}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Shader\Bloom">
+      <UniqueIdentifier>{3657f708-ee44-453b-bd73-08c4838be46f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\StateMachine">
+      <UniqueIdentifier>{c4bf7710-61dd-420e-bf61-f6f7fce0d9ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Shader\Fog">
+      <UniqueIdentifier>{bd054dc7-1340-4b01-b533-521c6c32f0b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Shader\Particle">
+      <UniqueIdentifier>{13521927-4ef5-4aa2-b966-57e565390fb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Graphics\Bloom">
+      <UniqueIdentifier>{417510a0-6805-4daa-841f-ca523fdafe03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Graphics\SkyBox">
+      <UniqueIdentifier>{dacced77-1e06-4411-bf91-da3ac5e1de92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Graphics\ShadowMap">
+      <UniqueIdentifier>{aa4b4569-5531-4b16-bb07-d868bcd1e03e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Graphics\Effect">
+      <UniqueIdentifier>{569e825f-f7c1-4231-8b4e-748bc10ec279}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Graphics\Particle">
+      <UniqueIdentifier>{91158c84-6ace-4d96-923d-421320438609}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

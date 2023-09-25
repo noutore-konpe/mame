@@ -3,6 +3,8 @@
 #include "../Graphics/Graphics.h"
 #include "../Input/Input.h"
 
+#include "AbilityManager.h"
+
 // コンストラクタ
 Player::Player()
 {
@@ -11,6 +13,7 @@ Player::Player()
     // モデル生成
     {
         model = std::make_unique<Model>(graphics.GetDevice(),
+            //"./Resources/Model/testModel/character.fbx");
             "./Resources/Model/sotai.fbx");
             //"./Resources/Model/sanaModel/mameoall.fbx");
             //"./Resources/Model/testModel/nico.fbx");

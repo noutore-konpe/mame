@@ -11,7 +11,7 @@
 class Model
 {
 public:
-    Model(ID3D11Device* device, const char* fbx_filename, bool triangulate = true, float sampling_rate = 0);
+    Model(ID3D11Device* device, const char* fbx_filename, const char* psFilename=nullptr, bool triangulate = true, float sampling_rate = 0);
     Model(ID3D11Device* device, const char* fbx_filename, std::vector<std::string>& animation_filenames, bool triangulate = true, float sampling_rate = 0);
     ~Model() {}
 

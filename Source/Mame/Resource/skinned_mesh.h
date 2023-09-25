@@ -238,10 +238,7 @@ public:
     struct constants
     {
         DirectX::XMFLOAT4X4 world;
-        //DirectX::XMFLOAT4 material_color;
-        DirectX::XMFLOAT4 Ka;
-        DirectX::XMFLOAT4 Kd;
-        DirectX::XMFLOAT4 Ks;
+        DirectX::XMFLOAT4 materialColor;
         DirectX::XMFLOAT4X4 bone_transforms[MAX_BONES]{
             {
                 1,0,0,0,
@@ -250,6 +247,11 @@ public:
                 0,0,0,1
             }
         };
+
+        // EMISSIVE
+        DirectX::XMFLOAT4 emissiveColor{ 0.0f, 0.0f, 0.0f, 1.0f };
+        float emissiveIntensity = 3.0f;
+        DirectX::XMFLOAT3 dummy; // ダミー
     };
 
     // メッシュ
@@ -320,9 +322,11 @@ public:
         uint64_t unique_id{ 0 };
         std::string name;
 
-        DirectX::XMFLOAT4 Ka{ 0.2f,0.2f,0.2f,1.0f };
-        DirectX::XMFLOAT4 Kd{ 0.8f,0.8f,0.8f,1.0f };
-        DirectX::XMFLOAT4 Ks{ 1.0f,1.0f,1.0f,1.0f };
+        DirectX::XMFLOAT4 Ka{ 0.2f, 0.2f, 0.2f, 1.0f };
+        DirectX::XMFLOAT4 Kd{ 0.8f, 0.8f, 0.8f, 1.0f };
+        DirectX::XMFLOAT4 Ks{ 1.0f, 1.0f, 1.0f, 1.0f };
+        // EMISSIVE
+        DirectX::XMFLOAT4 Ke{ 1.0f, 1.0f ,1.0f ,1.0f };
 
         std::string texture_filenames[4];
         Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shader_resource_views[4];
@@ -331,7 +335,7 @@ public:
         template<class T>
         void serialize(T& archive)
         {
-            archive(unique_id, name, Ka, Kd, Ks, texture_filenames);
+            archive(unique_id, name, Ka, Kd, Ks, Ke/* EMISSIVE */ ,texture_filenames);
         }
     };
     std::unordered_map<uint64_t, material> materials;
@@ -357,10 +361,10 @@ private:
     Microsoft::WRL::ComPtr<ID3D11Buffer> InstancingBuffer;
 
 
-    void create_com_objects(ID3D11Device* device, const char* fbx_filename);
+    void create_com_objects(ID3D11Device* device, const char* fbx_filename, const char* psFilename);
 
 public:
-    skinned_mesh(ID3D11Device* device, const char* fbx_filename, bool triangulate = false, float sampling_rate = 0);
+    skinned_mesh(ID3D11Device* device, const char* fbx_filename, const char* psFilename=nullptr, bool triangulate = false, float sampling_rate = 0);
     skinned_mesh(ID3D11Device* device, const char* fbx_filename, std::vector<std::string>& animation_filenames, bool triangulate = false, float sampling_rate = 0);
     virtual ~skinned_mesh() = default;
 

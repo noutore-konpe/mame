@@ -27,9 +27,6 @@
 #include "Resource/Audio.h"
 #include "Resource/GltfModel.h"
 
-// BLOOM
-#include "Graphics/Bloom.h"
-
 #include "../../External/imgui/ImGuiCtrl.h"
 
 #if 1	// todo : フルスクリーン実装完了したらいらなくなる
@@ -47,24 +44,6 @@ private:
 
 public:
 	CONST HWND hwnd;
-
-
-	struct parametric_constants
-	{
-		float extraction_threshold{ 0.8f };
-		float gaussian_sigma{ 1.0f };
-		float bloom_intensity{ 1.0f };
-		float exposure{ 1.0f };
-	};
-
-	//// BLOOM
-	//std::unique_ptr<Bloom> bloomer;
-	//Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;
-
-
-
-
-
 
 	framework(HWND hwnd);
 	~framework();
@@ -105,7 +84,6 @@ public:
 
 		// ImGui終了化
 		IMGUI_CTRL_UNINITIALIZE();
-
 
 #if 1
 		BOOL fullscreen = 0;
@@ -168,29 +146,19 @@ public:
 		return 0;
 	}
 
+public:
+	//static high_resolution_timer& GetTictoc() { return tictoc; }
+
 private:
 	bool initialize();
 	void update(float elapsed_time/*Elapsed seconds from last frame*/);
 	void render(float elapsed_time/*Elapsed seconds from last frame*/);
 	bool uninitialize();
 
-private:
-	high_resolution_timer tictoc;
+public:
+	static high_resolution_timer tictoc;
 	uint32_t frames{ 0 };
 	float elapsedTime{ 0.0f };
-	//void calculate_frame_stats()
-	//{
-	//	if (++frames, (tictoc.time_stamp() - elapsed_time) >= 1.0f)
-	//	{
-	//		float fps = static_cast<float>(frames);
-	//		std::wostringstream outs;
-	//		outs.precision(6);
-	//		outs << APPLICATION_NAME << L" : FPS : " << fps << L" / " << L"Frame Time : " << 1000.0f / fps << L" (ms)";
-	//		SetWindowTextW(hwnd, outs.str().c_str());
-	//		frames = 0;
-	//		elapsed_time += 1.0f;
-	//	}
-	//}
 	void CalculateFrameStats()
 	{
 		if (++frames, (tictoc.time_stamp() - elapsedTime) >= 1.0f)

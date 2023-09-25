@@ -98,7 +98,7 @@ void fetch_bone_influences(const FbxMesh* fbx_mesh,
 }
 
 
-skinned_mesh::skinned_mesh(ID3D11Device* device, const char* fbx_filename, bool triangulate, float sampling_rate)
+skinned_mesh::skinned_mesh(ID3D11Device* device, const char* fbx_filename, const char* psFilename, bool triangulate, float sampling_rate)
 {
     std::filesystem::path cereal_filename(fbx_filename);
     cereal_filename.replace_extension("cereal");
@@ -116,7 +116,7 @@ skinned_mesh::skinned_mesh(ID3D11Device* device, const char* fbx_filename, bool 
         cereal::BinaryOutputArchive serialization(ofs);
         serialization(scene_view, meshes, materials, animation_clips);
     }
-    create_com_objects(device, fbx_filename);
+    create_com_objects(device, fbx_filename, psFilename);
 
     // BOUNDING_BOX
     compute_bounding_box();
@@ -145,7 +145,7 @@ skinned_mesh::skinned_mesh(ID3D11Device* device, const char* fbx_filename, std::
         cereal::BinaryOutputArchive serialization(ofs);
         serialization(scene_view, meshes, materials, animation_clips);
     }
-    create_com_objects(device, fbx_filename);
+    create_com_objects(device, fbx_filename, nullptr);
 
     // BOUNDING_BOX
     compute_bounding_box();
@@ -306,7 +306,7 @@ void skinned_mesh::fetch_meshes(FbxScene* fbx_scene, std::vector<mesh>& meshes)
     }
 }
 
-void skinned_mesh::create_com_objects(ID3D11Device* device, const char* fbx_filename)
+void skinned_mesh::create_com_objects(ID3D11Device* device, const char* fbx_filename, const char* psFilename)
 {
     for (mesh& mesh : meshes)
     {
@@ -342,6 +342,7 @@ void skinned_mesh::create_com_objects(ID3D11Device* device, const char* fbx_file
     for (std::unordered_map<uint64_t, material>::iterator iterator = materials.begin();
         iterator != materials.end(); ++iterator)
     {
+#if 0
         for (size_t texture_index = 0; texture_index < 2; ++texture_index)
         {
             if (iterator->second.texture_filenames[texture_index].size() > 0)
@@ -359,6 +360,46 @@ void skinned_mesh::create_com_objects(ID3D11Device* device, const char* fbx_file
                     texture_index == 1 ? 0xFFFF7F7F : 0xFFFFFFFF, 16);
             }
         }
+#else
+        D3D11_TEXTURE2D_DESC texture2dDesc;
+
+        // Diffuse
+        if (iterator->second.texture_filenames[0].size() > 0)
+        {
+            std::filesystem::path path(fbx_filename);
+            path.replace_filename(iterator->second.texture_filenames[0]);
+            load_texture_from_file(device, path.c_str(), iterator->second.shader_resource_views[0].GetAddressOf(), &texture2dDesc);
+        }
+        else
+        {
+            make_dummy_texture(device, iterator->second.shader_resource_views[0].GetAddressOf(), 0xFFFFFFFF, 4);
+        }
+
+        // Normal
+        if (iterator->second.texture_filenames[1].size() > 0)
+        {
+            std::filesystem::path path(fbx_filename);
+            path.replace_filename(iterator->second.texture_filenames[1]);
+            load_texture_from_file(device, path.c_str(), iterator->second.shader_resource_views[1].GetAddressOf(), &texture2dDesc);
+        }
+        else
+        {
+            make_dummy_texture(device, iterator->second.shader_resource_views[1].GetAddressOf(), 0xFFFFF7F7, 4);
+        }
+
+        // EMISSIVE
+        if (iterator->second.texture_filenames[2].size() > 0)
+        {
+            std::filesystem::path path(fbx_filename);
+            path.replace_filename(iterator->second.texture_filenames[2]);
+            load_texture_from_file(device, path.c_str(), iterator->second.shader_resource_views[2].GetAddressOf(), &texture2dDesc);
+        }
+        else
+        {
+            make_dummy_texture(device, iterator->second.shader_resource_views[2].GetAddressOf(), 0xFF000000, 4);
+        }
+
+#endif
     }
 
     HRESULT hr = S_OK;
@@ -377,9 +418,11 @@ void skinned_mesh::create_com_objects(ID3D11Device* device, const char* fbx_file
         input_layout.ReleaseAndGetAddressOf(), input_element_desc, ARRAYSIZE(input_element_desc));
     create_ps_from_cso(device, "./resources/Shader/phongShaderPS.cso", pixel_shader.ReleaseAndGetAddressOf());
 #else
-    CreateVsFromCso(device, "./resources/Shader/skinned_mesh_vs.cso", vertex_shader.ReleaseAndGetAddressOf(),
+    CreateVsFromCso(device, "./resources/Shader/FbxModelVS.cso", vertex_shader.ReleaseAndGetAddressOf(),
         input_layout.ReleaseAndGetAddressOf(), input_element_desc, ARRAYSIZE(input_element_desc));
-    CreatePsFromCso(device, "./resources/Shader/skinned_mesh_ps.cso", pixel_shader.ReleaseAndGetAddressOf());
+    CreatePsFromCso(device,
+        (psFilename != nullptr) ? psFilename : "./resources/Shader/CharacterPS.cso",
+        pixel_shader.ReleaseAndGetAddressOf());
 #endif // Shader
 
 #else
@@ -508,18 +551,22 @@ void skinned_mesh::render(ID3D11DeviceContext* deviceContext,
         {
             const material& material{ materials.at(subset.material_unique_id) };
 
-            DirectX::XMStoreFloat4(&data.Ka, 
+            DirectX::XMStoreFloat4(&data.materialColor,
                 DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&material_color), DirectX::XMLoadFloat4(&material.Kd)));
-            data.Kd = material.Kd;
-            data.Ks = material.Ks;
-            //DirectX::XMStoreFloat4(&data.material_color,
-            //    DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&material_color), DirectX::XMLoadFloat4(&material.Kd)));
+
+            // EMISSIVE
+            data.emissiveColor = material.Ke;
+
             deviceContext->UpdateSubresource(constant_buffer.Get(), 0, 0, &data, 0, 0);
             deviceContext->VSSetConstantBuffers(0, 1, constant_buffer.GetAddressOf());
             deviceContext->PSSetConstantBuffers(0, 1, constant_buffer.GetAddressOf());
 
+            // Diffuse
             deviceContext->PSSetShaderResources(0, 1, material.shader_resource_views[0].GetAddressOf());
+            // Normal
             deviceContext->PSSetShaderResources(1, 1, material.shader_resource_views[1].GetAddressOf());
+            // EMISSIVE
+            deviceContext->PSSetShaderResources(2, 1, material.shader_resource_views[2].GetAddressOf());
 
             deviceContext->DrawIndexed(subset.index_count, subset.start_index_location, 0);
         }
@@ -587,16 +634,26 @@ void skinned_mesh::fetch_materials(FbxScene* fbx_scene,
                 const FbxFileTexture* file_texture{ fbx_property.GetSrcObject<FbxFileTexture>() };
                 material.texture_filenames[1] = file_texture ? file_texture->GetRelativeFileName() : "";
             }
+            // EMISSIVE
+            fbx_property = fbx_material->FindProperty(FbxSurfaceMaterial::sEmissive);
+            if (fbx_property.IsValid())
+            {
+                const FbxDouble3 color{ fbx_property.Get<FbxDouble3>() };
+                material.Ke.x = static_cast<float>(color[0]);
+                material.Ke.y = static_cast<float>(color[1]);
+                material.Ke.z = static_cast<float>(color[2]);
+                material.Ke.w = 1.0f;
+
+                const FbxFileTexture* fbxTexture{ fbx_property.GetSrcObject<FbxFileTexture>() };
+                material.texture_filenames[2] = fbxTexture ? fbxTexture->GetRelativeFileName() : "";
+            }
+
             materials.emplace(material.unique_id, std::move(material));
         }
     }
 
     // ダミーマテリアル
-    {
-        materials.emplace();
-        //material material;
-        //materials.emplace(material.unique_id, material);
-    }
+    materials.emplace();
 }
 
 // FBXメッシュからバインドポーズの情報を抽出する
@@ -819,6 +876,11 @@ void skinned_mesh::Drawdebug()
 
         ImGui::SliderInt("mask_texture", &mask_texture_value, 0, 3);
 
+        ImGui::TreePop();
+    }
+
+    if (ImGui::TreeNode("Emmisive"))
+    {
         ImGui::TreePop();
     }
 }

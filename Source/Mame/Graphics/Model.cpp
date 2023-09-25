@@ -5,12 +5,13 @@
 // TODO: リソースマネージャーの使用
 #define USE_RESOURCE_MANAGER
 
-Model::Model(ID3D11Device* device, const char* fbx_filename, bool triangulate, float sampling_rate)
+Model::Model(ID3D11Device* device, const char* fbx_filename, const char* psFilename, bool triangulate, float sampling_rate)
 {   
 #ifdef USE_RESOURCE_MANAGER // リソースマネージャーあり
     skinned_meshes = ResourceManager::Instance().LoadModelResource(
         device, 
         fbx_filename, 
+        psFilename,
         triangulate, 
         sampling_rate
     );
@@ -33,7 +34,7 @@ Model::Model(ID3D11Device* device, const char* fbx_filename, std::vector<std::st
 // 描画
 void Model::Render(const float& scale)
 {
-    Render(scale, 3);
+    Render(scale, static_cast<UINT>(Shader::RASTER_STATE::SOLID));
 }
 
 void Model::Render(const float& scale, int rastarizeState)

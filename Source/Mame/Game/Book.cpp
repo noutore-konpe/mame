@@ -1,4 +1,5 @@
 #include "Book.h"
+#include "BookState.h"
 
 #include "../Graphics/Graphics.h"
 
@@ -15,7 +16,17 @@ Book::Book()
     model = std::make_unique<Model>(graphics.GetDevice(), 
         "./Resources/Model/Item/Book.fbx");
 
-    GetTransform()->SetScaleFactor(3.0f);
+    // ステートマシン
+    {
+        stateMachine.reset(new StateMachine<State<Book>>);
+
+        GetStateMachine()->RegisterState(new BookState::IdleState(this));
+        GetStateMachine()->RegisterState(new BookState::OpenState(this));
+        GetStateMachine()->RegisterState(new BookState::AttackState(this));
+        GetStateMachine()->RegisterState(new BookState::CloseState(this));
+
+        GetStateMachine()->SetState(static_cast<UINT>(StateMachineState::Idle));
+    }
 
     // Tagを設定
     tag = Tag::BOOK;
@@ -36,6 +47,8 @@ Book::~Book()
 void Book::Initialize()
 {
     Item::Initialize();
+
+    GetTransform()->SetScaleFactor(3.0f);
 }
 
 // 終了化
@@ -51,7 +64,12 @@ void Book::Begin()
 // 更新処理
 void Book::Update(const float& elapsedTime)
 {
+    GetTransform()->SetScaleFactor(3.0f);
+
     Item::Update(elapsedTime);
+
+    // ステートマシン更新
+    GetStateMachine()->Update(elapsedTime);
 
     // Transform設定
     SetTransform(elapsedTime);
@@ -59,6 +77,44 @@ void Book::Update(const float& elapsedTime)
     // 弾丸更新処理
     projectileManager.Update(elapsedTime);
 
+
+
+    // アニメーション更新
+    UpdateAnimation(elapsedTime);
+}
+
+// Updateの後に呼ばれる
+void Book::End()
+{
+}
+
+// 描画処理
+void Book::Render(const float& scale)
+{
+    Item::Render(scale);
+
+    // 弾丸描画処理
+    projectileManager.Render(0.1f);
+}
+
+// ImGui用
+void Book::DrawDebug()
+{
+#ifdef USE_IMGUI
+    if (ImGui::BeginMenu(GetName()))
+    {
+        Item::DrawDebug();
+
+        //projectileManager.DrawDebug();
+
+        ImGui::EndMenu();
+    }
+#endif // USE_IMGUI
+}
+
+// 弾生成&発射
+bool Book::LaunchProjectile(const float& elapsedTime)
+{
     if (launchTimer <= 0.0f)
     {
         DirectX::XMFLOAT3 bookPosition = GetTransform()->GetPosition();
@@ -71,45 +127,21 @@ void Book::Update(const float& elapsedTime)
         ProjectileStraite* projectile = new ProjectileStraite(&projectileManager);
         projectile->Launch(bookForward, bookPosition);
 
-        launchTimer = 2.0f;
+        // 発射までの時間を設定
+        launchTimer = launchTime;
+
+        return true; // 発射した
     }
     launchTimer -= elapsedTime;
+
+    return false; // 発射してない
 }
 
-// Updateの後に呼ばれる
-void Book::End()
-{
-}
-
-// 描画処理
-void Book::Render(const float& elapsedTime, const float& scale)
-{
-    Item::Render(elapsedTime, scale);
-
-    // 弾丸描画処理
-    projectileManager.Render(elapsedTime, 0.1f);
-}
-
-// ImGui用
-void Book::DrawDebug()
-{
-#ifdef USE_IMGUI
-    if (ImGui::BeginMenu(GetName()))
-    {
-        Item::DrawDebug();
-
-        projectileManager.DrawDebug();
-
-        ImGui::EndMenu();
-    }
-#endif // USE_IMGUI
-}
 
 void Book::SetTransform(const float& elapsedTime)
 {
     Transform* playerTransform = PlayerManager::Instance().GetPlayer()->GetTransform();
     DirectX::XMFLOAT3 playerPos = playerTransform->GetPosition();
-    DirectX::XMFLOAT4 playerRot = playerTransform->GetRotation();
 
     // プレイヤーの右ベクトル
     DirectX::XMFLOAT3 playerRightVec = playerTransform->CalcRight();
@@ -205,11 +237,13 @@ void Book::SetTransform(const float& elapsedTime)
     // 位置設定
     GetTransform()->SetPosition(createPosition);
 
-    // 回転もプレイヤーに合わせる
-    
-    // 本をいい感じになるように設定
-    playerRot.x += DirectX::XMConvertToRadians(50.0f);
-
-    // 回転値設定
-    GetTransform()->SetRotation(playerRot);
+    // 回転値
+    DirectX::XMFLOAT4 bookRot = GetTransform()->GetRotation();
+    if (bookRot.x > DirectX::XMConvertToRadians(360.0f))bookRot.x -= DirectX::XMConvertToRadians(360.0f);
+    if (bookRot.x < DirectX::XMConvertToRadians(0.0f))bookRot.x += DirectX::XMConvertToRadians(360.0f);
+    if (bookRot.y > DirectX::XMConvertToRadians(360.0f))bookRot.y -= DirectX::XMConvertToRadians(360.0f);
+    if (bookRot.y < DirectX::XMConvertToRadians(0.0f))bookRot.y += DirectX::XMConvertToRadians(360.0f);
+    if (bookRot.z > DirectX::XMConvertToRadians(360.0f))bookRot.z -= DirectX::XMConvertToRadians(360.0f);
+    if (bookRot.z < DirectX::XMConvertToRadians(0.0f))bookRot.z += DirectX::XMConvertToRadians(360.0f);
+    GetTransform()->SetRotation(bookRot);
 }

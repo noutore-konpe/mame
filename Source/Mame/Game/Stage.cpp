@@ -6,7 +6,10 @@ Stage::Stage()
 {
     Graphics& graphics = Graphics::Instance();
 
-    model = std::make_unique<Model>(graphics.GetDevice(), "./Resources/Model/Stage/plane.fbx");
+    model = std::make_unique<Model>(graphics.GetDevice(), 
+        "./Resources/Model/Stage/plane.fbx", 
+        //"./Resources/Model/testModel/death_valley_-_terrain.fbx", 
+        "./Resources/Shader/StagePS.cso");
 }
 
 Stage::~Stage()
@@ -15,6 +18,7 @@ Stage::~Stage()
 
 void Stage::Initialize()
 {
+    GetTransform()->SetPositionY(-1.0f);
     GetTransform()->SetScaleFactor(100.0f);
 }
 

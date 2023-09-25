@@ -3,6 +3,7 @@
 const std::shared_ptr<skinned_mesh> ResourceManager::LoadModelResource(
     ID3D11Device*  device, 
     const char* const       fbx_filename, 
+    const char* const       psFilename,
     const bool              triangulate,
     const float             sampling_rate)
 {
@@ -23,6 +24,7 @@ const std::shared_ptr<skinned_mesh> ResourceManager::LoadModelResource(
         std::make_shared<skinned_mesh>(
             device, 
             fbx_filename, 
+            psFilename,
             triangulate, 
             sampling_rate)
     };

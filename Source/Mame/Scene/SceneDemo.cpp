@@ -22,8 +22,6 @@ void SceneDemo::CreateResource()
 {
     Graphics& graphics = Graphics::Instance();
 
-    SetStates();
-
     // GltfModel
     {
 #if GLTF_MODEL
@@ -118,16 +116,23 @@ void SceneDemo::CreateResource()
 #endif // SKYBOX
     }
 
-#if BLOOM
+
     framebuffers[0] = std::make_unique<FrameBuffer>(graphics.GetDevice(), 1280, 720);
-    bit_block_transfer = std::make_unique<FullscreenQuad>(graphics.GetDevice());
-#endif // BLOOM
+    bitBlockTransfer = std::make_unique<FullscreenQuad>(graphics.GetDevice());
+
+    // baseColor
+    CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/finalPassPs.cso", baseColorPS.GetAddressOf());
 
     // BLOOM
 #if BLOOM
-    bloomer = std::make_unique<Bloom>(graphics.GetDevice(), 1280, 720);
-    CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/finalPassPs.cso", pixelShader.ReleaseAndGetAddressOf());
+    bloomer = std::make_unique<Bloom>(graphics.GetDevice(), 1280 / 1, 720 / 1);
+    CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/finalPassPs.cso", bloomPS.ReleaseAndGetAddressOf());
 #endif // BLOOM
+
+#if FOG
+    framebuffers[1] = std::make_unique<FrameBuffer>(graphics.GetDevice(), 1280 / 1, 720 / 1, false);
+    CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/FogPS.cso", fogPS.GetAddressOf());
+#endif
 
     // SHADOW
     shadow.shadowMap = std::make_unique<ShadowMap>(graphics.GetDevice(),
@@ -144,6 +149,11 @@ void SceneDemo::CreateResource()
         hr = graphics.GetDevice()->CreateBuffer(&desc, nullptr, SceneConstantBuffer.GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
+
+#if PARTICLE
+    particles = std::make_unique<decltype(particles)::element_type>(graphics.GetDevice(), 1000);
+    particles->Initialize(graphics.GetDeviceContext(), 0);
+#endif// PARTICLE
 }
 
 // ‰Šú‰»
@@ -190,14 +200,19 @@ void SceneDemo::Update(const float& elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
 
+    //effect[0]->Play({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f });
+    
+#if PARTICLE
     if (gamePad.GetButtonDown() & GamePad::BTN_A)
     {
-        //for (int i = 0; i < 5; ++i)
-        {
-            effect[0]->Play({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f });
-        }
-        //effect[0]->Play({ 0.0f, 0.0f, 0.0f }, { 10.0f,10.0f,10.0f });
+        particles->Initialize(Graphics::Instance().GetDeviceContext(), 0);
     }
+
+    if (integrateParticles)
+    {
+        particles->Integrate(Graphics::Instance().GetDeviceContext(), elapsedTime);
+    }
+#endif// PARTICLE
 
     // GltfModel
     {
@@ -297,31 +312,28 @@ void SceneDemo::Render(const float& elapsedTime)
 {
     // scaleFactor
     //float enemyScaleFactor = 0.01f;
-    float enemyScaleFactor = 0.001f;
+    //float enemyScaleFactor = 0.001f;
+    float enemyScaleFactor = 0.1f;
     float playerScaleFactor = 0.01f;
 
     Graphics& graphics = Graphics::Instance();
 
+    Shader::ShadowConstants shadowConstants{};
+
     // •`‰æ‚Ì‰ŠúÝ’è
     {
-        ID3D11DeviceContext* deviceContext = graphics.GetDeviceContext();
         ID3D11RenderTargetView* renderTargetView = graphics.GetRenderTargetView();
         ID3D11DepthStencilView* depthStencilView = graphics.GetDepthStencilView();
 
         FLOAT color[]{ 0.2f, 0.2f, 0.2f, 1.0f };
-        deviceContext->ClearRenderTargetView(renderTargetView, color);
-        deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-        deviceContext->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+        graphics.GetDeviceContext()->ClearRenderTargetView(renderTargetView, color);
+        graphics.GetDeviceContext()->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+        graphics.GetDeviceContext()->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 
-#if SKYBOX
-        skyBox->Render(graphics.GetDeviceContext(),
-            Camera::Instance().GetViewMatrix(), Camera::Instance().GetProjectionMatrix());
-#endif // SKYBOX
 
         // SHADOW
-        Shader::SceneConstants sceneConstant{};
-        sceneConstant.lightDirection = graphics.GetShader()->view.position;
-        sceneConstant.cameraPosition = graphics.GetShader()->view.camera;
+        shadowConstants.lightDirection = graphics.GetShader()->view.position;
+        shadowConstants.cameraPosition = graphics.GetShader()->view.camera;
 
         // SHADOW : make shadow map
         {
@@ -351,13 +363,13 @@ void SceneDemo::Render(const float& elapsedTime)
                 shadow.lightViewSize,shadow.lightViewNearZ,shadow.lightViewFarZ)
             };
 
-            DirectX::XMStoreFloat4x4(&sceneConstant.viewProjection, V * P);
-            sceneConstant.lightViewProjection = sceneConstant.viewProjection;
-            deviceContext->UpdateSubresource(SceneConstantBuffer.Get(), 0, 0, &sceneConstant, 0, 0);
-            deviceContext->VSSetConstantBuffers(1, 1, SceneConstantBuffer.GetAddressOf());
+            DirectX::XMStoreFloat4x4(&shadowConstants.viewProjection, V * P);
+            shadowConstants.lightViewProjection = shadowConstants.viewProjection;
+            graphics.GetDeviceContext()->UpdateSubresource(SceneConstantBuffer.Get(), 0, 0, &shadowConstants, 0, 0);
+            graphics.GetDeviceContext()->VSSetConstantBuffers(1, 1, SceneConstantBuffer.GetAddressOf());
 
-            shadow.shadowMap->Clear(deviceContext, 1.0f);
-            shadow.shadowMap->Activate(deviceContext);
+            shadow.shadowMap->Clear(graphics.GetDeviceContext(), 1.0f);
+            shadow.shadowMap->Activate(graphics.GetDeviceContext());
 
             // SHADOW : ‰e‚Â‚¯‚½‚¢ƒ‚ƒfƒ‹‚Í‚±‚±‚ÉRender‚·‚é
             {
@@ -367,25 +379,28 @@ void SceneDemo::Render(const float& elapsedTime)
                 enemySlime[1]->Render(elapsedTime, enemyScaleFactor);
             }
 
-            shadow.shadowMap->Deactivete(deviceContext);
+            shadow.shadowMap->Deactivete(graphics.GetDeviceContext());
         }
-
-        // ƒJƒƒ‰ŠÖŒW
-        RenderContext rc;
-        rc.lightDirection = { 0.0f, -1.0f, 0.0f, 0.0f };
-
-        Shader* shader = graphics.GetShader();
-        shader->Begin(graphics.GetDeviceContext(), rc, sceneConstant);
-
-        // SHADOW : bind shadow map at slot 8
-        deviceContext->PSSetShaderResources(8, 1, shadow.shadowMap->shaderResourceView.GetAddressOf());
     }
 
-#if BLOOM
+
     framebuffers[0]->Clear(graphics.GetDeviceContext());
     framebuffers[0]->Activate(graphics.GetDeviceContext());
-#endif // BLOOM
 
+#if SKYBOX
+    skyBox->Render(graphics.GetDeviceContext(),
+        Camera::Instance().GetViewMatrix(), Camera::Instance().GetProjectionMatrix());
+#endif // SKYBOX
+
+    // ƒJƒƒ‰ŠÖŒW
+    RenderContext rc;
+    rc.lightDirection = { 0.0f, -1.0f, 0.0f, 0.0f };
+
+    Shader* shader = graphics.GetShader();
+    shader->Begin(graphics.GetDeviceContext(), rc, shadowConstants);
+
+    // SHADOW : bind shadow map at slot 8
+    graphics.GetDeviceContext()->PSSetShaderResources(8, 1, shadow.shadowMap->shaderResourceView.GetAddressOf());
 
     // GltfModel
     {
@@ -426,13 +441,21 @@ void SceneDemo::Render(const float& elapsedTime)
 
     // item
     {
-        ItemManager::Instance().Render(elapsedTime, 0.01f);
+        ItemManager::Instance().Render(0.01f);
     }
 
     // stage
     {
         stage->Render(elapsedTime, 1.0f);
     }
+
+#if PARTICLE
+    shader->SetDepthStencileState(static_cast<size_t>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
+    shader->SetRasterizerState(static_cast<size_t>(Shader::RASTER_STATE::CULL_NONE));
+    shader->SetBlendState(static_cast<size_t>(Shader::BLEND_STATE::ADD));
+    shader->GSSetConstantBuffer();
+    particles->Render(graphics.GetDeviceContext());
+#endif// PARTICLE
 
     // 3DƒGƒtƒFƒNƒg•`‰æ
     {
@@ -444,24 +467,57 @@ void SceneDemo::Render(const float& elapsedTime)
         EffectManager::Instance().Render(view, projection);
     }
 
-#if BLOOM
     framebuffers[0]->Deactivate(graphics.GetDeviceContext());
-#endif // BLOOM
+
+    
+    // FOG
+#if FOG
+    {
+        framebuffers[1]->Clear(graphics.GetDeviceContext());
+        framebuffers[1]->Activate(graphics.GetDeviceContext());
+        shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_OFF_ZW_OFF));
+        shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::CULL_NONE));
+        shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::NONE));
+
+        bitBlockTransfer->Blit(graphics.GetDeviceContext(), framebuffers[0]->shaderResourceViews[1].GetAddressOf()/*Depth*/, 0, 1, fogPS.Get());
+
+        framebuffers[1]->Deactivate(graphics.GetDeviceContext());
+
+        shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_OFF_ZW_OFF));
+        shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::CULL_NONE));
+        ID3D11ShaderResourceView* shaderResourceView[]
+        { 
+            framebuffers[0]->shaderResourceViews[0].Get(),
+            framebuffers[0]->shaderResourceViews[0].Get(),/*dummy*/
+            framebuffers[1]->shaderResourceViews[0].Get(),
+        };
+        bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceView, 0, _countof(shaderResourceView), baseColorPS.Get());
+    }
+#else
+    //ID3D11ShaderResourceView* shaderResourceView[]
+    //{
+    //    framebuffers[0]->shaderResourceViews[0].Get(),
+    //};
+    //bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceView, 0, _countof(shaderResourceView), baseColorPS.Get());
+#endif
 
     // BLOOM
 #if BLOOM
     bloomer->Make(graphics.GetDeviceContext(), framebuffers[0]->shaderResourceViews[0].Get());
 
-    graphics.GetDeviceContext()->OMSetDepthStencilState(depthStencilStates[static_cast<size_t>(DEPTH_STATE::ZT_OFF_ZW_OFF)].Get(), 0);
-    graphics.GetDeviceContext()->RSSetState(rasterizerStates[static_cast<size_t>(RASTER_STATE::CULL_NONE)].Get());
-    graphics.GetDeviceContext()->OMSetBlendState(blendStates[static_cast<size_t>(BLEND_STATE::ALPHA)].Get(), nullptr, 0xFFFFFFFF);
-    ID3D11ShaderResourceView* shader_resource_views[] =
+    shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_OFF_ZW_OFF));
+    shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::CULL_NONE));
+    shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
+
+    ID3D11ShaderResourceView* shaderResourceViews[] =
     {
         framebuffers[0]->shaderResourceViews[0].Get(),
         bloomer->ShaderResourceView(),
+        framebuffers[1]->shaderResourceViews[0].Get(),
     };
-    bit_block_transfer->Blit(graphics.GetDeviceContext(), shader_resource_views, 0, 2, pixel_shaders[0].Get());
+    bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceViews, 0, _countof(shaderResourceViews), bloomPS.Get());
 #endif // BLOOM
+
 }
 
 // Imgui—p
@@ -539,6 +595,7 @@ void SceneDemo::DrawDebug()
     // SHADOW
     {
         ImGui::Begin("shadow");
+        ImGui::DragFloat4("lightViewFocus", &shadow.lightViewFocus.x);
         ImGui::SliderFloat("lightViewDistance", &shadow.lightViewDistance, 1.0f, 100.0f);
         ImGui::SliderFloat("lightViewSize", &shadow.lightViewSize, 1.0f, 100.0f);
         ImGui::SliderFloat("lightViewNearZ", &shadow.lightViewNearZ, 1.0f, shadow.lightViewFarZ - 1.0f);
@@ -547,173 +604,20 @@ void SceneDemo::DrawDebug()
         ImGui::End();
     }
 
+#if PARTICLE
+    if (ImGui::BeginMenu("particle"))
+    {
+        particles->DrawDebug();
+        ImGui::ColorEdit4("particleDataColor", &particles->particleData.color.x);
+        ImGui::SliderFloat("particleDataSize", &particles->particleData.particleSize, 0.0f, 1.0f, "%.4f");
+
+        ImGui::EndMenu();
+    }
+#endif// PARTICLE
+
     Graphics::Instance().GetShader()->DrawDebug();
 
     ImGui::End(); // sceneDemo
 #endif // USE_IMUGI
 }
 
-void SceneDemo::SetStates()
-{
-    Graphics& graphics = Graphics::Instance();
-    HRESULT hr{ S_OK };
-
-    D3D11_SAMPLER_DESC samplerDesc{};
-    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.MipLODBias = 0;
-    samplerDesc.MaxAnisotropy = 16;
-    samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-    samplerDesc.BorderColor[0] = 0;
-    samplerDesc.BorderColor[1] = 0;
-    samplerDesc.BorderColor[2] = 0;
-    samplerDesc.BorderColor[3] = 0;
-    samplerDesc.MinLOD = 0;
-    samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-    hr = graphics.GetDevice()->CreateSamplerState(&samplerDesc, samplerStates[static_cast<size_t>(SAMPLER_STATE::POINT)].GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
-    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    hr = graphics.GetDevice()->CreateSamplerState(&samplerDesc, samplerStates[static_cast<size_t>(SAMPLER_STATE::LINEAR)].GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
-    samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    hr = graphics.GetDevice()->CreateSamplerState(&samplerDesc, samplerStates[static_cast<size_t>(SAMPLER_STATE::ANISOTROPIC)].GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
-    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-    samplerDesc.BorderColor[0] = 0;
-    samplerDesc.BorderColor[1] = 0;
-    samplerDesc.BorderColor[2] = 0;
-    samplerDesc.BorderColor[3] = 0;
-    hr = graphics.GetDevice()->CreateSamplerState(&samplerDesc, samplerStates[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_BLACK)].GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
-    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-    samplerDesc.BorderColor[0] = 1;
-    samplerDesc.BorderColor[1] = 1;
-    samplerDesc.BorderColor[2] = 1;
-    samplerDesc.BorderColor[3] = 1;
-    hr = graphics.GetDevice()->CreateSamplerState(&samplerDesc, samplerStates[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_WHITE)].GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
-    D3D11_DEPTH_STENCIL_DESC depth_stencil_desc{};
-    depth_stencil_desc.DepthEnable = TRUE;
-    depth_stencil_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    depth_stencil_desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-    hr = graphics.GetDevice()->CreateDepthStencilState(&depth_stencil_desc, depthStencilStates[static_cast<size_t>(DEPTH_STATE::ZT_ON_ZW_ON)].GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-    depth_stencil_desc.DepthEnable = TRUE;
-    depth_stencil_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-    depth_stencil_desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-    hr = graphics.GetDevice()->CreateDepthStencilState(&depth_stencil_desc, depthStencilStates[static_cast<size_t>(DEPTH_STATE::ZT_ON_ZW_OFF)].GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-    depth_stencil_desc.DepthEnable = FALSE;
-    depth_stencil_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    depth_stencil_desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-    hr = graphics.GetDevice()->CreateDepthStencilState(&depth_stencil_desc, depthStencilStates[static_cast<size_t>(DEPTH_STATE::ZT_OFF_ZW_ON)].GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-    depth_stencil_desc.DepthEnable = FALSE;
-    depth_stencil_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-    depth_stencil_desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-    hr = graphics.GetDevice()->CreateDepthStencilState(&depth_stencil_desc, depthStencilStates[static_cast<size_t>(DEPTH_STATE::ZT_OFF_ZW_OFF)].GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
-    D3D11_BLEND_DESC blend_desc{};
-    blend_desc.AlphaToCoverageEnable = FALSE;
-    blend_desc.IndependentBlendEnable = FALSE;
-    blend_desc.RenderTarget[0].BlendEnable = FALSE;
-    blend_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-    blend_desc.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
-    blend_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-    blend_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-    blend_desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-    blend_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-    blend_desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-    hr = graphics.GetDevice()->CreateBlendState(&blend_desc, blendStates[static_cast<size_t>(BLEND_STATE::NONE)].GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-    blend_desc.AlphaToCoverageEnable = FALSE;
-    blend_desc.IndependentBlendEnable = FALSE;
-    blend_desc.RenderTarget[0].BlendEnable = TRUE;
-    blend_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-    blend_desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-    blend_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-    blend_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-    blend_desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
-    blend_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-    blend_desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-    hr = graphics.GetDevice()->CreateBlendState(&blend_desc, blendStates[static_cast<size_t>(BLEND_STATE::ALPHA)].GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-    blend_desc.AlphaToCoverageEnable = FALSE;
-    blend_desc.IndependentBlendEnable = FALSE;
-    blend_desc.RenderTarget[0].BlendEnable = TRUE;
-    blend_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA; //D3D11_BLEND_ONE D3D11_BLEND_SRC_ALPHA
-    blend_desc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
-    blend_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-    blend_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
-    blend_desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
-    blend_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-    blend_desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-    hr = graphics.GetDevice()->CreateBlendState(&blend_desc, blendStates[static_cast<size_t>(BLEND_STATE::ADD)].GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-    blend_desc.AlphaToCoverageEnable = FALSE;
-    blend_desc.IndependentBlendEnable = FALSE;
-    blend_desc.RenderTarget[0].BlendEnable = TRUE;
-    blend_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_ZERO; //D3D11_BLEND_DEST_COLOR
-    blend_desc.RenderTarget[0].DestBlend = D3D11_BLEND_SRC_COLOR; //D3D11_BLEND_SRC_COLOR
-    blend_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-    blend_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_DEST_ALPHA;
-    blend_desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-    blend_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-    blend_desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-    hr = graphics.GetDevice()->CreateBlendState(&blend_desc, blendStates[static_cast<size_t>(BLEND_STATE::MULTIPLY)].GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
-    D3D11_RASTERIZER_DESC rasterizer_desc{};
-    rasterizer_desc.FillMode = D3D11_FILL_SOLID;
-    rasterizer_desc.CullMode = D3D11_CULL_BACK;
-    // UNIT.21
-    //rasterizer_desc.FrontCounterClockwise = FALSE;
-    rasterizer_desc.FrontCounterClockwise = TRUE;
-    rasterizer_desc.DepthBias = 0;
-    rasterizer_desc.DepthBiasClamp = 0;
-    rasterizer_desc.SlopeScaledDepthBias = 0;
-    rasterizer_desc.DepthClipEnable = TRUE;
-    rasterizer_desc.ScissorEnable = FALSE;
-    rasterizer_desc.MultisampleEnable = FALSE;
-    rasterizer_desc.AntialiasedLineEnable = FALSE;
-    hr = graphics.GetDevice()->CreateRasterizerState(&rasterizer_desc, rasterizerStates[static_cast<size_t>(RASTER_STATE::SOLID)].GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
-    rasterizer_desc.FillMode = D3D11_FILL_WIREFRAME;
-    rasterizer_desc.CullMode = D3D11_CULL_BACK;
-    rasterizer_desc.AntialiasedLineEnable = TRUE;
-    hr = graphics.GetDevice()->CreateRasterizerState(&rasterizer_desc, rasterizerStates[static_cast<size_t>(RASTER_STATE::WIREFRAME)].GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
-    rasterizer_desc.FillMode = D3D11_FILL_SOLID;
-    rasterizer_desc.CullMode = D3D11_CULL_NONE;
-    rasterizer_desc.AntialiasedLineEnable = TRUE;
-    hr = graphics.GetDevice()->CreateRasterizerState(&rasterizer_desc, rasterizerStates[static_cast<size_t>(RASTER_STATE::CULL_NONE)].GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
-    rasterizer_desc.FillMode = D3D11_FILL_WIREFRAME;
-    rasterizer_desc.CullMode = D3D11_CULL_NONE;
-    rasterizer_desc.AntialiasedLineEnable = TRUE;
-    hr = graphics.GetDevice()->CreateRasterizerState(&rasterizer_desc, rasterizerStates[static_cast<size_t>(RASTER_STATE::WIREFRAME_CULL_NONE)].GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-}
