@@ -25,7 +25,7 @@ struct Particles
     {
         DirectX::XMFLOAT3 emitterPosition{};
         float particleSize{ 0.02f };
-        DirectX::XMFLOAT4 color{ 0.0f,0.0f,1.0f,1.0f };
+        DirectX::XMFLOAT4 color{ 0.1f,0.1f,1.0f,1.0f };
         float time{};
         float deltaTime{};
         float something[2];

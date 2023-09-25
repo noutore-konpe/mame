@@ -9,6 +9,7 @@ EnemySlime::EnemySlime()
     model = std::make_unique<Model>(graphics.GetDevice(),
         //"./Resources/Model/sanaModel/mameoall.fbx");
         //"./Resources/Model/testModel/character.fbx");
+        //"./Resources/Model/Cube.fbx");
         "./Resources/Model/yoshiakiModel/Cube.fbx");
         //"./Resources/Model/testModel/plantune.fbx");
         //"./Resources/Model/testModel/latha.fbx");
