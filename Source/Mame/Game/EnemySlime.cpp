@@ -10,8 +10,8 @@ EnemySlime::EnemySlime()
         //"./Resources/Model/sanaModel/mameoall.fbx");
         //"./Resources/Model/testModel/character.fbx");
         //"./Resources/Model/Cube.fbx");
-        "./Resources/Model/yoshiakiModel/Cube.fbx");
-        //"./Resources/Model/testModel/plantune.fbx");
+        //"./Resources/Model/yoshiakiModel/Cube.fbx");
+        "./Resources/Model/testModel/plantune.fbx");
         //"./Resources/Model/testModel/latha.fbx");
         //"./Resources/Model/Collision/sphere.fbx");
 
@@ -56,9 +56,9 @@ void EnemySlime::End()
 }
 
 // •`‰æˆ—
-void EnemySlime::Render(const float& elapsedTime, const float& scale)
+void EnemySlime::Render(const float& scale, ID3D11PixelShader* psShader)
 {
-    Enemy::Render(elapsedTime, scale);
+    Enemy::Render(scale, psShader);
 }
 
 // ImGui—p
@@ -72,6 +72,8 @@ void EnemySlime::DrawDebug()
         float range = GetRange();
         ImGui::DragFloat("range", &range);
         SetRange(range);
+
+        model->skinned_meshes->Drawdebug();
 
         ImGui::EndMenu();
     }

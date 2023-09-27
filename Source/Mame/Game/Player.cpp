@@ -72,9 +72,9 @@ void Player::End()
 }
 
 // •`‰æˆ—
-void Player::Render(const float& elapsedTime, const float& scale)
+void Player::Render(const float& scale, ID3D11PixelShader* psShader)
 {
-    Character::Render(elapsedTime, scale);
+    Character::Render(scale, psShader);
 }
 
 // ImGui—p

@@ -31,9 +31,9 @@ void PlayerManager::End()
 }
 
 // •`‰æˆ—
-void PlayerManager::Render(const float& elapsedTime, const float& scale)
+void PlayerManager::Render(const float& scale, ID3D11PixelShader* psShader)
 {
-    player->Render(elapsedTime, scale);
+    player->Render(scale, psShader);
 }
 
 // ImGui—p

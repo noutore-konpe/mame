@@ -3,9 +3,9 @@
 int Ability::nameNum = 0;
 
 // •`‰æˆ—
-void Ability::Render(const float& scale)
+void Ability::Render(const float& scale, ID3D11PixelShader* psShader)
 {
-    model->Render(scale);
+    model->Render(scale, psShader);
 }
 
 // ImGui—p

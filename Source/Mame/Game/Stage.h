@@ -6,6 +6,7 @@ class Stage
 {
 public:
     Stage();
+    Stage(const char* fbxFilename);
     ~Stage();
 
     void Initialize();                                          // 初期化
@@ -13,7 +14,7 @@ public:
     void Begin();                                               // 毎フレーム一番最初に呼ばれる
     void Update(const float& elapsedTime);                      // 更新処理
     void End();                                                 // 毎フレーム一番最後に呼ばれる
-    void Render(const float& elapsedTime, const float& scale);  // 描画処理
+    void Render(const float& scale, ID3D11PixelShader* psShader = nullptr);  // 描画処理
     void DrawDebug();                                           // デバッグ描画
 
 public: // 取得・設定　関連

@@ -29,7 +29,7 @@ public:
     void Update(const float& elapsedTime) override; // 更新処理
     void End();                                     // 毎フレーム一番最後に呼ばれる
     
-    void Render(const float& elapsedTime, const float& scale) override; // 描画処理
+    void Render(const float& scale, ID3D11PixelShader* psShader = nullptr) override; // 描画処理
     
     void DrawDebug() override;  // ImGui用
 };

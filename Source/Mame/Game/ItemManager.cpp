@@ -70,11 +70,11 @@ void ItemManager::End()
 }
 
 // •`‰æˆ—
-void ItemManager::Render(const float& scale)
+void ItemManager::Render(const float& scale, ID3D11PixelShader* psShader)
 {
     for (Item*& item : items)
     {
-        item->Render(scale);
+        item->Render(scale, psShader);
     }
 }
 

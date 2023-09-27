@@ -87,7 +87,11 @@ private:
     std::unique_ptr<EnemySlime> enemySlime[2];
 
     // stage
-    std::unique_ptr<Stage> stage;
+    std::unique_ptr<Stage> stageBase;
+    std::unique_ptr<Stage> stageWall;
+
+    // ZELDA
+    Microsoft::WRL::ComPtr<ID3D11PixelShader> sagePS;
 
     // skybox
 #if SKYBOX

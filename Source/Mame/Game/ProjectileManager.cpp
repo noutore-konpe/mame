@@ -79,11 +79,11 @@ void ProjectileManager::End()
 }
 
 // •`‰æˆ—
-void ProjectileManager::Render(const float& scale)
+void ProjectileManager::Render(const float& scale, ID3D11PixelShader* psShader)
 {
     for (Projectile*& projectile : projectiles)
     {
-        projectile->Render(scale);
+        projectile->Render(scale, psShader);
     }
 }
 

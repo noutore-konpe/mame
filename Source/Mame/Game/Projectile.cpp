@@ -36,9 +36,9 @@ void Projectile::End()
 }
 
 // •`‰æˆ—
-void Projectile::Render(const float& scale)
+void Projectile::Render(const float& scale, ID3D11PixelShader* psShader)
 {
-    model->Render(scale);
+    model->Render(scale, psShader);
 }
 
 // ImGui—p

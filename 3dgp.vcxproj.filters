@@ -121,6 +121,18 @@
     <FxCompile Include="Source\Shader\ParticleVS.hlsl">
       <Filter>mamelib\Shader\Particle</Filter>
     </FxCompile>
+    <FxCompile Include="Source\Shader\SagePS.hlsl">
+      <Filter>mamelib\Shader\Zelda</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\AuraEffectVS.hlsl">
+      <Filter>mamelib\Shader\Zelda\aura</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\AuraEffectPS.hlsl">
+      <Filter>mamelib\Shader\Zelda\aura</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\AuraEffectGS.hlsl">
+      <Filter>mamelib\Shader\Zelda\aura</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Mame\Scene\BaseScene.cpp">
@@ -309,6 +321,9 @@
     </ClCompile>
     <ClCompile Include="Source\Mame\Graphics\Particle.cpp">
       <Filter>mamelib\Mame\Graphics\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Graphics\AuraEffect.cpp">
+      <Filter>mamelib\Mame\Graphics\Aura</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -515,6 +530,9 @@
     <ClInclude Include="Source\Mame\Graphics\Particle.h">
       <Filter>mamelib\Mame\Graphics\Particle</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Graphics\AuraEffect.h">
+      <Filter>mamelib\Mame\Graphics\Aura</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">
@@ -567,6 +585,9 @@
     </None>
     <None Include="Source\Shader\Particle.hlsli">
       <Filter>mamelib\Shader\Particle</Filter>
+    </None>
+    <None Include="Source\Shader\AuraEffect.hlsli">
+      <Filter>mamelib\Shader\Zelda\aura</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -659,6 +680,15 @@
     </Filter>
     <Filter Include="mamelib\Mame\Graphics\Particle">
       <UniqueIdentifier>{91158c84-6ace-4d96-923d-421320438609}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Shader\Zelda">
+      <UniqueIdentifier>{39fa6a7d-a6a7-421e-96c6-dd7f431a853f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Shader\Zelda\aura">
+      <UniqueIdentifier>{7e23d88b-2baa-4208-adcb-83c3cbff6b42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Graphics\Aura">
+      <UniqueIdentifier>{459ebf89-b5d9-45a3-b4be-8158b3da92c7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

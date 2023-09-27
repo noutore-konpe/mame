@@ -10,7 +10,7 @@ public:
 
     virtual void Initialize();
     virtual void Update(const float& elapsedTime);
-    virtual void Render(const float& elapsedTime, const float& scale);
+    virtual void Render(const float& scale, ID3D11PixelShader* psShader = nullptr);
     virtual void DrawDebug();
 
 public: // アニメーション関数関連
