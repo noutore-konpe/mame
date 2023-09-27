@@ -9,8 +9,8 @@ public:
     virtual ~Character() {}
 
     virtual void Initialize();
-    virtual void Update(const float& elapsedTime);
-    virtual void Render(const float& elapsedTime, const float& scale);
+    virtual void Update(const float elapsedTime);
+    virtual void Render(const float elapsedTime, const float scale);
     virtual void DrawDebug();
 
 public: // アニメーション関数関連
@@ -53,8 +53,8 @@ private:
     Transform collisionSqhereTransform{};
     DirectX::XMFLOAT3 debugSqhereOffset{};  // 当たり判定用
     float range = 1.0f;                     // 球当たり判定半径
-    
-    
+
+
 public: // --- ImGui用 --- //
     const char* GetName() const { return name.c_str(); }
     void SetName(std::string n) { name = n; }

@@ -43,7 +43,7 @@ void EnemySlime::Begin()
 }
 
 // XVˆ—
-void EnemySlime::Update(const float& elapsedTime)
+void EnemySlime::Update(const float elapsedTime)
 {
     Enemy::Update(elapsedTime);
 
@@ -56,7 +56,7 @@ void EnemySlime::End()
 }
 
 // •`‰æˆ—
-void EnemySlime::Render(const float& elapsedTime, const float& scale)
+void EnemySlime::Render(const float elapsedTime, const float scale)
 {
     Enemy::Render(elapsedTime, scale);
 }

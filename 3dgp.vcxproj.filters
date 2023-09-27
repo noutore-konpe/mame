@@ -310,6 +310,24 @@
     <ClCompile Include="Source\Mame\Graphics\Particle.cpp">
       <Filter>mamelib\Mame\Graphics\Particle</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyTestAI.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\BaseEnemyAI.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\BehaviorData.cpp">
+      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\BehaviorTree.cpp">
+      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\NodeBase.cpp">
+      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Taki174\Common.cpp">
+      <Filter>mamelib\Taki174</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -515,6 +533,39 @@
     <ClInclude Include="Source\Mame\Graphics\Particle.h">
       <Filter>mamelib\Mame\Graphics\Particle</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyTestAI.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\BaseEnemyAI.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\BehaviorData.h">
+      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\BehaviorTree.h">
+      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\NodeBase.h">
+      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\ActionBase.h">
+      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\JudgmentBase.h">
+      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Taki174\Common.h">
+      <Filter>mamelib\Taki174</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Taki174\FunctionXMFloat3.h">
+      <Filter>mamelib\Taki174</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Taki174\OperatorXMFloat3.h">
+      <Filter>mamelib\Taki174</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Taki174\OperatorXMFloat4.h">
+      <Filter>mamelib\Taki174</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">
@@ -659,6 +710,12 @@
     </Filter>
     <Filter Include="mamelib\Mame\Graphics\Particle">
       <UniqueIdentifier>{91158c84-6ace-4d96-923d-421320438609}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Character\AI">
+      <UniqueIdentifier>{bf183706-12e5-43fa-9b4f-0dcd81710109}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Taki174">
+      <UniqueIdentifier>{8d4995f7-87de-4c6e-b210-a83bd5862284}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

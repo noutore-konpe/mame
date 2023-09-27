@@ -5,12 +5,12 @@ void Enemy::Initialize()
     Character::Initialize();
 }
 
-void Enemy::Update(const float& elapsedTime)
+void Enemy::Update(const float elapsedTime)
 {
     Character::Update(elapsedTime);
 }
 
-void Enemy::Render(const float& elapsedTime, const float& scale)
+void Enemy::Render(const float elapsedTime, const float scale)
 {
     Character::Render(elapsedTime, scale);
 }

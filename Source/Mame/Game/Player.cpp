@@ -45,7 +45,7 @@ void Player::Begin()
 }
 
 // XVˆ—
-void Player::Update(const float& elapsedTime)
+void Player::Update(const float elapsedTime)
 {
     Character::Update(elapsedTime);
 
@@ -72,7 +72,7 @@ void Player::End()
 }
 
 // •`‰æˆ—
-void Player::Render(const float& elapsedTime, const float& scale)
+void Player::Render(const float elapsedTime, const float scale)
 {
     Character::Render(elapsedTime, scale);
 }

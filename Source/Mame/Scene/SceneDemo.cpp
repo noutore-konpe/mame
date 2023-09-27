@@ -89,6 +89,11 @@ void SceneDemo::CreateResource()
         enemySlime[1] = std::make_unique<EnemySlime>();
     }
 
+    // enemyAI
+    {
+        enemyTestAI_ = std::make_unique<EnemyTestAI>();
+    }
+
     // player
     {
         PlayerManager::Instance().GetPlayer() = std::make_unique<Player>();
@@ -167,6 +172,11 @@ void SceneDemo::Initialize()
         enemySlime[1]->Initialize();
     }
 
+    // enemyAI
+    {
+        enemyTestAI_->Initialize();
+    }
+
     // ƒJƒƒ‰
     Camera::Instance().Initialize();
 
@@ -201,7 +211,7 @@ void SceneDemo::Update(const float& elapsedTime)
     GamePad& gamePad = Input::Instance().GetGamePad();
 
     //effect[0]->Play({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f });
-    
+
 #if PARTICLE
     if (gamePad.GetButtonDown() & GamePad::BTN_A)
     {
@@ -239,7 +249,7 @@ void SceneDemo::Update(const float& elapsedTime)
     // Debug—pƒJƒƒ‰
     if (gamePad.GetButtonDown() & GamePad::BTN_X)isDebugCamera = isDebugCamera ? false : true;
     if (isDebugCamera)
-    {        
+    {
         int posX = 1980 / 2;
         int posY = 1080 / 2;
 
@@ -254,7 +264,7 @@ void SceneDemo::Update(const float& elapsedTime)
         DirectX::XMFLOAT2 moveVectorFloat2;
         DirectX::XMStoreFloat2(&moveVectorFloat2, moveVector);
 
-        Camera::Instance().UpdateDebug(elapsedTime, moveVectorFloat2);        
+        Camera::Instance().UpdateDebug(elapsedTime, moveVectorFloat2);
 
         SetCursorPos(posX, posY);
     }
@@ -265,10 +275,10 @@ void SceneDemo::Update(const float& elapsedTime)
     }
 
     // slime
-    {        
+    {
         enemySlime[0]->Update(elapsedTime);
         enemySlime[1]->Update(elapsedTime);
-        
+
         //DirectX::XMFLOAT3 enemySlime0offset = enemySlime[0]->GetDebugSqhereOffset();
         //DirectX::XMFLOAT3 enemySlime1offset = enemySlime[1]->GetDebugSqhereOffset();
         //DirectX::XMFLOAT3 enemySlime0position = enemySlime[0]->GetTransform()->GetPosition();
@@ -291,9 +301,14 @@ void SceneDemo::Update(const float& elapsedTime)
         }
     }
 
+    // enemyAI
+    {
+        enemyTestAI_->Update(elapsedTime);
+    }
+
     // player
     PlayerManager::Instance().Update(elapsedTime);
-    
+
     // item
     ItemManager::Instance().Update(elapsedTime);
 
@@ -434,6 +449,12 @@ void SceneDemo::Render(const float& elapsedTime)
         enemySlime[1]->Render(elapsedTime, enemyScaleFactor);
     }
 
+    // enemyAI
+    {
+        constexpr float scale = 0.5f;
+        enemyTestAI_->Render(elapsedTime, scale);
+    }
+
     // player
     {
         PlayerManager::Instance().Render(elapsedTime, playerScaleFactor);
@@ -469,7 +490,7 @@ void SceneDemo::Render(const float& elapsedTime)
 
     framebuffers[0]->Deactivate(graphics.GetDeviceContext());
 
-    
+
     // FOG
 #if FOG
     {
@@ -486,7 +507,7 @@ void SceneDemo::Render(const float& elapsedTime)
         shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_OFF_ZW_OFF));
         shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::CULL_NONE));
         ID3D11ShaderResourceView* shaderResourceView[]
-        { 
+        {
             framebuffers[0]->shaderResourceViews[0].Get(),
             framebuffers[0]->shaderResourceViews[0].Get(),/*dummy*/
             framebuffers[1]->shaderResourceViews[0].Get(),

@@ -23,7 +23,7 @@ void Character::Initialize()
 }
 
 // XVˆ—
-void Character::Update(const float& elapsedTime)
+void Character::Update(const float elapsedTime)
 {
     DirectX::XMFLOAT3 position = GetTransform()->GetPosition();
     position = { position.x + debugSqhereOffset.x, position.y + debugSqhereOffset.y , position.z + debugSqhereOffset.z };
@@ -40,7 +40,7 @@ void Character::Update(const float& elapsedTime)
 }
 
 // •`‰æˆ—
-void Character::Render(const float& elapsedTime, const float& scale)
+void Character::Render(const float elapsedTime, const float scale)
 {
     model->Render(scale);
 
