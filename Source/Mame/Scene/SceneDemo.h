@@ -121,4 +121,6 @@ private:
         float lightViewFarZ = 18.0f;
     }shadow;
 
+    // EMISSIVE
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> emissiceTexture;
 };

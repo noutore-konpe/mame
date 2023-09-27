@@ -10,8 +10,8 @@ EnemySlime::EnemySlime()
         //"./Resources/Model/sanaModel/mameoall.fbx");
         //"./Resources/Model/testModel/character.fbx");
         //"./Resources/Model/Cube.fbx");
-        //"./Resources/Model/yoshiakiModel/Cube.fbx");
-        "./Resources/Model/testModel/plantune.fbx");
+        "./Resources/Model/yoshiakiModel/Cube.fbx");
+        //"./Resources/Model/testModel/plantune.fbx");
         //"./Resources/Model/testModel/latha.fbx");
         //"./Resources/Model/Collision/sphere.fbx");
 

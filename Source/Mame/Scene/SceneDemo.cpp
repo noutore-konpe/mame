@@ -161,6 +161,10 @@ void SceneDemo::CreateResource()
     CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/GenerateAuraPS.cso", auraEffectPS.GetAddressOf());
     framebuffers[2] = std::make_unique<FrameBuffer>(graphics.GetDevice(), 1024, 1024, false/*has_depth*/);
     auraEffect = std::make_unique<decltype(auraEffect)::element_type>(graphics.GetDevice());
+
+    // EMISSIVE
+    D3D11_TEXTURE2D_DESC texture2Ddesc;
+    load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/Mask/dissolve_animation.png", emissiceTexture.GetAddressOf(), &texture2Ddesc);
 }
 
 // ‰Šú‰»
@@ -186,6 +190,8 @@ void SceneDemo::Initialize()
     // stage
     stageBase->Initialize();
     stageWall->Initialize();
+
+
 }
 
 void SceneDemo::Finalize()
@@ -320,8 +326,8 @@ void SceneDemo::Render(const float& elapsedTime)
 {
     // scaleFactor
     //float enemyScaleFactor = 0.01f;
-    float enemyScaleFactor = 0.001f;
-    //float enemyScaleFactor = 0.1f;
+    //float enemyScaleFactor = 0.001f;
+    float enemyScaleFactor = 0.1f;
     float playerScaleFactor = 0.01f;
 
     Graphics& graphics = Graphics::Instance();
@@ -385,6 +391,8 @@ void SceneDemo::Render(const float& elapsedTime)
         }
     }
 
+    // EMISSIVE
+    graphics.GetDeviceContext()->PSSetShaderResources(16, 1, emissiceTexture.GetAddressOf());
 
     framebuffers[0]->Clear(graphics.GetDeviceContext());
     framebuffers[0]->Activate(graphics.GetDeviceContext());
@@ -446,7 +454,7 @@ void SceneDemo::Render(const float& elapsedTime)
     {
         shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
         enemySlime[0]->Render(enemyScaleFactor, sagePS.Get());
-        //enemySlime[0]->Render(enemyScaleFactor);
+        enemySlime[1]->Render(enemyScaleFactor);
     }
 
 
@@ -550,6 +558,7 @@ void SceneDemo::Render(const float& elapsedTime)
     };
     bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceViews, 0, _countof(shaderResourceViews), bloomPS.Get());
 #endif // BLOOM
+
 
 }
 

@@ -555,7 +555,7 @@ void skinned_mesh::render(ID3D11DeviceContext* deviceContext,
                 DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&material_color), DirectX::XMLoadFloat4(&material.Kd)));
 
             // EMISSIVE
-            data.emissiveColor = material.Ke;
+            //data.emissiveColor = material.Ke;
 
             deviceContext->UpdateSubresource(constant_buffer.Get(), 0, 0, &data, 0, 0);
             deviceContext->VSSetConstantBuffers(0, 1, constant_buffer.GetAddressOf());
@@ -881,6 +881,9 @@ void skinned_mesh::Drawdebug()
 
     if (ImGui::TreeNode("Emmisive"))
     {
+        ImGui::ColorEdit4("color", &data.emissiveColor.x);
+        ImGui::DragFloat("Intencity", &data.emissiveIntensity);
+
         ImGui::TreePop();
     }
 

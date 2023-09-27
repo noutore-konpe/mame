@@ -19,6 +19,8 @@ Texture2D shadowMap : register(t8);
 // DISSOLVE
 Texture2D maskTexture : register(t15);
 
+// EMISSIVE‰¼
+Texture2D emissiveTexture : register(t16);
 
 float4 main(PSIn psIn) : SV_TARGET
 {
@@ -151,9 +153,13 @@ float4 main(PSIn psIn) : SV_TARGET
     
     // EMISSIVE
     {
+        
+#if 0
         float3 emissive = textureMaps[2].Sample(samplerStates[LINEAR], psIn.texcoord).rgb;
-        const float emissiveIntensity = 3.0f;
-        finalColor += emissive * emissiveIntensity;
+#else
+        float3 emissive = emissiveTexture.Sample(samplerStates[LINEAR], psIn.texcoord).rgb;
+#endif
+        finalColor += emissive * emissiveIntensity * emissiveColor.rgb;
     }
     
     //return float4(finalColor, alpha) * psIn.color;
