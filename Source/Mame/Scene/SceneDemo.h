@@ -20,7 +20,7 @@
 
 #define GLTF_MODEL 0
 #define MODEL 0
-#define SPRITE 0
+#define SPRITE 1
 #define BLOOM 1
 #define SKYBOX 1
 #define FOG 1

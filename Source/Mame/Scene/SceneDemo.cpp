@@ -152,7 +152,7 @@ void SceneDemo::CreateResource()
 
 #if PARTICLE
     particles = std::make_unique<decltype(particles)::element_type>(graphics.GetDevice(), 1000);
-    particles->Initialize(graphics.GetDeviceContext(), 0);
+    //particles->Initialize(graphics.GetDeviceContext(), 0);
 #endif// PARTICLE
 }
 
@@ -322,14 +322,8 @@ void SceneDemo::Render(const float& elapsedTime)
 
     // •`‰æ‚Ì‰ŠúÝ’è
     {
-        ID3D11RenderTargetView* renderTargetView = graphics.GetRenderTargetView();
-        ID3D11DepthStencilView* depthStencilView = graphics.GetDepthStencilView();
-
-        FLOAT color[]{ 0.2f, 0.2f, 0.2f, 1.0f };
-        graphics.GetDeviceContext()->ClearRenderTargetView(renderTargetView, color);
-        graphics.GetDeviceContext()->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-        graphics.GetDeviceContext()->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
-
+        // •`‰æ‚Ì‰ŠúÝ’è¦•K‚¸ŒÄ‚Ô‚±‚ÆIII
+        Mame::Scene::BaseScene::RenderInitialize();
 
         // SHADOW
         shadowConstants.lightDirection = graphics.GetShader()->view.position;
