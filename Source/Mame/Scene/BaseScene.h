@@ -26,6 +26,8 @@ namespace Mame::Scene
         virtual void Render(const float& elapsedTime) = 0;  // •`‰æˆ—
         virtual void DrawDebug()    = 0;
 
+        virtual void RenderInitialize();
+
     public:
         // €”õŠ®—¹‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
         bool IsReady()const { return ready; }

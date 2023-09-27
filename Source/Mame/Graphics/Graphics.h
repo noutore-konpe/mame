@@ -38,6 +38,7 @@ public:
     ID3D11RenderTargetView* GetRenderTargetView() const { return renderTargetView.Get(); }
     ID3D11DepthStencilView* GetDepthStencilView() const { return depthStencilView.Get(); }
 
+
     // シェーダー取得
     Shader* GetShader()const { return shader.get(); }
 

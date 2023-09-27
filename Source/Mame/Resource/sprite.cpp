@@ -120,6 +120,10 @@ Sprite::Sprite(ID3D11Device* device, const wchar_t* filename, const char* psFile
         }
     }
 
+    // 画像サイズを設定
+    GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(texture2dDesc.Width, texture2dDesc.Height));
+    GetSpriteTransform()->SetTexSize(DirectX::XMFLOAT2(texture2dDesc.Width, texture2dDesc.Height));
+
     //---ImGui名前かぶり防止用---//
     name = "Sprite" + std::to_string(nameNum++);
     SetName(name.c_str());    
@@ -217,7 +221,8 @@ void Sprite::Render()
     Graphics& graphics = Graphics::Instance();
     Shader* shader = graphics.GetShader();
 
-    shader->SetState(graphics.GetDeviceContext(), 3, 3, 0);
+    shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::CULL_NONE));
+    shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_OFF_ZW_OFF));
 
     // spriteDissolve
     if (isDissolve)
