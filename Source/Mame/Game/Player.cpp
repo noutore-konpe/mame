@@ -141,6 +141,8 @@ void Player::DrawDebug()
             ImGui::TreePop();
         }
 
+        ImGui::DragFloat("Move Speed", &moveSpeed, 0.05f, 0.1f);
+
         ImGui::EndMenu();
     }
 #endif // USE_IMGUI
