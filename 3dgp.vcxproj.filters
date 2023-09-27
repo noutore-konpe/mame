@@ -310,6 +310,9 @@
     <ClCompile Include="Source\Mame\Graphics\Particle.cpp">
       <Filter>mamelib\Mame\Graphics\Particle</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\PlayerState.cpp">
+      <Filter>mamelib\Mame\Game\Character\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -514,6 +517,9 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Graphics\Particle.h">
       <Filter>mamelib\Mame\Graphics\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\PlayerState.h">
+      <Filter>mamelib\Mame\Game\Character\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

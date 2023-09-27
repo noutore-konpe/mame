@@ -26,36 +26,36 @@ void Camera::Update()
     GetTransform()->SetRotation(DirectX::XMFLOAT4(DirectX::XMConvertToRadians(10),0,0,0));
     //GetTransform()->SetRotation(playerRot);
 #else
-    Transform* playerTransform = PlayerManager::Instance().GetPlayer()->GetTransform();
-    const DirectX::XMFLOAT3 playerPos = playerTransform->GetPosition();
-    const DirectX::XMFLOAT4 playerRot = playerTransform->GetRotation();
-    const DirectX::XMFLOAT3 playerFrontVec = playerTransform->CalcForward();
-    
-    // カメラ位置をプレイヤーの後ろにしたい
-    {
-        float length = 5.0f;
+    //Transform* playerTransform = PlayerManager::Instance().GetPlayer()->GetTransform();
+    //const DirectX::XMFLOAT3 playerPos = playerTransform->GetPosition();
+    //const DirectX::XMFLOAT4 playerRot = playerTransform->GetRotation();
+    //const DirectX::XMFLOAT3 playerFrontVec = playerTransform->CalcForward();
+    //
+    //// カメラ位置をプレイヤーの後ろにしたい
+    //{
+    //    float length = 5.0f;
 
-        // プレイヤーの上に高さを合わせる
-        DirectX::XMFLOAT3 offset{ 0, 2, 0 };
+    //    // プレイヤーの上に高さを合わせる
+    //    DirectX::XMFLOAT3 offset{ 0, 2, 0 };
 
-        // プレイヤーの後ろ向きベクトル
-        DirectX::XMFLOAT3 playerBack =
-        {
-            playerPos.x - playerFrontVec.x * length + offset.x,
-            playerPos.y - playerFrontVec.y * length + offset.y,
-            playerPos.z - playerFrontVec.z * length + offset.z
-        };
+    //    // プレイヤーの後ろ向きベクトル
+    //    DirectX::XMFLOAT3 playerBack =
+    //    {
+    //        playerPos.x - playerFrontVec.x * length + offset.x,
+    //        playerPos.y - playerFrontVec.y * length + offset.y,
+    //        playerPos.z - playerFrontVec.z * length + offset.z
+    //    };
 
-        GetTransform()->SetPosition(playerBack);
-    }
+    //    GetTransform()->SetPosition(playerBack);
+    //}
 
     // カメラの角度調整
     {
         // 斜めで見えるようにする
-        DirectX::XMFLOAT4 cameraRot = playerRot;
+        /*DirectX::XMFLOAT4 cameraRot = playerRot;
         cameraRot.x += DirectX::XMConvertToRadians(15.0f);
 
-        GetTransform()->SetRotation(cameraRot);
+        GetTransform()->SetRotation(cameraRot);*/
     }
 
 #endif
@@ -138,10 +138,36 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
     float aspect_ratio{ viewport.Width / viewport.Height };
     P = { DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(30),aspect_ratio,0.1f,1000.0f) };
     
-    DirectX::XMFLOAT3 pos = transform.GetPosition();
-    DirectX::XMFLOAT3 forward = transform.CalcForward();
-    DirectX::XMVECTOR eye{ DirectX::XMVectorSet(pos.x,pos.y,pos.z,1.0f) };
-    DirectX::XMVECTOR focus{ DirectX::XMVectorSet(pos.x + forward.x,pos.y + forward.y,pos.z + forward.z,1.0f) };
+    DirectX::XMVECTOR eye;
+    DirectX::XMVECTOR focus;
+
+    //TANA変更
+    if (focusTarget && !enableDebugCamera)
+    {
+        //DirectX::XMFLOAT3 pos = transform.GetPosition();
+        DirectX::XMFLOAT3 targetPos = focusTarget->GetPosition();
+        DirectX::XMFLOAT3 forward = transform.CalcForward();
+
+        eye = { DirectX::XMVectorSet(
+            targetPos.x - forward.x * focalLength,
+            targetPos.y - forward.y * focalLength + offsetY,
+            targetPos.z - forward.z * focalLength,
+            1.0f) };
+
+        focus = { DirectX::XMVectorSet(
+            targetPos.x,
+            targetPos.y + focusOffsetY,
+            targetPos.z,
+            1.0f) };
+    }
+    else
+    {
+        DirectX::XMFLOAT3 pos = transform.GetPosition();
+        DirectX::XMFLOAT3 forward = transform.CalcForward();
+        eye = { DirectX::XMVectorSet(pos.x, pos.y, pos.z, 1.0f) };
+        focus = { DirectX::XMVectorSet(pos.x + forward.x, pos.y + forward.y, pos.z + forward.z, 1.0f) };
+    }
+   
     //DirectX::XMVECTOR eye{ DirectX::XMVectorSet(camera.eye.x,camera.eye.y,camera.eye.z,1.0f) };
     //DirectX::XMVECTOR focus{ DirectX::XMVectorSet(camera.focus.x,camera.focus.y,camera.focus.z,1.0f) };
     DirectX::XMVECTOR up{ DirectX::XMVectorSet(camera.up.x,camera.up.y,camera.up.z,0.0f) };
@@ -156,6 +182,8 @@ void Camera::DrawDebug()
     {
         transform.DrawDebug();
 
+        ImGui::Checkbox("Enable Debug Camera", &enableDebugCamera);
+
         if (ImGui::TreeNode("DebugCamera"))
         {
             ImGui::DragFloat("moveSpeed", &moveSpeed);
@@ -168,6 +196,13 @@ void Camera::DrawDebug()
             ImGui::DragFloat3("eye", &camera.eye.x);
             ImGui::DragFloat3("focus", &camera.focus.x);
             ImGui::DragFloat3("up", &camera.up.x);
+            ImGui::TreePop();
+        }
+        if (ImGui::TreeNode("player camera"))
+        {
+            ImGui::SliderFloat("FocalLength", &focalLength, 0.1f, 20.0f); 
+            ImGui::SliderFloat("OffsetY", &offsetY, 0.1f, 10.0f); 
+            ImGui::SliderFloat("FocusOffsetY", &focusOffsetY, 0.1f, 10.0f); 
             ImGui::TreePop();
         }
 

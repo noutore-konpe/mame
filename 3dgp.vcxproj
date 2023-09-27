@@ -217,6 +217,7 @@
     <ClCompile Include="Source\Mame\Game\ItemManager.cpp" />
     <ClCompile Include="Source\Mame\Game\Player.cpp" />
     <ClCompile Include="Source\Mame\Game\PlayerManager.cpp" />
+    <ClCompile Include="Source\Mame\Game\PlayerState.cpp" />
     <ClCompile Include="Source\Mame\Game\Projectile.cpp" />
     <ClCompile Include="Source\Mame\Game\ProjectileManager.cpp" />
     <ClCompile Include="Source\Mame\Game\ProjectileStraite.cpp" />
@@ -281,6 +282,7 @@
     <ClInclude Include="Source\Mame\Game\ItemManager.h" />
     <ClInclude Include="Source\Mame\Game\Player.h" />
     <ClInclude Include="Source\Mame\Game\PlayerManager.h" />
+    <ClInclude Include="Source\Mame\Game\PlayerState.h" />
     <ClInclude Include="Source\Mame\Game\Projectile.h" />
     <ClInclude Include="Source\Mame\Game\ProjectileManager.h" />
     <ClInclude Include="Source\Mame\Game\ProjectileStraite.h" />

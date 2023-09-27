@@ -38,10 +38,11 @@ public:
     void DrawDebug();
     void Reset();
 
+    void SetTraget(Transform* t) { focusTarget = t; }
+
 private: // Debug用
     float moveSpeed = 0.01f;
     float rotationSpeed = 60.0f;
-
 
 public:
     Transform* GetTransform() { return &transform; }        // transform取得
@@ -53,4 +54,13 @@ private:
 
     DirectX::XMMATRIX V{};  // view行列
     DirectX::XMMATRIX P{};  // projection行列
+
+    //プレイヤーからカメラまでの距離
+    float focalLength = 7.0f;
+    float offsetY = 2.7f;
+    float focusOffsetY = 1.0f;
+
+    Transform* focusTarget;//注視点になるオブジェクト
+
+    bool enableDebugCamera = false;
 };
