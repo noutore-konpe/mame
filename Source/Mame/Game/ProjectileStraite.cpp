@@ -48,9 +48,9 @@ void ProjectileStraite::Update(const float& elapsedTime)
 }
 
 // •`‰æˆ—
-void ProjectileStraite::Render(const float& scale)
+void ProjectileStraite::Render(const float& scale, ID3D11PixelShader* psShader)
 {
-    Projectile::Render(scale);
+    Projectile::Render(scale, psShader);
 }
 
 // ImGui—p

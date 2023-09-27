@@ -36,7 +36,7 @@ public:
 
     void CameraControllerUpdate(float elapsedTime);
     
-    void Render(const float& elapsedTime, const float& scale) override; // •`‰æˆ—
+    void Render(const float& scale, ID3D11PixelShader* psShader = nullptr) override; // •`‰æˆ—
     
     void DrawDebug() override;  // ImGui—p
 

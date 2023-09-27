@@ -252,7 +252,9 @@ public:
         DirectX::XMFLOAT4 emissiveColor{ 0.0f, 0.0f, 0.0f, 1.0f };
         float emissiveIntensity = 3.0f;
         DirectX::XMFLOAT3 dummy; // ダミー
+        DirectX::XMFLOAT4 sageColor{ 1.0f,1.0f,1.0f,1.0f };
     };
+    constants data;
 
     // メッシュ
     struct mesh

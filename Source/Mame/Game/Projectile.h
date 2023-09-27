@@ -16,7 +16,7 @@ public:
     virtual void Begin();                           // 毎フレーム一番最初に呼ばれる
     virtual void Update(const float& elapsedTime);  // 更新処理
     virtual void End();                             // 毎フレーム一番最後に呼ばれる
-    virtual void Render(const float& scale);        // 描画処理
+    virtual void Render(const float& scale, ID3D11PixelShader* psShader = nullptr);  // 描画処理
     virtual void DrawDebug();                       // ImGui用
 
 public:

@@ -509,7 +509,7 @@ void skinned_mesh::render(ID3D11DeviceContext* deviceContext,
         //immediate_context->PSSetShader(pixel_shader.Get(), nullptr, 0);
         alternative_pixel_shader ? deviceContext->PSSetShader(alternative_pixel_shader, nullptr, 0) : deviceContext->PSSetShader(pixel_shader.Get(), nullptr, 0);
 
-        constants data;
+        
 
         if (keyframe && keyframe->nodes.size() > 0)
         {
@@ -883,4 +883,6 @@ void skinned_mesh::Drawdebug()
     {
         ImGui::TreePop();
     }
+
+    ImGui::ColorEdit4("materialColor", &data.sageColor.x);
 }

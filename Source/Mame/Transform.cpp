@@ -17,7 +17,7 @@ void Transform::DrawDebug()
         rotation.y = DirectX::XMConvertToRadians(rot.y);
         rotation.z = DirectX::XMConvertToRadians(rot.z);
         
-        ImGui::DragFloat("ScaleFactor", &scaleFactor, 0.001f, 0.001f, 1.0f);
+        ImGui::DragFloat("ScaleFactor", &scaleFactor, 0.001f, 0.001f, 100.0f);
         
         ImGui::SliderInt("Coordinate System", &coordinateSystem, 0, static_cast<int>(CoordinateSystem::cLeftZup));
         ImGui::Text(coordinateSystemName[coordinateSystem].c_str());

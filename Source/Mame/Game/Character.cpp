@@ -40,9 +40,9 @@ void Character::Update(const float& elapsedTime)
 }
 
 // •`‰æˆ—
-void Character::Render(const float& elapsedTime, const float& scale)
+void Character::Render(const float& scale, ID3D11PixelShader* psShader)
 {
-    model->Render(scale);
+    model->Render(scale, psShader);
 
 #ifdef _DEBUG
     if(SceneDemo::isDebugRender)debugSqhere->Render(1.0f, 1);

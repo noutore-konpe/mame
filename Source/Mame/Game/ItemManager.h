@@ -23,7 +23,7 @@ public:
     void Begin();                           // 毎フレーム一番最初に呼ばれる
     void Update(const float& elapsedTime);  // 更新処理
     void End();                             // 毎フレーム一番最後に呼ばれる
-    void Render(const float& scale);        // 描画処理
+    void Render(const float& scale, ID3D11PixelShader* psShader = nullptr);        // 描画処理
     void DrawDebug();                       // ImGui用
 
 public:

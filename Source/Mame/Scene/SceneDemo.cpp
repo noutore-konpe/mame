@@ -101,7 +101,8 @@ void SceneDemo::CreateResource()
 
     // stage
     {
-        stage = std::make_unique<Stage>();
+        stageBase = std::make_unique<Stage>();
+        stageWall = std::make_unique<Stage>("./Resources/Model/Stage/stage_1000.fbx");
     }
 
     // skybox
@@ -154,6 +155,9 @@ void SceneDemo::CreateResource()
     particles = std::make_unique<decltype(particles)::element_type>(graphics.GetDevice(), 1000);
     //particles->Initialize(graphics.GetDeviceContext(), 0);
 #endif// PARTICLE
+
+    // ZELAD
+    CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/SagePS.cso", sagePS.GetAddressOf());
 }
 
 // ‰Šú‰»
@@ -177,7 +181,8 @@ void SceneDemo::Initialize()
     ItemManager::Instance().Initialize();
 
     // stage
-    stage->Initialize();
+    stageBase->Initialize();
+    stageWall->Initialize();
 }
 
 void SceneDemo::Finalize()
@@ -312,8 +317,8 @@ void SceneDemo::Render(const float& elapsedTime)
 {
     // scaleFactor
     //float enemyScaleFactor = 0.01f;
-    //float enemyScaleFactor = 0.001f;
-    float enemyScaleFactor = 0.1f;
+    float enemyScaleFactor = 0.001f;
+    //float enemyScaleFactor = 0.1f;
     float playerScaleFactor = 0.01f;
 
     Graphics& graphics = Graphics::Instance();
@@ -367,10 +372,10 @@ void SceneDemo::Render(const float& elapsedTime)
 
             // SHADOW : ‰e‚Â‚¯‚½‚¢ƒ‚ƒfƒ‹‚Í‚±‚±‚ÉRender‚·‚é
             {
-                PlayerManager::Instance().Render(elapsedTime, playerScaleFactor);
+                PlayerManager::Instance().Render(playerScaleFactor);
 
-                enemySlime[0]->Render(elapsedTime, enemyScaleFactor);
-                enemySlime[1]->Render(elapsedTime, enemyScaleFactor);
+                enemySlime[0]->Render(enemyScaleFactor);
+                enemySlime[1]->Render(enemyScaleFactor);
             }
 
             shadow.shadowMap->Deactivete(graphics.GetDeviceContext());
@@ -422,26 +427,31 @@ void SceneDemo::Render(const float& elapsedTime)
 #endif // SPRITE
     }
 
-    // slime
+    // stage
     {
-        enemySlime[0]->Render(elapsedTime, enemyScaleFactor);
-        enemySlime[1]->Render(elapsedTime, enemyScaleFactor);
+        stageBase->Render(0.01f);
+        stageWall->Render(0.01f);
     }
+
 
     // player
     {
-        PlayerManager::Instance().Render(elapsedTime, playerScaleFactor);
+        PlayerManager::Instance().Render(playerScaleFactor);
     }
+
+    // slime
+    {
+        shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
+        enemySlime[0]->Render(enemyScaleFactor, sagePS.Get());
+        //enemySlime[0]->Render(enemyScaleFactor);
+    }
+
 
     // item
     {
         ItemManager::Instance().Render(0.01f);
     }
 
-    // stage
-    {
-        stage->Render(elapsedTime, 1.0f);
-    }
 
 #if PARTICLE
     shader->SetDepthStencileState(static_cast<size_t>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
@@ -571,7 +581,10 @@ void SceneDemo::DrawDebug()
 
     // stage
     {
-        stage->DrawDebug();
+        stageBase->DrawDebug();
+        ImGui::Begin("stagewall");
+        stageWall->DrawDebug();
+        ImGui::End();
     }
 
     Camera::Instance().DrawDebug();

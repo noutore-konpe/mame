@@ -676,7 +676,7 @@ void Shader::DrawDebug()
         {
             ImGui::ColorEdit4("fogColor", &fogConstants.fogColor.x);
             ImGui::SliderFloat("fogDensity", &fogConstants.fogDensity, 0.0f, 0.005f, "%.4f");
-            ImGui::SliderFloat("fogHeightFalloff", &fogConstants.fogHeightFalloff, 0.0001f, 10.0f, "%.4f");
+            ImGui::SliderFloat("fogHeightFalloff", &fogConstants.fogHeightFalloff, 0.0001f, 100.0f, "%.4f");
             ImGui::SliderFloat("fogCutoffDistance", &fogConstants.fogCutoffDistance, 0.0f, 1000.0f, "%.4f");
             ImGui::SliderFloat("startDistance", &fogConstants.startDistance, 0.0f, 100.0f, "%.4f");
 

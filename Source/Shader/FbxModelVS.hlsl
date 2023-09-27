@@ -39,5 +39,8 @@ PSIn main(VSIn vsIn)
     // LIM_LIGHT
     psIn.normalInView = mul(viewProjection, vsIn.normal); // ƒJƒƒ‰‹óŠÔ‚Ì–@ü‚ð‹‚ß‚é
     
+    // ZELDA
+    psIn.localPosition = vsIn.position;
+    
     return psIn;
 }

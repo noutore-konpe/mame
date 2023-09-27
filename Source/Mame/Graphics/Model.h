@@ -15,8 +15,8 @@ public:
     Model(ID3D11Device* device, const char* fbx_filename, std::vector<std::string>& animation_filenames, bool triangulate = true, float sampling_rate = 0);
     ~Model() {}
 
-    void Render(const float& scale);
-    void Render(const float& scale, int rastarizeState);
+    void Render(const float& scale, int rasterizeState = 0);
+    void Render(const float& scale, ID3D11PixelShader* psShader = nullptr, int rasterizeState = 0);
      
     void DrawDebug();
 

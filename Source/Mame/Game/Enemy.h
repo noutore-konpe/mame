@@ -12,7 +12,7 @@ public:
     virtual void Begin() = 0;                                           // 毎フレーム一番最初に呼ばれる
     virtual void Update(const float& elapsedTime);                      // 更新処理
     virtual void End() = 0;                                             // 毎フレーム一番最後に呼ばれる
-    virtual void Render(const float& elapsedTime, const float& scale);  // 描画処理
+    virtual void Render(const float& scale, ID3D11PixelShader* psShader = nullptr);
     virtual void DrawDebug() = 0;                                       // デバッグ描画
 
 

@@ -15,7 +15,9 @@ Player::Player()
     {
         model = std::make_unique<Model>(graphics.GetDevice(),
             //"./Resources/Model/testModel/character.fbx");
-            "./Resources/Model/sotai.fbx");
+            //"./Resources/Model/sotai.fbx");
+            "./Resources/Model/P_Chara.fbx");
+            //"./Resources/Model/player.fbx");
             //"./Resources/Model/sanaModel/mameoall.fbx");
             //"./Resources/Model/testModel/nico.fbx");
     }
@@ -101,6 +103,8 @@ void Player::MoveUpdate(float elapsedTime)
     }
 
     GetTransform()->SetPosition(pos);
+
+    
 }
 
 void Player::CameraControllerUpdate(float elapsedTime)
@@ -121,9 +125,9 @@ void Player::CameraControllerUpdate(float elapsedTime)
 }
 
 // ï`âÊèàóù
-void Player::Render(const float& elapsedTime, const float& scale)
+void Player::Render(const float& scale, ID3D11PixelShader* psShader)
 {
-    Character::Render(elapsedTime, scale);
+    Character::Render(scale, psShader);
 }
 
 // ImGuióp

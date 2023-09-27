@@ -21,6 +21,9 @@ struct PSIn
     
     // LIM_LIGHT
     float3 normalInView : TEXCOORD2;
+    
+    // ZELDA
+    float3 localPosition : LOCAL_POSITION;
 };
 
 // モデル情報
@@ -33,6 +36,9 @@ cbuffer OBJECT_CONSTANT_BUFFER : register(b0)
     
     // EMISSIVE
     float4 emissiveColor;
+    float emissiveIntensity;
+    float3 step;    // ダミー
+    float4 sageColor; // ZELDA
 };
 
 // カメラ位置、ディレクションライト情報
