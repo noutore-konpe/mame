@@ -158,6 +158,9 @@ void SceneDemo::CreateResource()
 
     // ZELAD
     CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/SagePS.cso", sagePS.GetAddressOf());
+    CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/GenerateAuraPS.cso", auraEffectPS.GetAddressOf());
+    framebuffers[2] = std::make_unique<FrameBuffer>(graphics.GetDevice(), 1024, 1024, false/*has_depth*/);
+    auraEffect = std::make_unique<decltype(auraEffect)::element_type>(graphics.GetDevice());
 }
 
 // 初期化
@@ -460,6 +463,32 @@ void SceneDemo::Render(const float& elapsedTime)
     shader->GSSetConstantBuffer();
     particles->Render(graphics.GetDeviceContext());
 #endif// PARTICLE
+
+    // シェーダーエフェクト
+    {
+#if 0
+        auraEmitters.clear();
+        auraEmitters.push_back({ enemySlime[0]->model->skinned_meshes->DetectJointPosition("PLT:Shoulder_R_BK",&enemySlime[0]->model->keyframe),0 });
+        auraEmitters.push_back({ enemySlime[0]->model->skinned_meshes->DetectJointPosition("PLT:Elbow_L_BK",&enemySlime[0]->model->keyframe),1 });
+        auraEmitters.push_back({ enemySlime[0]->model->skinned_meshes->DetectJointPosition("PLT:branch4_R_BK",&enemySlime[0]->model->keyframe),2 });
+        auraEmitters.push_back({ enemySlime[0]->model->skinned_meshes->DetectJointPosition("PLT:Wrist_R_BK",&enemySlime[0]->model->keyframe),3 });
+        auraEmitters.push_back({ enemySlime[0]->model->skinned_meshes->DetectJointPosition("PLT:ThumbFinger2_L_BK",&enemySlime[0]->model->keyframe),4 });
+        {
+            framebuffers[2]->Clear(graphics.GetDeviceContext(), 0, 0, 0, 0);
+            framebuffers[2]->Activate(graphics.GetDeviceContext());
+            shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_OFF_ZW_OFF));
+            shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::CULL_NONE));
+            bitBlockTransfer->Blit(graphics.GetDeviceContext(), NULL, 0, 0, auraEffectPS.Get());
+            framebuffers[2]->Deactivate(graphics.GetDeviceContext());
+        }
+        shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ADD));
+        shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_ON_ZW_OFF));
+        shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::CULL_NONE));
+        DirectX::XMFLOAT4X4 world;
+        DirectX::XMStoreFloat4x4(&world, enemySlime[0]->model->GetTransform()->CalcWorldMatrix(enemyScaleFactor));
+        auraEffect->Render(graphics.GetDeviceContext(), auraEmitters, world, framebuffers[2]->shaderResourceViews[0].Get());
+#endif
+    }
 
     // 3Dエフェクト描画
     {

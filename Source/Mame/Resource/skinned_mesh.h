@@ -395,6 +395,24 @@ public:
     float dissolve_value1{ 0.0f };
     Microsoft::WRL::ComPtr<ID3D11Buffer> dissolve_constant_buffer;
 
+    // ZELDA
+    DirectX::XMFLOAT3 DetectJointPosition(const char* boneName, const animation::keyframe* keyframe)const
+    {
+        for (const mesh& mesh : meshes)
+        {
+            for (const skeleton::bone& bone : mesh.bind_pose.bones)
+            {
+                if (bone.name != boneName) continue;
+
+                const animation::keyframe::node& node = keyframe->nodes.at(bone.node_index);
+                DirectX::XMFLOAT3 jointPosition = { node.global_transform._41,node.global_transform._42,node.global_transform._43 };
+                return jointPosition;
+            }
+        }
+        _ASSERT_EXPR(FALSE, L"Could not find a joint by 'bone-name'.");
+        return { 0,0,0 };
+    }
+
 protected:
     scene scene_view;
     

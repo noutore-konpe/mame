@@ -14,6 +14,7 @@ Player::Player()
     {
         model = std::make_unique<Model>(graphics.GetDevice(),
             //"./Resources/Model/testModel/character.fbx");
+            //"./Resources/Model/TESTidle.fbx");
             "./Resources/Model/sotai.fbx");
             //"./Resources/Model/sanaModel/mameoall.fbx");
             //"./Resources/Model/testModel/nico.fbx");

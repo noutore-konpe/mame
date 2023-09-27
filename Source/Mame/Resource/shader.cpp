@@ -553,6 +553,9 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc, 
 #endif// _DEBUG
     }
 
+    // ZELDA
+    deviceContext->GSSetConstantBuffers(1, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].GetAddressOf());
+
     EntryLight();
     //EntryLight2();
 }

@@ -16,7 +16,7 @@
 #include "../Graphics/SkyBox.h"
 #include "../Graphics/ShadowMap.h"
 #include "../Graphics/Particle.h"
-
+#include "../Graphics/AuraEffect.h"
 
 #define GLTF_MODEL 0
 #define MODEL 0
@@ -65,6 +65,11 @@ public:
     bool integrateParticles = true;
     std::unique_ptr<Particles> particles;
 #endif// PARTICLE
+
+    // ZELDA
+    Microsoft::WRL::ComPtr<ID3D11PixelShader> auraEffectPS;
+    std::unique_ptr<AuraEffect> auraEffect;
+    std::vector<AuraEffect::Emitter> auraEmitters;
 
 private:
     bool isDebugCamera = false;
