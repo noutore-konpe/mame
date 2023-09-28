@@ -2,6 +2,7 @@
 
 #include "Character.h"
 #include "StateMachine.h"
+#include "../Input/Input.h"
 
 class Player : public Character
 {
@@ -33,6 +34,7 @@ public:
     void End();                                     // 毎フレーム一番最後に呼ばれる
 
     void MoveUpdate(float elapsedTime);
+    void UpdateVelocity(float elapsedTime);
 
     void CameraControllerUpdate(float elapsedTime);
     
@@ -40,14 +42,31 @@ public:
     
     void DrawDebug() override;  // ImGui用
 
+    static bool InputAttack()
+    {
+        return (Input::Instance().GetGamePad().GetButtonDown() || GamePad::BTN_X);
+    }
+
+    static bool InputDash()
+    {
+        return (Input::Instance().GetGamePad().GetButton() || GamePad::BTN_RIGHT_SHOULDER);
+    }
+
 private:
     //----------------------------カメラ関係----------------------------------
     float cameraRotSpeed = 2.0f;//旋回速度
     //-----------------------------------------------------------------------
 
     //--------------------------移動-----------------------------------------
-    float moveSpeed = 3.0f;
+    float maxSpeed = 3.0f;
+    float maxDashSpeed = 4.0f;
     DirectX::XMFLOAT3 velocity{};
+
+    //カメラの向いている方向を前とした移動方向ベクトル
+    DirectX::XMFLOAT3 moveVec;
+
+    float deceleration;
+    float acceleration = 3.0f;
     //-----------------------------------------------------------------------
 
 

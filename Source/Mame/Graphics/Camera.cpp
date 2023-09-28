@@ -180,6 +180,8 @@ void Camera::DrawDebug()
 {
     if (ImGui::BeginMenu("Camera"))
     {
+        ImGui::Begin("Camera");
+
         transform.DrawDebug();
 
         ImGui::Checkbox("Enable Debug Camera", &enableDebugCamera);
@@ -213,6 +215,8 @@ void Camera::DrawDebug()
 
 
         if (ImGui::Button("Reset"))Camera::Reset();
+
+        ImGui::End();
 
         ImGui::EndMenu();
     }
