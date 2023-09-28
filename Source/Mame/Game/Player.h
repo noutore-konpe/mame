@@ -36,6 +36,8 @@ public:
     void MoveUpdate(float elapsedTime);
     void UpdateVelocity(float elapsedTime);
 
+    void Turn(float elapsedTime,float vx, float vz, float speed);
+
     void CameraControllerUpdate(float elapsedTime);
     
     void Render(const float& scale, ID3D11PixelShader* psShader = nullptr) override; // 描画処理
@@ -44,12 +46,12 @@ public:
 
     static bool InputAttack()
     {
-        return (Input::Instance().GetGamePad().GetButtonDown() || GamePad::BTN_X);
+        return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X);
     }
 
     static bool InputDash()
     {
-        return (Input::Instance().GetGamePad().GetButton() || GamePad::BTN_RIGHT_SHOULDER);
+        return (Input::Instance().GetGamePad().GetButton() & GamePad::BTN_RIGHT_SHOULDER);
     }
 
 private:
@@ -65,8 +67,8 @@ private:
     //カメラの向いている方向を前とした移動方向ベクトル
     DirectX::XMFLOAT3 moveVec;
 
-    float deceleration;
-    float acceleration = 3.0f;
+    float deceleration = 5.0f;
+    float acceleration = 10.0f;
     //-----------------------------------------------------------------------
 
 

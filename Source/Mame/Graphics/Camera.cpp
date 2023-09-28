@@ -180,7 +180,7 @@ void Camera::DrawDebug()
 {
     if (ImGui::BeginMenu("Camera"))
     {
-        ImGui::Begin("Camera");
+        //ImGui::Begin("Camera");
 
         transform.DrawDebug();
 
@@ -216,7 +216,7 @@ void Camera::DrawDebug()
 
         if (ImGui::Button("Reset"))Camera::Reset();
 
-        ImGui::End();
+        //ImGui::End();
 
         ImGui::EndMenu();
     }
