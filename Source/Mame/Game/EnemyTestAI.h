@@ -1,9 +1,8 @@
 #pragma once
 
-#include <memory>
-#include "BaseEnemyAI.h"
+#include "BaseCharacterAI.h"
 
-class EnemyTestAI : public BaseEnemyAI
+class EnemyTestAI : public BaseCharacterAI
 {
 public:
     EnemyTestAI();

@@ -1,6 +1,7 @@
 #pragma once
 
-class EnemyBlueSlime;
+//class EnemyBlueSlime;
+
 
 // 行動処理基底クラス
 class ActionBase
@@ -15,14 +16,16 @@ public:
 	};
 
 public:
-	ActionBase(EnemyBlueSlime* enemy) :owner_(enemy) {}
+	template <class TemplateAI>
+	ActionBase(TemplateAI* enemy) :owner_(enemy) {}
 	virtual ~ActionBase() {}
 
 	// 実行処理(純粋仮想関数)
 	virtual ActionBase::State Run(const float elapsedTime) = 0;
 
 protected:
-	EnemyBlueSlime* owner_;
+	BaseCharacterAI* owner_;
+
 	int step_ = 0;
 
 };

@@ -39,7 +39,7 @@ NodeBase::~NodeBase()
 }
 
 // 子ノードゲッター
-NodeBase* NodeBase::GetChild(const int index)  const
+NodeBase* NodeBase::GetChild(const int index) const
 {
 	if (children_.size() <= index)
 	{
@@ -74,7 +74,7 @@ NodeBase* NodeBase::GetTopChild()  const
 // ノード検索
 NodeBase* NodeBase::SearchNode(const std::string& searchName)
 {
-	// 名前が一致
+	// 名前が一致（）
 	if (searchName == name_)
 	{
 		return this;
@@ -99,7 +99,10 @@ NodeBase* NodeBase::SearchNode(const std::string& searchName)
 // ノード推論
 NodeBase* NodeBase::Inference(BehaviorData* data)
 {
-	std::vector<NodeBase*> list = {};
+	using std::vector;
+	using SelectRule = BehaviorTree::SelectRule;
+
+	vector<NodeBase*> list = {};
 	NodeBase* result = nullptr;
 
 	// childrenの数だけループを行う。
@@ -108,14 +111,15 @@ NodeBase* NodeBase::Inference(BehaviorData* data)
 		// children.at(i)->judgmentがnullptrでなければ
 		if (children_.at(i)->judgment_ != nullptr)
 		{
-			// TODO 04_03 children.at(i)->judgment->Judgment()関数を実行し、tureであれば
+			// TODO 04_03 children.at(i)->judgment->Judgment()関数を実行し、trueであれば
 			// listにchildren.at(i)を追加していく
 			if (children_.at(i)->judgment_->Judgment())
 			{
 				list.emplace_back(children_.at(i));
 			}
 		}
-		else {
+		else
+		{
 			// TODO 04_03 判定クラスがなければ無条件に追加
 			list.emplace_back(children_.at(i));
 		}
@@ -125,16 +129,16 @@ NodeBase* NodeBase::Inference(BehaviorData* data)
 	switch (selectRule_)
 	{
 		// 優先順位
-	case BehaviorTree::SelectRule::Priority:
+	case SelectRule::Priority:
 		result = SelectPriority(&list);
 		break;
 		// ランダム
-	case BehaviorTree::SelectRule::Random:
+	case SelectRule::Random:
 		result = SelectRandom(&list);
 		break;
 		// シーケンス
-	case BehaviorTree::SelectRule::Sequence:
-	case BehaviorTree::SelectRule::SequentialLooping:
+	case SelectRule::Sequence:
+	case SelectRule::SequentialLooping:
 		result = SelectSequence(&list, data);
 		break;
 	}
@@ -244,8 +248,9 @@ const bool NodeBase::Judgment()  const
 	// TODO 04_07 judgmentがあるか判断。あればメンバ関数Judgment()実行した結果をリターン。
 	if (judgment_ != nullptr)
 	{
-		//return judgment_->Judgment();
+		return judgment_->Judgment();
 	}
+
 	return true;
 }
 
@@ -255,7 +260,7 @@ const ActionBase::State NodeBase::Run(const float elapsedTime)
 	// TODO 04_08 actionがあるか判断。あればメンバ関数Run()実行した結果をリターン。
 	if (action_ != nullptr)
 	{
-		//return action_->Run(elapsedTime);
+		return action_->Run(elapsedTime);
 	}
 
 	return ActionBase::State::Failed;

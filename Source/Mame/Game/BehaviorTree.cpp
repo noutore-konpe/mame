@@ -44,7 +44,7 @@ void BehaviorTree::AddNode(
 		}
 		else
 		{
-			assert("Parent is Not Found");
+			assert("Parent Node is not found (or wrong parent's name)");
 		}
 	}
 	else
@@ -80,9 +80,9 @@ NodeBase* BehaviorTree::SequenceBack(
 
 // ノード実行
 NodeBase* BehaviorTree::Run(
-	NodeBase* actionNode,
-	BehaviorData* data,
-	const float elapsedTime)
+	NodeBase*		actionNode,
+	BehaviorData*	data,
+	const float		elapsedTime)
 {
 	using State = ActionBase::State;
 
@@ -96,7 +96,7 @@ NodeBase* BehaviorTree::Run(
 		NodeBase* sequenceNode = data->PopSequenceNode();
 
 		// 途中じゃないなら終了
-		if (sequenceNode == nullptr)
+		if (nullptr == sequenceNode)
 		{
 			return nullptr;
 		}

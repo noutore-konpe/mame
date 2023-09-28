@@ -1,16 +1,18 @@
 #pragma once
 
+#include <memory>
+
 #include "Character.h"
 
 #include "BehaviorTree.h"
 #include "BehaviorData.h"
 #include "NodeBase.h"
 
-class BaseEnemyAI : public Character
+class BaseCharacterAI : public Character
 {
 public:
-    BaseEnemyAI() {}
-    virtual ~BaseEnemyAI();
+    BaseCharacterAI() {}
+    virtual ~BaseCharacterAI();
 
     virtual void Initialize() {}                      // ‰Šú‰»
     virtual void Finalize() {}                        // I—¹‰»

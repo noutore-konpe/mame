@@ -1,16 +1,17 @@
-#include "BaseEnemyAI.h"
+#include "BaseCharacterAI.h"
 
 #include "../../Taki174/Common.h"
 
-BaseEnemyAI::~BaseEnemyAI()
+
+BaseCharacterAI::~BaseCharacterAI()
 {
     SafeDelete(activeNode_);
 }
 
-void BaseEnemyAI::Update(const float elapsedTime)
+void BaseCharacterAI::Update(const float elapsedTime)
 {
     // 現在実行するノードがあれば、ビヘイビアツリーからノードを実行
-    if (activeNode_)
+    if (activeNode_ != nullptr)
     {
         activeNode_ = aiTree_->Run(activeNode_, behaviorData_.get(), elapsedTime);
     }
@@ -22,13 +23,13 @@ void BaseEnemyAI::Update(const float elapsedTime)
 
 }
 
-void BaseEnemyAI::Render(const float elapsedTime, const float scale)
+void BaseCharacterAI::Render(const float elapsedTime, const float scale)
 {
     Character::Render(elapsedTime, scale);
 }
 
 // ImGui用
-void BaseEnemyAI::DrawDebug()
+void BaseCharacterAI::DrawDebug()
 {
 #ifdef USE_IMGUI
     if (ImGui::BeginMenu(GetName()))

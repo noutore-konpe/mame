@@ -29,7 +29,8 @@ public:
 
 public:
 	// 名前ゲッター
-	const std::string GetName() const { return name_; }
+	const std::string& GetName() const { return name_; }
+
 	// 親ノードゲッター
 	NodeBase* GetParent() const { return parent_; }
 	// 子ノードゲッター
@@ -39,7 +40,7 @@ public:
 	// 子ノードゲッター(先頭)
 	NodeBase* GetTopChild() const;
 	// 兄弟ノードゲッター
-	NodeBase* GetSibling() const  { return sibling_; }
+	NodeBase* GetSibling() const { return sibling_; }
 
 	// 階層番号ゲッター
 	const int GetHirerchyNo() const { return hierarchyNo_; }
@@ -58,7 +59,7 @@ public:
 
 public:
 	// 行動データを持っているか
-	const bool HasAction() const { return (action_ != nullptr) ? true : false; }
+	const bool HasAction() const { return (action_ != nullptr); }
 	// 実行可否判定
 	const bool Judgment() const;
 

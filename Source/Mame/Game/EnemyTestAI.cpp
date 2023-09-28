@@ -25,7 +25,7 @@ EnemyTestAI::EnemyTestAI()
     aiTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);
 
     // ImGuiñºëOê›íË
-    SetName("EnemyTestAI" + to_string(nameNum++));
+    SetName("EnemyTestAI_" + to_string(nameNum++));
 }
 
 
@@ -36,11 +36,11 @@ void EnemyTestAI::Initialize()
 
 void EnemyTestAI::Update(const float elapsedTime)
 {
-    BaseEnemyAI::Update(elapsedTime);
+    BaseCharacterAI::Update(elapsedTime);
 }
 
 
 void EnemyTestAI::Render(const float elapsedTime, const float scale)
 {
-    BaseEnemyAI::Render(elapsedTime, scale);
+    BaseCharacterAI::Render(elapsedTime, scale);
 }

@@ -8,7 +8,7 @@ class JudgmentBase;
 class NodeBase;
 class BehaviorData;
 //class EnemyBlueSlime;
-class BaseEnemyAI;
+class BaseCharacterAI;
 
 // ビヘイビアツリー
 class BehaviorTree
@@ -26,7 +26,7 @@ public:
 
 public:
 	BehaviorTree() {}
-	BehaviorTree(BaseEnemyAI* enemy) : owner_(enemy) {}
+	BehaviorTree(BaseCharacterAI* enemy) : owner_(enemy) {}
 	~BehaviorTree();
 
 	// 実行ノードを推論する
@@ -59,7 +59,7 @@ private:
 private:
 	// ルートノード
 	//NodeBase*		root_	= nullptr;
-	std::unique_ptr<NodeBase> root_	= nullptr;
-	BaseEnemyAI*	owner_	= nullptr;
+	std::unique_ptr<NodeBase>	root_	= nullptr;
+	BaseCharacterAI*			owner_	= nullptr;
 
 };
