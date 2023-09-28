@@ -8,7 +8,7 @@ Stage::Stage()
 
     model = std::make_unique<Model>(graphics.GetDevice(), 
         //"./Resources/Model/Stage/stageWall.fbx", 
-        "./Resources/Model/Stage/stageBase.fbx", 
+        "./Resources/Model/Stage/stage_base.fbx", 
         //"./Resources/Model/Stage/plane.fbx", 
         //"./Resources/Model/testModel/death_valley_-_terrain.fbx", 
         "./Resources/Shader/StagePS.cso");

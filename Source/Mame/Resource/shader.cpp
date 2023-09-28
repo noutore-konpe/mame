@@ -36,7 +36,7 @@ HRESULT CreateVsFromCso(ID3D11Device* device, const char* cso_name, ID3D11Vertex
             cso_data.get(), cso_sz, input_layout);
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
-    
+
     return hr;
 }
 
@@ -61,7 +61,7 @@ HRESULT CreatePsFromCso(ID3D11Device* device, const char* cso_name, ID3D11PixelS
     return hr;
 }
 
-HRESULT CreateGsFromCso(ID3D11Device* device, const char* csoName, ID3D11GeometryShader** geometryShader) 
+HRESULT CreateGsFromCso(ID3D11Device* device, const char* csoName, ID3D11GeometryShader** geometryShader)
 {
     FILE* fp = nullptr;
     fopen_s(&fp, csoName, "rb");
@@ -433,11 +433,11 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc)
 
     // ビュープロジェクション変換行列を計算し、それを定数バッファにセットする
     camera.SetPerspectiveFov(deviceContext);
-        
+
 
     SceneConstants scene{};
     DirectX::XMStoreFloat4x4(&scene.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
-    
+
     scene.lightDirection = { view.position.x,view.position.y,view.position.z,view.position.w };
     scene.cameraPosition = { view.camera.x,view.camera.y,view.camera.z,view.camera.w };
 
@@ -517,7 +517,7 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc, 
         deviceContext->VSSetConstantBuffers(10, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].GetAddressOf());
         deviceContext->PSSetConstantBuffers(10, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].GetAddressOf());
     }
-    
+
     SceneConstants scene{};
     DirectX::XMStoreFloat4x4(&scene.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
 
@@ -602,7 +602,7 @@ void Shader::DrawDebug()
 
         ImGui::TreePop();
     }
-    
+
     camera.DrawDebug();
 
     ImGui::End();
@@ -726,7 +726,7 @@ void Shader::EntryLight()
         if (lightConstant.spotLight.range >= 5.0f)
         {
             // R
-            lightConstant.spotLight.color.x = 1.0f; 
+            lightConstant.spotLight.color.x = 1.0f;
 
             // G
             if (lightConstant.spotLight.color.y <= 0.2f)lightConstant.spotLight.color.y += 0.001f;
@@ -767,7 +767,7 @@ void Shader::EntryLight2()
 
         // color
         // R
-        if (lightConstant.spotLight.color.x <= 1.0f)lightConstant.spotLight.color.x += 0.00078; //0.0039f;
+        if (lightConstant.spotLight.color.x <= 1.0f)lightConstant.spotLight.color.x += 0.00078f; //0.0039f;
         else lightConstant.spotLight.color.x = 1.0f;
 
         // G

@@ -106,7 +106,7 @@ void SceneDemo::CreateResource()
     // stage
     {
         stageBase = std::make_unique<Stage>();
-        stageWall = std::make_unique<Stage>("./Resources/Model/Stage/stageWall.fbx");
+        stageWall = std::make_unique<Stage>("./Resources/Model/Stage/stage_1000.fbx");
     }
 
     // skybox

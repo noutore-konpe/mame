@@ -325,6 +325,9 @@
     <ClCompile Include="Source\Mame\Graphics\Particle.cpp">
       <Filter>mamelib\Mame\Graphics\Particle</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\PlayerState.cpp">
+      <Filter>mamelib\Mame\Game\Character\Player</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Mame\Graphics\AuraEffect.cpp">
       <Filter>mamelib\Mame\Graphics\Aura</Filter>
     </ClCompile>
@@ -533,6 +536,9 @@
     <ClInclude Include="Source\Mame\Graphics\Particle.h">
       <Filter>mamelib\Mame\Graphics\Particle</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Game\PlayerState.h">
+      <Filter>mamelib\Mame\Game\Character\Player</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Mame\Graphics\AuraEffect.h">
       <Filter>mamelib\Mame\Graphics\Aura</Filter>
     </ClInclude>
@@ -695,8 +701,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="3dgp.rc" />
     <ResourceCompile Include="Resource.rc" />
+    <ResourceCompile Include="3dgp.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon1.ico" />
