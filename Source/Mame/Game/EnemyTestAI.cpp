@@ -10,6 +10,7 @@ EnemyTestAI::EnemyTestAI()
 {
     using std::make_unique;
     using std::to_string;
+    using SelectRule = BehaviorTree::SelectRule;
 
     Graphics& graphics = Graphics::Instance();
 
@@ -20,6 +21,8 @@ EnemyTestAI::EnemyTestAI()
 
     behaviorData_ = make_unique<BehaviorData>();
     aiTree_       = make_unique<BehaviorTree>(this);
+
+    aiTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);
 
     // ImGuiñºëOê›íË
     SetName("EnemyTestAI" + to_string(nameNum++));

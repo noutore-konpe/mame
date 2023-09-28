@@ -6,7 +6,6 @@ class EnemyBlueSlime;
 class ActionBase
 {
 public:
-	ActionBase(EnemyBlueSlime* enemy):owner(enemy){}
 	// 実行情報
 	enum class State
 	{
@@ -15,9 +14,15 @@ public:
 		Complete,	// 実行成功
 	};
 
+public:
+	ActionBase(EnemyBlueSlime* enemy) :owner_(enemy) {}
+	virtual ~ActionBase() {}
+
 	// 実行処理(純粋仮想関数)
-	virtual ActionBase::State Run(float elapsedTime) = 0;
+	virtual ActionBase::State Run(const float elapsedTime) = 0;
+
 protected:
-	EnemyBlueSlime* owner;
-	int step = 0;
+	EnemyBlueSlime* owner_;
+	int step_ = 0;
+
 };

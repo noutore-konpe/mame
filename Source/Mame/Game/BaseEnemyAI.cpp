@@ -9,14 +9,17 @@ BaseEnemyAI::~BaseEnemyAI()
 
 void BaseEnemyAI::Update(const float elapsedTime)
 {
-    //if (nullptr == activeNode_)
-    //{
-    //    activeNode_ = aiTree_->ActiveNodeInference(behaviorData_.get());
-    //}
-    //if (activeNode_ != nullptr)
-    //{
-    //    activeNode_ = aiTree_->Run(activeNode_, behaviorData_.get(), elapsedTime);
-    //}
+    // 現在実行するノードがあれば、ビヘイビアツリーからノードを実行
+    if (activeNode_)
+    {
+        activeNode_ = aiTree_->Run(activeNode_, behaviorData_.get(), elapsedTime);
+    }
+    // 現在実行されているノードがなければ、次に実行するノードを推論する
+    else
+    {
+        activeNode_ = aiTree_->ActiveNodeInference(behaviorData_.get());
+    }
+
 }
 
 void BaseEnemyAI::Render(const float elapsedTime, const float scale)

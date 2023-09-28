@@ -28,12 +28,12 @@ void Character::Update(const float elapsedTime)
     DirectX::XMFLOAT3 position = GetTransform()->GetPosition();
     position = { position.x + debugSqhereOffset.x, position.y + debugSqhereOffset.y , position.z + debugSqhereOffset.z };
     GetCollisionSqhereTransform()->SetPosition(position);
-    GetCollisionSqhereTransform()->SetScaleFactor(range);
+    GetCollisionSqhereTransform()->SetScaleFactor(range_);
     GetCollisionSqhereTransform()->SetRotation(GetTransform()->GetRotation());
 
 #ifdef _DEBUG
     debugSqhere->GetTransform()->SetPosition(GetCollisionSqhereTransform()->GetPosition());
-    debugSqhere->GetTransform()->SetScaleFactor(range);
+    debugSqhere->GetTransform()->SetScaleFactor(range_);
     //debugSqhere->GetTransform()->SetScale(GetCollisionSqhereTransform()->GetScale());
     debugSqhere->GetTransform()->SetRotation(GetCollisionSqhereTransform()->GetRotation());
 #endif // _DEBUG

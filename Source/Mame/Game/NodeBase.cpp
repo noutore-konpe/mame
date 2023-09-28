@@ -39,7 +39,7 @@ NodeBase::~NodeBase()
 }
 
 // 子ノードゲッター
-NodeBase* NodeBase::GetChild(const int index)
+NodeBase* NodeBase::GetChild(const int index)  const
 {
 	if (children_.size() <= index)
 	{
@@ -49,7 +49,7 @@ NodeBase* NodeBase::GetChild(const int index)
 }
 
 // 子ノードゲッター(末尾)
-NodeBase* NodeBase::GetLastChild()
+NodeBase* NodeBase::GetLastChild() const
 {
 	if (children_.size() == 0)
 	{
@@ -60,7 +60,7 @@ NodeBase* NodeBase::GetLastChild()
 }
 
 // 子ノードゲッター(先頭)
-NodeBase* NodeBase::GetTopChild()
+NodeBase* NodeBase::GetTopChild()  const
 {
 	if (children_.size() == 0)
 	{
@@ -79,7 +79,8 @@ NodeBase* NodeBase::SearchNode(const std::string& searchName)
 	{
 		return this;
 	}
-	else {
+	else
+	{
 		// 子ノードで検索
 		for (auto itr = children_.begin(); itr != children_.end(); ++itr)
 		{
@@ -238,7 +239,7 @@ NodeBase* NodeBase::SelectSequence(
 }
 
 // 判定
-const bool NodeBase::Judgment()
+const bool NodeBase::Judgment()  const
 {
 	// TODO 04_07 judgmentがあるか判断。あればメンバ関数Judgment()実行した結果をリターン。
 	if (judgment_ != nullptr)

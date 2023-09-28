@@ -23,6 +23,8 @@ void BehaviorTree::AddNode(
 	JudgmentBase* judgment,
 	ActionBase* action)
 {
+	using std::make_unique;
+
 	if (parentName != "")
 	{
 		NodeBase* parentNode = root_->SearchNode(parentName);
@@ -30,9 +32,19 @@ void BehaviorTree::AddNode(
 		if (parentNode != nullptr)
 		{
 			NodeBase* sibling = parentNode->GetLastChild();
-			NodeBase* addNode = new NodeBase(entryName, parentNode, sibling, priority, selectRule, judgment, action, parentNode->GetHirerchyNo() + 1);
+			NodeBase* addNode = {
+				new NodeBase(
+					entryName, parentNode, sibling,
+					priority, selectRule,
+					judgment, action,
+					parentNode->GetHirerchyNo() + 1)
+			};
 
 			parentNode->AddChild(addNode);
+		}
+		else
+		{
+			assert("Parent is Not Found");
 		}
 	}
 	else
@@ -40,7 +52,12 @@ void BehaviorTree::AddNode(
 		if (nullptr == root_)
 		{
 			//root_ = new NodeBase(entryName, nullptr, nullptr, priority, selectRule, judgment, action, 1);
-			root_ = std::make_unique<NodeBase>(entryName, nullptr, nullptr, priority, selectRule, judgment, action, 1);
+			root_ = {
+				make_unique<NodeBase>(
+				entryName, nullptr, nullptr,
+				priority, selectRule,
+				judgment, action, 1)
+			};
 		}
 	}
 }
@@ -90,7 +107,8 @@ NodeBase* BehaviorTree::Run(
 		}
 		// é∏îsÇÕèIóπ
 	}
-	else if (ActionBase::State::Failed == state) {
+	else if (State::Failed == state)
+	{
 		return nullptr;
 	}
 

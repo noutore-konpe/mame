@@ -30,15 +30,14 @@ public:
 public:
 	// 名前ゲッター
 	const std::string GetName() const { return name_; }
-
 	// 親ノードゲッター
 	NodeBase* GetParent() const { return parent_; }
 	// 子ノードゲッター
-	NodeBase* GetChild(const int index);
+	NodeBase* GetChild(const int index) const;
 	// 子ノードゲッター(末尾)
-	NodeBase* GetLastChild();
+	NodeBase* GetLastChild() const;
 	// 子ノードゲッター(先頭)
-	NodeBase* GetTopChild();
+	NodeBase* GetTopChild() const;
 	// 兄弟ノードゲッター
 	NodeBase* GetSibling() const  { return sibling_; }
 
@@ -50,16 +49,18 @@ public:
 public:
 	// 親ノードセッター
 	void SetParent(NodeBase* parent) { this->parent_ = parent; }
-	// 子ノード追加
-	void AddChild(NodeBase* child) { children_.push_back(child); }
 	// 兄弟ノードセッター
 	void SetSibling(NodeBase* sibling) {this->sibling_ = sibling;}
 
 public:
+	// 子ノード追加
+	void AddChild(NodeBase* child) { children_.push_back(child); }
+
+public:
 	// 行動データを持っているか
-	const bool HasAction() const { return action_ != nullptr ? true : false; }
+	const bool HasAction() const { return (action_ != nullptr) ? true : false; }
 	// 実行可否判定
-	const bool Judgment();
+	const bool Judgment() const;
 
 public:
 	// 優先順位選択

@@ -39,8 +39,8 @@ public: // 取得・設定　関連
     void SetDebugSqhereOffset(DirectX::XMFLOAT3 offset) { debugSqhereOffset = offset; }
     DirectX::XMFLOAT3 GetDebugSqhereOffset() { return debugSqhereOffset; }
 
-    void SetRange(const float& r) { range = r; }
-    float GetRange() { return range; }
+    void SetRange(const float& r) { range_ = r; }
+    float GetRange() { return range_; }
 
 public:
     std::unique_ptr<Model> model = nullptr;
@@ -52,7 +52,7 @@ public:
 private:
     Transform collisionSqhereTransform{};
     DirectX::XMFLOAT3 debugSqhereOffset{};  // 当たり判定用
-    float range = 1.0f;                     // 球当たり判定半径
+    float range_ = 1.0f;                     // 球当たり判定半径
 
 
 public: // --- ImGui用 --- //

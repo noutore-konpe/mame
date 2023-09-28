@@ -6,8 +6,11 @@ class EnemyBlueSlime;
 class JudgmentBase
 {
 public:
-	JudgmentBase(EnemyBlueSlime* enemy) :owner(enemy) {}
+	JudgmentBase(EnemyBlueSlime* enemy) :owner_(enemy) {}
+	virtual ~JudgmentBase() {}
 	virtual bool Judgment() = 0;
+
 protected:
-	EnemyBlueSlime* owner;
+	EnemyBlueSlime* owner_;
+
 };
