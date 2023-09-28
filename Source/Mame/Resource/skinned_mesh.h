@@ -251,7 +251,9 @@ public:
         // EMISSIVE
         DirectX::XMFLOAT4 emissiveColor{ 0.0f, 0.0f, 0.0f, 1.0f };
         float emissiveIntensity = 3.0f;
-        DirectX::XMFLOAT3 dummy; // É_É~Å[
+        float emissiveOptions = 0.0f;  // emissiveTextureUVScrollSpeed
+        DirectX::XMFLOAT2 emissiveScrollDirection{1.0f,0.0f};
+
         DirectX::XMFLOAT4 sageColor{ 1.0f,1.0f,1.0f,1.0f };
     };
     constants data;

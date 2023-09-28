@@ -78,7 +78,11 @@ void SceneDemo::CreateResource()
     // Effect
     {
         //effect[0] = std::make_unique<Effect>("./Resources/Effect/ringz.efk");
-        effect[0] = std::make_unique<Effect>("./Resources/Effect/sample/lightningv002.efk");
+        //effect[0] = std::make_unique<Effect>("./Resources/Effect/explosion.efk");
+        //effect[0] = std::make_unique<Effect>("./Resources/Effect/explosion2.efk");
+        //effect[0] = std::make_unique<Effect>("./Resources/Effect/explosion3.efk");
+        effect[0] = std::make_unique<Effect>("./Resources/Effect/explosion4.efk");
+        //effect[0] = std::make_unique<Effect>("./Resources/Effect/sample/lightningv002.efk");
         //effect[0] = std::make_unique<Effect>("./Resources/Effect/ring2.efk");
         //effect[0] = std::make_unique<Effect>("./Resources/Effect/old/ring.efk");
     }
@@ -214,11 +218,12 @@ void SceneDemo::Update(const float& elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
 
-    //effect[0]->Play({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f });
     
 #if PARTICLE
     if (gamePad.GetButtonDown() & GamePad::BTN_A)
     {
+        effect[0]->Play({ 0.0f, 0.0f, 0.0f }, { 0.05f, 0.05f, 0.05f });
+        //effect[0]->Play({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f });
         particles->Initialize(Graphics::Instance().GetDeviceContext(), 0);
     }
 

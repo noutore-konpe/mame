@@ -24,6 +24,9 @@ struct PSIn
     
     // ZELDA
     float3 localPosition : LOCAL_POSITION;
+    
+    // EMISSIVE
+    float2 emissiveTexcoord : TEXCOORD3;
 };
 
 // モデル情報
@@ -37,7 +40,9 @@ cbuffer OBJECT_CONSTANT_BUFFER : register(b0)
     // EMISSIVE
     float4 emissiveColor;
     float emissiveIntensity;
-    float3 step;    // ダミー
+    float emissiveOptions;
+    float2 emissiveScrollDirection;    
+    
     float4 sageColor; // ZELDA
 };
 

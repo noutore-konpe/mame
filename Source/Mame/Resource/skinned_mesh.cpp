@@ -10,6 +10,8 @@
 #include <filesystem>
 #include <fstream>
 
+#include "../framework.h"
+
 inline DirectX::XMFLOAT4X4 to_xmfloat4x4(const FbxAMatrix& fbxamatrix)
 {
     DirectX::XMFLOAT4X4 xmfloat4x4;
@@ -485,6 +487,9 @@ void skinned_mesh::render(ID3D11DeviceContext* deviceContext,
     const animation::keyframe* keyframe,
     ID3D11PixelShader* alternative_pixel_shader)
 {
+    const float elapsedTime = framework::elapsedTime;
+    data.emissiveOptions += elapsedTime;
+
     deviceContext->PSSetShaderResources(15, 1, mask_texture[mask_texture_value].GetAddressOf());
 
     //// 定数バッファの更新
@@ -883,6 +888,8 @@ void skinned_mesh::Drawdebug()
     {
         ImGui::ColorEdit4("color", &data.emissiveColor.x);
         ImGui::DragFloat("Intencity", &data.emissiveIntensity);
+        ImGui::DragFloat("options", &data.emissiveOptions);
+        ImGui::DragFloat2("scrollDirection", &data.emissiveScrollDirection.x);
 
         ImGui::TreePop();
     }

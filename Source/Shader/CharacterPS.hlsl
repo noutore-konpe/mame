@@ -157,7 +157,7 @@ float4 main(PSIn psIn) : SV_TARGET
 #if 0
         float3 emissive = textureMaps[2].Sample(samplerStates[LINEAR], psIn.texcoord).rgb;
 #else
-        float3 emissive = emissiveTexture.Sample(samplerStates[LINEAR], psIn.texcoord).rgb;
+        float3 emissive = emissiveTexture.Sample(samplerStates[LINEAR], psIn.emissiveTexcoord).rgb;
 #endif
         finalColor += emissive * emissiveIntensity * emissiveColor.rgb;
     }

@@ -13,6 +13,8 @@
 
 high_resolution_timer framework::tictoc = {};
 
+float framework::elapsedTime = 0.0f;
+
 framework::framework(HWND hwnd)
     : hwnd(hwnd),
     graphics(hwnd, FALSE),
