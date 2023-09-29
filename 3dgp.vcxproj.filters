@@ -314,19 +314,19 @@
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\BehaviorData.cpp">
-      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\BehaviorTree.cpp">
-      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\NodeBase.cpp">
-      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
     </ClCompile>
     <ClCompile Include="Source\Taki174\Common.cpp">
       <Filter>mamelib\Taki174</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\BaseCharacterAI.cpp">
-      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+      <Filter>mamelib\Mame\Game\Character</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -537,19 +537,19 @@
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\BehaviorData.h">
-      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\BehaviorTree.h">
-      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\NodeBase.h">
-      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\ActionBase.h">
-      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\JudgmentBase.h">
-      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
     </ClInclude>
     <ClInclude Include="Source\Taki174\Common.h">
       <Filter>mamelib\Taki174</Filter>
@@ -564,7 +564,7 @@
       <Filter>mamelib\Taki174</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\BaseCharacterAI.h">
-      <Filter>mamelib\Mame\Game\Character\AI</Filter>
+      <Filter>mamelib\Mame\Game\Character</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -708,14 +708,14 @@
     <Filter Include="mamelib\Mame\Graphics\Particle">
       <UniqueIdentifier>{91158c84-6ace-4d96-923d-421320438609}</UniqueIdentifier>
     </Filter>
-    <Filter Include="mamelib\Mame\Game\Character\AI">
-      <UniqueIdentifier>{bf183706-12e5-43fa-9b4f-0dcd81710109}</UniqueIdentifier>
-    </Filter>
     <Filter Include="mamelib\Taki174">
       <UniqueIdentifier>{8d4995f7-87de-4c6e-b210-a83bd5862284}</UniqueIdentifier>
     </Filter>
     <Filter Include="mamelib\Mame\Game\Item\StateMachine">
       <UniqueIdentifier>{c4bf7710-61dd-420e-bf61-f6f7fce0d9ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Character\BehaviorTree">
+      <UniqueIdentifier>{bf183706-12e5-43fa-9b4f-0dcd81710109}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

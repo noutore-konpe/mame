@@ -23,9 +23,9 @@ public:
     virtual void DrawDebug();                         // デバッグ描画
 
 protected:
-    std::unique_ptr<BehaviorTree>   aiTree_;
-    std::unique_ptr<BehaviorData>   behaviorData_;
-    NodeBase*                       activeNode_ = nullptr;
+    std::unique_ptr<BehaviorTree>   behaviorTree_;
+    std::unique_ptr<BehaviorData>   behaviorData_; // 主にシーケンスに使う
+    std::unique_ptr<NodeBase>       activeNode_;
 
 };
 

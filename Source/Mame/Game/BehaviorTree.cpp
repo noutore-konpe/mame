@@ -9,12 +9,6 @@
 #include "BehaviorData.h"
 
 
-// デストラクタ
-BehaviorTree::~BehaviorTree()
-{
-	//NodeAllClear(root_);
-}
-
 void BehaviorTree::AddNode(
 	const std::string& parentName,
 	const std::string& entryName,
@@ -126,11 +120,11 @@ void BehaviorTree::NodeAllClear(NodeBase* delNode)
 		{
 			NodeAllClear(node);
 		}
-		SafeDelete(delNode);
+		SafeDeletePtr(delNode);
 	}
 	else
 	{
-		SafeDelete(delNode);
+		SafeDeletePtr(delNode);
 	}
 }
 

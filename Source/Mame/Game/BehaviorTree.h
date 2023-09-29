@@ -27,7 +27,7 @@ public:
 public:
 	BehaviorTree() {}
 	BehaviorTree(BaseCharacterAI* enemy) : owner_(enemy) {}
-	~BehaviorTree();
+	~BehaviorTree() {}
 
 	// 実行ノードを推論する
 	NodeBase* ActiveNodeInference(BehaviorData* data);

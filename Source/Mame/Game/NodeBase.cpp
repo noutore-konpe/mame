@@ -1,6 +1,7 @@
 #include "NodeBase.h"
 
 #include <stdlib.h>
+#include <memory>
 
 #include "../../Taki174/Common.h"
 
@@ -14,7 +15,7 @@ NodeBase::NodeBase(
 	const std::string& name,
 	NodeBase* parent,
 	NodeBase* sibling,
-	const int priority,
+	const unsigned int priority,
 	const BehaviorTree::SelectRule& selectRule,
 	JudgmentBase* judgment,
 	ActionBase* action,
@@ -24,37 +25,34 @@ NodeBase::NodeBase(
 	, sibling_(sibling)
 	, priority_(priority)
 	, selectRule_(selectRule)
-	, judgment_(judgment)
-	, action_(action)
+	//, judgment_(judgment)
+	//, action_(action)
 	, hierarchyNo_(hierarchyNo)
 	, children_(0)
 {
+	judgment_.reset(judgment);
+	action_.reset(action);
 }
 
 // デストラクタ
 NodeBase::~NodeBase()
 {
-	SafeDelete(judgment_);
-	SafeDelete(action_);
+	//SafeDeletePtr(judgment_);
+	//SafeDeletePtr(action_);
 }
 
 // 子ノードゲッター
 NodeBase* NodeBase::GetChild(const int index) const
 {
-	if (children_.size() <= index)
-	{
-		return nullptr;
-	}
+	if (children_.size() <= index) return nullptr;
+
 	return children_.at(index);
 }
 
 // 子ノードゲッター(末尾)
 NodeBase* NodeBase::GetLastChild() const
 {
-	if (children_.size() == 0)
-	{
-		return nullptr;
-	}
+	if (children_.size() == 0) return nullptr;
 
 	return children_.at(children_.size() - 1);
 }
@@ -62,10 +60,7 @@ NodeBase* NodeBase::GetLastChild() const
 // 子ノードゲッター(先頭)
 NodeBase* NodeBase::GetTopChild()  const
 {
-	if (children_.size() == 0)
-	{
-		return nullptr;
-	}
+	if (children_.size() == 0) return nullptr;
 
 	return children_.at(0);
 }
@@ -82,7 +77,8 @@ NodeBase* NodeBase::SearchNode(const std::string& searchName)
 	else
 	{
 		// 子ノードで検索
-		for (auto itr = children_.begin(); itr != children_.end(); ++itr)
+		using Iterator = std::vector<NodeBase*>::iterator;
+		for (Iterator itr = children_.begin(); itr != children_.end(); ++itr)
 		{
 			NodeBase* ret = (*itr)->SearchNode(searchName);
 
@@ -102,26 +98,27 @@ NodeBase* NodeBase::Inference(BehaviorData* data)
 	using std::vector;
 	using SelectRule = BehaviorTree::SelectRule;
 
-	vector<NodeBase*> list = {};
-	NodeBase* result = nullptr;
+	vector<NodeBase*> candidateList = {}; // 実行するノードの候補リスト
+	NodeBase* selectNode = nullptr;	  // 選択された実行ノード
 
 	// childrenの数だけループを行う。
 	for (int i = 0; i < children_.size(); ++i)
 	{
+		NodeBase* node = children_.at(i);
 		// children.at(i)->judgmentがnullptrでなければ
-		if (children_.at(i)->judgment_ != nullptr)
+		if (node->judgment_ != nullptr)
 		{
 			// TODO 04_03 children.at(i)->judgment->Judgment()関数を実行し、trueであれば
 			// listにchildren.at(i)を追加していく
-			if (children_.at(i)->judgment_->Judgment())
+			if (node->judgment_->Judgment())
 			{
-				list.emplace_back(children_.at(i));
+				candidateList.emplace_back(node);
 			}
 		}
 		else
 		{
 			// TODO 04_03 判定クラスがなければ無条件に追加
-			list.emplace_back(children_.at(i));
+			candidateList.emplace_back(node);
 		}
 	}
 
@@ -130,47 +127,46 @@ NodeBase* NodeBase::Inference(BehaviorData* data)
 	{
 		// 優先順位
 	case SelectRule::Priority:
-		result = SelectPriority(&list);
+		selectNode = SelectPriority(&candidateList);
 		break;
 		// ランダム
 	case SelectRule::Random:
-		result = SelectRandom(&list);
+		selectNode = SelectRandom(&candidateList);
 		break;
 		// シーケンス
 	case SelectRule::Sequence:
 	case SelectRule::SequentialLooping:
-		result = SelectSequence(&list, data);
+		selectNode = SelectSequence(&candidateList, data);
 		break;
 	}
 
-	if (result != nullptr)
+	if (selectNode != nullptr)
 	{
 		// 行動があれば終了
-		if (true == result->HasAction())
+		if (true == selectNode->HasAction())
 		{
-			return result;
+			return selectNode;
 		}
 		else
 		{
 			// 決まったノードで推論開始
-			result = result->Inference(data);
+			selectNode = selectNode->Inference(data);
 		}
 	}
 
-	return result;
+	return selectNode;
 }
 
 // 優先順位でノード選択
-NodeBase* NodeBase::SelectPriority(std::vector<NodeBase*>* list)
+NodeBase* NodeBase::SelectPriority(std::vector<NodeBase*>* candidateList)
 {
 	NodeBase* selectNode  = nullptr;
-	unsigned int priority = INT_MAX;
+	unsigned int priority = UINT_MAX;
 
-	// TODO 04_04 一番優先順位が高いノードを探してselectNodeに格納
-	const size_t nodeCount = list->size();
-	for (size_t i = 0; i < nodeCount; ++i)
+	// TODO 04_04 一番優先順位が高い(値が小さい)ノードを探してselectNodeに格納
+	for (size_t i = 0; i < (*candidateList).size(); ++i)
 	{
-		NodeBase* node = list->at(i);
+		NodeBase* node = (*candidateList).at(i);
 		if (node->priority_ < priority)
 		{
 			priority   = node->priority_;
@@ -183,24 +179,24 @@ NodeBase* NodeBase::SelectPriority(std::vector<NodeBase*>* list)
 
 
 // ランダムでノード選択
-NodeBase* NodeBase::SelectRandom(std::vector<NodeBase*>* list)
+NodeBase* NodeBase::SelectRandom(std::vector<NodeBase*>* candidateList)
 {
 	// TODO 04_05 listのサイズで乱数を取得してselectNoに格納
-	const size_t nodeCount = list->size();
-	const size_t selectNo  = static_cast<size_t>(std::rand()) % nodeCount;
+	const size_t lastNode = (*candidateList).size() - 1;
+	const size_t selectNo  = static_cast<size_t>(std::rand()) % lastNode;
 
 	// listのselectNo番目の実態をリターン
-	return (*list).at(selectNo);
+	return (*candidateList).at(selectNo);
 }
 
 // シーケンス・シーケンシャルルーピングでノード選択
 NodeBase* NodeBase::SelectSequence(
-	std::vector<NodeBase*>* list,
+	std::vector<NodeBase*>* candidateList,
 	BehaviorData* data)
 {
 	int step = 0;
 
-	// 指定されている中間ノードのがシーケンスがどこまで実行されたか取得する
+	// 指定されている中間ノードのシーケンスがどこまで実行されたか取得する
 	step = data->GetSequenceStep(name_);
 
 	// 中間ノードに登録されているノード数以上の場合、
@@ -221,21 +217,26 @@ NodeBase* NodeBase::SelectSequence(
 
 	}
 	// 実行可能リストに登録されているデータの数だけループを行う
-	for (auto itr = list->begin(); itr != list->end(); itr++)
+	using Iterator = std::vector<NodeBase*>::iterator;
+	for (Iterator itr = candidateList->begin(); itr != candidateList->end(); ++itr)
 	{
 		// 子ノードが実行可能リストに含まれているか
-		if (children_.at(step)->GetName() == (*itr)->GetName())
+		NodeBase* childNode		= children_.at(step);
+		NodeBase* condidateNode = (*itr);
+		if (childNode->GetName() == condidateNode->GetName())
 		{
 			// TODO 04_06 現在の実行ノードの保存、次に実行するステップの保存を行った後、
 			// 現在のステップ番号のノードをリターンしなさい
 			// ①スタックにはdata->PushSequenceNode関数を使用する。保存するデータは実行中の中間ノード。
+			data->PushSequenceNode(this);
+
 			// ②また、次に実行する中間ノードとステップ数を保存する
 			// 　保存にはdata->SetSequenceStep関数を使用。
 			// 　保存データは中間ノードの名前と次のステップ数です(step + 1)
+			data->SetSequenceStep(childNode->GetName(), step + 1);
+
 			// ③ステップ番号目の子ノードを実行ノードとしてリターンする
-
-
-
+			return childNode;
 		}
 	}
 	// 指定された中間ノードに実行可能ノードがないのでnullptrをリターンする

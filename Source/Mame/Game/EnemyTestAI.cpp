@@ -1,8 +1,6 @@
 #include "EnemyTestAI.h"
 
 #include <memory>
-
-#include "../../Taki174/Common.h"
 #include "../Graphics/Graphics.h"
 
 
@@ -20,9 +18,9 @@ EnemyTestAI::EnemyTestAI()
     };
 
     behaviorData_ = make_unique<BehaviorData>();
-    aiTree_       = make_unique<BehaviorTree>(this);
+    behaviorTree_ = make_unique<BehaviorTree>(this);
 
-    aiTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);
+    behaviorTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);
 
     // ImGuiñºëOê›íË
     SetName("EnemyTestAI_" + to_string(nameNum++));

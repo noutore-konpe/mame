@@ -14,10 +14,10 @@
 extern float (*const ToRadian)(float);
 
 // ƒ|ƒCƒ“ƒ^Á‹ŠÖ”
-template <typename T>
-inline void SafeDelete(NoConst T*& p)
+template <class T>
+inline void SafeDeletePtr(NoConst T*& p)
 {
-    if (!p) return;
+    if (nullptr == p) return;
 
     delete (p);
     p = nullptr;

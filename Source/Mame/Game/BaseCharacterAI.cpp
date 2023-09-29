@@ -5,20 +5,42 @@
 
 BaseCharacterAI::~BaseCharacterAI()
 {
-    SafeDelete(activeNode_);
+    //SafeDeletePtr(activeNode_);
 }
 
 void BaseCharacterAI::Update(const float elapsedTime)
 {
+    using std::make_unique;
+
     // 現在実行するノードがあれば、ビヘイビアツリーからノードを実行
     if (activeNode_ != nullptr)
     {
-        activeNode_ = aiTree_->Run(activeNode_, behaviorData_.get(), elapsedTime);
+        //activeNode_ = behaviorTree_->Run(activeNode_, behaviorData_.get(), elapsedTime);
+        activeNode_.release();      // リソースの所有権の放棄
+        // (リソースを開放して)新たなリソースの設定
+        activeNode_.reset(behaviorTree_->Run(
+            activeNode_.get(),
+            behaviorData_.get(),
+            elapsedTime)
+        );
+        //activeNode_ = make_unique<NodeBase>(
+        //    behaviorTree_->Run(
+        //        activeNode_.get(),
+        //        behaviorData_.get(),
+        //        elapsedTime)
+        //);
     }
     // 現在実行されているノードがなければ、次に実行するノードを推論する
     else
     {
-        activeNode_ = aiTree_->ActiveNodeInference(behaviorData_.get());
+        activeNode_.release();
+        activeNode_.reset(behaviorTree_->ActiveNodeInference(
+            behaviorData_.get())
+        );
+        //activeNode_ = make_unique<NodeBase>(
+        //    behaviorTree_->ActiveNodeInference(
+        //        behaviorData_.get())
+        //);
     }
 
 }
@@ -35,8 +57,8 @@ void BaseCharacterAI::DrawDebug()
     if (ImGui::BeginMenu(GetName()))
     {
         std::string str = (activeNode_ != nullptr)
-            ? activeNode_->GetName()
-            : "";
+                        ? activeNode_->GetName()
+                        : "";
         ImGui::Text(u8"Behavior　%s", str.c_str());
 
         Character::DrawDebug();

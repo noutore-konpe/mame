@@ -21,7 +21,7 @@ public:
 	virtual ~ActionBase() {}
 
 	// Àsˆ—(ƒˆ‰¼‘zŠÖ”)
-	virtual ActionBase::State Run(const float elapsedTime) = 0;
+	virtual const ActionBase::State Run(const float elapsedTime) = 0;
 
 protected:
 	BaseCharacterAI* owner_;

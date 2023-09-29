@@ -19,7 +19,7 @@ public:
 		const std::string& name,
 		NodeBase* parent,
 		NodeBase* sibling,
-		const int priority,
+		const unsigned int priority,
 		const BehaviorTree::SelectRule& selectRule,
 		JudgmentBase* judgment,
 		ActionBase* action,
@@ -65,11 +65,11 @@ public:
 
 public:
 	// 優先順位選択
-	NodeBase* SelectPriority(std::vector<NodeBase*>* list);
+	NodeBase* SelectPriority(std::vector<NodeBase*>* condidateList);
 	// ランダム選択
-	NodeBase* SelectRandom(std::vector<NodeBase*>* list);
+	NodeBase* SelectRandom(std::vector<NodeBase*>* condidateList);
 	// シーケンス選択
-	NodeBase* SelectSequence(std::vector<NodeBase*>* list, BehaviorData* data);
+	NodeBase* SelectSequence(std::vector<NodeBase*>* condidateList, BehaviorData* data);
 
 public:
 	// ノード検索
@@ -80,13 +80,15 @@ public:
 	const ActionBase::State Run(const float elapsedTime);
 
 public:
-	std::vector<NodeBase*>		children_;		// 子ノード
+	std::vector<NodeBase*>			children_;		// 子ノード
 
 protected:
 	std::string					name_;			// 名前
 	BehaviorTree::SelectRule	selectRule_;	// 選択ルール
-	JudgmentBase*				judgment_;		// 判定クラス
-	ActionBase*					action_;		// 実行クラス
+	//JudgmentBase*				judgment_;		// 判定クラス
+	//ActionBase*				action_;		// 実行クラス
+	std::unique_ptr<JudgmentBase>	judgment_;		// 判定クラス
+	std::unique_ptr<ActionBase>		action_;		// 実行クラス
 	unsigned int				priority_;		// 優先順位
 	NodeBase*					parent_;		// 親ノード
 	NodeBase*					sibling_;		// 兄弟ノード

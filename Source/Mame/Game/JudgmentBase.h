@@ -7,7 +7,7 @@ class BaseCharacterAI;
 class JudgmentBase
 {
 public:
-	template <typename TemplateAI>
+	template <class TemplateAI>
 	JudgmentBase(TemplateAI* enemy) :owner_(enemy) {}
 	virtual ~JudgmentBase() {}
 

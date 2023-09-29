@@ -14,8 +14,8 @@ void BehaviorData::Init()
 // シーケンスノードのポップ
 NodeBase* BehaviorData::PopSequenceNode()
 {
-	// 空ならNULL
-	if (sequenceStack_.empty() != 0) return nullptr;
+	// 空ならnullptr
+	if (true == sequenceStack_.empty()) return nullptr;
 
 	NodeBase* node = sequenceStack_.top();
 	if (node != nullptr)
@@ -32,7 +32,7 @@ const int BehaviorData::GetSequenceStep(const std::string& name)
 {
 	if (0 == runSequenceStepMap_.count(name))
 	{
-		runSequenceStepMap_.insert(std::make_pair(name,0));
+		runSequenceStepMap_.insert(std::make_pair(name, 0));
 	}
 
 	return runSequenceStepMap_.at(name);
