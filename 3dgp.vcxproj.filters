@@ -328,6 +328,12 @@
     <ClCompile Include="Source\Mame\Game\BaseCharacterAI.cpp">
       <Filter>mamelib\Mame\Game\Character</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\JudgmentDerived.cpp">
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\ActionDerived.cpp">
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -565,6 +571,12 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\BaseCharacterAI.h">
       <Filter>mamelib\Mame\Game\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\JudgmentDerived.h">
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\ActionDerived.h">
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

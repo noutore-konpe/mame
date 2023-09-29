@@ -206,6 +206,10 @@
     <ClCompile Include="Source\Mame\FullscreenQuad.cpp" />
     <ClCompile Include="Source\Mame\Game\Ability.cpp" />
     <ClCompile Include="Source\Mame\Game\AbilityManager.cpp" />
+    <ClCompile Include="Source\Mame\Game\ActionDerived.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Source\Mame\Game\BaseCharacterAI.cpp" />
     <ClCompile Include="Source\Mame\Game\BehaviorData.cpp" />
     <ClCompile Include="Source\Mame\Game\BehaviorTree.cpp" />
@@ -219,6 +223,10 @@
     <ClCompile Include="Source\Mame\Game\EnemyTestAI.cpp" />
     <ClCompile Include="Source\Mame\Game\Item.cpp" />
     <ClCompile Include="Source\Mame\Game\ItemManager.cpp" />
+    <ClCompile Include="Source\Mame\Game\JudgmentDerived.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Source\Mame\Game\NodeBase.cpp" />
     <ClCompile Include="Source\Mame\Game\Player.cpp" />
     <ClCompile Include="Source\Mame\Game\PlayerManager.cpp" />
@@ -277,6 +285,7 @@
     <ClInclude Include="Source\Mame\Game\Ability.h" />
     <ClInclude Include="Source\Mame\Game\AbilityManager.h" />
     <ClInclude Include="Source\Mame\Game\ActionBase.h" />
+    <ClInclude Include="Source\Mame\Game\ActionDerived.h" />
     <ClInclude Include="Source\Mame\Game\BaseCharacterAI.h" />
     <ClInclude Include="Source\Mame\Game\BehaviorData.h" />
     <ClInclude Include="Source\Mame\Game\BehaviorTree.h" />
@@ -291,6 +300,7 @@
     <ClInclude Include="Source\Mame\Game\Item.h" />
     <ClInclude Include="Source\Mame\Game\ItemManager.h" />
     <ClInclude Include="Source\Mame\Game\JudgmentBase.h" />
+    <ClInclude Include="Source\Mame\Game\JudgmentDerived.h" />
     <ClInclude Include="Source\Mame\Game\NodeBase.h" />
     <ClInclude Include="Source\Mame\Game\Player.h" />
     <ClInclude Include="Source\Mame\Game\PlayerManager.h" />

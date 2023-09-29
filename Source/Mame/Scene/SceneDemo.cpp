@@ -586,6 +586,11 @@ void SceneDemo::DrawDebug()
         enemySlime[1]->DrawDebug();
     }
 
+    // EnemyTest
+    {
+        enemyTestAI_->DrawDebug();
+    }
+
     // player
     {
         PlayerManager::Instance().DrawDebug();

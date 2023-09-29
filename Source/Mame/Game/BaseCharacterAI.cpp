@@ -58,8 +58,8 @@ void BaseCharacterAI::DrawDebug()
     {
         std::string str = (activeNode_ != nullptr)
                         ? activeNode_->GetName()
-                        : "";
-        ImGui::Text(u8"Behavior@%s", str.c_str());
+                        : u8"‚È‚µ";
+        ImGui::Text(u8"BehaviorF%s", str.c_str());
 
         Character::DrawDebug();
 

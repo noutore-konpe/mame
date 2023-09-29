@@ -15,5 +15,9 @@ public:
     //void End() override;                            // 毎フレーム一番最後に呼ばれる
     void Render(const float elapsedTime, const float scale) override; // 描画処理
     //void DrawDebug() override;                      // デバッグ描画
+
+private:
+    static int nameNum_;
+
 };
 

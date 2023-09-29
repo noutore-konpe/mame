@@ -58,7 +58,7 @@ private:
 public: // --- ImGui—p --- //
     const char* GetName() const { return name.c_str(); }
     void SetName(std::string n) { name = n; }
-    static int nameNum;
+    //static int nameNum;
 
 private: // --- ImGui—p --- //
     std::string name = {};

@@ -38,7 +38,7 @@ void BehaviorTree::AddNode(
 		}
 		else
 		{
-			assert("Parent Node is not found (or wrong parent's name)");
+			assert("Parent Node Not Found (or wrong parentName)");
 		}
 	}
 	else
@@ -99,7 +99,7 @@ NodeBase* BehaviorTree::Run(
 			// “r’†‚È‚ç‚»‚±‚©‚çn‚ß‚é
 			return SequenceBack(sequenceNode, data);
 		}
-		// ¸”s‚ÍI—¹
+	// ¸”s‚ÍI—¹
 	}
 	else if (State::Failed == state)
 	{

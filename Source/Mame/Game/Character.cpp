@@ -3,7 +3,7 @@
 
 #include "../Scene/SceneDemo.h"
 
-int Character::nameNum = 0;
+//int Character::nameNum = 0;
 
 // コンストラクタ
 Character::Character()

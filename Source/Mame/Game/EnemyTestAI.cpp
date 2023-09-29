@@ -3,6 +3,7 @@
 #include <memory>
 #include "../Graphics/Graphics.h"
 
+int EnemyTestAI::nameNum_ = 0;
 
 EnemyTestAI::EnemyTestAI()
 {
@@ -23,7 +24,7 @@ EnemyTestAI::EnemyTestAI()
     behaviorTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);
 
     // ImGuiñºëOê›íË
-    SetName("EnemyTestAI_" + to_string(nameNum++));
+    SetName("EnemyTestAI_" + to_string(nameNum_++));
 }
 
 
