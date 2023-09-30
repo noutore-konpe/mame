@@ -163,8 +163,11 @@ void skinned_mesh::fetch_meshes(FbxScene* fbx_scene, std::vector<mesh>& meshes)
             continue;
         }
 
-        FbxNode* fbx_node{ fbx_scene->FindNodeByName(node.name.c_str()) };
+        //FbxNode* fbx_node{ fbx_scene->FindNodeByName(node.name.c_str()) };
+        FbxNode* fbx_node{ nodeList[node.unique_id]};
         FbxMesh* fbx_mesh{ fbx_node->GetMesh() };
+
+        //if (fbx_mesh == nullptr)continue;
 
         mesh& mesh{ meshes.emplace_back() };
         mesh.unique_id = fbx_mesh->GetNode()->GetUniqueID();
@@ -794,6 +797,9 @@ void skinned_mesh::fetch_scene(const char* fbx_filename, bool triangulate, float
         node.name = fbx_node->GetName();
         node.unique_id = fbx_node->GetUniqueID();
         node.parent_index = scene_view.indexof(fbx_node->GetParent() ? fbx_node->GetParent()->GetUniqueID() : 0);
+
+        //ノードをuniqueIdをキーとしたリストに格納
+        nodeList[node.unique_id] = fbx_node;
 
         for (int child_index = 0; child_index < fbx_node->GetChildCount(); ++child_index)
         {

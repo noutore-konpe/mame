@@ -456,5 +456,9 @@ private:
             boundingBox[1].z = std::max<float>(mesh.bounding_box[1].z, boundingBox[1].z);
         }
     }
+
+    private:
+        //メッシュ情報をunique_idで検索するためのリスト
+        std::unordered_map<uint64_t, FbxNode*> nodeList;
 };
 

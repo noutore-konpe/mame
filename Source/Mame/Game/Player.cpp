@@ -17,7 +17,7 @@ Player::Player()
     {
         model = std::make_unique<Model>(graphics.GetDevice(),
             //"./Resources/Model/testModel/character.fbx");
-            //"./Resources/Model/TESTidle.fbx");
+            //"./Resources/Model/P_Chara.fbx");
             "./Resources/Model/sotai.fbx");
             //"./Resources/Model/sanaModel/mameoall.fbx");
             //"./Resources/Model/testModel/nico.fbx");
@@ -81,8 +81,8 @@ void Player::MoveUpdate(float elapsedTime)
 
     auto cTransform = Camera::Instance().GetTransform();
 
-    
-    if (aLx || aLy) 
+#if 0
+    if (aLx || aLy)
     {
         auto forward = cTransform->CalcForward();
         auto right = cTransform->CalcRight();
@@ -91,22 +91,43 @@ void Player::MoveUpdate(float elapsedTime)
         right.x *= aLx;
         right.z *= aLx;
 
-        DirectX::XMFLOAT2 moveVec{
-            right.x + forward.x,
-            right.z + forward.z
-        };
+        moveVec = {right.x + forward.x,0,right.z + forward.z};
         float length = sqrtf(moveVec.x * moveVec.x + moveVec.y * moveVec.y);
         moveVec.x /= length;
-        moveVec.y /= length;
+        moveVec.z /= length;
 
         float speed = acceleration * elapsedTime;
         pos.x += speed * moveVec.x;
-        pos.z += speed * moveVec.y;
+        pos.z += speed * moveVec.z;
+    }
+#else
+    if (aLx || aLy)
+    {
+        auto forward = cTransform->CalcForward();
+        auto right = cTransform->CalcRight();
+        forward.x *= aLy;
+        forward.z *= aLy;
+        right.x *= aLx;
+        right.z *= aLx;
+
+        moveVec = { right.x + forward.x,0,right.z + forward.z };
+        float length = sqrtf(moveVec.x * moveVec.x + moveVec.y * moveVec.y);
+        moveVec.x /= length;
+        moveVec.z /= length;
     }
 
-    GetTransform()->SetPosition(pos);
+    UpdateVelocity(elapsedTime);
+#endif // 0
+    
+    //GetTransform()->SetPosition(pos);
+    DirectX::XMFLOAT3 velo = {
+        velocity.x * elapsedTime,
+        velocity.y * elapsedTime,
+        velocity.z * elapsedTime
+    };
+    GetTransform()->AddPosition(velo);
 
-    //GetTransform()->AddPosition(velocity);
+    Turn(elapsedTime,moveVec.x, moveVec.z,360.0f);
 }
 
 void Player::UpdateVelocity(float elapsedTime)
@@ -187,6 +208,35 @@ void Player::UpdateVelocity(float elapsedTime)
         }
 
     }
+}
+
+void Player::Turn(float elapsedTime,float vx, float vz, float speed)
+{
+    if (vx == 0 && vz == 0)return;
+
+    Transform* transform = GetTransform();
+    speed = DirectX::XMConvertToRadians(speed * elapsedTime);
+
+    float length = sqrtf(vx * vx + vz * vz);
+    vx /= length;
+    vz /= length;
+
+    DirectX::XMFLOAT3 front{transform->CalcForward()};
+
+    float dot = (vx * front.x) + (vz * front.z);
+    float rot = 1.0f - dot;
+    if (rot < 0.005f)return;
+    if (rot < 0.3f)rot = 0.3f;
+    rot += 0.5f;
+    float rotSpeed = speed * rot;
+
+    //¶‰E”»’è‚Ì‚½‚ß‚ÌŠOÏ
+    float cross = (vx * front.z) - (vz * front.x);
+
+    DirectX::XMFLOAT4 rotation{transform->GetRotation()};
+    rotation.y += cross < 0.0f ? -rotSpeed : rotSpeed;
+
+    transform->SetRotation(rotation);
 }
 
 void Player::CameraControllerUpdate(float elapsedTime)
