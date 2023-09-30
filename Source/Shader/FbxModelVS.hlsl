@@ -39,10 +39,8 @@ PSIn main(VSIn vsIn)
     // LIM_LIGHT
     psIn.normalInView = mul(viewProjection, vsIn.normal); // ƒJƒƒ‰‹óŠÔ‚Ì–@ü‚ğ‹‚ß‚é
     
-    // EMISSIVE
-    // TODO : emssiveTexture‚ÅUVScroll‚µ‚½‚¢
+    // EMISSIVE : emissiveTextureUVScroll
     psIn.emissiveTexcoord = vsIn.texcoord + emissiveScrollDirection * emissiveOptions.xx;
-    //psIn.emissiveTexcoord = vsIn.texcoord + emissiveOptions;
     
     // ZELDA
     psIn.localPosition = vsIn.position;

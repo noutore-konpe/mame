@@ -1,5 +1,6 @@
 // BLOOM
 #include "fullscreen_quad.hlsli"
+#include "PostEffect.hlsli"
 
 #define POINT 0
 #define LINEAR 1
@@ -9,6 +10,11 @@
 SamplerState samplerStates[5] : register(s0);
 Texture2D textureMaps[4] : register(t0);
 
+// Žg‚¤‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO
+#define RGB_SHIFT 1
+#define NOISE 0
+#define SCAN_LINE 0
+
 float3 reinhardToneMapping(float3 color)
 {
     float luma = dot(color, float3(0.2126, 0.7152, 0.0722));
@@ -17,11 +23,48 @@ float3 reinhardToneMapping(float3 color)
     return color;
 }
 
-float4 main(VS_OUT pin) : SV_TARGET
+float4 main(VS_OUT psIn) : SV_TARGET
 {
-    float4 color = textureMaps[0].Sample(samplerStates[POINT], pin.texcoord);
-    float4 bloom = textureMaps[1].Sample(samplerStates[POINT], pin.texcoord);
-    float4 fog = textureMaps[2].Sample(samplerStates[LINEAR_BORDER_BLACK], pin.texcoord);
+    float4 color = textureMaps[0].Sample(samplerStates[POINT], psIn.texcoord);
+    float4 bloom = textureMaps[1].Sample(samplerStates[POINT], psIn.texcoord);
+    float4 fog = textureMaps[2].Sample(samplerStates[LINEAR_BORDER_BLACK], psIn.texcoord);
+    
+    // RGB‚¸‚ç‚µ
+    {
+#if RGB_SHIFT
+        float2 samplePoint = psIn.texcoord;
+        samplePoint.x += shiftSize.x;
+        color.r = textureMaps[0].Sample(samplerStates[POINT], samplePoint).r;
+        samplePoint = psIn.texcoord;
+        samplePoint.x -= shiftSize.x;
+        color.b = textureMaps[0].Sample(samplerStates[POINT], samplePoint).b;
+        samplePoint = psIn.texcoord;
+        samplePoint.y += shiftSize.y;
+        color.g = textureMaps[0].Sample(samplerStates[POINT], samplePoint).g;
+#endif // RGB_SHIFT
+    }
+    
+    // Noise
+    {
+#if NOISE
+        float2 samplePoint = psIn.texcoord;
+        float noise = WhiteNoise(psIn.texcoord * noiseTimer) - 0.5;
+        color.rgb += float3(noise, noise, noise) * noiseColor.rgb;
+#endif // NOISE
+    }
+    
+    // ScanLine
+    {
+#if SCAN_LINE
+        float2 samplePoint = psIn.texcoord;
+        float sinv = sin(psIn.texcoord.y * 2 + scanLineTimer * -0.1);
+        float steped = step(0.99, sinv * sinv);
+        color.rgb -= (1 - steped) * abs(sin(psIn.texcoord.y * 50.0 + scanLineTimer * 1.0)) * 0.05;
+        color.rgb -= (1 - steped) * abs(sin(psIn.texcoord.y * 100.0 - scanLineTimer * 2.0)) * 0.08;
+        color.rgb += steped * 0.1;        
+#endif
+    }
+    
     
 #if 0
     const float GAMMA = 1.0 / 2.2;
@@ -39,6 +82,6 @@ float4 main(VS_OUT pin) : SV_TARGET
     const float INV_GAMMA = 1.0 / 2.2;
     fragmentColor = pow(fragmentColor, INV_GAMMA);
 #endif
-
+    
     return float4(fragmentColor, alpha);
 }

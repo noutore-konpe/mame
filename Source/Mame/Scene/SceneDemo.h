@@ -71,6 +71,9 @@ public:
     std::unique_ptr<AuraEffect> auraEffect;
     std::vector<AuraEffect::Emitter> auraEmitters;
 
+    // EMISSIVE : emissiveTextuerUVScroll
+    Microsoft::WRL::ComPtr<ID3D11PixelShader> emissiveTextureUVScrollPS;
+
 private:
     bool isDebugCamera = false;
 

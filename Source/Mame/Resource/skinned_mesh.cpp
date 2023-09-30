@@ -487,8 +487,8 @@ void skinned_mesh::render(ID3D11DeviceContext* deviceContext,
     const animation::keyframe* keyframe,
     ID3D11PixelShader* alternative_pixel_shader)
 {
-    const float elapsedTime = framework::elapsedTime;
-    data.emissiveOptions += elapsedTime;
+    const float dt = framework::tictoc.time_stamp();
+    data.emissiveOptions = dt;
 
     deviceContext->PSSetShaderResources(15, 1, mask_texture[mask_texture_value].GetAddressOf());
 

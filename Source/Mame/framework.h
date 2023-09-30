@@ -158,8 +158,9 @@ private:
 public:
 	static high_resolution_timer tictoc;
 	uint32_t frames{ 0 };
-	static float elapsedTime;
-	//float elapsedTime{0};
+	//static float elapsedTime;
+	
+	float elapsedTime{0};
 	void CalculateFrameStats()
 	{
 		if (++frames, (tictoc.time_stamp() - elapsedTime) >= 1.0f)
