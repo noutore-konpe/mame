@@ -106,7 +106,7 @@ void SceneDemo::CreateResource()
     // stage
     {
         stageBase = std::make_unique<Stage>();
-        stageWall = std::make_unique<Stage>("./Resources/Model/Stage/stage_1000.fbx");
+        stageWall = std::make_unique<Stage>("./Resources/Model/Stage/stageWall.fbx");
     }
 
     // skybox
@@ -168,7 +168,12 @@ void SceneDemo::CreateResource()
 
     // EMISSIVE
     D3D11_TEXTURE2D_DESC texture2Ddesc;
-    load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/Mask/dissolve_animation.png", emissiceTexture.GetAddressOf(), &texture2Ddesc);
+    load_texture_from_file(graphics.GetDevice(),
+        L"./Resources/Image/Mask/noise3.png",
+        //L"./Resources/Image/Mask/noise.png",
+        //L"./Resources/Image/Mask/dissolve_animation.png",
+        emissiceTexture.GetAddressOf(), &texture2Ddesc);
+    CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/EmissiveTextureUVScrollPS.cso", emissiveTextureUVScrollPS.GetAddressOf());
 }
 
 // ‰Šú‰»
@@ -331,8 +336,8 @@ void SceneDemo::Render(const float& elapsedTime)
 {
     // scaleFactor
     //float enemyScaleFactor = 0.01f;
-    //float enemyScaleFactor = 0.001f;
-    float enemyScaleFactor = 0.1f;
+    float enemyScaleFactor = 0.001f;
+    //float enemyScaleFactor = 0.1f;
     float playerScaleFactor = 0.01f;
 
     Graphics& graphics = Graphics::Instance();
@@ -459,7 +464,7 @@ void SceneDemo::Render(const float& elapsedTime)
     {
         shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
         enemySlime[0]->Render(enemyScaleFactor, sagePS.Get());
-        enemySlime[1]->Render(enemyScaleFactor);
+        enemySlime[1]->Render(enemyScaleFactor, emissiveTextureUVScrollPS.Get());
     }
 
 

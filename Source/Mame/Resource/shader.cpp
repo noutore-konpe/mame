@@ -101,6 +101,46 @@ HRESULT CreateCsFromCso(ID3D11Device* device, const char* csoName, ID3D11Compute
     return hr;
 }
 
+HRESULT CreateDsFromCso(ID3D11Device* device, const char* csoName, ID3D11DomainShader** domainShader)
+{
+    FILE* fp = nullptr;
+    fopen_s(&fp, csoName, "rb");
+    _ASSERT_EXPR_A(fp, "CSO File not found");
+
+    fseek(fp, 0, SEEK_END);
+    long csoSz = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+    std::unique_ptr<unsigned char[]> csoData = std::make_unique<unsigned char[]>(csoSz);
+    fread(csoData.get(), csoSz, 1, fp);
+    fclose(fp);
+
+    HRESULT hr = device->CreateDomainShader(csoData.get(), csoSz, nullptr, domainShader);
+    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+    return hr;
+}
+
+HRESULT CreateHsFromCso(ID3D11Device* device, const char* csoName, ID3D11HullShader** hullShader)
+{
+    FILE* fp = nullptr;
+    fopen_s(&fp, csoName, "rb");
+    _ASSERT_EXPR_A(fp, "CSO File not found");
+
+    fseek(fp, 0, SEEK_END);
+    long csoSz = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+    std::unique_ptr<unsigned char[]> csoData = std::make_unique<unsigned char[]>(csoSz);
+    fread(csoData.get(), csoSz, 1, fp);
+    fclose(fp);
+
+    HRESULT hr = device->CreateHullShader(csoData.get(), csoSz, nullptr, hullShader);
+    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+    return hr;
+}
+
 Shader::Shader(ID3D11Device* device)
 {
     // 定数バッファ
@@ -116,14 +156,14 @@ Shader::Shader(ID3D11Device* device)
         bufferDesc.StructureByteStride = 0;
         // SceneConstants
         hr = device->CreateBuffer(&bufferDesc, nullptr,
-            sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].GetAddressOf());
+            ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
 
         bufferDesc.ByteWidth = sizeof(CBParametric);
         // CBParametric
         hr = device->CreateBuffer(&bufferDesc, nullptr,
-            sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::CONSTANT_BUFFER_PARAMETRIC)].GetAddressOf());
+            ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::CONSTANT_BUFFER_PARAMETRIC)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
 
@@ -131,17 +171,22 @@ Shader::Shader(ID3D11Device* device)
         bufferDesc.ByteWidth = sizeof(LightConstants);
         // LightConstants
         hr = device->CreateBuffer(&bufferDesc, nullptr,
-            sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
+            ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
 
         // SHADOW
         bufferDesc.ByteWidth = sizeof(ShadowConstants);
         hr = device->CreateBuffer(&bufferDesc, nullptr,
-            sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].GetAddressOf());
+            ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].GetAddressOf());
 
         // FOG
         bufferDesc.ByteWidth = sizeof(FogConstants);
         hr = device->CreateBuffer(&bufferDesc, nullptr,
-            sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].GetAddressOf());
+            ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].GetAddressOf());
+
+        // PostEffect
+        bufferDesc.ByteWidth = sizeof(PostEffectConstants);
+        hr = device->CreateBuffer(&bufferDesc, nullptr,
+            ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POST_EFFECT_CONSTANT)].GetAddressOf());
     }
 
     // ブレンドステート
@@ -441,27 +486,33 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc)
     scene.lightDirection = { view.position.x,view.position.y,view.position.z,view.position.w };
     scene.cameraPosition = { view.camera.x,view.camera.y,view.camera.z,view.camera.w };
 
+    // POST_EFECT
+    {
+        deviceContext->UpdateSubresource(ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POST_EFFECT_CONSTANT)].Get(), 0, 0, &postEffectConstants, 0, 0);
+        deviceContext->PSSetConstantBuffers(13, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POST_EFFECT_CONSTANT)].GetAddressOf());
+    }
+
     // FOG
     {
         DirectX::XMStoreFloat4x4(&scene.inverseProjection, DirectX::XMMatrixInverse(NULL, camera.GetProjectionMatrix()));
         DirectX::XMStoreFloat4x4(&scene.inverseViewProjection, DirectX::XMMatrixInverse(NULL, camera.GetViewMatrix() * camera.GetProjectionMatrix()));
         scene.time = framework::tictoc.time_stamp();
 
-        deviceContext->UpdateSubresource(sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].Get(), 0, 0, &fogConstants, 0, 0);
-        deviceContext->PSSetConstantBuffers(2, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].GetAddressOf());
+        deviceContext->UpdateSubresource(ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].Get(), 0, 0, &fogConstants, 0, 0);
+        deviceContext->PSSetConstantBuffers(2, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].GetAddressOf());
     }
 
 
-    deviceContext->UpdateSubresource(sceneConstantBuffer[0].Get(), 0, 0, &scene, 0, 0);
-    deviceContext->VSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
-    deviceContext->PSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
+    deviceContext->UpdateSubresource(ConstantBuffer[0].Get(), 0, 0, &scene, 0, 0);
+    deviceContext->VSSetConstantBuffers(1, 1, ConstantBuffer[0].GetAddressOf());
+    deviceContext->PSSetConstantBuffers(1, 1, ConstantBuffer[0].GetAddressOf());
 
 
     // POINT_LIGHT
     {
-        deviceContext->UpdateSubresource(sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].Get(), 0, 0, &lightConstant, 0, 0);
-        deviceContext->VSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
-        deviceContext->PSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
+        deviceContext->UpdateSubresource(ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].Get(), 0, 0, &lightConstant, 0, 0);
+        deviceContext->VSSetConstantBuffers(5, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
+        deviceContext->PSSetConstantBuffers(5, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
 
 #ifdef _DEBUG
 #if POINT_LIGHT_ONE
@@ -513,9 +564,9 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc, 
         //shadow.cameraPosition = shadowConstant.cameraPosition;
         shadow.lightViewProjection = shadowConstant.lightViewProjection;
 
-        deviceContext->UpdateSubresource(sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].Get(), 0, 0, &shadow, 0, 0);
-        deviceContext->VSSetConstantBuffers(10, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].GetAddressOf());
-        deviceContext->PSSetConstantBuffers(10, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].GetAddressOf());
+        deviceContext->UpdateSubresource(ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].Get(), 0, 0, &shadow, 0, 0);
+        deviceContext->VSSetConstantBuffers(10, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].GetAddressOf());
+        deviceContext->PSSetConstantBuffers(10, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].GetAddressOf());
     }
 
     SceneConstants scene{};
@@ -524,25 +575,31 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc, 
     scene.lightDirection = { view.position.x,view.position.y,view.position.z,view.position.w };
     scene.cameraPosition = { view.camera.x,view.camera.y,view.camera.z,view.camera.w };
 
+    // POST_EFECT
+    {
+        deviceContext->UpdateSubresource(ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POST_EFFECT_CONSTANT)].Get(), 0, 0, &postEffectConstants, 0, 0);
+        deviceContext->PSSetConstantBuffers(13, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POST_EFFECT_CONSTANT)].GetAddressOf());
+    }
+
     // FOG
     {
         DirectX::XMStoreFloat4x4(&scene.inverseProjection, DirectX::XMMatrixInverse(NULL, camera.GetProjectionMatrix()));
         DirectX::XMStoreFloat4x4(&scene.inverseViewProjection, DirectX::XMMatrixInverse(NULL, camera.GetViewMatrix() * camera.GetProjectionMatrix()));
         scene.time = framework::tictoc.time_stamp();
 
-        deviceContext->UpdateSubresource(sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].Get(), 0, 0, &fogConstants, 0, 0);
-        deviceContext->PSSetConstantBuffers(2, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].GetAddressOf());
+        deviceContext->UpdateSubresource(ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].Get(), 0, 0, &fogConstants, 0, 0);
+        deviceContext->PSSetConstantBuffers(2, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].GetAddressOf());
     }
 
-    deviceContext->UpdateSubresource(sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].Get(), 0, 0, &scene, 0, 0);
-    deviceContext->VSSetConstantBuffers(1, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].GetAddressOf());
-    deviceContext->PSSetConstantBuffers(1, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].GetAddressOf());
+    deviceContext->UpdateSubresource(ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].Get(), 0, 0, &scene, 0, 0);
+    deviceContext->VSSetConstantBuffers(1, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].GetAddressOf());
+    deviceContext->PSSetConstantBuffers(1, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].GetAddressOf());
 
     // POINT_LIGHT
     {
-        deviceContext->UpdateSubresource(sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].Get(), 0, 0, &lightConstant, 0, 0);
-        deviceContext->VSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
-        deviceContext->PSSetConstantBuffers(5, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
+        deviceContext->UpdateSubresource(ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].Get(), 0, 0, &lightConstant, 0, 0);
+        deviceContext->VSSetConstantBuffers(5, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
+        deviceContext->PSSetConstantBuffers(5, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
 
 #ifdef _DEBUG
 #if POINT_LIGHT_ONE
@@ -554,7 +611,7 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc, 
     }
 
     // ZELDA
-    deviceContext->GSSetConstantBuffers(1, 1, sceneConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].GetAddressOf());
+    deviceContext->GSSetConstantBuffers(1, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].GetAddressOf());
 
     EntryLight();
     //EntryLight2();
@@ -606,6 +663,20 @@ void Shader::DrawDebug()
     camera.DrawDebug();
 
     ImGui::End();
+
+    // テスト用
+    postEffectConstants.noiseTimer = framework::tictoc.time_stamp();
+    postEffectConstants.scanLineTimer = framework::tictoc.time_stamp();
+
+    if (ImGui::TreeNode("postEffect"))
+    {
+        ImGui::DragFloat4("shiftSize", &postEffectConstants.shiftSize.x);
+        ImGui::ColorEdit4("noiseColor", &postEffectConstants.noiseColor.x);
+        ImGui::DragFloat("noiseTimer", &postEffectConstants.noiseTimer);
+        ImGui::DragFloat("scanTimer", &postEffectConstants.scanLineTimer);
+
+        ImGui::TreePop();
+    }
 
     if (ImGui::Begin("Light"))
     {
@@ -679,7 +750,7 @@ void Shader::DrawDebug()
         {
             ImGui::ColorEdit4("fogColor", &fogConstants.fogColor.x);
             ImGui::SliderFloat("fogDensity", &fogConstants.fogDensity, 0.0f, 0.005f, "%.4f");
-            ImGui::SliderFloat("fogHeightFalloff", &fogConstants.fogHeightFalloff, 0.0001f, 100.0f, "%.4f");
+            ImGui::SliderFloat("fogHeightFalloff", &fogConstants.fogHeightFalloff, 0.0001f, 1000.0f, "%.4f");
             ImGui::SliderFloat("fogCutoffDistance", &fogConstants.fogCutoffDistance, 0.0f, 1000.0f, "%.4f");
             ImGui::SliderFloat("startDistance", &fogConstants.startDistance, 0.0f, 100.0f, "%.4f");
 
@@ -793,5 +864,5 @@ void Shader::EntryLight2()
 
 void Shader::GSSetConstantBuffer()
 {
-    Graphics::Instance().GetDeviceContext()->GSSetConstantBuffers(1, 1, sceneConstantBuffer[0].GetAddressOf());
+    Graphics::Instance().GetDeviceContext()->GSSetConstantBuffers(1, 1, ConstantBuffer[0].GetAddressOf());
 }

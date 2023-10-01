@@ -34,6 +34,7 @@ public: // enumŠÖ˜A
         LIGHT_CONSTANT,
         FOG_CONSTANT,
         SHADOW_CONSTANT,
+        POST_EFFECT_CONSTANT,
     };
 
 public:
@@ -136,6 +137,16 @@ public:
         HemisphereLight hemisphereLight;    // ”¼‹…ƒ‰ƒCƒg
     }lightConstant;
 
+    struct PostEffectConstants
+    {
+        DirectX::XMFLOAT4 shiftSize = {};
+
+        DirectX::XMFLOAT4 noiseColor{ 1.0f,1.0f,1.0f,1.0f };
+        float noiseTimer = 0.0f;
+        float scanLineTimer = 0.0f;
+        DirectX::XMFLOAT2 dummy{};
+    }postEffectConstants;
+
 public:
     Shader(ID3D11Device* device);
     ~Shader() {}
@@ -180,7 +191,7 @@ private:
 
     static const int MaxBones = 128;
 
-    Microsoft::WRL::ComPtr<ID3D11Buffer> sceneConstantBuffer[5];
+    Microsoft::WRL::ComPtr<ID3D11Buffer> ConstantBuffer[10];
 
 
 
@@ -221,9 +232,10 @@ private:
 
 HRESULT CreateVsFromCso(ID3D11Device* device, const char* cso_name, ID3D11VertexShader** vertex_shader,
     ID3D11InputLayout** input_layout, D3D11_INPUT_ELEMENT_DESC* input_element_desc, UINT num_elements);
-
 HRESULT CreatePsFromCso(ID3D11Device* device, const char* cso_name, ID3D11PixelShader** pixel_shader);
 
 HRESULT CreateGsFromCso(ID3D11Device* device, const char* csoName, ID3D11GeometryShader** geometryShader);
-
 HRESULT CreateCsFromCso(ID3D11Device* device, const char* csoName, ID3D11ComputeShader** computeShader);
+
+HRESULT CreateDsFromCso(ID3D11Device* device, const char* csoName, ID3D11DomainShader** domainShader);
+HRESULT CreateHsFromCso(ID3D11Device* device, const char* csoName, ID3D11HullShader** hullShader);

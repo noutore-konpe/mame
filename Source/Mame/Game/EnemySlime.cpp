@@ -10,10 +10,10 @@ EnemySlime::EnemySlime()
         //"./Resources/Model/sanaModel/mameoall.fbx");
         //"./Resources/Model/testModel/character.fbx");
         //"./Resources/Model/Cube.fbx");
-        "./Resources/Model/yoshiakiModel/Cube.fbx");
-        //"./Resources/Model/testModel/plantune.fbx");
+        //"./Resources/Model/yoshiakiModel/Cube.fbx");
+        "./Resources/Model/testModel/plantune.fbx");
         //"./Resources/Model/testModel/latha.fbx");
-        //"./Resources/Model/Collision/sphere.fbx");
+        //"./Resources/Model/Collision/sqhere.fbx");
 
     // ImGuiñºëOê›íË
     SetName("EnemySlime" + std::to_string(nameNum++));
