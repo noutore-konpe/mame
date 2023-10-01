@@ -87,7 +87,7 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_IMGUI;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
@@ -115,7 +115,7 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;USE_IMGUI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
@@ -206,6 +206,13 @@
     <ClCompile Include="Source\Mame\FullscreenQuad.cpp" />
     <ClCompile Include="Source\Mame\Game\Ability.cpp" />
     <ClCompile Include="Source\Mame\Game\AbilityManager.cpp" />
+    <ClCompile Include="Source\Mame\Game\ActionDerived.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\BaseCharacterAI.cpp" />
+    <ClCompile Include="Source\Mame\Game\BehaviorData.cpp" />
+    <ClCompile Include="Source\Mame\Game\BehaviorTree.cpp" />
     <ClCompile Include="Source\Mame\Game\Book.cpp" />
     <ClCompile Include="Source\Mame\Game\BookState.cpp" />
     <ClCompile Include="Source\Mame\Game\Character.cpp" />
@@ -213,8 +220,14 @@
     <ClCompile Include="Source\Mame\Game\DemoStateDerived.cpp" />
     <ClCompile Include="Source\Mame\Game\Enemy.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemySlime.cpp" />
+    <ClCompile Include="Source\Mame\Game\EnemyTestAI.cpp" />
     <ClCompile Include="Source\Mame\Game\Item.cpp" />
     <ClCompile Include="Source\Mame\Game\ItemManager.cpp" />
+    <ClCompile Include="Source\Mame\Game\JudgmentDerived.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\NodeBase.cpp" />
     <ClCompile Include="Source\Mame\Game\Player.cpp" />
     <ClCompile Include="Source\Mame\Game\PlayerManager.cpp" />
     <ClCompile Include="Source\Mame\Game\PlayerState.cpp" />
@@ -256,6 +269,7 @@
     <ClCompile Include="Source\Mame\Scene\SceneManager.cpp" />
     <ClCompile Include="Source\Mame\Scene\SceneTitle.cpp" />
     <ClCompile Include="Source\Mame\Transform.cpp" />
+    <ClCompile Include="Source\Taki174\Common.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h" />
@@ -273,6 +287,11 @@
     <ClInclude Include="Source\Mame\FullscreenQuad.h" />
     <ClInclude Include="Source\Mame\Game\Ability.h" />
     <ClInclude Include="Source\Mame\Game\AbilityManager.h" />
+    <ClInclude Include="Source\Mame\Game\ActionBase.h" />
+    <ClInclude Include="Source\Mame\Game\ActionDerived.h" />
+    <ClInclude Include="Source\Mame\Game\BaseCharacterAI.h" />
+    <ClInclude Include="Source\Mame\Game\BehaviorData.h" />
+    <ClInclude Include="Source\Mame\Game\BehaviorTree.h" />
     <ClInclude Include="Source\Mame\Game\Book.h" />
     <ClInclude Include="Source\Mame\Game\BookState.h" />
     <ClInclude Include="Source\Mame\Game\Character.h" />
@@ -280,8 +299,12 @@
     <ClInclude Include="Source\Mame\Game\DemoStateDerived.h" />
     <ClInclude Include="Source\Mame\Game\Enemy.h" />
     <ClInclude Include="Source\Mame\Game\EnemySlime.h" />
+    <ClInclude Include="Source\Mame\Game\EnemyTestAI.h" />
     <ClInclude Include="Source\Mame\Game\Item.h" />
     <ClInclude Include="Source\Mame\Game\ItemManager.h" />
+    <ClInclude Include="Source\Mame\Game\JudgmentBase.h" />
+    <ClInclude Include="Source\Mame\Game\JudgmentDerived.h" />
+    <ClInclude Include="Source\Mame\Game\NodeBase.h" />
     <ClInclude Include="Source\Mame\Game\Player.h" />
     <ClInclude Include="Source\Mame\Game\PlayerManager.h" />
     <ClInclude Include="Source\Mame\Game\PlayerState.h" />
@@ -329,6 +352,10 @@
     <ClInclude Include="Source\Mame\Scene\SceneManager.h" />
     <ClInclude Include="Source\Mame\Scene\SceneTitle.h" />
     <ClInclude Include="Source\Mame\Transform.h" />
+    <ClInclude Include="Source\Taki174\Common.h" />
+    <ClInclude Include="Source\Taki174\FunctionXMFloat3.h" />
+    <ClInclude Include="Source\Taki174\OperatorXMFloat3.h" />
+    <ClInclude Include="Source\Taki174\OperatorXMFloat4.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shader\phongShaderPS.hlsl">
