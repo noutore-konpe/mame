@@ -201,6 +201,7 @@ void Model::UpdateAnimation(const float& elapsedTime)
         // アニメーショントランスフォーム更新
         skinned_meshes->update_animation(keyframe);
     }
+    //ブレンドアニメーション再生するとき
     else if (BlendAnimationIndex1)
     {
 

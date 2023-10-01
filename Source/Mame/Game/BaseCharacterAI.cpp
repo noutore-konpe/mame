@@ -47,7 +47,7 @@ void BaseCharacterAI::Update(const float elapsedTime)
 
 void BaseCharacterAI::Render(const float elapsedTime, const float scale)
 {
-    Character::Render(elapsedTime, scale);
+    //Character::Render(elapsedTime, scale);
 }
 
 // ImGui—p
