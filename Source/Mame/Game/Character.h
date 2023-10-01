@@ -42,6 +42,9 @@ public: // æ“¾Eİ’è@ŠÖ˜A
     void SetRange(const float& r) { range = r; }
     float GetRange() { return range; }
 
+    void Turn(float elapsedTime, float vx, float vz, float rotSpeed);
+
+
 public:
     std::unique_ptr<Model> model = nullptr;
 

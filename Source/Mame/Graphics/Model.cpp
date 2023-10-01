@@ -103,6 +103,23 @@ void Model::PlayAnimation(
     animationBlendSeconds   = blendSeconds;
 }
 
+void Model::PlayBlendingAnimation(const int& index1, const int& index2, const bool& loop, const float& speed)
+{
+    // 設定用のアニメーション番号が現在のアニメーション番号と同じ場合はreturn
+    if (BlendAnimationIndex1 == index1 && BlendAnimationIndex2 == index2) return;
+
+    BlendAnimationIndex1 = index1;    // 再生するアニメーション番号を設定
+    BlendAnimationIndex2 = index2;    // 再生するアニメーション番号を設定
+    currentAnimationSeconds = 0.0f;     // アニメーション再生時間リセット
+
+    animationLoopFlag = loop;     // ループさせるか
+    animationEndFlag = false;    // 再生終了フラグをリセット
+
+    animationSpeed = speed;    // アニメーション再生速度
+
+    animationBlendTime = 0.0f;
+}
+
 
 void Model::UpdateBlendRate(float blendRate, const float& elapsedTime)
 {
@@ -183,6 +200,10 @@ void Model::UpdateAnimation(const float& elapsedTime)
 
         // アニメーショントランスフォーム更新
         skinned_meshes->update_animation(keyframe);
+    }
+    else if (BlendAnimationIndex1)
+    {
+
     }
     // キーフレームが一度も更新されていなくてアニメーションが再生しきっていなければ現在のフレームを保存
     else

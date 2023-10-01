@@ -91,3 +91,32 @@ bool Character::IsPlayAnimation() const
 {
     return model->IsPlayAnimation();
 }
+
+void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
+{
+    if (vx == 0 && vz == 0)return;
+
+    Transform* transform = GetTransform();
+    rotSpeed = DirectX::XMConvertToRadians(rotSpeed * elapsedTime);
+
+    float length = sqrtf(vx * vx + vz * vz);
+    vx /= length;
+    vz /= length;
+
+    DirectX::XMFLOAT3 front{transform->CalcForward()};
+
+    float dot = (vx * front.x) + (vz * front.z);
+    float rot = 1.0f - dot;
+    if (rot < 0.005f)return;
+    if (rot < 0.3f)rot = 0.3f;
+    rot += 0.5f;
+    float _rotSpeed = rotSpeed * rot;
+
+    //¶‰E”»’è‚Ì‚½‚ß‚ÌŠOÏ
+    float cross = (vx * front.z) - (vz * front.x);
+
+    DirectX::XMFLOAT4 rotation{transform->GetRotation()};
+    rotation.y += cross < 0.0f ? -_rotSpeed : _rotSpeed;
+
+    transform->SetRotation(rotation);
+}

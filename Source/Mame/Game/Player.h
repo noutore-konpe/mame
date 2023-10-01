@@ -36,8 +36,6 @@ public:
     void MoveUpdate(float elapsedTime);
     void UpdateVelocity(float elapsedTime);
 
-    void Turn(float elapsedTime,float vx, float vz, float speed);
-
     void CameraControllerUpdate(float elapsedTime);
     
     void Render(const float& scale, ID3D11PixelShader* psShader = nullptr) override; // •`‰æˆ—
