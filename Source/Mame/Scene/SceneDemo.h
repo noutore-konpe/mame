@@ -9,7 +9,10 @@
 #include "../Graphics/Effect.h"
 
 #include "../Game/EnemySlime.h"
+
 #include "../Game/EnemyAura.h"
+#include "../Game/EnemyTestAI.h"
+
 
 #include "../Game/Stage.h"
 
@@ -44,7 +47,7 @@ public:
     void DrawDebug()    override;
 
     static bool isDebugRender;
-    
+
 public:
 
     std::unique_ptr<FrameBuffer> framebuffers[8];
@@ -95,7 +98,11 @@ private:
     // slime
     std::unique_ptr<EnemySlime> enemySlime[2];
 
+
     std::unique_ptr<EnemyAura> enemyAura;
+
+    // enemyAI
+    std::unique_ptr<EnemyTestAI> enemyTestAI_;
 
     // stage
     std::unique_ptr<Stage> stageBase;
