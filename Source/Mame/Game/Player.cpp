@@ -18,7 +18,7 @@ Player::Player()
         model = std::make_unique<Model>(graphics.GetDevice(),
             //"./Resources/Model/testModel/character.fbx");
             //"./Resources/Model/P_Chara.fbx");
-            "./Resources/Model/P_Motion.fbx");
+            "./Resources/Model/Character/Player/P_Motion.fbx");
             //"./Resources/Model/P_Motion_2.fbx");
             //"./Resources/Model/sotai.fbx");
             //"./Resources/Model/sanaModel/mameoall.fbx");
@@ -37,8 +37,8 @@ void Player::Initialize()
     Character::Initialize();
 
     // 待機アニメーションに設定してる
-    Character::PlayAnimation(0, true);
-    //Character::PlayBlendAnimation(0,1, true);
+    //Character::PlayAnimation(0, true);
+    Character::PlayBlendAnimation(0,1, true);
 
     //カメラがプレイヤーを追いかけるよう設定
     Camera::Instance().SetTraget(GetTransform());
