@@ -23,6 +23,13 @@ public: // アニメーション関数関連
         const float& blendSeconds = 1.0f
     );
 
+    void PlayBlendAnimation(
+        const int& index1,
+        const int& index2,
+        const bool& loop,
+        const float& speed = 1.0f
+    );
+
     // ブレンド率の計算更新処理
     void UpdateBlendRate(float blendRate, const float& elapsedTime);
 

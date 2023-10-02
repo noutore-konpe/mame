@@ -19,6 +19,7 @@ Player::Player()
             //"./Resources/Model/testModel/character.fbx");
             //"./Resources/Model/P_Chara.fbx");
             "./Resources/Model/P_Motion.fbx");
+            //"./Resources/Model/P_Motion_2.fbx");
             //"./Resources/Model/sotai.fbx");
             //"./Resources/Model/sanaModel/mameoall.fbx");
             //"./Resources/Model/testModel/nico.fbx");
@@ -37,6 +38,7 @@ void Player::Initialize()
 
     // 待機アニメーションに設定してる
     Character::PlayAnimation(0, true);
+    //Character::PlayBlendAnimation(0,1, true);
 
     //カメラがプレイヤーを追いかけるよう設定
     Camera::Instance().SetTraget(GetTransform());

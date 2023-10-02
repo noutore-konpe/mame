@@ -54,7 +54,9 @@ void Character::DrawDebug()
 {
 #ifdef USE_IMGUI
 
-    GetTransform()->DrawDebug();
+    //GetTransform()->DrawDebug();
+    
+    model->DrawDebug();
 
 #ifdef _DEBUG
     if (ImGui::TreeNode("debugSqhere"))
@@ -75,6 +77,11 @@ void Character::DrawDebug()
 void Character::PlayAnimation(const int& index, const bool& loop, const float& speed, const float& blendSeconds)
 {
     model->PlayAnimation(index, loop, speed, blendSeconds);
+}
+
+void Character::PlayBlendAnimation(const int& index1, const int& index2, const bool& loop, const float& speed)
+{
+    model->PlayBlendAnimation(index1, index2, loop, speed);
 }
 
 void Character::UpdateBlendRate(float blendRate, const float& elapsedTime)

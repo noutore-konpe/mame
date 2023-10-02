@@ -158,5 +158,5 @@ float4 main(PSIn psIn) : SV_TARGET
     }
     
     //return float4(finalColor, alpha) * psIn.color;
-    return float4(finalColor * shadowFactor, alpha) * psIn.color;
+    return float4(max(0, finalColor * shadowFactor), alpha) * psIn.color;
 }

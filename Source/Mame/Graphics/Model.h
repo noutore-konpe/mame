@@ -46,7 +46,7 @@ public: // アニメーション関数関連
         const float& blendSeconds = 1.0f
     );
 
-    void PlayBlendingAnimation(
+    void PlayBlendAnimation(
         const int& index1,
         const int& index2,
         const bool& loop,
