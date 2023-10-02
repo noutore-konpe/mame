@@ -106,10 +106,10 @@ void Model::PlayAnimation(
 void Model::PlayBlendingAnimation(const int& index1, const int& index2, const bool& loop, const float& speed)
 {
     // 設定用のアニメーション番号が現在のアニメーション番号と同じ場合はreturn
-    if (BlendAnimationIndex1 == index1 && BlendAnimationIndex2 == index2) return;
+    if (blendAnimationIndex1 == index1 && blendAnimationIndex2 == index2) return;
 
-    BlendAnimationIndex1 = index1;    // 再生するアニメーション番号を設定
-    BlendAnimationIndex2 = index2;    // 再生するアニメーション番号を設定
+    blendAnimationIndex1 = index1;    // 再生するアニメーション番号を設定
+    blendAnimationIndex2 = index2;    // 再生するアニメーション番号を設定
     currentAnimationSeconds = 0.0f;     // アニメーション再生時間リセット
 
     animationLoopFlag = loop;     // ループさせるか
@@ -148,6 +148,9 @@ void Model::UpdateAnimation(const float& elapsedTime)
         currentAnimationIndex = -1;    // アニメーション番号リセット
         return;
     }
+
+    //ブレンドアニメーションの再生（再生中の場合これ以降の通常再生の処理はしない）
+    //if (UpdateBlendAnimation(elapsedTime))return;
 
     // アニメーション再生時間経過
     currentAnimationSeconds += elapsedTime;
@@ -201,16 +204,27 @@ void Model::UpdateAnimation(const float& elapsedTime)
         // アニメーショントランスフォーム更新
         skinned_meshes->update_animation(keyframe);
     }
-    //ブレンドアニメーション再生するとき
-    else if (BlendAnimationIndex1)
-    {
-
-    }
     // キーフレームが一度も更新されていなくてアニメーションが再生しきっていなければ現在のフレームを保存
     else
     {
         keyframe = animation.sequence.at(frameIndex);
     }
+}
+
+bool Model::UpdateBlendAnimation(const float& elapsedTime)
+{
+    if(!blendAnimationIndex1)return false;
+
+    animation& bAnimation1 = GetAnimation()->at(blendAnimationIndex1);
+    animation& bAnimation2 = GetAnimation()->at(blendAnimationIndex2);
+
+    //const 
+
+    const std::vector<animation::keyframe>& keyframes{};
+
+    //skinned_meshes->blend_animations();
+
+    return true;
 }
 
 

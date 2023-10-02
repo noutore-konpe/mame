@@ -59,6 +59,9 @@ public: // アニメーション関数関連
     // アニメーション更新処理
     void UpdateAnimation(const float& elapsedTime);
 
+    //ブレンドアニメーション更新処理　更新中はtrueを返す
+    bool UpdateBlendAnimation(const float& elapsedTime);
+
     // アニメーションが再生中かどうか
     bool IsPlayAnimation() const;
 
@@ -84,8 +87,9 @@ private:
 
     int         currentAnimationIndex   = -1;	    // 現在のアニメーション番号
 
-    int         BlendAnimationIndex1   = -1;	    // 一つ目ブレンド用アニメーション番号
-    int         BlendAnimationIndex2   = -1;	    // 二つ目ブレンド用アニメーション番号
+    int         blendAnimationIndex1   = -1;	    // 一つ目ブレンド用アニメーション番号
+    int         blendAnimationIndex2   = -1;	    // 二つ目ブレンド用アニメーション番号
+    float       blendAnimationSeconds = 0.0f;     // 現在のアニメーション再生時間
 
     bool        animationLoopFlag       = false;    // アニメーションをループ再生するか
     bool        animationEndFlag        = false;    // アニメーションが終了したか
