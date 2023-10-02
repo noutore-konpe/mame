@@ -244,7 +244,7 @@ bool Model::UpdateBlendAnimation(const float& elapsedTime)
     const float frameIndex = (blendAnimationSeconds * bAnimation1.sampling_rate) * animationSpeed;
 
     //アニメーションが再生しきっている場合
-    if (frameIndex > maxFrameCount - 1)
+    if (frameIndex > maxFrameCount)
     {
         if (animationLoopFlag)
         {
@@ -259,8 +259,8 @@ bool Model::UpdateBlendAnimation(const float& elapsedTime)
     }
 
     //再生フレームを正規化して再生時間の長さを合わせる
-    UINT64 frameIndex1 = static_cast<UINT64>(frameIndex / maxFrameCount * frameCount1);
-    UINT64 frameIndex2 = static_cast<UINT64>(frameIndex / maxFrameCount * frameCount2);
+    UINT64 frameIndex1 = static_cast<UINT64>(frameIndex / maxFrameCount * (frameCount1 - 1));
+    UINT64 frameIndex2 = static_cast<UINT64>(frameIndex / maxFrameCount * (frameCount2 - 1));
     const animation::keyframe* keyframeArr[2] = {
              &bAnimation1.sequence.at(frameIndex1),
              &bAnimation2.sequence.at(frameIndex2)
@@ -277,8 +277,9 @@ bool Model::UpdateBlendAnimation(const float& elapsedTime)
     skinned_meshes->blend_animations(lerpKeyframeArr,weight,keyframe2);
 
     // ブレンド率の計算
-    float blendRate = 1.0f;
-    UpdateBlendRate(blendRate, elapsedTime);
+    float blendRate = frameIndex;
+
+    
     const animation::keyframe* resultKeyframeArr[2] = { &keyframe1 ,&keyframe2};
     skinned_meshes->blend_animations(resultKeyframeArr,blendRate,keyframe);
 

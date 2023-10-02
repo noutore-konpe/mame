@@ -19,6 +19,7 @@ Player::Player()
             //"./Resources/Model/Character/Player/sotai.fbx");
             //"./Resources/Model/Character/Player/P_Chara.fbx");
             "./Resources/Model/Character/Player/P_Motion.fbx");
+
     }
 }
 
@@ -33,8 +34,8 @@ void Player::Initialize()
     Character::Initialize();
 
     // 待機アニメーションに設定してる
-    Character::PlayAnimation(0, true);
-    //Character::PlayBlendAnimation(0,1, true);
+    //Character::PlayAnimation(0, true);
+    Character::PlayBlendAnimation(0,1, true);
 
     //カメラがプレイヤーを追いかけるよう設定
     Camera::Instance().SetTraget(GetTransform());
