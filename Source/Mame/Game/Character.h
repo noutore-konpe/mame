@@ -36,6 +36,13 @@ public: // アニメーション関数関連
         const float& blendSeconds = 1.0f
     );
 
+    void PlayBlendAnimation(
+        const int& index1,
+        const int& index2,
+        const bool& loop,
+        const float& speed = 1.0f
+    );
+
     // ブレンド率の計算更新処理
     void UpdateBlendRate(float blendRate, const float& elapsedTime);
 
@@ -59,6 +66,10 @@ public: // 取得・設定　関連
     void SetEmissiveIntensity(float intensity) { model->skinned_meshes->data.emissiveIntensity = intensity; }
     void SetEmissiveScrollDirection(DirectX::XMFLOAT2 scroll) { model->skinned_meshes->data.emissiveScrollDirection = scroll; }
     void SetEmissiveColor(DirectX::XMFLOAT4 color) { model->skinned_meshes->data.emissiveColor = color; }
+
+
+public: // 関数
+    void Turn(float elapsedTime, float vx, float vz, float rotSpeed);
 
 public:
     std::unique_ptr<Model> model = nullptr;

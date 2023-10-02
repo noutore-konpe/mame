@@ -281,7 +281,7 @@
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\DemoStateDerived.cpp">
-      <Filter>mamelib\Mame\Game\StateMachine</Filter>
+      <Filter>mamelib\Mame\Game\Item\StateMachine</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\Ability.cpp">
       <Filter>mamelib\Mame\Game\Ability</Filter>
@@ -290,7 +290,7 @@
       <Filter>mamelib\Mame\Game\Ability</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\BookState.cpp">
-      <Filter>mamelib\Mame\Game\StateMachine</Filter>
+      <Filter>mamelib\Mame\Game\Item\StateMachine</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Graphics\Bloom.cpp">
       <Filter>mamelib\Mame\Graphics\Bloom</Filter>
@@ -340,8 +340,33 @@
     <ClCompile Include="Source\Mame\Resource\Metarmorphose.cpp">
       <Filter>mamelib\Mame\Resource\Model\Metamorphos</Filter>
     </ClCompile>
+
     <ClCompile Include="Source\Mame\Game\EnemyAura.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyTestAI.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\BehaviorData.cpp">
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\BehaviorTree.cpp">
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\NodeBase.cpp">
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Taki174\Common.cpp">
+      <Filter>mamelib\Taki174</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\BaseCharacterAI.cpp">
+      <Filter>mamelib\Mame\Game\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\JudgmentDerived.cpp">
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\ActionDerived.cpp">
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -492,13 +517,13 @@
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\State.h">
-      <Filter>mamelib\Mame\Game\StateMachine</Filter>
+      <Filter>mamelib\Mame\Game\Item\StateMachine</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\StateMachine.h">
-      <Filter>mamelib\Mame\Game\StateMachine</Filter>
+      <Filter>mamelib\Mame\Game\Item\StateMachine</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\DemoStateDerived.h">
-      <Filter>mamelib\Mame\Game\StateMachine</Filter>
+      <Filter>mamelib\Mame\Game\Item\StateMachine</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\Ability.h">
       <Filter>mamelib\Mame\Game\Ability</Filter>
@@ -507,7 +532,7 @@
       <Filter>mamelib\Mame\Game\Ability</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\BookState.h">
-      <Filter>mamelib\Mame\Game\StateMachine</Filter>
+      <Filter>mamelib\Mame\Game\Item\StateMachine</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Graphics\Bloom.h">
       <Filter>mamelib\Mame\Graphics\Bloom</Filter>
@@ -562,6 +587,45 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\EnemyAura.h">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyTestAI.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\BehaviorData.h">
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\BehaviorTree.h">
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\NodeBase.h">
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\ActionBase.h">
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\JudgmentBase.h">
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Taki174\Common.h">
+      <Filter>mamelib\Taki174</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Taki174\FunctionXMFloat3.h">
+      <Filter>mamelib\Taki174</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Taki174\OperatorXMFloat3.h">
+      <Filter>mamelib\Taki174</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Taki174\OperatorXMFloat4.h">
+      <Filter>mamelib\Taki174</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\BaseCharacterAI.h">
+      <Filter>mamelib\Mame\Game\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\JudgmentDerived.h">
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\ActionDerived.h">
+      <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -690,9 +754,6 @@
     <Filter Include="mamelib\Shader\Bloom">
       <UniqueIdentifier>{3657f708-ee44-453b-bd73-08c4838be46f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="mamelib\Mame\Game\StateMachine">
-      <UniqueIdentifier>{c4bf7710-61dd-420e-bf61-f6f7fce0d9ac}</UniqueIdentifier>
-    </Filter>
     <Filter Include="mamelib\Shader\Fog">
       <UniqueIdentifier>{bd054dc7-1340-4b01-b533-521c6c32f0b9}</UniqueIdentifier>
     </Filter>
@@ -740,6 +801,15 @@
     </Filter>
     <Filter Include="mamelib\Shader\Fbx\Zelda\aura">
       <UniqueIdentifier>{7e23d88b-2baa-4208-adcb-83c3cbff6b42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Taki174">
+      <UniqueIdentifier>{8d4995f7-87de-4c6e-b210-a83bd5862284}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Item\StateMachine">
+      <UniqueIdentifier>{c4bf7710-61dd-420e-bf61-f6f7fce0d9ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Character\BehaviorTree">
+      <UniqueIdentifier>{bf183706-12e5-43fa-9b4f-0dcd81710109}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

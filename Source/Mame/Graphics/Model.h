@@ -46,11 +46,21 @@ public: // アニメーション関数関連
         const float& blendSeconds = 1.0f
     );
 
+    void PlayBlendAnimation(
+        const int& index1,
+        const int& index2,
+        const bool& loop,
+        const float& speed = 1.0f
+    );
+
     // ブレンド率の計算更新処理
     void UpdateBlendRate(float blendRate, const float& elapsedTime);
 
     // アニメーション更新処理
     void UpdateAnimation(const float& elapsedTime);
+
+    //ブレンドアニメーション更新処理　更新中はtrueを返す
+    bool UpdateBlendAnimation(const float& elapsedTime);
 
     // アニメーションが再生中かどうか
     bool IsPlayAnimation() const;
@@ -66,6 +76,8 @@ public:
     animation::keyframe keyframe = {};
     DirectX::XMFLOAT4 color = { 1,1,1,1 };
 
+    //アニメーションブレンドのブレンド率
+    float       weight{};
 private:
     float       animationSpeed          = 1.0f;     // アニメーション再生速度
     float       currentAnimationSeconds = 0.0f;     // 現在のアニメーション再生時間
@@ -74,6 +86,10 @@ private:
     float       animationBlendSeconds   = 0.0f;     // ブレンド時間
 
     int         currentAnimationIndex   = -1;	    // 現在のアニメーション番号
+
+    int         blendAnimationIndex1   = -1;	    // 一つ目ブレンド用アニメーション番号
+    int         blendAnimationIndex2   = -1;	    // 二つ目ブレンド用アニメーション番号
+    float       blendAnimationSeconds = 0.0f;     // 現在のアニメーション再生時間
 
     bool        animationLoopFlag       = false;    // アニメーションをループ再生するか
     bool        animationEndFlag        = false;    // アニメーションが終了したか
