@@ -9,7 +9,11 @@
 #include "../Graphics/Effect.h"
 
 #include "../Game/EnemySlime.h"
+
+#include "../Game/EnemyAura.h"
+
 #include "../Game/EnemyTestAI.h"
+
 
 #include "../Game/Stage.h"
 
@@ -95,6 +99,8 @@ private:
     // slime
     std::unique_ptr<EnemySlime> enemySlime[2];
 
+
+    std::unique_ptr<EnemyAura> enemyAura;
     // enemyAI
     std::unique_ptr<EnemyTestAI> enemyTestAI_;
 

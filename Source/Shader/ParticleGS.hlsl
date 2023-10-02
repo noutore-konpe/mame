@@ -37,6 +37,10 @@ void main(point VS_OUT input[1] : SV_POSITION, inout TriangleStream<GS_OUT> outp
         
         element.color = p.color;
         element.texcoord = texcoords[vertexIndex];
+        
+        element.scrollTexcoord = texcoords[vertexIndex] + scrollDirection * options.xx;
+
+        
         output.Append(element);
     }
     

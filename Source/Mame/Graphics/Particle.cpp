@@ -2,6 +2,7 @@
 
 #include "../Resource/shader.h"
 #include "../Other/misc.h"
+#include "../framework.h"
 
 Particles::Particles(ID3D11Device* device, size_t particleCount) : maxParticleCount(particleCount)
 {
@@ -60,6 +61,8 @@ void Particles::Integrate(ID3D11DeviceContext* deviceContext, float deltaTime)
 
     particleData.time += deltaTime;
     particleData.deltaTime = deltaTime;
+    particleData.options = framework::tictoc.time_stamp();
+
     deviceContext->UpdateSubresource(constantBuffer.Get(), 0, 0, &particleData, 0, 0);
     deviceContext->CSSetConstantBuffers(9, 1, constantBuffer.GetAddressOf());
 
@@ -78,6 +81,8 @@ void Particles::Initialize(ID3D11DeviceContext* deviceContext, float deltaTime)
 
     particleData.time += deltaTime;
     particleData.deltaTime = deltaTime;
+    particleData.options = framework::tictoc.time_stamp();
+
     deviceContext->UpdateSubresource(constantBuffer.Get(), 0, 0, &particleData, 0, 0);
 
     deviceContext->CSSetShader(particleInitializerCS.Get(), NULL, 0);
@@ -123,6 +128,13 @@ void Particles::DrawDebug()
         ImGui::ColorEdit4("color", &particleData.color.x);
         ImGui::DragFloat("time", &particleData.time);
         ImGui::DragFloat("deltaTime", &particleData.deltaTime);
+
+        ImGui::DragFloat2("scrollDirection", &particleData.scrollDirection.x);
+        ImGui::DragFloat("options", &particleData.options);
+
+        ImGui::SliderFloat("dissolve", &particleData.dissolveParameters.x,0.0f,1.0f);
+        ImGui::SliderFloat("threshold", &particleData.dissolveParameters.y,0.0f,1.0f);
+        ImGui::ColorEdit4("thresholdColor", &particleData.edgeColor.x);
 
         ImGui::TreePop();
     }

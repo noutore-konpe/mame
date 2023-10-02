@@ -5,7 +5,8 @@ cbuffer POST_EFFECT_CONSTANT : register(b13)
     float4 noiseColor;
     float noiseTimer;
     float scanLineTimer;
-    float2 step3; // dummy
+    float shakeTimer;
+    float step3; // dummy
     
 };
 

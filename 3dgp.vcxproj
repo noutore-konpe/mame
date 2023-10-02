@@ -219,6 +219,7 @@
     <ClCompile Include="Source\Mame\Game\Collision.cpp" />
     <ClCompile Include="Source\Mame\Game\DemoStateDerived.cpp" />
     <ClCompile Include="Source\Mame\Game\Enemy.cpp" />
+    <ClCompile Include="Source\Mame\Game\EnemyAura.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemySlime.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyTestAI.cpp" />
     <ClCompile Include="Source\Mame\Game\Item.cpp" />
@@ -298,6 +299,7 @@
     <ClInclude Include="Source\Mame\Game\Collision.h" />
     <ClInclude Include="Source\Mame\Game\DemoStateDerived.h" />
     <ClInclude Include="Source\Mame\Game\Enemy.h" />
+    <ClInclude Include="Source\Mame\Game\EnemyAura.h" />
     <ClInclude Include="Source\Mame\Game\EnemySlime.h" />
     <ClInclude Include="Source\Mame\Game\EnemyTestAI.h" />
     <ClInclude Include="Source\Mame\Game\Item.h" />
@@ -556,6 +558,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SageAura.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Source\Shader\SagePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
