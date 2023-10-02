@@ -29,7 +29,7 @@ Stage::~Stage()
 
 void Stage::Initialize()
 {
-    GetTransform()->SetPositionY(-1.0f);
+    //GetTransform()->SetPositionY(-1.0f);
 }
 
 void Stage::Finalize()

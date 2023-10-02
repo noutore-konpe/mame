@@ -42,7 +42,7 @@ void Model::Render(const float& scale, int rasterizeState)
     DirectX::XMStoreFloat4x4(&world, GetTransform()->CalcWorldMatrix(scale));
 
     // ステートセット
-    shader->SetState(graphics.GetDeviceContext(), rasterizeState, 0, 0);
+    shader->SetRasterizerState(rasterizeState);
 
     // Model描画
     if (&keyframe)
@@ -65,7 +65,7 @@ void Model::Render(const float& scale, ID3D11PixelShader* psShader, int rasteriz
     DirectX::XMStoreFloat4x4(&world, GetTransform()->CalcWorldMatrix(scale));
 
     // ステートセット
-    shader->SetState(graphics.GetDeviceContext(), rasterizeState, 0, 0);
+    shader->SetRasterizerState(rasterizeState);
 
     // Model描画
     if (&keyframe)
