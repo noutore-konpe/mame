@@ -39,7 +39,7 @@ const int BehaviorData::GetSequenceStep(const std::string& name)
 }
 
 // シーケンスステップのセッター
-void BehaviorData::SetSequenceStep(const std::string& name, const int step)
+void BehaviorData::SetSequenceStep(const std::string& name, const int step_)
 {
-	runSequenceStepMap_.at(name) = step;
+	runSequenceStepMap_.at(name) = step_;
 }

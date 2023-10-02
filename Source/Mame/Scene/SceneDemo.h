@@ -95,9 +95,6 @@ private:
     // slime
     std::unique_ptr<EnemySlime> enemySlime[2];
 
-    // enemyAI
-    std::unique_ptr<EnemyTestAI> enemyTestAI_;
-
     // stage
     std::unique_ptr<Stage> stageBase;
     std::unique_ptr<Stage> stageWall;

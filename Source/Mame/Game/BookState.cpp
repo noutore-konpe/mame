@@ -54,7 +54,7 @@ namespace BookState
 
         // ランダムで回転するか決める
         // case RotateState::ContenuOpenState には入らないようにしたい
-        //rotateToOpen = rand() % 4; 
+        //rotateToOpen = rand() % 4;
         ++rotateToOpen;
         if (rotateToOpen > RotateState::DiagonalRot)rotateToOpen = 0;
         addBookRot = {};
@@ -143,7 +143,7 @@ namespace BookState
             SetTimer(1.0f);
             isOpen = true;
         }
-        
+
         // Attackステートへ
         if (GetTimer() < 0.0f && isOpen)
         {

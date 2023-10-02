@@ -194,23 +194,23 @@ NodeBase* NodeBase::SelectSequence(
 	std::vector<NodeBase*>* candidateList,
 	BehaviorData* data)
 {
-	int step = 0;
+	int step_ = 0;
 
 	// 指定されている中間ノードのシーケンスがどこまで実行されたか取得する
-	step = data->GetSequenceStep(name_);
+	step_ = data->GetSequenceStep(name_);
 
 	// 中間ノードに登録されているノード数以上の場合、
-	if (step >= children_.size())
+	if (step_ >= children_.size())
 	{
 		// TODO 04_06 ルールによって処理を切り替える
 		// ルールがBehaviorTree::SelectRule::SequentialLoopingのときは最初から実行するため、stepに0を代入
 		// ルールがBehaviorTree::SelectRule::Sequenceのときは次に実行できるノードがないため、nullptrをリターン
 		using SelectRule = BehaviorTree::SelectRule;
-		if (SelectRule::SequentialLooping == children_.at(step)->selectRule_)
+		if (SelectRule::SequentialLooping == children_.at(step_)->selectRule_)
 		{
-			step = 0;
+			step_ = 0;
 		}
-		else if (SelectRule::Sequence == children_.at(step)->selectRule_)
+		else if (SelectRule::Sequence == children_.at(step_)->selectRule_)
 		{
 			return nullptr;
 		}
@@ -221,7 +221,7 @@ NodeBase* NodeBase::SelectSequence(
 	for (Iterator itr = candidateList->begin(); itr != candidateList->end(); ++itr)
 	{
 		// 子ノードが実行可能リストに含まれているか
-		NodeBase* childNode		= children_.at(step);
+		NodeBase* childNode		= children_.at(step_);
 		NodeBase* condidateNode = (*itr);
 		if (childNode->GetName() == condidateNode->GetName())
 		{
@@ -233,7 +233,7 @@ NodeBase* NodeBase::SelectSequence(
 			// ②また、次に実行する中間ノードとステップ数を保存する
 			// 　保存にはdata->SetSequenceStep関数を使用。
 			// 　保存データは中間ノードの名前と次のステップ数です(step + 1)
-			data->SetSequenceStep(childNode->GetName(), step + 1);
+			data->SetSequenceStep(childNode->GetName(), step_ + 1);
 
 			// ③ステップ番号目の子ノードを実行ノードとしてリターンする
 			return childNode;
