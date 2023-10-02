@@ -156,11 +156,6 @@ public:
     // 描画開始
     void Begin(ID3D11DeviceContext* dc, const RenderContext& rc);
     void Begin(ID3D11DeviceContext* dc, const RenderContext& rc, const ShadowConstants& shadowConstant);
-    void SetState(ID3D11DeviceContext* dc,
-        int RastarizeState, int DepthStencilState, int SamplerState);
-
-    void SetState(ID3D11DeviceContext* deviceContext,
-        int SamplerState, int DepthStencileState, int BlendState, int RasterizerState);
 
     // 描画
     void Draw(ID3D11DeviceContext* dc, Model* model);
@@ -175,6 +170,7 @@ public:// 各種ステート設定
     void SetBlendState(int blendState);
     void SetRasterizerState(int rasterizerState);
 
+    void SetSamplerState(ID3D11DeviceContext* deviceContext);
 
 public:
     void EntryLight(); // 登場演出に使う

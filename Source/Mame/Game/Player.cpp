@@ -15,7 +15,6 @@ Player::Player()
 
     // ÉÇÉfÉãê∂ê¨
     {
-
         model = std::make_unique<Model>(graphics.GetDevice(),            
             //"./Resources/Model/Character/Player/sotai.fbx");
             //"./Resources/Model/Character/Player/P_Chara.fbx");

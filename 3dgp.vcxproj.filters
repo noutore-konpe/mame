@@ -122,22 +122,25 @@
       <Filter>mamelib\Shader\Particle</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\SagePS.hlsl">
-      <Filter>mamelib\Shader\Zelda</Filter>
+      <Filter>mamelib\Shader\Fbx\Zelda</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\AuraEffectVS.hlsl">
-      <Filter>mamelib\Shader\Zelda\aura</Filter>
+      <Filter>mamelib\Shader\Fbx\Zelda\aura</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\AuraEffectPS.hlsl">
-      <Filter>mamelib\Shader\Zelda\aura</Filter>
+      <Filter>mamelib\Shader\Fbx\Zelda\aura</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\AuraEffectGS.hlsl">
-      <Filter>mamelib\Shader\Zelda\aura</Filter>
+      <Filter>mamelib\Shader\Fbx\Zelda\aura</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\GenerateAuraPS.hlsl">
-      <Filter>mamelib\Shader\Zelda\aura</Filter>
+      <Filter>mamelib\Shader\Fbx\Zelda\aura</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\EmissiveTextureUVScrollPS.hlsl">
       <Filter>mamelib\Shader\Fbx</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SageAura.hlsl">
+      <Filter>mamelib\Shader\Fbx\Zelda</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -677,7 +680,7 @@
       <Filter>mamelib\Shader\Particle</Filter>
     </None>
     <None Include="Source\Shader\AuraEffect.hlsli">
-      <Filter>mamelib\Shader\Zelda\aura</Filter>
+      <Filter>mamelib\Shader\Fbx\Zelda\aura</Filter>
     </None>
     <None Include="Source\Shader\PostEffect.hlsli">
       <Filter>mamelib\Shader\PostEffect</Filter>
@@ -771,12 +774,6 @@
     <Filter Include="mamelib\Mame\Graphics\Particle">
       <UniqueIdentifier>{91158c84-6ace-4d96-923d-421320438609}</UniqueIdentifier>
     </Filter>
-    <Filter Include="mamelib\Shader\Zelda">
-      <UniqueIdentifier>{39fa6a7d-a6a7-421e-96c6-dd7f431a853f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="mamelib\Shader\Zelda\aura">
-      <UniqueIdentifier>{7e23d88b-2baa-4208-adcb-83c3cbff6b42}</UniqueIdentifier>
-    </Filter>
     <Filter Include="mamelib\Mame\Graphics\Aura">
       <UniqueIdentifier>{459ebf89-b5d9-45a3-b4be-8158b3da92c7}</UniqueIdentifier>
     </Filter>
@@ -797,6 +794,12 @@
     </Filter>
     <Filter Include="mamelib\Shader\PostEffect">
       <UniqueIdentifier>{601cccd0-876f-4819-a552-cbbbbfdf379a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Shader\Fbx\Zelda">
+      <UniqueIdentifier>{39fa6a7d-a6a7-421e-96c6-dd7f431a853f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Shader\Fbx\Zelda\aura">
+      <UniqueIdentifier>{7e23d88b-2baa-4208-adcb-83c3cbff6b42}</UniqueIdentifier>
     </Filter>
     <Filter Include="mamelib\Taki174">
       <UniqueIdentifier>{8d4995f7-87de-4c6e-b210-a83bd5862284}</UniqueIdentifier>
