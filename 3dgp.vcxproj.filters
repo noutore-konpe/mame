@@ -337,6 +337,9 @@
     <ClCompile Include="Source\Mame\Resource\Metarmorphose.cpp">
       <Filter>mamelib\Mame\Resource\Model\Metamorphos</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyAura.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -553,6 +556,9 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Other\Common.h">
       <Filter>mamelib\Mame\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyAura.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

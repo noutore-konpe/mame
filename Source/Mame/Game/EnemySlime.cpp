@@ -58,6 +58,9 @@ void EnemySlime::End()
 // •`‰æˆ—
 void EnemySlime::Render(const float& scale, ID3D11PixelShader* psShader)
 {
+    // ’è”XV
+    UpdateConstants();
+
     Enemy::Render(scale, psShader);
 }
 
@@ -78,4 +81,19 @@ void EnemySlime::DrawDebug()
         ImGui::EndMenu();
     }
 #endif // USE_IMGUI
+}
+
+void EnemySlime::UpdateConstants()
+{
+    // emissive
+    {
+        // emissive‚Ì‹­‚³
+        SetEmissiveIntensity(1.5f);
+
+        // emissiveTexture ScrollDirection
+        SetEmissiveScrollDirection(DirectX::XMFLOAT2(0.25f, 0.5f));
+
+        // color ‚Æ‚è‚ ‚¦‚¸Ô
+        SetEmissiveColor(DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
+    }
 }

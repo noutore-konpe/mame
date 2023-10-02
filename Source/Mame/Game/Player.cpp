@@ -15,12 +15,10 @@ Player::Player()
 
     // ÉÇÉfÉãê∂ê¨
     {
-        model = std::make_unique<Model>(graphics.GetDevice(),
-            //"./Resources/Model/testModel/character.fbx");
-            //"./Resources/Model/P_Chara.fbx");
-            "./Resources/Model/sotai.fbx");
-            //"./Resources/Model/sanaModel/mameoall.fbx");
-            //"./Resources/Model/testModel/nico.fbx");
+        model = std::make_unique<Model>(graphics.GetDevice(),            
+            "./Resources/Model/Character/Player/sotai.fbx");
+            //"./Resources/Model/Character/Player/P_Chara.fbx");
+            //"./Resources/Model/Character/Player/P_Motion.fbx");
     }
 }
 

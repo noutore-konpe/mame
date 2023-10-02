@@ -355,16 +355,6 @@ private:
     Microsoft::WRL::ComPtr<ID3D11Buffer> constant_buffer;
 
 
-    // Instancing
-    struct Instance
-    {
-        DirectX::XMFLOAT4X4 world;
-        DirectX::XMFLOAT4 color;
-    };
-    Microsoft::WRL::ComPtr<ID3D11Buffer> InstancingConstantBuffer;
-    Microsoft::WRL::ComPtr<ID3D11Buffer> InstancingBuffer;
-
-
     void create_com_objects(ID3D11Device* device, const char* fbx_filename, const char* psFilename);
 
 public:

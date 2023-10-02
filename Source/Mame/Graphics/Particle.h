@@ -28,7 +28,15 @@ struct Particles
         DirectX::XMFLOAT4 color{ 0.1f,0.1f,1.0f,1.0f };
         float time{};
         float deltaTime{};
-        float something[2];
+        
+        DirectX::XMFLOAT2 scrollDirection{ 1.0f, 0.0f };    // UVScroll方向
+        float options = 0.0f;                               // UVScroll用タイマー
+                
+        DirectX::XMFLOAT2 dissolveParameters{}; // x : ディゾルブ適応量、 y : 縁の閾値
+        float something = 0; // ダミー
+
+        DirectX::XMFLOAT4 edgeColor{};   // 縁の色
+
     };
     ParticleConstants particleData;
 

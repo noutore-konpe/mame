@@ -72,6 +72,38 @@ void Character::DrawDebug()
 #endif // USE_IMGUI
 }
 
+// インスタンシング描画
+void Character::RenderInstancing(const Model& m, const std::vector<Instance>& instances)
+{
+    UINT totalInstanceCount = static_cast<UINT>(instances.size());
+    UINT startInstance = 0;
+    UINT instanceCount = (totalInstanceCount < maxInstanceCount) ? totalInstanceCount : maxInstanceCount;
+    while (startInstance < totalInstanceCount)
+    {
+        // 頂点バッファー設定
+        UINT stride[] = { sizeof(DirectX::XMFLOAT3), sizeof(Instance) };
+        UINT offset[] = { 0,0 };
+        ID3D11Buffer* vertexBuffers[] =
+        {
+            instanceBuffer.Get(),
+        };
+        Graphics::Instance().GetDeviceContext()->IASetVertexBuffers(0, 0, vertexBuffers, stride, offset);
+
+        // インスタンス編集
+        D3D11_MAPPED_SUBRESOURCE mappedSubresource;
+        HRESULT hr = Graphics::Instance().GetDeviceContext()->Map(instanceBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
+        FBX_ASSERT_MSG(SUCCEEDED(hr), "インスタンスバッファのマップに失敗しました。\nhr=%08x", hr);
+
+        memcpy(mappedSubresource.pData, &instances[startInstance], sizeof(Instance) * instanceCount);
+
+        Graphics::Instance().GetDeviceContext()->Unmap(instanceBuffer.Get(), 0);
+
+        // 描画
+        //Graphics::Instance().GetDeviceContext()->DrawInstanced()
+    }
+
+}
+
 void Character::PlayAnimation(const int& index, const bool& loop, const float& speed, const float& blendSeconds)
 {
     model->PlayAnimation(index, loop, speed, blendSeconds);

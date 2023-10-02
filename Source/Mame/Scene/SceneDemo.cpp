@@ -93,6 +93,8 @@ void SceneDemo::CreateResource()
         enemySlime[1] = std::make_unique<EnemySlime>();
     }
 
+    enemyAura = std::make_unique<EnemyAura>();
+
     // player
     {
         PlayerManager::Instance().GetPlayer() = std::make_unique<Player>();
@@ -186,6 +188,7 @@ void SceneDemo::Initialize()
         enemySlime[0]->Initialize();
         enemySlime[1]->Initialize();
     }
+    enemyAura->Initialize();
 
     // ƒJƒƒ‰
     Camera::Instance().Initialize();
@@ -315,6 +318,8 @@ void SceneDemo::Update(const float& elapsedTime)
         }
     }
 
+    enemyAura->Update(elapsedTime);
+
     // player
     PlayerManager::Instance().Update(elapsedTime);
     
@@ -395,6 +400,8 @@ void SceneDemo::Render(const float& elapsedTime)
 
                 enemySlime[0]->Render(enemyScaleFactor);
                 enemySlime[1]->Render(enemyScaleFactor);
+
+                enemyAura->Render(enemyScaleFactor);
             }
 
             shadow.shadowMap->Deactivete(graphics.GetDeviceContext());
@@ -466,7 +473,7 @@ void SceneDemo::Render(const float& elapsedTime)
         enemySlime[0]->Render(enemyScaleFactor, sagePS.Get());
         enemySlime[1]->Render(enemyScaleFactor, emissiveTextureUVScrollPS.Get());
     }
-
+    enemyAura->Render(enemyScaleFactor);
 
     // item
     {
@@ -615,6 +622,8 @@ void SceneDemo::DrawDebug()
     {
         enemySlime[0]->DrawDebug();
         enemySlime[1]->DrawDebug();
+
+        enemyAura->DrawDebug();
     }
 
     // player
