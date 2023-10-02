@@ -1,7 +1,9 @@
 #include "Character.h"
 #include "../Graphics/Graphics.h"
 
-#include "../Scene/SceneDemo.h"
+#ifdef _DEBUG
+#include "../Scene/SceneGame.h"
+#endif
 
 int Character::nameNum = 0;
 
@@ -45,7 +47,7 @@ void Character::Render(const float& scale, ID3D11PixelShader* psShader)
     model->Render(scale, psShader);
 
 #ifdef _DEBUG
-    if(SceneDemo::isDebugRender)debugSqhere->Render(1.0f, 1);
+    if(SceneGame::isDebugRender)debugSqhere->Render(1.0f, 1);
 #endif // _DEBUG
 }
 

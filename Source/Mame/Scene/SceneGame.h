@@ -95,5 +95,10 @@ private: // GPU用定数・変数
     // PS Shader
     Microsoft::WRL::ComPtr<ID3D11PixelShader> sagePS; // 透明のシェーダー
 
+
+public: // debug用
+#ifdef _DEBUG
+    static bool isDebugRender;
+#endif // _DEBUG
 };
 

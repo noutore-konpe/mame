@@ -16,6 +16,10 @@
 #include "../Game/Book.h"
 #include "../Game/ProjectileManager.h"
 
+#ifdef _DEBUG
+bool SceneGame::isDebugRender = false;
+#endif // _DEBUG
+
 // リソース生成
 void SceneGame::CreateResource()
 {
@@ -400,6 +404,25 @@ void SceneGame::Render(const float& elapsedTime)
 // debug用
 void SceneGame::DrawDebug()
 {
+#ifdef USE_IMGUI
+    ImGui::Begin("sceneGame");
+
+    // デバッグプリミティブ描画
+    if (ImGui::Button("drawDebug"))
+    {
+        isDebugRender = isDebugRender ? false : true;
+    }
+
+    // 本生成
+    if (ImGui::Button("createBook"))
+    {
+        ItemManager::Instance().Register(new Book());
+    }
+
+    
     // カメラ
     Camera::Instance().DrawDebug();
+
+    ImGui::End();
+#endif
 }
