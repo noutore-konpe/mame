@@ -78,8 +78,8 @@ public:
 
     //アニメーションブレンドのブレンド率
     float       weight{};
-private:
     float       animationSpeed          = 1.0f;     // アニメーション再生速度
+private:
     float       currentAnimationSeconds = 0.0f;     // 現在のアニメーション再生時間
 
     float       animationBlendTime      = 0.0f;     // 現在のブレンドタイマー
@@ -94,5 +94,8 @@ private:
     bool        animationLoopFlag       = false;    // アニメーションをループ再生するか
     bool        animationEndFlag        = false;    // アニメーションが終了したか
 
+    float       blendThreshold = 0.0f; //ブレンドアニメーションのベースとなるアニメーションの切り替えしきい値
+
+    float blendRate;
 };
 

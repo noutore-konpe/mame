@@ -85,7 +85,12 @@ void Model::DrawDebug()
     if (ImGui::TreeNode("Animation"))
     {
         ImGui::SliderFloat("weight", &weight, 0.0f, 1.0f);
+        ImGui::SliderFloat("threshold", &blendThreshold, 0.0f, 1.0f);
         ImGui::InputInt("Current Index", &currentAnimationIndex);
+
+        ImGui::SliderFloat("Animation Speed", &animationSpeed, 0.0f, 3.0f);
+
+        ImGui::SliderFloat("BlendRate", &blendRate, 0.0f, 1.0f);
 
         ImGui::TreePop();
     }
@@ -240,7 +245,10 @@ bool Model::UpdateBlendAnimation(const float& elapsedTime)
     const size_t frameCount1 = bAnimation1.sequence.size();
     const size_t frameCount2 = bAnimation2.sequence.size();
 
-    const size_t maxFrameCount = frameCount1;
+    //基準となるアニメーションにフレーム数を合わせる
+    size_t maxFrameCount = frameCount1;
+    if (blendThreshold < weight)maxFrameCount = frameCount2;
+
     const float frameIndex = (blendAnimationSeconds * bAnimation1.sampling_rate) * animationSpeed;
 
     //アニメーションが再生しきっている場合
@@ -261,12 +269,15 @@ bool Model::UpdateBlendAnimation(const float& elapsedTime)
     //再生フレームを正規化して再生時間の長さを合わせる
     UINT64 frameIndex1 = static_cast<UINT64>(frameIndex / maxFrameCount * (frameCount1 - 1));
     UINT64 frameIndex2 = static_cast<UINT64>(frameIndex / maxFrameCount * (frameCount2 - 1));
+
+#if 0
+
     const animation::keyframe* keyframeArr[2] = {
              &bAnimation1.sequence.at(frameIndex1),
              &bAnimation2.sequence.at(frameIndex2)
     };
     animation::keyframe keyframe1;
-    skinned_meshes->blend_animations(keyframeArr,weight,keyframe1);
+    skinned_meshes->blend_animations(keyframeArr, weight, keyframe1);
 
     //フレーム補間するためのキーフレーム
     const animation::keyframe* lerpKeyframeArr[2] = {
@@ -274,14 +285,60 @@ bool Model::UpdateBlendAnimation(const float& elapsedTime)
              &bAnimation2.sequence.at(frameIndex2 + 1)
     };
     animation::keyframe keyframe2;
-    skinned_meshes->blend_animations(lerpKeyframeArr,weight,keyframe2);
+    skinned_meshes->blend_animations(lerpKeyframeArr, weight, keyframe2);
 
     // ブレンド率の計算
-    float blendRate = frameIndex;
+    blendRate = frameIndex - static_cast<int>(frameIndex);
 
-    
-    const animation::keyframe* resultKeyframeArr[2] = { &keyframe1 ,&keyframe2};
-    skinned_meshes->blend_animations(resultKeyframeArr,blendRate,keyframe);
+
+    const animation::keyframe* resultKeyframeArr[2] = { &keyframe1 ,&keyframe2 };
+    skinned_meshes->blend_animations(resultKeyframeArr, blendRate, keyframe);
+
+#else//なんか上手くできやんので別バージョン
+
+    blendRate = 1.0f;
+    if (animationBlendTime < animationBlendSeconds)
+    {
+        animationBlendTime += elapsedTime;
+        if (animationBlendTime >= animationBlendSeconds)
+        {
+            animationBlendTime = animationBlendSeconds;
+        }
+        blendRate = animationBlendTime / animationBlendSeconds;
+        blendRate *= blendRate;
+    }
+
+    // キーフレーム取得
+    const std::vector<animation::keyframe>& keyframes1 = bAnimation1.sequence;
+
+    // 現在の前後のキーフレームを取得
+    const animation::keyframe* keyframeArr1[2] = {
+        &keyframes1.at(frameIndex1),
+        &keyframes1.at(frameIndex1 + 1)
+    };
+
+    // アニメーションを滑らかに切り替える
+    animation::keyframe keyframe1;
+    skinned_meshes->blend_animations(keyframeArr1, blendRate, keyframe1);
+
+    // キーフレーム取得
+    const std::vector<animation::keyframe>& keyframes2 = bAnimation2.sequence;
+
+    // 現在の前後のキーフレームを取得
+    const animation::keyframe* keyframeArr2[2] = {
+        &keyframes2.at(frameIndex2),
+        &keyframes2.at(frameIndex2 + 1)
+    };
+
+    // アニメーションを滑らかに切り替える
+    animation::keyframe keyframe2;
+    skinned_meshes->blend_animations(keyframeArr2, blendRate, keyframe2);
+
+    const animation::keyframe* resultKeyframeArr[2] = { &keyframe1 ,&keyframe2 };
+    skinned_meshes->blend_animations(resultKeyframeArr, weight, keyframe);
+#endif // 0
+
+
 
     skinned_meshes->update_animation(keyframe);
 
