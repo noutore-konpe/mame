@@ -21,7 +21,7 @@ public:
     void Initialize();                      // 初期化
     void Finalize();
     void Update(const float elapsedTime);  // 更新処理
-    void Render(const float scale, ID3D11PixelShader* psShader);  // 描画処理
+    void Render(const float scale, ID3D11PixelShader* psShader = nullptr);  // 描画処理
     void DrawDebug();                       // デバッグ描画
 
 public:

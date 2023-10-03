@@ -476,7 +476,7 @@ void SceneDemo::Render(const float& elapsedTime)
         enemySlime[0]->Render(enemyScaleFactor, sagePS.Get());
         enemySlime[1]->Render(enemyScaleFactor, emissiveTextureUVScrollPS.Get());
 
-        EnemyManager::Instance().Render(playerScaleFactor, nullptr);
+        EnemyManager::Instance().Render(playerScaleFactor);
     }
 
 
