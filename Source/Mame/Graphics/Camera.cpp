@@ -1,7 +1,8 @@
 #include "Camera.h"
 
 #include "../Input/Input.h"
-
+#include "../Other/MathHelper.h"
+#include "../Other/Easing.h"
 #include "../Game/PlayerManager.h"
 
 void Camera::Initialize()
@@ -59,6 +60,8 @@ void Camera::Update()
     }
 
 #endif
+
+
 }
 
 void Camera::UpdateDebug(const float& elapsedTime, DirectX::XMFLOAT2 moveVector)
@@ -159,6 +162,8 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
             targetPos.y + focusOffsetY,
             targetPos.z,
             1.0f) };
+
+        focus = DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&screenVibrationOffset), focus);
     }
     else
     {
@@ -208,6 +213,19 @@ void Camera::DrawDebug()
             ImGui::TreePop();
         }
 
+        static float vibVolume;
+        static float vibTime;
+        if (ImGui::TreeNode("Vibration"))
+        {
+            ImGui::SliderFloat("VibrationVolume", &vibVolume, 0.0f, 1.0f);
+            ImGui::SliderFloat("VibrationTime", &vibTime, 0.0f, 5.0f);
+            if (ImGui::Button("Vibrate"))
+            {
+                ScreenVibrate(vibVolume, vibTime);
+            }
+            ImGui::TreePop();
+        }
+
         // todo : camera
         // デバッグ用にカメラを動かしやすいようにしている
         ImGui::DragFloat("camera_position.x", &camera.eye.x);
@@ -225,4 +243,40 @@ void Camera::DrawDebug()
 void Camera::Reset()
 {
     camera.eye = { 0.0f,0.0f,-10.0f };
+}
+
+void Camera::ScreenVibrate(float volume, float effectTime)
+{
+    vibrationVolume = volume;
+    vibrationTimer = effectTime;
+    vibrationTime = effectTime;
+}
+
+void Camera::ScreenVibrationUpdate(float elapsedTime)
+{
+    screenVibrationOffset = {};
+    if (vibrationTimer <= 0)return;
+
+    //振動方向の指定(乱数)
+    DirectX::XMFLOAT3 vibVec;
+    auto right = GetTransform()->CalcRight();
+    auto up = GetTransform()->CalcUp();
+
+    right = right * (rand() % 100 - 50.0f);
+    up = up * (rand() % 100 - 50.0f);
+
+    vibVec = {
+        right.x + up.x,
+        right.y + up.y,
+        0.0f
+    };
+    vibVec = Normalize(vibVec);
+
+    //イージングを使い経過時間で振動量を調整する
+    float vibrationVolume = Easing::InSine(vibrationTimer, vibrationTime, this->vibrationVolume, 0.0f);
+
+    //振動値を入れる
+    screenVibrationOffset = vibVec * vibrationVolume;
+
+    vibrationTimer -= elapsedTime;
 }

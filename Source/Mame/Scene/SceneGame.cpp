@@ -454,6 +454,8 @@ void SceneGame::DrawDebug()
         ItemManager::Instance().Register(new Book());
     }
 
+    PlayerManager::Instance().DrawDebug();
+
     ItemManager::Instance().DrawDebug();
     
     particles->DrawDebug();

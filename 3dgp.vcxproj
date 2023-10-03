@@ -342,6 +342,8 @@
     <ClInclude Include="Source\Mame\Input\Mouse.h" />
     <ClInclude Include="Source\Mame\Mame.h" />
     <ClInclude Include="Source\Mame\Other\Common.h" />
+    <ClInclude Include="Source\Mame\Other\Easing.h" />
+    <ClInclude Include="Source\Mame\Other\MathHelper.h" />
     <ClInclude Include="Source\Mame\Other\misc.h" />
     <ClInclude Include="Source\Mame\Resource\Audio.h" />
     <ClInclude Include="Source\Mame\Resource\AudioManager.h" />

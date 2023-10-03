@@ -76,8 +76,19 @@ public: // 取得・設定　関連
 public: // 関数
     void Turn(float elapsedTime, float vx, float vz, float rotSpeed);
 
+    //ダメージを受けたときに呼ばれる
+    virtual void OnDamaged() {}
+
+    //死亡した時に呼ばれる
+    virtual void OnDead() {}
+
+    bool ApplyDamage(int damage, float invincibleTime);
+
 public:
     std::unique_ptr<Model> model = nullptr;
+
+    float health;//hp
+    float invincibleTime = 1.0f;//無敵時間
 
 #ifdef _DEBUG
     std::unique_ptr<Model> debugSqhere = nullptr;   // 当たり判定用＿球

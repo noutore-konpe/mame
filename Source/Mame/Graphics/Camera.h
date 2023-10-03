@@ -26,6 +26,10 @@ public:
     void UpdateDebug(const float& elapsedTime, DirectX::XMFLOAT2 moveVector);
 
     void SetPerspectiveFov(ID3D11DeviceContext* dc);
+
+    //画面振動
+    void ScreenVibrate(float volume/*振動量*/, float effectTime/*振動時間*/);
+    void ScreenVibrationUpdate(float elapsedTime);
     
     struct view_camera
     {
@@ -63,4 +67,10 @@ private:
     Transform* focusTarget;//注視点になるオブジェクト
 
     bool enableDebugCamera = false;
+
+    //画面振動
+    DirectX::XMFLOAT3 screenVibrationOffset{};//振動表現用の座標
+    float vibrationVolume;//振動量
+    float vibrationTime;//振動時間
+    float vibrationTimer;//振動時間を測るためのタイマー
 };
