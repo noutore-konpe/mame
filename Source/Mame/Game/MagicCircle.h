@@ -18,6 +18,10 @@ public:
     void Render(const float& scale, ID3D11PixelShader* psShader = nullptr) override; // •`‰æˆ—
     void DrawDebug()                        override; // ImGui—p
 
+    void SetEmissiveIntensity(float intensity) { model->skinned_meshes->data.emissiveIntensity = intensity; }
+    void SetEmissiveScrollDirection(DirectX::XMFLOAT2 scroll) { model->skinned_meshes->data.emissiveScrollDirection = scroll; }
+    void SetEmissiveColor(DirectX::XMFLOAT4 color) { model->skinned_meshes->data.emissiveColor = color; }
+
 private:
     Microsoft::WRL::ComPtr<ID3D11PixelShader> magicCirclePS;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> emissiveTexture;

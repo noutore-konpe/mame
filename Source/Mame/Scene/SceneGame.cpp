@@ -48,7 +48,12 @@ void SceneGame::CreateResource()
     // item
     {
         ItemManager::Instance().Register(new Book());
-        ItemManager::Instance().Register(new MagicCircle());
+        //ItemManager::Instance().Register(new MagicCircle());
+    }
+
+    // ñÇñ@êw
+    {
+        magicCircleSummon = std::make_unique<MagicCircleSummon>();
     }
 
     // ps Shader
@@ -137,6 +142,9 @@ void SceneGame::Initialize()
     // stage
     stageBase->Initialize();
     stageWall->Initialize();
+
+    // ñÇñ@êw
+    magicCircleSummon->Initialize();
 }
 
 // èIóπâª
@@ -222,6 +230,9 @@ void SceneGame::Update(const float& elapsedTime)
 
     // item
     ItemManager::Instance().Update(elapsedTime);
+
+    // ñÇñ@êw
+    magicCircleSummon->Update(elapsedTime);
 
     // effect
     EffectManager::Instance().Update(elapsedTime);
@@ -350,6 +361,9 @@ void SceneGame::Render(const float& elapsedTime)
         {
             ItemManager::Instance().Render(0.01f);
         }
+
+        // ñÇñ@êw
+        magicCircleSummon->Render();
     }
 
     shader->SetDepthStencileState(static_cast<size_t>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
@@ -452,6 +466,12 @@ void SceneGame::DrawDebug()
     if (ImGui::Button("createBook"))
     {
         ItemManager::Instance().Register(new Book());
+    }
+
+    // ñÇñ@êwçƒê∂
+    if (ImGui::Button("magicCircle"))
+    {
+        magicCircleSummon->Initialize();
     }
 
     PlayerManager::Instance().DrawDebug();

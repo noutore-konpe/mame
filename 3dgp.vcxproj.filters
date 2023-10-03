@@ -373,11 +373,14 @@
     <ClCompile Include="Source\Mame\Game\AttackSkill.cpp">
       <Filter>mamelib\Mame\Game\Character\Player\Skill</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Game\MagicCircle.cpp">
-      <Filter>mamelib\Mame\Game\Item</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Mame\Game\EnemyGolem.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\MagicCircle.cpp">
+      <Filter>mamelib\Mame\Game\Item\MagicCircle</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\MagicCircleSummon.cpp">
+      <Filter>mamelib\Mame\Game\Item\MagicCircle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -644,9 +647,6 @@
     <ClInclude Include="Source\Mame\Game\AttackSkill.h">
       <Filter>mamelib\Mame\Game\Character\Player\Skill</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\Game\MagicCircle.h">
-      <Filter>mamelib\Mame\Game\Item</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Mame\Game\EnemyGolem.h">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClInclude>
@@ -655,6 +655,12 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Other\Easing.h">
       <Filter>mamelib\Mame\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\MagicCircle.h">
+      <Filter>mamelib\Mame\Game\Item\MagicCircle</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\MagicCircleSummon.h">
+      <Filter>mamelib\Mame\Game\Item\MagicCircle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -842,6 +848,9 @@
     </Filter>
     <Filter Include="mamelib\Mame\Game\Character\Player\Skill">
       <UniqueIdentifier>{b0d5c975-3b90-4186-a2d6-36d312de7cda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Item\MagicCircle">
+      <UniqueIdentifier>{988f39f7-e6ba-4a7a-8b89-2c2bb6d2fc28}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

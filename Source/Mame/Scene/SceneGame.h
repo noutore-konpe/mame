@@ -17,6 +17,8 @@
 #include "../Game/EnemyAura.h"
 #include "../Game/EnemyGolem.h"
 
+#include  "../Game/MagicCircleSummon.h"
+
 
 class SceneGame : public Mame::Scene::BaseScene
 {
@@ -46,6 +48,9 @@ private: // •Ï”“™X
     // enemy
     std::unique_ptr<EnemyAura> enemyAura;
     std::unique_ptr<EnemyGolem> enemyGolem;
+
+    // –‚–@w
+    std::unique_ptr<MagicCircleSummon> magicCircleSummon;
 
     // effect
     Effect* effect[4];
