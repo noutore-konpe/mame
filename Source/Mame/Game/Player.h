@@ -52,6 +52,10 @@ public:
         return (Input::Instance().GetGamePad().GetButton() & GamePad::BTN_RIGHT_SHOULDER);
     }
 
+#ifdef _DEBUG   // テスト用
+    std::unique_ptr<Model> testModel;
+#endif // _DEBUG
+
 private:
     //----------------------------カメラ関係----------------------------------
     float cameraRotSpeed = 2.0f;//旋回速度

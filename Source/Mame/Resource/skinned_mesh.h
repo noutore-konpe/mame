@@ -447,8 +447,13 @@ private:
         }
     }
 
-    private:
-        //メッシュ情報をunique_idで検索するためのリスト
-        std::unordered_map<uint64_t, FbxNode*> nodeList;
+private:
+    //メッシュ情報をunique_idで検索するためのリスト
+    std::unordered_map<uint64_t, FbxNode*> nodeList;
+
+public:
+    // JOINT_POSITION
+    DirectX::XMFLOAT3 JointPosition(const std::string& meshName, const std::string& boneName, const animation::keyframe* keyframe, const DirectX::XMFLOAT4X4& transform);
+    DirectX::XMFLOAT3 JointPosition(size_t meshIndex, size_t boneIndex, const animation::keyframe* keyframe, const DirectX::XMFLOAT4X4& transform);
 };
 

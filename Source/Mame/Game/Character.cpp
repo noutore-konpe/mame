@@ -133,6 +133,24 @@ bool Character::IsPlayAnimation() const
     return model->IsPlayAnimation();
 }
 
+// JOINT_POSITION
+DirectX::XMFLOAT3 Character::GetJointPosition(const std::string& meshName, const std::string& boneName, const float& scale)
+{
+    DirectX::XMFLOAT4X4 transform{};
+    DirectX::XMStoreFloat4x4(&transform, GetTransform()->CalcWorldMatrix(scale));
+
+    return model->skinned_meshes->JointPosition(meshName, boneName, &model->keyframe, transform);
+}
+
+// JOINT_POSITION
+DirectX::XMFLOAT3 Character::GetJointPosition(size_t meshIndex, size_t boneIndex, const float& scale)
+{
+    DirectX::XMFLOAT4X4 transform{};
+    DirectX::XMStoreFloat4x4(&transform, GetTransform()->CalcWorldMatrix(scale));
+
+    return model->skinned_meshes->JointPosition(meshIndex, boneIndex, &model->keyframe, transform);
+}
+
 void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
 {
     if (vx == 0 && vz == 0)return;

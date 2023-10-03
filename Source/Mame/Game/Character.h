@@ -42,7 +42,7 @@ public: // アニメーション関数関連
         const bool& loop,
         const float& speed = 1.0f
     );
-
+    
     // ブレンド率の計算更新処理
     void UpdateBlendRate(float blendRate, const float& elapsedTime);
 
@@ -51,6 +51,10 @@ public: // アニメーション関数関連
 
     // アニメーションが再生中かどうか
     bool IsPlayAnimation() const;
+
+    // ジョイント位置取得
+    DirectX::XMFLOAT3 GetJointPosition(const std::string& meshName, const std::string& boneName, const float& scale);
+    DirectX::XMFLOAT3 GetJointPosition(size_t meshIndex, size_t boneIndex, const float& scale);
 
 public: // 取得・設定　関連
     Transform* GetTransform() { return model->GetTransform(); }

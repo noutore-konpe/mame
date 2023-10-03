@@ -19,7 +19,13 @@ Player::Player()
         model = std::make_unique<Model>(graphics.GetDevice(),            
             //"./Resources/Model/Character/Player/sotai.fbx");
             //"./Resources/Model/Character/Player/P_Chara.fbx");
+            //"./Resources/Model/Character/Player/P_Motion.fbx");
+            "./Resources/Model/testModel/nico.fbx");
+
+#ifdef _DEBUG // テスト用
+        testModel = std::make_unique<Model>(graphics.GetDevice(),
             "./Resources/Model/Character/Player/P_Motion.fbx");
+#endif // _DEBUG
     }
 }
 
@@ -240,6 +246,10 @@ void Player::CameraControllerUpdate(float elapsedTime)
 void Player::Render(const float& scale, ID3D11PixelShader* psShader)
 {
     Character::Render(scale, psShader);
+
+    DirectX::XMFLOAT3 pos = Character::GetJointPosition(1/*"NIC:magic_wand"*/, 1/*"NIC:wand2_BK"*/, scale);
+    testModel->GetTransform()->SetPosition(pos);
+    testModel->Render(scale, 0);
 }
 
 // ImGui用
