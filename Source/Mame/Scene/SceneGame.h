@@ -15,7 +15,7 @@
 
 #include "../Game/EnemySlime.h"
 #include "../Game/EnemyAura.h"
-
+#include "../Game/EnemyGolem.h"
 
 
 class SceneGame : public Mame::Scene::BaseScene
@@ -45,6 +45,7 @@ private: // •Ï”“™X
 
     // enemy
     std::unique_ptr<EnemyAura> enemyAura;
+    std::unique_ptr<EnemyGolem> enemyGolem;
 
     // effect
     Effect* effect[4];

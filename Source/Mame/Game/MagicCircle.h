@@ -7,6 +7,7 @@ class MagicCircle : public Item
 {
 public:
     MagicCircle();
+    MagicCircle(const char* fbxFilename, const wchar_t* spriteFilename);
     ~MagicCircle() override;
 
     void Initialize()                       override; // ‰Šú‰»

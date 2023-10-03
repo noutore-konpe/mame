@@ -376,6 +376,9 @@
     <ClCompile Include="Source\Mame\Game\MagicCircle.cpp">
       <Filter>mamelib\Mame\Game\Item</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyGolem.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -643,6 +646,9 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\MagicCircle.h">
       <Filter>mamelib\Mame\Game\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyGolem.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

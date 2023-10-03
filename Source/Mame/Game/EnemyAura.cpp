@@ -84,6 +84,16 @@ void EnemyAura::Render(const float& scale, ID3D11PixelShader* psShader)
 
 void EnemyAura::DrawDebug()
 {
+#ifdef USE_IMGUI
+    if (ImGui::BeginMenu(GetName()))
+    {
+        Character::DrawDebug();
+
+        model->skinned_meshes->Drawdebug();
+
+        ImGui::EndMenu();
+    }
+#endif // USE_IMGUI
 }
 
 void EnemyAura::UpdateConstants()

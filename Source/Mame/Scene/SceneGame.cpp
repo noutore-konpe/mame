@@ -37,6 +37,7 @@ void SceneGame::CreateResource()
     // enemy
     {
         enemyAura = std::make_unique<EnemyAura>();
+        enemyGolem = std::make_unique<EnemyGolem>();
     }
 
     // player
@@ -125,6 +126,7 @@ void SceneGame::Initialize()
 
     // enemy
     enemyAura->Initialize();
+    enemyGolem->Initialize();
 
     // player
     PlayerManager::Instance().Initialize();
@@ -168,7 +170,17 @@ void SceneGame::Update(const float& elapsedTime)
     GamePad& gamePad = Input::Instance().GetGamePad();
 
     if (gamePad.GetButtonDown() & GamePad::BTN_A)
-        Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
+    {
+        particles->Initialize(Graphics::Instance().GetDeviceContext(), 0);
+    }
+
+    if (integrateParticles)
+    {
+        particles->Integrate(Graphics::Instance().GetDeviceContext(), elapsedTime);
+    }
+        
+    //if (gamePad.GetButtonDown() & GamePad::BTN_B)
+    //    Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
 
 #ifdef _DEBUG
     // Debug用カメラ
@@ -202,6 +214,7 @@ void SceneGame::Update(const float& elapsedTime)
     // enemy
     {
         enemyAura->Update(elapsedTime);
+        enemyGolem->Update(elapsedTime);
     }
 
     // player
@@ -281,6 +294,7 @@ void SceneGame::Render(const float& elapsedTime)
                 PlayerManager::Instance().Render(playerScaleFactor);
 
                 enemyAura->Render(enemyScaleFactor);
+                enemyGolem->Render(0.01f);
             }
 
             shadow.shadowMap->Deactivete(graphics.GetDeviceContext());
@@ -326,6 +340,7 @@ void SceneGame::Render(const float& elapsedTime)
         // enemy
         {
             enemyAura->Render(enemyScaleFactor);
+            enemyGolem->Render(0.01f);
             //shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
             //enemySlime[0]->Render(enemyScaleFactor, sagePS.Get());
             //enemySlime[1]->Render(enemyScaleFactor, emissiveTextureUVScrollPS.Get());
@@ -337,6 +352,10 @@ void SceneGame::Render(const float& elapsedTime)
         }
     }
 
+    shader->SetDepthStencileState(static_cast<size_t>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
+    shader->SetRasterizerState(static_cast<size_t>(Shader::RASTER_STATE::CULL_NONE));
+    shader->SetBlendState(static_cast<size_t>(Shader::BLEND_STATE::ADD));
+    shader->GSSetConstantBuffer();
     particles->Render(graphics.GetDeviceContext());
 
     // シェーダーエフェクト
@@ -437,6 +456,11 @@ void SceneGame::DrawDebug()
 
     ItemManager::Instance().DrawDebug();
     
+    particles->DrawDebug();
+
+    enemyAura->DrawDebug();
+    enemyGolem->DrawDebug();
+
     // カメラ
     Camera::Instance().DrawDebug();
 

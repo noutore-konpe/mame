@@ -9,35 +9,11 @@ void main(uint3 dtid : SV_DISPATCHTHREADID)
     
     Particle p = particleBuffer[id];
     
-#if 1
-    if (p.age>10.0)
-    {
-        const float g = -0.5;
-        p.velocity.y += g * deltaTime;
-        p.position += p.velocity * deltaTime;
-        
-        if (p.position.y<0)
-        {
-            p.velocity = 0;
-            p.position.y = 0;
-        }
-    }
+    //if (p.age > 10.0)
+    //{
+    //}
+    p.position += p.velocity * deltaTime;
     p.age += deltaTime;
-#else
-    if (p.age > 10.0)
-    {
-        const float g = -0.5;
-        p.velocity.y += g * deltaTime;
-        p.position.xz += p.velocity.xz * deltaTime;
-        
-        if (p.position.y < 0)
-        {
-            p.velocity = 0;
-            p.position.y = 0;
-        }
-    }
-    p.age += deltaTime;
-#endif
     
     particleBuffer[id] = p;
 }
