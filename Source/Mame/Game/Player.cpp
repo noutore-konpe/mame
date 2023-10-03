@@ -37,13 +37,21 @@ void Player::Initialize()
     Character::Initialize();
 
     // 待機アニメーションに設定してる
-    Character::PlayAnimation(2, true);
-    //Character::PlayBlendAnimation(0,1, true);
+    //Character::PlayAnimation(2, true);
+    Character::PlayBlendAnimation(0,1, true);
 
     //カメラがプレイヤーを追いかけるよう設定
     Camera::Instance().SetTraget(GetTransform());
 
     //stateMachine.RegisterState(new PlayerState::NormalState());
+
+    GetTransform()->SetScaleFactor(0.75f);
+
+    level = 1;
+    curExp = 0;
+    totalExp = 0;
+    levelUpExp = 100;
+    isSelectingAbility = 0;
 }
 
 // 終了化
@@ -268,4 +276,16 @@ void Player::DrawDebug()
         ImGui::EndMenu();
     }
 #endif // USE_IMGUI
+}
+
+void Player::LevelUpdate()
+{
+    if(curExp > levelUpExp)
+    {
+        level++;
+        curExp -= levelUpExp;
+
+        //レベルが上がると能力を取得出来る
+        isSelectingAbility = true;
+    }
 }
