@@ -13,9 +13,14 @@ namespace PlayerSkill
 
     }
 
+    void Drain::Render()
+    {
+
+    }
+
     void Drain::Assimilate(float power)
     {
         float drainAmount = power * drainCoefficient;
-
+        //player
     }
 }

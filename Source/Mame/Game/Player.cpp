@@ -41,7 +41,8 @@ void Player::Initialize()
 
     //stateMachine.RegisterState(new PlayerState::NormalState());
 
-    GetTransform()->SetScaleFactor(0.75f);
+    GetTransform()->SetScaleFactor(0.7f);
+    maxSpeed = 4.2f;
 
     level = 1;
     curExp = 0;
@@ -147,7 +148,7 @@ void Player::UpdateVelocity(float elapsedTime)
     float length{ sqrtf(velocity.x * velocity.x + velocity.z * velocity.z) };
 
     //アニメーションの重みの変更
-    model->weight = length / maxDashSpeed;
+    model->weight = length / maxSpeed;
 
     if (length > 0.0f)
     {
@@ -186,7 +187,6 @@ void Player::UpdateVelocity(float elapsedTime)
     if (moveVecLength > 0.0f)
     {
         float acceleration;//加速力
-        float maxSpeed;//最大速度
 
         ////ダッシュ
         //if (InputDash())
@@ -201,7 +201,6 @@ void Player::UpdateVelocity(float elapsedTime)
         //}
 
         acceleration = this->acceleration * elapsedTime;
-        maxSpeed = maxDashSpeed;
 
         //移動ベクトルによる加速処理
         velocity.x += moveVec.x * acceleration;
@@ -239,11 +238,13 @@ void Player::CameraControllerUpdate(float elapsedTime)
     {
         cTransform->AddRotationX(cameraRotSpeed * ay * elapsedTime);
         float rotX = cTransform->GetRotation().x;
-        rotX = std::clamp(rotX,-0.4f,0.8f);
+        rotX = std::clamp(rotX,-0.35f,0.8f);
         cTransform->SetRotationX(rotX);
     }
 
     //cTransform->SetRotationX(DirectX::XMConvertToRadians(15.0f));
+
+    Camera::Instance().ScreenVibrationUpdate(elapsedTime);
 }
 
 // 描画処理
@@ -267,7 +268,13 @@ void Player::DrawDebug()
             ImGui::TreePop();
         }
 
-        ImGui::DragFloat("MaxMoveSpeed", &maxSpeed, 0.05f, 0.1f);
+        if(ImGui::TreeNode("Movement"))
+        {
+            ImGui::SliderFloat("MaxMoveSpeed", &maxSpeed, 0.1f, 10.0f);
+
+            ImGui::TreePop();
+        }
+
 
         ImGui::EndMenu();
     }
