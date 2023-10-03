@@ -56,16 +56,12 @@ void SceneLoading::End()
 // 描画処理
 void SceneLoading::Render(const float& elapsedTime)
 {
-    Graphics& graphics = Graphics::Instance();
-    ID3D11DeviceContext* deviceContext = graphics.GetDeviceContext();
-    ID3D11RenderTargetView* renderTargetView = graphics.GetRenderTargetView();
-    ID3D11DepthStencilView* depthStencileView = graphics.GetDepthStencilView();
+    // 描画の初期化
+    {
+        Graphics& graphics = Graphics::Instance();
 
-    // 画面クリア&レンダーターゲット設定
-    FLOAT color[] = { 0.0f,1.0f,0.0f,1.0f };
-    deviceContext->ClearRenderTargetView(renderTargetView, color);
-    deviceContext->ClearDepthStencilView(depthStencileView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-    deviceContext->OMSetRenderTargets(1, &renderTargetView, depthStencileView);
+        Mame::Scene::BaseScene::RenderInitialize();
+    }
 }
 
 void SceneLoading::DrawDebug()

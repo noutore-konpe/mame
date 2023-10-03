@@ -62,6 +62,7 @@ public: // 取得・設定　関連
     void SetRange(const float& r) { range = r; }
     float GetRange() { return range; }
 
+
     // emissive ※constansのやつなのでこいつを使う場所は UpdateConstansで使ってほしい
     void SetEmissiveIntensity(float intensity) { model->skinned_meshes->data.emissiveIntensity = intensity; }
     void SetEmissiveScrollDirection(DirectX::XMFLOAT2 scroll) { model->skinned_meshes->data.emissiveScrollDirection = scroll; }

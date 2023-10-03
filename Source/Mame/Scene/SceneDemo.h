@@ -101,6 +101,7 @@ private:
 
 
     std::unique_ptr<EnemyAura> enemyAura;
+
     // enemyAI
     std::unique_ptr<EnemyTestAI> enemyTestAI_;
 

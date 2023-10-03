@@ -229,6 +229,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\MagicCircle.cpp" />
     <ClCompile Include="Source\Mame\Game\NodeBase.cpp" />
     <ClCompile Include="Source\Mame\Game\Player.cpp" />
     <ClCompile Include="Source\Mame\Game\PlayerManager.cpp" />
@@ -309,6 +310,7 @@
     <ClInclude Include="Source\Mame\Game\ItemManager.h" />
     <ClInclude Include="Source\Mame\Game\JudgmentBase.h" />
     <ClInclude Include="Source\Mame\Game\JudgmentDerived.h" />
+    <ClInclude Include="Source\Mame\Game\MagicCircle.h" />
     <ClInclude Include="Source\Mame\Game\NodeBase.h" />
     <ClInclude Include="Source\Mame\Game\Player.h" />
     <ClInclude Include="Source\Mame\Game\PlayerManager.h" />
@@ -515,6 +517,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Source\Shader\FogPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\MagicCirclePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
