@@ -463,12 +463,6 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc)
 {
     Camera& camera = Camera::Instance();
 
-    // サンプラーステート
-    deviceContext->PSSetSamplers(0, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::POINT)].GetAddressOf());
-    deviceContext->PSSetSamplers(1, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR)].GetAddressOf());
-    deviceContext->PSSetSamplers(2, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::ANISOTROPIC)].GetAddressOf());
-    deviceContext->PSSetSamplers(3, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_BLACK)].GetAddressOf());
-    deviceContext->PSSetSamplers(4, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_WHITE)].GetAddressOf());
 
     deviceContext->OMSetDepthStencilState(depthStencilStates[0].Get(), 1);
 
@@ -533,16 +527,6 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc, 
 {
     Camera& camera = Camera::Instance();
 
-    // サンプラーステート
-    {
-        deviceContext->PSSetSamplers(0, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::POINT)].GetAddressOf());
-        deviceContext->PSSetSamplers(1, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR)].GetAddressOf());
-        deviceContext->PSSetSamplers(2, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::ANISOTROPIC)].GetAddressOf());
-        deviceContext->PSSetSamplers(3, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_BLACK)].GetAddressOf());
-        deviceContext->PSSetSamplers(4, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_WHITE)].GetAddressOf());
-        // SHADOW
-        deviceContext->PSSetSamplers(5, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::COMPARISON_LINEAR_BORDER_WHITE)].GetAddressOf());
-    }
 
     deviceContext->OMSetDepthStencilState(depthStencilStates[0].Get(), 1);
 
@@ -617,20 +601,18 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc, 
     //EntryLight2();
 }
 
-void Shader::SetState(ID3D11DeviceContext* dc, int RasterizerState, int DepthStencilState, int SamplerState)
-{
-    dc->PSSetSamplers(SamplerState, 1, samplerState[SamplerState].GetAddressOf());
-    dc->RSSetState(rasterizerStates[RasterizerState].Get());
-    dc->OMSetDepthStencilState(depthStencilStates[DepthStencilState].Get(), 1);
-}
-
-void Shader::SetState(ID3D11DeviceContext* deviceContext, int SamplerState, int DepthStencileState, int BlendState, int RasterizerState)
-{
-    deviceContext->PSSetSamplers(SamplerState, 1, samplerState[SamplerState].GetAddressOf());
-    deviceContext->OMSetDepthStencilState(depthStencilStates[DepthStencileState].Get(), 1);
-    deviceContext->OMSetBlendState(blendStates[BlendState].Get(), nullptr, 0xFFFFFFFF);
-    deviceContext->RSSetState(rasterizerStates[RasterizerState].Get());
-}
+//void Shader::SetState(ID3D11DeviceContext* dc, int RasterizerState, int DepthStencilState)
+//{
+//    dc->RSSetState(rasterizerStates[RasterizerState].Get());
+//    dc->OMSetDepthStencilState(depthStencilStates[DepthStencilState].Get(), 1);
+//}
+//
+//void Shader::SetState(ID3D11DeviceContext* deviceContext, int DepthStencileState, int BlendState, int RasterizerState)
+//{
+//    deviceContext->OMSetDepthStencilState(depthStencilStates[DepthStencileState].Get(), 1);
+//    deviceContext->OMSetBlendState(blendStates[BlendState].Get(), nullptr, 0xFFFFFFFF);
+//    deviceContext->RSSetState(rasterizerStates[RasterizerState].Get());
+//}
 
 void Shader::Draw(ID3D11DeviceContext* dc, Model* model)
 {
@@ -749,8 +731,10 @@ void Shader::DrawDebug()
         if (ImGui::TreeNode("Fog"))
         {
             ImGui::ColorEdit4("fogColor", &fogConstants.fogColor.x);
-            ImGui::SliderFloat("fogDensity", &fogConstants.fogDensity, 0.0f, 0.005f, "%.4f");
-            ImGui::SliderFloat("fogHeightFalloff", &fogConstants.fogHeightFalloff, 0.0001f, 1000.0f, "%.4f");
+            ImGui::DragFloat("fogDensity", &fogConstants.fogDensity);
+            //ImGui::SliderFloat("fogDensity", &fogConstants.fogDensity, 0.0f, 10.0f, "%.4f");
+            ImGui::DragFloat("fogHeightFalloff", &fogConstants.fogHeightFalloff);
+            //ImGui::SliderFloat("fogHeightFalloff", &fogConstants.fogHeightFalloff, 0.0001f, 10.0f, "%.4f");
             ImGui::SliderFloat("fogCutoffDistance", &fogConstants.fogCutoffDistance, 0.0f, 1000.0f, "%.4f");
             ImGui::SliderFloat("startDistance", &fogConstants.startDistance, 0.0f, 100.0f, "%.4f");
 
@@ -784,6 +768,20 @@ void Shader::SetRasterizerState(int rasterizerState)
 {
     Graphics::Instance().GetDeviceContext()->
         RSSetState(rasterizerStates[rasterizerState].Get());
+}
+
+void Shader::SetSamplerState(ID3D11DeviceContext* deviceContext)
+{  
+    // サンプラーステート
+    {
+        deviceContext->PSSetSamplers(0, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::POINT)].GetAddressOf());
+        deviceContext->PSSetSamplers(1, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR)].GetAddressOf());
+        deviceContext->PSSetSamplers(2, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::ANISOTROPIC)].GetAddressOf());
+        deviceContext->PSSetSamplers(3, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_BLACK)].GetAddressOf());
+        deviceContext->PSSetSamplers(4, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_WHITE)].GetAddressOf());
+        // SHADOW
+        deviceContext->PSSetSamplers(5, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::COMPARISON_LINEAR_BORDER_WHITE)].GetAddressOf());
+    }
 }
 
 void Shader::EntryLight()

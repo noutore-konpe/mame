@@ -15,7 +15,6 @@ Player::Player()
 
     // モデル生成
     {
-
         model = std::make_unique<Model>(graphics.GetDevice(),            
             //"./Resources/Model/Character/Player/sotai.fbx");
             //"./Resources/Model/Character/Player/P_Chara.fbx");
@@ -35,13 +34,21 @@ void Player::Initialize()
     Character::Initialize();
 
     // 待機アニメーションに設定してる
-    //Character::PlayAnimation(0, true);
+    //Character::PlayAnimation(2, true);
     Character::PlayBlendAnimation(0,1, true);
 
     //カメラがプレイヤーを追いかけるよう設定
     Camera::Instance().SetTraget(GetTransform());
 
     //stateMachine.RegisterState(new PlayerState::NormalState());
+
+    GetTransform()->SetScaleFactor(0.75f);
+
+    level = 1;
+    curExp = 0;
+    totalExp = 0;
+    levelUpExp = 100;
+    isSelectingAbility = 0;
 }
 
 // 終了化
@@ -139,6 +146,10 @@ void Player::UpdateVelocity(float elapsedTime)
     float ay = gamePad.GetAxisLY();
 
     float length{ sqrtf(velocity.x * velocity.x + velocity.z * velocity.z) };
+
+    //アニメーションの重みの変更
+    model->weight = length / maxDashSpeed;
+
     if (length > 0.0f)
     {
         //入力がないなら減速
@@ -178,18 +189,20 @@ void Player::UpdateVelocity(float elapsedTime)
         float acceleration;//加速力
         float maxSpeed;//最大速度
 
-        //ダッシュ
-        if (InputDash())
-        {
-            acceleration = this->acceleration * elapsedTime;
-            maxSpeed = maxDashSpeed;
-        }
-        else
-        {
-            acceleration = this->acceleration * elapsedTime;
-            maxSpeed = this->maxSpeed;
-        }
+        ////ダッシュ
+        //if (InputDash())
+        //{
+        //    acceleration = this->acceleration * elapsedTime;
+        //    maxSpeed = maxDashSpeed;
+        //}
+        //else
+        //{
+        //    acceleration = this->acceleration * elapsedTime;
+        //    maxSpeed = this->maxSpeed;
+        //}
 
+        acceleration = this->acceleration * elapsedTime;
+        maxSpeed = maxDashSpeed;
 
         //移動ベクトルによる加速処理
         velocity.x += moveVec.x * acceleration;
@@ -207,7 +220,6 @@ void Player::UpdateVelocity(float elapsedTime)
 
             length = maxSpeed;
         }
-
     }
 }
 
@@ -231,8 +243,6 @@ void Player::CameraControllerUpdate(float elapsedTime)
         rotX = std::clamp(rotX,-0.4f,0.8f);
         cTransform->SetRotationX(rotX);
     }
-    
-
 
     //cTransform->SetRotationX(DirectX::XMConvertToRadians(15.0f));
 }
@@ -263,4 +273,16 @@ void Player::DrawDebug()
         ImGui::EndMenu();
     }
 #endif // USE_IMGUI
+}
+
+void Player::LevelUpdate()
+{
+    if(curExp > levelUpExp)
+    {
+        level++;
+        curExp -= levelUpExp;
+
+        //レベルが上がると能力を取得出来る
+        isSelectingAbility = true;
+    }
 }

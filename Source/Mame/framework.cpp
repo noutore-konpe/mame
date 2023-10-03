@@ -74,6 +74,8 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
 {
     Graphics& graphics = Graphics::Instance();
 
+    graphics.GetShader()->SetSamplerState(graphics.GetDeviceContext());
+
     // todo scenemanager
     Mame::Scene::SceneManager::Instance().Render(elapsed_time);
 

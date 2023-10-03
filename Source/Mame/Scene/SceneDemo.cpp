@@ -163,7 +163,8 @@ void SceneDemo::CreateResource()
 #endif// PARTICLE
 
     // ZELAD
-    CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/SagePS.cso", sagePS.GetAddressOf());
+    CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/SageAura.cso", sagePS.GetAddressOf());
+    //CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/SagePS.cso", sagePS.GetAddressOf());
     CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/GenerateAuraPS.cso", auraEffectPS.GetAddressOf());
     framebuffers[2] = std::make_unique<FrameBuffer>(graphics.GetDevice(), 1024, 1024, false/*has_depth*/);
     auraEffect = std::make_unique<decltype(auraEffect)::element_type>(graphics.GetDevice());
@@ -348,6 +349,8 @@ void SceneDemo::Render(const float& elapsedTime)
     Graphics& graphics = Graphics::Instance();
 
     Shader::ShadowConstants shadowConstants{};
+
+    graphics.GetShader()->SetSamplerState(graphics.GetDeviceContext());
 
     // ï`âÊÇÃèâä˙ê›íË
     {

@@ -72,8 +72,9 @@ public: // éÊìæÅEê›íËÅ@ä÷òA
     void SetEmissiveScrollDirection(DirectX::XMFLOAT2 scroll) { model->skinned_meshes->data.emissiveScrollDirection = scroll; }
     void SetEmissiveColor(DirectX::XMFLOAT4 color) { model->skinned_meshes->data.emissiveColor = color; }
 
-    void Turn(float elapsedTime, float vx, float vz, float rotSpeed);
 
+public: // ä÷êî
+    void Turn(float elapsedTime, float vx, float vz, float rotSpeed);
 
 public:
     std::unique_ptr<Model> model = nullptr;

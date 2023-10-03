@@ -210,6 +210,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\AttackSkill.cpp" />
     <ClCompile Include="Source\Mame\Game\BaseCharacterAI.cpp" />
     <ClCompile Include="Source\Mame\Game\BehaviorData.cpp" />
     <ClCompile Include="Source\Mame\Game\BehaviorTree.cpp" />
@@ -291,7 +292,9 @@
     <ClInclude Include="Source\Mame\Game\AbilityManager.h" />
     <ClInclude Include="Source\Mame\Game\ActionBase.h" />
     <ClInclude Include="Source\Mame\Game\ActionDerived.h" />
+    <ClInclude Include="Source\Mame\Game\AttackSkill.h" />
     <ClInclude Include="Source\Mame\Game\BaseCharacterAI.h" />
+    <ClInclude Include="Source\Mame\Game\BaseSkill.h" />
     <ClInclude Include="Source\Mame\Game\BehaviorData.h" />
     <ClInclude Include="Source\Mame\Game\BehaviorTree.h" />
     <ClInclude Include="Source\Mame\Game\Book.h" />
@@ -566,6 +569,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SageAura.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Source\Shader\SagePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
