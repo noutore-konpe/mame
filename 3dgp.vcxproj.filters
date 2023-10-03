@@ -368,6 +368,9 @@
     <ClCompile Include="Source\Mame\Game\ActionDerived.cpp">
       <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\AttackSkill.cpp">
+      <Filter>mamelib\Mame\Game\Character\Player\Skill</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -627,6 +630,12 @@
     <ClInclude Include="Source\Mame\Game\ActionDerived.h">
       <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Game\BaseSkill.h">
+      <Filter>mamelib\Mame\Game\Character\Player\Skill</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\AttackSkill.h">
+      <Filter>mamelib\Mame\Game\Character\Player\Skill</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">
@@ -810,6 +819,9 @@
     </Filter>
     <Filter Include="mamelib\Mame\Game\Character\BehaviorTree">
       <UniqueIdentifier>{bf183706-12e5-43fa-9b4f-0dcd81710109}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Character\Player\Skill">
+      <UniqueIdentifier>{b0d5c975-3b90-4186-a2d6-36d312de7cda}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
