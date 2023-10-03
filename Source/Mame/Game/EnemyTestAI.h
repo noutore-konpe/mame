@@ -6,7 +6,7 @@ class EnemyTestAI : public BaseEnemyAI
 {
 public:
     EnemyTestAI();
-    //~EnemyTestAI() override;
+    ~EnemyTestAI() override;
 
     void Initialize() override;                     // ‰Šú‰»
     //void Finalize() override;                       // I—¹‰»

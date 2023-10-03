@@ -2,6 +2,14 @@
 #include "JudgmentBase.h"
 //#include "EnemyBlueSlime.h"
 
+class PursuitJudgment : public JudgmentBase
+{
+public:
+	template <class TemplateAI>
+	PursuitJudgment(TemplateAI* enemy) : JudgmentBase(enemy) {}
+	const bool Judgment() override;
+};
+
 // BattleNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
 class BattleJudgment : public JudgmentBase
 {
@@ -31,6 +39,7 @@ template <class TemplateAI>
 	// ”»’è
 	const bool Judgment() override;
 };
+
 
 // WanderNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
 class WanderJudgment : public JudgmentBase

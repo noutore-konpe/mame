@@ -17,6 +17,8 @@ void BaseEnemyAI::Update(const float& elapsedTime)
 {
     using std::make_unique;
 
+    Character::Update(elapsedTime);
+
     // ノード更新
     UpdateNode(elapsedTime);
 
@@ -27,7 +29,7 @@ void BaseEnemyAI::Update(const float& elapsedTime)
     //UpdateInvincibleTimer(elapsedTime);
 
     // アニメーション更新
-    model->UpdateAnimation(elapsedTime);
+    Character::UpdateAnimation(elapsedTime);
 
 }
 
@@ -47,11 +49,13 @@ void BaseEnemyAI::DrawDebug()
                         : u8"なし";
         ImGui::Text(u8"Behavior：%s", str.c_str());
 
+        ImGui::InputFloat("RunTimer", &runTimer_);
+
         Character::DrawDebug();
 
-        float r = GetRange();
-        ImGui::DragFloat("range", &r);
-        SetRange(r);
+        //float r = GetRange();
+        //ImGui::DragFloat("range", &r);
+        //SetRange(r);
 
         ImGui::EndMenu();
     }
@@ -74,15 +78,12 @@ void BaseEnemyAI::Turn(
     const float elapsedTime,
     float vx,
     float vz,
-    float turnSpeed)
+    float turnSpeed /*Degree*/)
 {
     if (vx == 0.0f && vz == 0.0f) return;
 
     using DirectX::XMFLOAT3;
     using DirectX::XMFLOAT4;
-
-    XMFLOAT4 rotation = GetTransform()->GetRotation();
-    turnSpeed = ToRadian(turnSpeed * elapsedTime);
 
     const float length = sqrtf(vx * vx + vz * vz);
     if (length < 0.001f) return;
@@ -90,22 +91,24 @@ void BaseEnemyAI::Turn(
     vx /= length;
     vz /= length;
 
+    XMFLOAT4 rotation = GetTransform()->GetRotation();
     const float frontX = ::sinf(rotation.y);
     const float frontZ = ::cosf(rotation.y);
 
     const float dot = (frontX * vx) + (frontZ * vz);
 
     // 回転角が微小な場合は回転を行わない
-    const float angleAbs = ::fabsf(::acosf(dot)); // ラジアン絶対値
-    if (angleAbs <= 0.01f) return;
+    const float angle = ::acosf(dot); // ラジアン絶対値
+    if (::fabsf(angle) <= 0.01f) return;
 
     float rot = 1.0f - dot;
+    turnSpeed = ToRadian(turnSpeed) * elapsedTime;
     if (rot > turnSpeed) rot = turnSpeed;
 
     //左右判定のための外積
     const float cross = (frontZ * vx) - (frontX * vz);
 
-    rotation.y += (cross < 0.0f) ? -rot : +rot;
+    rotation.y += (cross < 0.0f) ? -rot : rot;
 
     GetTransform()->SetRotation(rotation);
 }

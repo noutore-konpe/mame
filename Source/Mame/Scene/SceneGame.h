@@ -13,11 +13,6 @@
 
 #include "../Game/Stage.h"
 
-#include "../Game/EnemySlime.h"
-#include "../Game/EnemyAura.h"
-
-
-
 class SceneGame : public Mame::Scene::BaseScene
 {
 public: // Šî’êƒNƒ‰ƒX‚É‚ ‚éŠÖ”
@@ -44,7 +39,7 @@ private: // •Ï”“™X
     std::unique_ptr<Stage> stageWall;
 
     // enemy
-    std::unique_ptr<EnemyAura> enemyAura;
+    //std::unique_ptr<EnemyAura> enemyAura;
 
     // effect
     std::unique_ptr<Effect> effect[4];

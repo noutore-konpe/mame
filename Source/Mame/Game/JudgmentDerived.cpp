@@ -1,6 +1,6 @@
 #include "JudgmentDerived.h"
 #include "BaseEnemyAI.h"
-#include "Player.h"
+#include "PlayerManager.h"
 //#include "Mathf.h"
 
 
@@ -75,5 +75,28 @@ const bool EscapeJudgment::Judgment()
 	//{
 	//	return true;
 	//}
+	return false;
+}
+
+const bool PursuitJudgment::Judgment()
+{
+	using DirectX::XMFLOAT3;
+
+	PlayerManager& playerManager = PlayerManager::Instance();
+
+	// プレイヤーとのXZ平面での距離判定
+	const XMFLOAT3	position		= owner_->GetPosition();
+	const XMFLOAT3	targetPosition	= playerManager.GetPlayer()->GetPosition();
+	const float		vx				= targetPosition.x - position.x;
+	const float		vz				= targetPosition.z - position.z;
+	const float		lengthSq		= (vx * vx + vz * vz);
+
+	// 攻撃距離圏外の場合
+	const float attackLength = owner_->GetAttackLength();
+	if (lengthSq > attackLength * attackLength)
+	{
+		return true;
+	}
+
 	return false;
 }

@@ -25,20 +25,18 @@ NodeBase::NodeBase(
 	, sibling_(sibling)
 	, priority_(priority)
 	, selectRule_(selectRule)
-	//, judgment_(judgment)
-	//, action_(action)
+	, judgment_(judgment)
+	, action_(action)
 	, hierarchyNo_(hierarchyNo)
 	, children_(0)
 {
-	judgment_.reset(judgment);
-	action_.reset(action);
 }
 
 // デストラクタ
 NodeBase::~NodeBase()
 {
-	//SafeDeletePtr(judgment_);
-	//SafeDeletePtr(action_);
+	SafeDeletePtr(judgment_);
+	SafeDeletePtr(action_);
 }
 
 // 子ノードゲッター

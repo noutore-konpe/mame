@@ -2,6 +2,9 @@
 #include "../Graphics/Graphics.h"
 #include "../Resource/texture.h"
 
+#include "../Game/ActionDerived.h"
+#include "../Game/JudgmentDerived.h"
+
 int EnemyAura::nameNum_ = 0;
 
 // コンストラクタ
@@ -31,10 +34,17 @@ EnemyAura::EnemyAura()
             emissiveTextureUVScroll.GetAddressOf());
     }
 
-    behaviorData_ = make_unique<BehaviorData>();
-    behaviorTree_ = make_unique<BehaviorTree>(this);
 
-    behaviorTree_->AddNode("", "Root", 0, BehaviorTree::SelectRule::Priority, nullptr, nullptr);
+    // BehaviorTree設定
+    {
+        behaviorData_ = make_unique<BehaviorData>();
+        behaviorTree_ = make_unique<BehaviorTree>(this);
+
+        behaviorTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);
+        behaviorTree_->AddNode("Root", "Pursuit", 1, SelectRule::Non, new PursuitJudgment(this), new PursuitAction(this));
+        behaviorTree_->AddNode("Root", "Idle",    2, SelectRule::Non, nullptr, new IdleAction(this));
+    }
+
 
     // ImGui名前設定
     SetName("AuraEnemy" + std::to_string(nameNum_++));
@@ -43,6 +53,7 @@ EnemyAura::EnemyAura()
 // デストラクタ
 EnemyAura::~EnemyAura()
 {
+    --nameNum_;
 }
 
 // 初期化
@@ -69,8 +80,8 @@ void EnemyAura::Update(const float& elapsedTime)
 {
     BaseEnemyAI::Update(elapsedTime);
 
-    // アニメーション更新
-    Character::UpdateAnimation(elapsedTime);
+    //// アニメーション更新
+    //Character::UpdateAnimation(elapsedTime);
 }
 
 // Updateの後に呼ばれる
@@ -95,6 +106,7 @@ void EnemyAura::Render(const float& scale, ID3D11PixelShader* psShader)
 
 void EnemyAura::DrawDebug()
 {
+    BaseEnemyAI::DrawDebug();
 }
 
 void EnemyAura::UpdateConstants()

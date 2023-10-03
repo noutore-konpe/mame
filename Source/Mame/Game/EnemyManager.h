@@ -8,7 +8,7 @@ class EnemyManager
 {
 private:
     EnemyManager()  {}
-    ~EnemyManager() { Clear(); }
+    ~EnemyManager() {}
 
 public:
     // 唯一のインスタンス取得
@@ -20,7 +20,9 @@ public:
 
     void Initialize();                      // 初期化
     void Finalize();
+    void Begin();
     void Update(const float elapsedTime);  // 更新処理
+    void End();
     void Render(const float scale, ID3D11PixelShader* psShader = nullptr);  // 描画処理
     void DrawDebug();                       // デバッグ描画
 

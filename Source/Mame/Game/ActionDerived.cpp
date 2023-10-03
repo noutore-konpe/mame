@@ -2,12 +2,127 @@
 
 #include "../../Taki174/OperatorXMFloat3.h"
 #include "../../Taki174/FunctionXMFloat3.h"
+#include "../../Taki174/Common.h"
 
 //#include "EnemyBlueSlime.h"
 #include "BaseEnemyAI.h"
 #include "PlayerManager.h"
 //#include "Mathf.h"
 
+
+// 待機行動
+const ActionBase::State IdleAction::Run(const float elapsedTime)
+{
+	using DirectX::XMFLOAT3;
+
+	PlayerManager& playerManager = PlayerManager::Instance();
+
+	//float runTimer = owner_->GetRunTimer();
+	switch (step_)
+	{
+	case 0:
+		owner_->SetRunTimer(::RandFloat(2.0f, 1.0f));
+	//	owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::IdleNormal), true);
+
+		++step_;
+		[[fallthrough]];
+	//	break;
+	case 1:
+	//	runTimer -= elapsedTime;
+	//	owner_->SetRunTimer(runTimer);
+		// タイマー更新
+		owner_->ElapseRunTimer(elapsedTime);
+
+		// 待機時間が過ぎた時
+		if (owner_->GetRunTimer() <= 0.0f)
+		{
+			//owner_->SetRandomTargetPosition();
+			owner_->SetRunTimer(0.0f);
+			step_ = 0;
+
+			return ActionBase::State::Complete;
+		}
+
+		const XMFLOAT3 position			= owner_->GetPosition();
+		const XMFLOAT3 targetPosition	= playerManager.GetPlayer()->GetPosition();
+		const float vx	= targetPosition.x - position.x;
+		const float vz	= targetPosition.z - position.z;
+		owner_->Turn(elapsedTime, vx, vz, owner_->GetTurnSpeed());
+
+	//	// プレイヤーを見つけた時
+	//	if (owner_->SearchPlayer())
+	//	{
+	//		step_ = 0;
+	//		return ActionBase::State::Complete;
+	//	}
+	//	break;
+	}
+
+	return ActionBase::State::Run;
+}
+
+
+// 追跡行動
+const ActionBase::State PursuitAction::Run(const float elapsedTime)
+{
+	using DirectX::XMFLOAT3;
+
+	PlayerManager& playerManager = PlayerManager::Instance();
+
+	//float runTimer = owner_->GetRunTimer();
+	switch (step_)
+	{
+	case 0:
+		// 目標地点をプレイヤー位置に設定
+		owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
+		//owner_->SetRunTimer(Mathf::RandomRange(3.0f, 5.0f));
+		//owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::RunFWD), true);
+
+		++step_;
+		[[fallthrough]];
+		//break;
+	case 1:
+		//runTimer -= elapsedTime;
+		//// タイマー更新
+		//owner_->SetRunTimer(runTimer);
+
+		// 目標地点をプレイヤー位置に設定
+		owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
+
+		// プレイヤーとのXZ平面での距離判定
+		const XMFLOAT3	position = owner_->GetPosition();
+		const XMFLOAT3	targetPosition = owner_->GetTargetPosition();
+		const float		vx = targetPosition.x - position.x;
+		const float		vz = targetPosition.z - position.z;
+		const float		lengthSq = (vx * vx + vz * vz);
+
+		// 攻撃距離圏内まで接近したら追跡成功を返す
+		const float		attackLength = owner_->GetAttackLength();
+		if (lengthSq <= attackLength * attackLength)
+		{
+			step_ = 0;
+			return ActionBase::State::Complete;
+		}
+		// 目標地点へ移動
+		else
+		{
+			owner_->MoveToTarget(elapsedTime, 1.0);
+		}
+
+		//// 行動時間が過ぎた時
+		//if (runTimer <= 0.0f)
+		//{
+		//	step_ = 0;
+		//	// 追跡失敗を返す
+		//	return ActionBase::State::Failed;
+		//}
+
+		break;
+	}
+
+	return ActionBase::State::Run;
+
+}
 
 
 // 攻撃行動
@@ -105,102 +220,6 @@ const ActionBase::State WanderAction::Run(const float elapsedTime)
 	return ActionBase::State::Run;
 }
 
-// 追跡行動
-const ActionBase::State PursuitAction::Run(const float elapsedTime)
-{
-	using DirectX::XMFLOAT3;
-
-	//float runTimer = owner_->GetRunTimer();
-	switch (step_)
-	{
-	case 0:
-		// 目標地点をプレイヤー位置に設定
-		//owner_->SetTargetPosition(PlayerManager::Instance().GetPosition());
-		//owner_->SetRunTimer(Mathf::RandomRange(3.0f, 5.0f));
-		//owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::RunFWD), true);
-		++step_;
-		[[fallthrough]];
-		//break;
-	case 1:
-		//runTimer -= elapsedTime;
-		//// タイマー更新
-		//owner_->SetRunTimer(runTimer);
-		// 目標地点をプレイヤー位置に設定
-		const XMFLOAT3 targetPosition = PlayerManager::Instance().GetPlayer()->GetPosition();
-		owner_->SetTargetPosition(targetPosition);
-		// 目的地点へ移動
-		owner_->MoveToTarget(elapsedTime, 1.0);
-
-		// プレイヤーとの距離を計算
-		//const XMFLOAT3 position = owner_->GetTransform()->GetPosition();
-		//PlayerManager& playerManager = PlayerManager::Instance();
-		//const XMFLOAT3 targetPosition = playerManager.GetPlayer()->GetTransform()->GetPosition();
-
-		//const float dist = sqrtf(vx * vx + vy * vy + vz * vz);
-		//// 攻撃範囲にいるとき
-		//if (dist < owner_->GetAttackRange())
-		//{
-		//	step_ = 0;
-		//	// 追跡成功を返す
-		//	return ActionBase::State::Complete;
-		//}
-		const XMFLOAT3 vec = targetPosition - owner_->GetPosition();
-		const float distSq = XMFloat3LengthSq(vec);
-		// 攻撃範囲にいるとき
-		constexpr float distlimit = 5.0f;
-		if (distSq < distlimit * distlimit)
-		{
-			step_ = 0;
-			// 追跡成功を返す
-			return ActionBase::State::Complete;
-		}
-
-		//// 行動時間が過ぎた時
-		//if (runTimer <= 0.0f)
-		//{
-		//	step_ = 0;
-		//	// 追跡失敗を返す
-		//	return ActionBase::State::Failed;
-		//}
-		break;
-	}
-	return ActionBase::State::Run;
-}
-
-// 待機行動
-const ActionBase::State IdleAction::Run(const float elapsedTime)
-{
-	//float runTimer = owner_->GetRunTimer();
-	//switch (step_)
-	//{
-	//case 0:
-	//	owner_->SetRunTimer(Mathf::RandomRange(3.0f, 5.0f));
-	//	owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::IdleNormal), true);
-	//	step_++;
-	//	break;
-	//case 1:
-	//	runTimer -= elapsedTime;
-	//	// タイマー更新
-	//	owner_->SetRunTimer(runTimer);
-
-	//	// 待機時間が過ぎた時
-	//	if (runTimer <= 0.0f)
-	//	{
-	//		owner_->SetRandomTargetPosition();
-	//		step_ = 0;
-	//		return ActionBase::State::Complete;
-	//	}
-
-	//	// プレイヤーを見つけた時
-	//	if (owner_->SearchPlayer())
-	//	{
-	//		step_ = 0;
-	//		return ActionBase::State::Complete;
-	//	}
-	//	break;
-	//}
-	return ActionBase::State::Run;
-}
 
 // 逃走行動
 const ActionBase::State LeaveAction::Run(const float elapsedTime)

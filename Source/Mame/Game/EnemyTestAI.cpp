@@ -18,7 +18,7 @@ EnemyTestAI::EnemyTestAI()
 
     model = {
         make_unique<Model>(graphics.GetDevice(),
-        "./Resources/Model/Character/Player/P_Motion.fbx")
+        "./Resources/Model/Character/Player/P_Chara.fbx")
     };
 
     behaviorData_ = make_unique<BehaviorData>();
@@ -32,10 +32,14 @@ EnemyTestAI::EnemyTestAI()
 }
 
 
+EnemyTestAI::~EnemyTestAI()
+{
+    --nameNum_;
+}
+
+
 void EnemyTestAI::Initialize()
 {
-    moveSpeed_ = 2.0f;
-    turnSpeed_ = 360.0f;
 }
 
 

@@ -24,7 +24,7 @@ framework::framework(HWND hwnd)
 bool framework::initialize()
 {
     HRESULT hr{ S_OK };
-    
+
     // mouseの初期設定
     input.GetMouse().SetScreenWidth(SCREEN_WIDTH);
     input.GetMouse().SetScreenHeight(SCREEN_HEIGHT);
@@ -39,7 +39,7 @@ bool framework::initialize()
 
     hr = audioManager.xAudio2->CreateMasteringVoice(&audioManager.masterVoice);
     _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-    
+
     // 音楽読み込み
     //audioManager.LoadAudio();
     //audioManager.StopAllAudio(); // 全音楽停止
@@ -81,11 +81,11 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
     IMGUI_CTRL_DISPLAY();
 
     UINT sync_interval{ 0 };
-    graphics.GetSwapChain()->Present(sync_interval, 0); 
+    graphics.GetSwapChain()->Present(sync_interval, 0);
 }
 
 bool framework::uninitialize()
-{    
+{
     // シーン終了化
     Mame::Scene::SceneManager::Instance().Clear();
 

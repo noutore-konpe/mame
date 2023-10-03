@@ -11,7 +11,19 @@ void EnemyManager::Initialize()
 
 void EnemyManager::Finalize()
 {
+    for (BaseEnemyAI*& enemy : enemies_)
+    {
+        enemy->Finalize();
+    }
     Clear();
+}
+
+void EnemyManager::Begin()
+{
+    for (BaseEnemyAI*& enemy : enemies_)
+    {
+        enemy->Begin();
+    }
 }
 
 // 更新処理
@@ -47,6 +59,14 @@ void EnemyManager::Update(const float elapsedTime)
 
     // エネミー同士の衝突判定処理
     //CollisionEnemyVsEnemy();
+}
+
+void EnemyManager::End()
+{
+    for (BaseEnemyAI*& enemy : enemies_)
+    {
+        enemy->End();
+    }
 }
 
 
@@ -90,8 +110,10 @@ void EnemyManager::Clear()
 // デバッグ
 void EnemyManager::DrawDebug()
 {
+#ifdef USE_IMGUI
     for (BaseEnemyAI*& enemy : enemies_)
     {
         enemy->DrawDebug();
     }
+#endif
 }

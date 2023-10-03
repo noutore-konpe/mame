@@ -2,6 +2,26 @@
 #include "ActionBase.h"
 //#include "EnemyBlueSlime.h"
 
+
+// 待機行動
+class IdleAction : public ActionBase
+{
+public:
+	template <class TemplateAI>
+	IdleAction(TemplateAI* enemy) : ActionBase(enemy) {}
+	const ActionBase::State Run(const float elapsedTime) override;
+};
+
+
+// 追跡行動
+class PursuitAction : public ActionBase
+{
+public:
+template <class TemplateAI>
+	PursuitAction(TemplateAI* enemy) : ActionBase(enemy) {}
+	const ActionBase::State Run(const float elapsedTime) override;
+};
+
 // 通常攻撃
 class NormalAction : public ActionBase
 {
@@ -20,14 +40,6 @@ public:
 	const ActionBase::State Run(const float elapsedTime) override;
 };
 
-// 追跡行動
-class PursuitAction : public ActionBase
-{
-public:
-template <class TemplateAI>
-	PursuitAction(TemplateAI* enemy) :ActionBase(enemy) {}
-	const ActionBase::State Run(const float elapsedTime) override;
-};
 
 // 徘徊行動
 class WanderAction : public ActionBase
@@ -38,14 +50,6 @@ template <class TemplateAI>
 	const ActionBase::State Run(const float elapsedTime) override;
 };
 
-// 待機行動
-class IdleAction : public ActionBase
-{
-public:
-template <class TemplateAI>
-	IdleAction(TemplateAI* enemy) :ActionBase(enemy) {}
-	const ActionBase::State Run(const float elapsedTime) override;
-};
 
 // 逃走行動
 class LeaveAction : public ActionBase
