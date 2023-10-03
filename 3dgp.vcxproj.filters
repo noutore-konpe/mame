@@ -337,6 +337,9 @@
     <ClCompile Include="Source\Mame\Resource\Metarmorphose.cpp">
       <Filter>mamelib\Mame\Resource\Model\Metamorphos</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyTestAI.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Mame\Game\BehaviorData.cpp">
       <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
     </ClCompile>
@@ -362,6 +365,9 @@
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\EnemyTestAI.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyAura.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -621,6 +627,9 @@
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\EnemyTestAI.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyAura.h">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClInclude>
   </ItemGroup>

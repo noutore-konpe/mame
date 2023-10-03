@@ -13,6 +13,21 @@ public:
     virtual void Render(const float& scale, ID3D11PixelShader* psShader = nullptr);
     virtual void DrawDebug();
 
+    virtual void UpdateConstants() {}
+
+public: // GPU_Instancing
+    struct Instance
+    {
+        DirectX::XMFLOAT4X4 world;
+        DirectX::XMFLOAT4 color;
+    };
+
+    std::vector<Instance> modelInstance;
+    Microsoft::WRL::ComPtr<ID3D11Buffer> instanceBuffer;
+    UINT maxInstanceCount = 0;
+
+    void RenderInstancing(const Model& m, const std::vector<Instance>& instances);
+
 public: // アニメーション関数関連
     // アニメーション再生設定
     // (アニメーション番号・ループするかどうか・アニメーション再生速度・スムーズ切り替え時間（速度）)
@@ -21,6 +36,13 @@ public: // アニメーション関数関連
         const bool& loop,
         const float& speed = 1.0f,
         const float& blendSeconds = 1.0f
+    );
+
+    void PlayBlendAnimation(
+        const int& index1,
+        const int& index2,
+        const bool& loop,
+        const float& speed = 1.0f
     );
 
     // ブレンド率の計算更新処理
@@ -44,6 +66,12 @@ public: // 取得・設定　関連
 
     void SetRange(const float& r) { range = r; }
     float GetRange() { return range; }
+
+
+    // emissive ※constansのやつなのでこいつを使う場所は UpdateConstansで使ってほしい
+    void SetEmissiveIntensity(float intensity) { model->skinned_meshes->data.emissiveIntensity = intensity; }
+    void SetEmissiveScrollDirection(DirectX::XMFLOAT2 scroll) { model->skinned_meshes->data.emissiveScrollDirection = scroll; }
+    void SetEmissiveColor(DirectX::XMFLOAT4 color) { model->skinned_meshes->data.emissiveColor = color; }
 
     void Turn(float elapsedTime, float vx, float vz, float rotSpeed);
 

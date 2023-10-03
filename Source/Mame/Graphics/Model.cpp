@@ -81,6 +81,14 @@ void Model::Render(const float& scale, ID3D11PixelShader* psShader, int rasteriz
 void Model::DrawDebug()
 {
     GetTransform()->DrawDebug();
+
+    if (ImGui::TreeNode("Animation"))
+    {
+        ImGui::SliderFloat("weight", &weight, 0.0f, 1.0f);
+        ImGui::InputInt("Current Index", &currentAnimationIndex);
+
+        ImGui::TreePop();
+    }
 }
 
 
@@ -103,14 +111,14 @@ void Model::PlayAnimation(
     animationBlendSeconds   = blendSeconds;
 }
 
-void Model::PlayBlendingAnimation(const int& index1, const int& index2, const bool& loop, const float& speed)
+void Model::PlayBlendAnimation(const int& index1, const int& index2, const bool& loop, const float& speed)
 {
     // 設定用のアニメーション番号が現在のアニメーション番号と同じ場合はreturn
-    if (BlendAnimationIndex1 == index1 && BlendAnimationIndex2 == index2) return;
+    if (blendAnimationIndex1 == index1 && blendAnimationIndex2 == index2) return;
 
-    BlendAnimationIndex1 = index1;    // 再生するアニメーション番号を設定
-    BlendAnimationIndex2 = index2;    // 再生するアニメーション番号を設定
-    currentAnimationSeconds = 0.0f;     // アニメーション再生時間リセット
+    blendAnimationIndex1 = index1;    // 再生するアニメーション番号を設定
+    blendAnimationIndex2 = index2;    // 再生するアニメーション番号を設定
+    blendAnimationSeconds = 0.0f;     // アニメーション再生時間リセット
 
     animationLoopFlag = loop;     // ループさせるか
     animationEndFlag = false;    // 再生終了フラグをリセット
@@ -148,6 +156,9 @@ void Model::UpdateAnimation(const float& elapsedTime)
         currentAnimationIndex = -1;    // アニメーション番号リセット
         return;
     }
+
+    //ブレンドアニメーションの再生（再生中の場合これ以降の通常再生の処理はしない）
+    if (UpdateBlendAnimation(elapsedTime))return;
 
     // アニメーション再生時間経過
     currentAnimationSeconds += elapsedTime;
@@ -201,10 +212,6 @@ void Model::UpdateAnimation(const float& elapsedTime)
         // アニメーショントランスフォーム更新
         skinned_meshes->update_animation(keyframe);
     }
-    else if (BlendAnimationIndex1)
-    {
-
-    }
     // キーフレームが一度も更新されていなくてアニメーションが再生しきっていなければ現在のフレームを保存
     else
     {
@@ -212,13 +219,82 @@ void Model::UpdateAnimation(const float& elapsedTime)
     }
 }
 
+bool Model::UpdateBlendAnimation(const float& elapsedTime)
+{
+    if(blendAnimationIndex1 < 0)return false;
+
+    if (animationEndFlag)
+    {
+        animationEndFlag = false; // 終了フラグをリセット
+        blendAnimationIndex1 = -1;    // アニメーション番号リセット
+        blendAnimationIndex2 = -1;
+        return false;
+    }
+
+    //アニメーション再生時間更新
+    blendAnimationSeconds += elapsedTime;
+
+    animation& bAnimation1 = GetAnimation()->at(blendAnimationIndex1);
+    animation& bAnimation2 = GetAnimation()->at(blendAnimationIndex2);
+
+    const size_t frameCount1 = bAnimation1.sequence.size();
+    const size_t frameCount2 = bAnimation2.sequence.size();
+
+    const size_t maxFrameCount = frameCount1;
+    const float frameIndex = (blendAnimationSeconds * bAnimation1.sampling_rate) * animationSpeed;
+
+    //アニメーションが再生しきっている場合
+    if (frameIndex > maxFrameCount)
+    {
+        if (animationLoopFlag)
+        {
+            blendAnimationSeconds = 0.0f;
+            return true;
+        }
+        else
+        {
+            animationEndFlag = true;
+            return true;
+        }
+    }
+
+    //再生フレームを正規化して再生時間の長さを合わせる
+    UINT64 frameIndex1 = static_cast<UINT64>(frameIndex / maxFrameCount * (frameCount1 - 1));
+    UINT64 frameIndex2 = static_cast<UINT64>(frameIndex / maxFrameCount * (frameCount2 - 1));
+    const animation::keyframe* keyframeArr[2] = {
+             &bAnimation1.sequence.at(frameIndex1),
+             &bAnimation2.sequence.at(frameIndex2)
+    };
+    animation::keyframe keyframe1;
+    skinned_meshes->blend_animations(keyframeArr,weight,keyframe1);
+
+    //フレーム補間するためのキーフレーム
+    const animation::keyframe* lerpKeyframeArr[2] = {
+             &bAnimation1.sequence.at(frameIndex1 + 1),
+             &bAnimation2.sequence.at(frameIndex2 + 1)
+    };
+    animation::keyframe keyframe2;
+    skinned_meshes->blend_animations(lerpKeyframeArr,weight,keyframe2);
+
+    // ブレンド率の計算
+    float blendRate = frameIndex;
+
+    
+    const animation::keyframe* resultKeyframeArr[2] = { &keyframe1 ,&keyframe2};
+    skinned_meshes->blend_animations(resultKeyframeArr,blendRate,keyframe);
+
+    skinned_meshes->update_animation(keyframe);
+
+    return true;
+}
+
 
 bool Model::IsPlayAnimation() const
 {
-    if (currentAnimationIndex < 0) return false;
+    if (currentAnimationIndex < 0 && blendAnimationIndex1 < 0) return false;
 
     const int animationIndexEnd = static_cast<int>(skinned_meshes->animation_clips.size());
-    if (currentAnimationIndex >= animationIndexEnd) return false;
+    if (currentAnimationIndex >= animationIndexEnd && blendAnimationIndex1 >= animationIndexEnd) return false;
 
     return true;
 }

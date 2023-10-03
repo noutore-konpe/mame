@@ -11,10 +11,16 @@
 #include "../Game/Collision.h"
 
 #include "../Game/PlayerManager.h"
+
 #include "../Game/ItemManager.h"
 #include "../Game/Book.h"
+
 #include "../Game/ProjectileManager.h"
+
 #include "../Game/EnemyManager.h"
+#include "../Game/EnemyTestAI.h"
+#include "../Game/EnemyAura.h"
+
 
 bool SceneDemo::isDebugRender = true;
 
@@ -88,12 +94,16 @@ void SceneDemo::CreateResource()
         //effect[0] = std::make_unique<Effect>("./Resources/Effect/old/ring.efk");
     }
 
-    // slime
+    // Enemy
     {
-        enemySlime[0] = std::make_unique<EnemySlime>();
-        enemySlime[1] = std::make_unique<EnemySlime>();
+        // slime
+        {
+            enemySlime[0] = std::make_unique<EnemySlime>();
+            enemySlime[1] = std::make_unique<EnemySlime>();
+        }
 
         EnemyManager::Instance().Register(new EnemyTestAI);
+        EnemyManager::Instance().Register(new EnemyAura);
     }
 
     // player
@@ -191,6 +201,7 @@ void SceneDemo::Initialize()
 
         EnemyManager::Instance().Initialize();
     }
+    //enemyAura->Initialize();
 
     // ƒJƒƒ‰
     Camera::Instance().Initialize();
@@ -321,9 +332,10 @@ void SceneDemo::Update(const float& elapsedTime)
             enemySlime[1]->GetTransform()->SetPosition(outPosition);
         }
 
-
         EnemyManager::Instance().Update(elapsedTime);
     }
+
+    //enemyAura->Update(elapsedTime);
 
     // player
     PlayerManager::Instance().Update(elapsedTime);
@@ -405,6 +417,9 @@ void SceneDemo::Render(const float& elapsedTime)
 
                 enemySlime[0]->Render(enemyScaleFactor);
                 enemySlime[1]->Render(enemyScaleFactor);
+
+                EnemyManager::Instance().Render(playerScaleFactor);
+                //enemyAura->Render(enemyScaleFactor);
             }
 
             shadow.shadowMap->Deactivete(graphics.GetDeviceContext());
@@ -478,7 +493,7 @@ void SceneDemo::Render(const float& elapsedTime)
 
         EnemyManager::Instance().Render(playerScaleFactor);
     }
-
+    //enemyAura->Render(enemyScaleFactor);
 
     // item
     {
@@ -629,6 +644,7 @@ void SceneDemo::DrawDebug()
         enemySlime[1]->DrawDebug();
 
         EnemyManager::Instance().DrawDebug();
+        //enemyAura->DrawDebug();
     }
 
     // player

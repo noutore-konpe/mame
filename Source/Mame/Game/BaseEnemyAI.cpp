@@ -10,6 +10,7 @@ BaseEnemyAI::~BaseEnemyAI()
 
 void BaseEnemyAI::Initialize()
 {
+    Character::Initialize();
 }
 
 void BaseEnemyAI::Update(const float& elapsedTime)

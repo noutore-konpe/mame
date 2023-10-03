@@ -220,6 +220,7 @@
     <ClCompile Include="Source\Mame\Game\DemoStateDerived.cpp" />
     <ClCompile Include="Source\Mame\Game\Enemy.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyManager.cpp" />
+    <ClCompile Include="Source\Mame\Game\EnemyAura.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemySlime.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyTestAI.cpp" />
     <ClCompile Include="Source\Mame\Game\Item.cpp" />
@@ -300,6 +301,7 @@
     <ClInclude Include="Source\Mame\Game\DemoStateDerived.h" />
     <ClInclude Include="Source\Mame\Game\Enemy.h" />
     <ClInclude Include="Source\Mame\Game\EnemyManager.h" />
+    <ClInclude Include="Source\Mame\Game\EnemyAura.h" />
     <ClInclude Include="Source\Mame\Game\EnemySlime.h" />
     <ClInclude Include="Source\Mame\Game\EnemyTestAI.h" />
     <ClInclude Include="Source\Mame\Game\Item.h" />

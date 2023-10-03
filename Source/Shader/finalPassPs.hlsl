@@ -14,6 +14,8 @@ Texture2D textureMaps[4] : register(t0);
 #define RGB_SHIFT 1
 #define NOISE 0
 #define SCAN_LINE 0
+#define NEBIT 1
+#define SHAKE 0
 
 float3 reinhardToneMapping(float3 color)
 {
@@ -62,8 +64,34 @@ float4 main(VS_OUT psIn) : SV_TARGET
         color.rgb -= (1 - steped) * abs(sin(psIn.texcoord.y * 50.0 + scanLineTimer * 1.0)) * 0.05;
         color.rgb -= (1 - steped) * abs(sin(psIn.texcoord.y * 100.0 - scanLineTimer * 2.0)) * 0.08;
         color.rgb += steped * 0.1;        
-#endif
+#endif // SCAN_LINE
     }
+    
+    // nebit
+    {
+#if NEBIT
+        float2 samplePoint = psIn.texcoord;
+        float vignette = length(float2(0.5, 0.5) - psIn.texcoord);
+        vignette = clamp(vignette - 0.2, 0, 1);
+        color.rgb -= vignette;        
+#endif // NEBIT
+    }
+    
+    // shake
+    {
+#if SHAKE
+        const float shakeLength = 0.1;  // óhÇÍÇÃîgÇÃêî
+        const float shakeWidth = 0.01;  // óhÇÍÇÃïù
+        const float speed = 5.0;        // óhÇÍÇÃÉXÉsÅ[Éh
+        
+        float offsetX = sin(psIn.texcoord.x * shakeLength + noiseTimer * speed) * shakeWidth;
+        float offsetY = cos(psIn.texcoord.y * shakeLength + noiseTimer * speed) * shakeWidth;
+        
+        float4 shakeColor = textureMaps[0].Sample(samplerStates[POINT], float2(psIn.texcoord.x + offsetX, psIn.texcoord.y + offsetY));
+        color += shakeColor;
+#endif // SHAKE
+    }
+    
     
     
 #if 0

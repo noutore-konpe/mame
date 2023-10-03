@@ -108,7 +108,7 @@ NodeBase* NodeBase::Inference(BehaviorData* data)
 		// children.at(i)->judgmentがnullptrでなければ
 		if (node->judgment_ != nullptr)
 		{
-			// TODO 04_03 children.at(i)->judgment->Judgment()関数を実行し、trueであれば
+			// Judgment関数を実行し、trueであれば
 			// listにchildren.at(i)を追加していく
 			if (node->judgment_->Judgment())
 			{
@@ -117,7 +117,7 @@ NodeBase* NodeBase::Inference(BehaviorData* data)
 		}
 		else
 		{
-			// TODO 04_03 判定クラスがなければ無条件に追加
+			// 判定クラスがなければ無条件に追加
 			candidateList.emplace_back(node);
 		}
 	}
@@ -163,7 +163,7 @@ NodeBase* NodeBase::SelectPriority(std::vector<NodeBase*>* candidateList)
 	NodeBase* selectNode  = nullptr;
 	unsigned int priority = UINT_MAX;
 
-	// TODO 04_04 一番優先順位が高い(値が小さい)ノードを探してselectNodeに格納
+	// 一番優先順位が高い(値が小さい)ノードを探してselectNodeに格納
 	for (size_t i = 0; i < (*candidateList).size(); ++i)
 	{
 		NodeBase* node = (*candidateList).at(i);
@@ -181,7 +181,7 @@ NodeBase* NodeBase::SelectPriority(std::vector<NodeBase*>* candidateList)
 // ランダムでノード選択
 NodeBase* NodeBase::SelectRandom(std::vector<NodeBase*>* candidateList)
 {
-	// TODO 04_05 listのサイズで乱数を取得してselectNoに格納
+	// listのサイズで乱数を取得してselectNoに格納
 	const size_t lastNode = (*candidateList).size() - 1;
 	const size_t selectNo  = static_cast<size_t>(std::rand()) % lastNode;
 
@@ -202,14 +202,13 @@ NodeBase* NodeBase::SelectSequence(
 	// 中間ノードに登録されているノード数以上の場合、
 	if (step_ >= children_.size())
 	{
-		// TODO 04_06 ルールによって処理を切り替える
-		// ルールがBehaviorTree::SelectRule::SequentialLoopingのときは最初から実行するため、stepに0を代入
-		// ルールがBehaviorTree::SelectRule::Sequenceのときは次に実行できるノードがないため、nullptrをリターン
+		// ルールがSequentialLoopingのときは最初から実行するため、stepに0を代入
 		using SelectRule = BehaviorTree::SelectRule;
 		if (SelectRule::SequentialLooping == children_.at(step_)->selectRule_)
 		{
 			step_ = 0;
 		}
+		// ルールがSequenceのときは次に実行できるノードがないため、nullptrをリターン
 		else if (SelectRule::Sequence == children_.at(step_)->selectRule_)
 		{
 			return nullptr;
@@ -225,17 +224,13 @@ NodeBase* NodeBase::SelectSequence(
 		NodeBase* condidateNode = (*itr);
 		if (childNode->GetName() == condidateNode->GetName())
 		{
-			// TODO 04_06 現在の実行ノードの保存、次に実行するステップの保存を行った後、
-			// 現在のステップ番号のノードをリターンしなさい
-			// ①スタックにはdata->PushSequenceNode関数を使用する。保存するデータは実行中の中間ノード。
+			// 現在の実行ノードの保存
 			data->PushSequenceNode(this);
 
-			// ②また、次に実行する中間ノードとステップ数を保存する
-			// 　保存にはdata->SetSequenceStep関数を使用。
-			// 　保存データは中間ノードの名前と次のステップ数です(step + 1)
+			// 次に実行する中間ノードとステップ数を保存する
 			data->SetSequenceStep(childNode->GetName(), step_ + 1);
 
-			// ③ステップ番号目の子ノードを実行ノードとしてリターンする
+			// 現在のステップ番号のノードを返す
 			return childNode;
 		}
 	}
@@ -246,7 +241,7 @@ NodeBase* NodeBase::SelectSequence(
 // 判定
 const bool NodeBase::Judgment()  const
 {
-	// TODO 04_07 judgmentがあるか判断。あればメンバ関数Judgment()実行した結果をリターン。
+	// judgmentがあるか判断。あればメンバ関数Judgment()実行した結果をリターン。
 	if (judgment_ != nullptr)
 	{
 		return judgment_->Judgment();
@@ -258,7 +253,7 @@ const bool NodeBase::Judgment()  const
 // ノード実行
 const ActionBase::State NodeBase::Run(const float elapsedTime)
 {
-	// TODO 04_08 actionがあるか判断。あればメンバ関数Run()実行した結果をリターン。
+	// actionがあるか判断。あればメンバ関数Run()実行した結果をリターン。
 	if (action_ != nullptr)
 	{
 		return action_->Run(elapsedTime);

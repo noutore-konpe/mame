@@ -19,6 +19,10 @@ public:
     void Render(const float& scale, ID3D11PixelShader* psShader = nullptr) override;
     void DrawDebug() override;
 
+    virtual void Finalize() {}
+    virtual void Begin() {}
+    virtual void End() {}
+
 public:
     // –Ú“I’n“_‚ÖˆÚ“®
     void MoveToTarget(

@@ -15,13 +15,11 @@ Player::Player()
 
     // モデル生成
     {
-        model = std::make_unique<Model>(graphics.GetDevice(),
-            //"./Resources/Model/testModel/character.fbx");
-            //"./Resources/Model/P_Chara.fbx");
+
+        model = std::make_unique<Model>(graphics.GetDevice(),            
+            //"./Resources/Model/Character/Player/sotai.fbx");
+            //"./Resources/Model/Character/Player/P_Chara.fbx");
             "./Resources/Model/Character/Player/P_Motion.fbx");
-            //"./Resources/Model/sotai.fbx");
-            //"./Resources/Model/sanaModel/mameoall.fbx");
-            //"./Resources/Model/testModel/nico.fbx");
     }
 }
 
@@ -36,7 +34,8 @@ void Player::Initialize()
     Character::Initialize();
 
     // 待機アニメーションに設定してる
-    Character::PlayAnimation(0, true);
+    //Character::PlayAnimation(0, true);
+    Character::PlayBlendAnimation(0,1, true);
 
     //カメラがプレイヤーを追いかけるよう設定
     Camera::Instance().SetTraget(GetTransform());
@@ -119,7 +118,7 @@ void Player::MoveUpdate(float elapsedTime)
 
     UpdateVelocity(elapsedTime);
 #endif // 0
-
+    
     //GetTransform()->SetPosition(pos);
     DirectX::XMFLOAT3 velo = {
         velocity.x * elapsedTime,
@@ -215,7 +214,7 @@ void Player::CameraControllerUpdate(float elapsedTime)
 {
     //カメラ挙動（今は回転のみ）
     auto* cTransform = Camera::Instance().GetTransform();
-
+    
     GamePad& gamePad = Input::Instance().GetGamePad();
 
     float ax = gamePad.GetAxisRX();
@@ -231,7 +230,7 @@ void Player::CameraControllerUpdate(float elapsedTime)
         rotX = std::clamp(rotX,-0.4f,0.8f);
         cTransform->SetRotationX(rotX);
     }
-
+    
 
 
     //cTransform->SetRotationX(DirectX::XMConvertToRadians(15.0f));

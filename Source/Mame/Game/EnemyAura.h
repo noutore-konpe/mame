@@ -1,11 +1,14 @@
 #pragma once
-#include "Enemy.h"
 
-class EnemySlime : public Enemy
+//#include "Enemy.h"
+#include "BaseEnemyAI.h"
+
+//class EnemyAura : public Enemy
+class EnemyAura : public BaseEnemyAI
 {
 public:
-    EnemySlime();
-    ~EnemySlime() override;
+    EnemyAura();
+    ~EnemyAura() override;
 
     void Initialize()                                           override; // 初期化
     void Finalize()                                             override; // 終了化
@@ -16,5 +19,13 @@ public:
     void DrawDebug()                                            override; // デバッグ描画
 
     void UpdateConstants() override;
+
+private:
+    static int nameNum_;
+
+private:
+    Microsoft::WRL::ComPtr<ID3D11PixelShader> emissiveTextureUVScroll;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> emissiveTexture;
+
 };
 
