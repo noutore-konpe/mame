@@ -14,6 +14,7 @@
 #include "../Game/PlayerManager.h"
 #include "../Game/ItemManager.h"
 #include "../Game/Book.h"
+#include "../Game/MagicCircle.h"
 #include "../Game/ProjectileManager.h"
 
 #ifdef _DEBUG
@@ -46,6 +47,7 @@ void SceneGame::CreateResource()
     // item
     {
         ItemManager::Instance().Register(new Book());
+        ItemManager::Instance().Register(new MagicCircle());
     }
 
     // ps Shader
@@ -433,6 +435,7 @@ void SceneGame::DrawDebug()
         ItemManager::Instance().Register(new Book());
     }
 
+    ItemManager::Instance().DrawDebug();
     
     // ÉJÉÅÉâ
     Camera::Instance().DrawDebug();

@@ -139,6 +139,9 @@
     <FxCompile Include="Source\Shader\EmissiveTextureUVScrollPS.hlsl">
       <Filter>mamelib\Shader\Fbx</Filter>
     </FxCompile>
+    <FxCompile Include="Source\Shader\MagicCirclePS.hlsl">
+      <Filter>mamelib\Shader\Fbx</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Mame\Scene\BaseScene.cpp">
@@ -364,6 +367,9 @@
     <ClCompile Include="Source\Mame\Game\ActionDerived.cpp">
       <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\MagicCircle.cpp">
+      <Filter>mamelib\Mame\Game\Item</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -578,9 +584,9 @@
     <ClInclude Include="Source\Mame\Resource\Metarmorphose.h">
       <Filter>mamelib\Mame\Resource\Model\Metamorphos</Filter>
     </ClInclude>
-	  <ClInclude Include="Source\Mame\Other\Common.h">
-		  <Filter>mamelib\Mame\Other</Filter>
-	  </ClInclude>
+    <ClInclude Include="Source\Mame\Other\Common.h">
+      <Filter>mamelib\Mame\Other</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Mame\Game\EnemyAura.h">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClInclude>
@@ -622,6 +628,9 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\ActionDerived.h">
       <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\MagicCircle.h">
+      <Filter>mamelib\Mame\Game\Item</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

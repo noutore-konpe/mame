@@ -46,8 +46,6 @@ Book::~Book()
 // 初期化
 void Book::Initialize()
 {
-    Item::Initialize();
-
     GetTransform()->SetScaleFactor(3.0f);
 }
 
@@ -65,8 +63,6 @@ void Book::Begin()
 void Book::Update(const float& elapsedTime)
 {
     GetTransform()->SetScaleFactor(3.0f);
-
-    Item::Update(elapsedTime);
 
     // ステートマシン更新
     GetStateMachine()->Update(elapsedTime);
