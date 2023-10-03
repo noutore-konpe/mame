@@ -1,4 +1,5 @@
 #include "AttackSkill.h"
+#include "Player.h"
 
 namespace PlayerSkill
 {
@@ -18,9 +19,26 @@ namespace PlayerSkill
 
     }
 
+    void Drain::DrawDebug()
+    {
+        if (ImGui::TreeNode("Drain"))
+        {
+            ImGui::SliderFloat("Drain Coefficient",&drainCoefficient,0.0f,1.0f);
+
+            ImGui::TreePop();
+        }
+    }
+
+    void Drain::Overlaping()
+    {
+        overlap++;
+        if (overlap <= 1)return;
+        drainCoefficient += 0.1f;
+    }
+
     void Drain::Assimilate(float power)
     {
         float drainAmount = power * drainCoefficient;
-        //player
+        player->ApplyHeal(drainAmount);
     }
 }

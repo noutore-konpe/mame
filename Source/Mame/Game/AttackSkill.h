@@ -14,6 +14,8 @@ namespace PlayerSkill
         void Render()override;
         void DrawDebug()override;
 
+        void Overlaping()override;
+
         //HP‹zûˆ— ‚±‚ê‚ğƒvƒŒƒCƒ„[‚ÌUŒ‚ˆ—‚É‘g‚İ‚Ş
         void Assimilate(float power/*“G‚É—^‚¦‚½UŒ‚‚Ì—Í*/);
 

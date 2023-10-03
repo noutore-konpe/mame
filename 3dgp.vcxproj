@@ -231,6 +231,7 @@
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\MagicCircle.cpp" />
     <ClCompile Include="Source\Mame\Game\NodeBase.cpp" />
+    <ClCompile Include="Source\Mame\Game\ParametricSkill.cpp" />
     <ClCompile Include="Source\Mame\Game\Player.cpp" />
     <ClCompile Include="Source\Mame\Game\PlayerManager.cpp" />
     <ClCompile Include="Source\Mame\Game\PlayerState.cpp" />
@@ -312,6 +313,7 @@
     <ClInclude Include="Source\Mame\Game\JudgmentDerived.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircle.h" />
     <ClInclude Include="Source\Mame\Game\NodeBase.h" />
+    <ClInclude Include="Source\Mame\Game\ParametricSkill.h" />
     <ClInclude Include="Source\Mame\Game\Player.h" />
     <ClInclude Include="Source\Mame\Game\PlayerManager.h" />
     <ClInclude Include="Source\Mame\Game\PlayerState.h" />

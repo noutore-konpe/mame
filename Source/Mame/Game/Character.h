@@ -78,11 +78,17 @@ public: // ŠÖ”
     //€–S‚µ‚½‚ÉŒÄ‚Î‚ê‚é
     virtual void OnDead() {}
 
-    bool ApplyDamage(int damage, float invincibleTime);
+    virtual void OnHealed() {}
+
+    bool ApplyDamage(float damage, float invincibleTime);
+
+    bool ApplyHeal(float heal);
 
 public:
     std::unique_ptr<Model> model = nullptr;
 
+
+    float maxHealth;
     float health;//hp
     float invincibleTime = 1.0f;//–³“GŠÔ
 

@@ -105,7 +105,6 @@ void Character::RenderInstancing(const Model& m, const std::vector<Instance>& in
         // 描画
         //Graphics::Instance().GetDeviceContext()->DrawInstanced()
     }
-
 }
 
 void Character::PlayAnimation(const int& index, const bool& loop, const float& speed, const float& blendSeconds)
@@ -160,4 +159,49 @@ void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
     rotation.y += cross < 0.0f ? -_rotSpeed : _rotSpeed;
 
     transform->SetRotation(rotation);
+}
+
+bool Character::ApplyDamage(float damage, float invincibleTime)
+{
+    //無敵時間か
+    if (this->invincibleTime > 0.0f)return false;
+
+    //ダメージが０の場合は健康状態を変更する必要がない
+    if (damage == 0)return false;
+
+    //死亡している場合は健康状態を変更しない
+    if (health <= 0)return false;
+
+    //ダメージ処理
+    health -= damage;
+
+    //無敵時間設定
+    this->invincibleTime = invincibleTime;
+
+    //死亡通知
+    if (health <= 0)
+    {
+        OnDead();
+    }
+    //ダメージ通知
+    else
+    {
+        OnDamaged();
+    }
+
+    //健康状態が変更した場合はtrueを返す
+    return true;
+}
+
+bool Character::ApplyHeal(float heal)
+{
+    if (heal == 0)return false;
+
+    if (health >= maxHealth)return false;
+
+    health += heal;
+
+    OnHealed();
+
+    return true;
 }

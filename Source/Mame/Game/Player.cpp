@@ -49,6 +49,18 @@ void Player::Initialize()
     totalExp = 0;
     levelUpExp = 100;
     isSelectingAbility = 0;
+
+    //初回時のみスキルの生成と配列挿入をする
+    static bool callOnce = [&]() { //一度だけ呼び出す処理
+        drainSkill = std::make_unique<PlayerSkill::Drain>(this);
+        skillArray.emplace_back(drainSkill.get());
+        
+        return true; 
+    }(); // 右辺はラムダ式の実行
+    for (auto& skill : skillArray)
+    {
+        skill->Initialize();
+    }
 }
 
 // 終了化
@@ -71,6 +83,11 @@ void Player::Update(const float& elapsedTime)
     MoveUpdate(elapsedTime);
 
     CameraControllerUpdate(elapsedTime);
+
+    for (auto& skill : skillArray)
+    {
+        skill->Update(elapsedTime);
+    }
 }
 
 // Updateの後に呼ばれる
@@ -251,6 +268,11 @@ void Player::CameraControllerUpdate(float elapsedTime)
 void Player::Render(const float& scale, ID3D11PixelShader* psShader)
 {
     Character::Render(scale, psShader);
+
+    for (auto& skill : skillArray)
+    {
+        skill->Render();
+    }
 }
 
 // ImGui用
@@ -274,6 +296,15 @@ void Player::DrawDebug()
 
             ImGui::TreePop();
         }
+
+        ImGui::Begin("Skill");
+
+        for (auto& skill : skillArray)
+        {
+            skill->DrawDebug();
+        }
+
+        ImGui::End();
 
 
         ImGui::EndMenu();

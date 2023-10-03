@@ -4,6 +4,9 @@
 #include "StateMachine.h"
 #include "../Input/Input.h"
 
+#include "BaseSkill.h"
+#include "AttackSkill.h"
+
 class Player : public Character
 {
 public: // enum関連
@@ -84,6 +87,13 @@ private:
 
     //---------------------------ステートマシン-------------------------------
     StateMachine<State<Player>> stateMachine;
+    //-----------------------------------------------------------------------
+
+    
+    //---------------------------スキル-------------------------------
+    std::vector<BaseSkill*> skillArray;
+
+    std::unique_ptr<PlayerSkill::Drain> drainSkill;
     //-----------------------------------------------------------------------
 };
 
