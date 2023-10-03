@@ -7,6 +7,10 @@ namespace Mame::Scene
     // 描画の初期化
     void BaseScene::RenderInitialize()
     {
+        // 別スレッド中にデバイスコンテキストが使われていた場合に
+        // 同時アクセスしないように排他制御する
+        std::lock_guard<std::mutex> lock(Graphics::Instance().GetMutex());
+
         Graphics& graphics = Graphics::Instance();
 
         ID3D11RenderTargetView* renderTargetView = graphics.GetRenderTargetView();

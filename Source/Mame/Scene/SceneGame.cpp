@@ -25,10 +25,7 @@ void SceneGame::CreateResource()
 {
     Graphics& graphics = Graphics::Instance();
 
-    // effect
-    {
-        effect[0] = std::make_unique<Effect>("./Resources/Effect/explosion4.efk");
-    }
+
 
     // stage
     {
@@ -111,7 +108,11 @@ void SceneGame::CreateResource()
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
 
-
+    // effect
+    {
+        effect[0] = new Effect("./Resources/Effect/explosion4.efk");
+        //effect[0] = std::make_unique<Effect>("./Resources/Effect/explosion4.efk");
+    }
 }
 
 // èâä˙âª
@@ -139,6 +140,19 @@ void SceneGame::Finalize()
 {
     ItemManager::Instance().Finalize();
     PlayerManager::Instance().Finalize();
+
+    // effect
+    {
+        for (int i = 0; i < 4; ++i)
+        {
+            if (effect[i])
+            {
+                effect[i]->Stop(effect[i]->handle);
+                delete effect[i];
+                effect[i] = nullptr;
+            }
+        }
+    }
 }
 
 // UpdateÇÃëOÇ…åƒÇ—èoÇ≥ÇÍÇÈ

@@ -47,7 +47,8 @@ private: // •Ï”“™X
     std::unique_ptr<EnemyAura> enemyAura;
 
     // effect
-    std::unique_ptr<Effect> effect[4];
+    Effect* effect[4];
+    //std::unique_ptr<Effect> effect[4];
 
     bool isDebugCamera = false;
 
