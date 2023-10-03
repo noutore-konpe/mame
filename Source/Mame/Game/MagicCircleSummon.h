@@ -1,6 +1,8 @@
 #pragma once
 #include "MagicCircle.h"
 
+#include "StateMachine.h"
+
 class MagicCircleSummon
 {
 public:
@@ -11,10 +13,11 @@ public:
         Move2,
     };
 
-    enum class STATE
+    enum class StateMachineState
     {
-        AddScale,
-        MoveUp,
+        DummyState,
+        AppearState,
+        ExpandState,
     };
 
 public:
@@ -27,13 +30,17 @@ public:
     void Render();
     void DrawDebug();
 
-private:
+public:// 取得・設定
+    // ステートマシン
+    StateMachine<State<MagicCircleSummon>>* GetStateMachine() const { return stateMachine.get(); }
+
+
+public:
     std::unique_ptr<MagicCircle> magicCircle[3];
 
-    int state = 0;
     
-
-    float scaleTimer = 0.0f; // easing用
-
+private:
+    // ステートマシン
+    std::unique_ptr<StateMachine<State<MagicCircleSummon>>> stateMachine = nullptr;
 };
 

@@ -231,6 +231,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\MagicCircle.cpp" />
+    <ClCompile Include="Source\Mame\Game\MagicCircleState.cpp" />
     <ClCompile Include="Source\Mame\Game\MagicCircleSummon.cpp" />
     <ClCompile Include="Source\Mame\Game\NodeBase.cpp" />
     <ClCompile Include="Source\Mame\Game\Player.cpp" />
@@ -314,6 +315,7 @@
     <ClInclude Include="Source\Mame\Game\JudgmentBase.h" />
     <ClInclude Include="Source\Mame\Game\JudgmentDerived.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircle.h" />
+    <ClInclude Include="Source\Mame\Game\MagicCircleState.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircleSummon.h" />
     <ClInclude Include="Source\Mame\Game\NodeBase.h" />
     <ClInclude Include="Source\Mame\Game\Player.h" />

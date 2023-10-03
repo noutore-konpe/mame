@@ -382,6 +382,9 @@
     <ClCompile Include="Source\Mame\Game\MagicCircleSummon.cpp">
       <Filter>mamelib\Mame\Game\Item\MagicCircle</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\MagicCircleState.cpp">
+      <Filter>mamelib\Mame\Game\Item\StateMachine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -661,6 +664,9 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\MagicCircleSummon.h">
       <Filter>mamelib\Mame\Game\Item\MagicCircle</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\MagicCircleState.h">
+      <Filter>mamelib\Mame\Game\Item\StateMachine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

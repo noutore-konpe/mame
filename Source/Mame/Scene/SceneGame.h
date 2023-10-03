@@ -50,7 +50,8 @@ private: // •Ï”“™X
     std::unique_ptr<EnemyGolem> enemyGolem;
 
     // –‚–@w
-    std::unique_ptr<MagicCircleSummon> magicCircleSummon;
+    std::unique_ptr<MagicCircleSummon> magicCircleSummon[10];
+    bool isSeveralNum = false;
 
     // effect
     Effect* effect[4];

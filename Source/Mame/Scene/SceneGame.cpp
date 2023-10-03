@@ -53,7 +53,10 @@ void SceneGame::CreateResource()
 
     // ñÇñ@êw
     {
-        magicCircleSummon = std::make_unique<MagicCircleSummon>();
+        for (int i = 0; i < 10; ++i)
+        {
+            magicCircleSummon[i] = std::make_unique<MagicCircleSummon>();
+        }
     }
 
     // ps Shader
@@ -144,7 +147,10 @@ void SceneGame::Initialize()
     stageWall->Initialize();
 
     // ñÇñ@êw
-    magicCircleSummon->Initialize();
+    for (int i = 0; i < 10; ++i)
+    {
+        magicCircleSummon[i]->Initialize();
+    }
 }
 
 // èIóπâª
@@ -232,7 +238,10 @@ void SceneGame::Update(const float& elapsedTime)
     ItemManager::Instance().Update(elapsedTime);
 
     // ñÇñ@êw
-    magicCircleSummon->Update(elapsedTime);
+    for (int i = 0; i < 10; ++i)
+    {
+        magicCircleSummon[i]->Update(elapsedTime);
+    }
 
     // effect
     EffectManager::Instance().Update(elapsedTime);
@@ -363,7 +372,17 @@ void SceneGame::Render(const float& elapsedTime)
         }
 
         // ñÇñ@êw
-        magicCircleSummon->Render();
+        if (isSeveralNum)
+        {
+            for (int i = 0; i < 10; ++i)
+            {
+                magicCircleSummon[i]->Render();
+            }
+        }
+        else
+        {
+            magicCircleSummon[0]->Render();
+        }
     }
 
     shader->SetDepthStencileState(static_cast<size_t>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
@@ -468,10 +487,37 @@ void SceneGame::DrawDebug()
         ItemManager::Instance().Register(new Book());
     }
 
+    if (ImGui::Button("isSeveral"))
+    {
+        isSeveralNum = isSeveralNum ? false : true;
+    }
+
     // ñÇñ@êwçƒê∂
     if (ImGui::Button("magicCircle"))
     {
-        magicCircleSummon->Initialize();
+        if (isSeveralNum)
+        {
+            for (int i = 0; i < 10; ++i)
+            {
+                for (int j = 0; j < 3; ++j)
+                {
+                    magicCircleSummon[i]->magicCircle[j]->GetTransform()->
+                        SetPosition(DirectX::XMFLOAT3(cosf(i) * 7.0f, 0.0f, sinf(i) * 7.0f));
+                }
+
+                magicCircleSummon[i]->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleSummon::StateMachineState::AppearState));
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 3; ++i)
+            {
+                magicCircleSummon[0]->magicCircle[i]->GetTransform()->
+                    SetPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
+            }
+
+            magicCircleSummon[0]->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleSummon::StateMachineState::AppearState));
+        }
     }
 
     PlayerManager::Instance().DrawDebug();
