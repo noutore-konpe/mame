@@ -59,6 +59,7 @@ void Player::Initialize()
     isSelectingSkill = false;//スキルの選択演出中かどうかのフラグ
 
     maxSpeed = 4.2f;
+    maxDodgeSpeed = 6.0f;
     baseAttackPower = 10.0f;
     attackSpeed = 1.0f;
 
@@ -184,6 +185,26 @@ void Player::MoveUpdate(float elapsedTime)
     Turn(elapsedTime,moveVec.x, moveVec.z,360.0f);
 }
 
+void Player::MoveVecUpdate(float ax,float ay)
+{
+    if (ax || ay)
+    {
+        auto cTransform = Camera::Instance().GetTransform();
+
+        auto forward = cTransform->CalcForward();
+        auto right = cTransform->CalcRight();
+        forward.x *= ay;
+        forward.z *= ay;
+        right.x *= ax;
+        right.z *= ax;
+
+        moveVec = { right.x + forward.x,0,right.z + forward.z };
+        float length = sqrtf(moveVec.x * moveVec.x + moveVec.y * moveVec.y);
+        moveVec.x /= length;
+        moveVec.z /= length;
+    }
+}
+
 void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
 {
     //GamePad& gamePad = Input::Instance().GetGamePad();
@@ -269,7 +290,39 @@ void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
 
 void Player::AvoidUpdate(float elapsedTime)
 {
+    auto front = GetTransform()->CalcForward();
 
+    float acceleration = this->acceleration * elapsedTime;
+
+    //移動ベクトルによる加速処理
+    velocity.x += front.x * acceleration;
+    velocity.z += front.z * acceleration;
+
+    //最大速度制限
+    float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+    if (length > maxDodgeSpeed)
+    {
+        DirectX::XMVECTOR vec = { moveVec.x,moveVec.z };
+        vec = DirectX::XMVector2Normalize(vec);
+        DirectX::XMVECTOR velo = DirectX::XMVectorScale(vec, maxDodgeSpeed);
+        velocity.x = DirectX::XMVectorGetX(velo);
+        velocity.z = DirectX::XMVectorGetY(velo);
+
+        length = maxDodgeSpeed;
+    }
+
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    float ax = gamePad.GetAxisLX();
+    float ay = gamePad.GetAxisLY();
+    MoveVecUpdate(ax,ay);
+    Turn(elapsedTime, moveVec.x, moveVec.z, 360.0f);
+
+    DirectX::XMFLOAT3 velo = {
+        velocity.x * elapsedTime,
+        velocity.y * elapsedTime,
+        velocity.z * elapsedTime
+    };
+    GetTransform()->AddPosition(velo);
 }
 
 void Player::CameraControllerUpdate(float elapsedTime)

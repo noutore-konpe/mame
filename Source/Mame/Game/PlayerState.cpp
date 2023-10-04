@@ -37,7 +37,8 @@ namespace PlayerState
 
     void AvoidState::Update(const float& elapsedTime)
     {
-        owner->MoveUpdate(elapsedTime);
+        //owner->MoveUpdate(elapsedTime);
+        owner->AvoidUpdate(elapsedTime);
         if (!owner->IsPlayAnimation())
         {
             owner->GetStateMachine()->ChangeState(Player::NORMAL);

@@ -46,6 +46,9 @@ public:
     void MoveUpdate(float elapsedTime);
     void UpdateVelocity(float elapsedTime, float ax, float ay);
 
+    //入力をカメラから見たベクトルに変更しmoveVec変数に入れる関数
+    void MoveVecUpdate(float ax,float ay);
+
     void AvoidUpdate(float elapsedTime);
 
     void CameraControllerUpdate(float elapsedTime);
@@ -143,6 +146,10 @@ private:
     float baseAttackPower;//基礎攻撃力（これにモーション倍率を掛けて計算する）
 
     float attackSpeed;//攻撃速度
+    //-----------------------------------------------------------------------
+
+    //----------------------------回避---------------------------------------
+    float maxDodgeSpeed;//回避中の移動速度
     //-----------------------------------------------------------------------
 };
 
