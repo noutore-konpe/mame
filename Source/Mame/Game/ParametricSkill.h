@@ -18,7 +18,7 @@ namespace PlayerSkill
         void Overlaping()override;
 
     private:
-        const float speedIncreasing = 0.3f;//上昇値
+        float speedIncreasing = 0.5f;//上昇値
     };
 
     //基礎攻撃力上昇
@@ -35,7 +35,7 @@ namespace PlayerSkill
         void Overlaping()override;
 
     private:
-        const float attackPowerIncreasing = 2.0f;//上昇値
+        float attackPowerIncreasing = 4.0f;//上昇値
     };
 
     //攻撃速度上昇
@@ -52,7 +52,7 @@ namespace PlayerSkill
         void Overlaping()override;
 
     private:
-        const float attackSpeedIncreasing = 0.1f;//上昇値
+        float attackSpeedIncreasing = 0.1f;//上昇値
     };
 
     //本数アップ
