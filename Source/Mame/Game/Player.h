@@ -12,7 +12,7 @@ class Player : public Character
 {
 public: // enum関連
     // ステート
-    enum class STATE
+    enum STATE
     {
         NORMAL,   // 移動、待機等
         ATTACK,   // 攻撃
@@ -20,12 +20,18 @@ public: // enum関連
         DIE,   // 死亡
     };
 
-private: // enum関連
     // アニメーション
-    enum class Animation
+    enum Animation
     {
+        Idle,
+        Dash,
+        Jab_1,
+        Jab_2,
+        //Jab_3,
+        Avoid
     };
 
+    
 public:
     Player();
     ~Player() override;
@@ -38,7 +44,9 @@ public:
     void End();                                     // 毎フレーム一番最後に呼ばれる
 
     void MoveUpdate(float elapsedTime);
-    void UpdateVelocity(float elapsedTime);
+    void UpdateVelocity(float elapsedTime, float ax, float ay);
+
+    void AvoidUpdate(float elapsedTime);
 
     void CameraControllerUpdate(float elapsedTime);
     
@@ -48,6 +56,13 @@ public:
 
     void DrawDebug() override;  // ImGui用
 
+    void PlayAnimation(Animation index,bool loop,float speed = 1.0f) { Character::PlayAnimation(static_cast<int>(index),loop,speed); }
+
+    //汎用関数
+    void PlayWalkAnimation() { PlayBlendAnimation(Idle, Dash, true); }
+
+
+    //入力関数
     static bool InputAttack()
     {
         return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X);
@@ -56,6 +71,11 @@ public:
     static bool InputDash()
     {
         return (Input::Instance().GetGamePad().GetButton() & GamePad::BTN_RIGHT_SHOULDER);
+    }
+
+    static bool inputAvoid()
+    {
+        return (Input::Instance().GetGamePad().GetButton() & GamePad::BTN_A);
     }
 
     //getter,setter
@@ -69,11 +89,17 @@ public:
 
     std::vector<BaseSkill*>& GetSkillArray() { return skillArray; }
 
+    void SetAcceleration(const float accel) { acceleration = accel; }
+
+    StateMachine<State<Player>>* GetStateMachine() { return stateMachine.get(); }
+
 private:
     void LevelUpdate();
 
 public:
     bool isSelectingSkill;//能力の選択演出中かのフラグ
+
+    static constexpr float InitAcceleration = 10.0f;
 
 private:
     //----------------------------カメラ関係----------------------------------
@@ -81,15 +107,15 @@ private:
     //-----------------------------------------------------------------------
 
     //--------------------------移動-----------------------------------------
-    float maxSpeed = 4.0f;
+    float maxSpeed;
     //float maxDashSpeed = 4.0f;
     DirectX::XMFLOAT3 velocity{};
 
     //カメラの向いている方向を前とした移動方向ベクトル
     DirectX::XMFLOAT3 moveVec;
 
-    float deceleration = 5.0f;
-    float acceleration = 10.0f;
+    float deceleration;
+    float acceleration;
     //-----------------------------------------------------------------------
 
     //--------------------------レベル-----------------------------------------
@@ -100,7 +126,7 @@ private:
     //-----------------------------------------------------------------------
 
     //---------------------------ステートマシン-------------------------------
-    StateMachine<State<Player>> stateMachine;
+    std::unique_ptr<StateMachine<State<Player>>> stateMachine;
     //-----------------------------------------------------------------------
 
     

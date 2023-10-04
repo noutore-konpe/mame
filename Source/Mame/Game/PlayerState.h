@@ -7,6 +7,7 @@ namespace PlayerState
     //移動、待機を含めたステート
     class NormalState : public State<Player>
     {
+    public:
         NormalState(Player* player) : State(player, "player") {}
         ~NormalState() {}
 
@@ -18,6 +19,7 @@ namespace PlayerState
     //攻撃
     class AttackState : public State<Player>
     {
+    public:
         AttackState(Player* player) : State(player, "player") {}
         ~AttackState() {}
 
@@ -29,17 +31,22 @@ namespace PlayerState
     //回避
     class AvoidState : public State<Player>
     {
+    public:
         AvoidState(Player* player) : State(player, "player") {}
         ~AvoidState() {}
 
         void Initialize() override;
         void Update(const float& elapsedTime) override;
         void Finalize() override;
+
+    private:
+        float dodgeSpeed  = 15.0f;
     };
 
     //死亡
     class DieState : public State<Player>
     {
+    public:
         DieState(Player* player) : State(player, "player") {}
         ~DieState() {}
 

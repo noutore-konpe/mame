@@ -35,12 +35,19 @@ void Player::Initialize()
 
     // 待機アニメーションに設定してる
     //Character::PlayAnimation(2, true);
-    Character::PlayBlendAnimation(0,1, true);
+    
 
     //カメラがプレイヤーを追いかけるよう設定
     Camera::Instance().SetTraget(GetTransform());
 
-    //stateMachine.RegisterState(new PlayerState::NormalState());
+    stateMachine = std::make_unique<StateMachine<State<Player>>>();
+
+    stateMachine->RegisterState(new PlayerState::NormalState(this));
+    stateMachine->RegisterState(new PlayerState::AttackState(this));
+    stateMachine->RegisterState(new PlayerState::AvoidState(this));
+    stateMachine->RegisterState(new PlayerState::DieState(this));
+
+    stateMachine->SetState(STATE::NORMAL);
 
     GetTransform()->SetScaleFactor(0.7f);
 
@@ -54,6 +61,9 @@ void Player::Initialize()
     maxSpeed = 4.2f;
     baseAttackPower = 10.0f;
     attackSpeed = 1.0f;
+
+    deceleration = 7.0f;
+    acceleration = InitAcceleration;
 
     //初回時のみスキルの生成と配列挿入をする
     if (drainSkill == nullptr)
@@ -98,7 +108,8 @@ void Player::Update(const float& elapsedTime)
 
     Character::UpdateAnimation(elapsedTime);
 
-    MoveUpdate(elapsedTime);
+    stateMachine->Update(elapsedTime);
+    //MoveUpdate(elapsedTime);
 
     CameraControllerUpdate(elapsedTime);
 
@@ -159,7 +170,7 @@ void Player::MoveUpdate(float elapsedTime)
         moveVec.z /= length;
     }
 
-    UpdateVelocity(elapsedTime);
+    UpdateVelocity(elapsedTime,aLx,aLy);
 #endif // 0
     
     //GetTransform()->SetPosition(pos);
@@ -173,12 +184,12 @@ void Player::MoveUpdate(float elapsedTime)
     Turn(elapsedTime,moveVec.x, moveVec.z,360.0f);
 }
 
-void Player::UpdateVelocity(float elapsedTime)
+void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
 {
-    GamePad& gamePad = Input::Instance().GetGamePad();
+    //GamePad& gamePad = Input::Instance().GetGamePad();
 
-    float ax = gamePad.GetAxisLX();
-    float ay = gamePad.GetAxisLY();
+    /*float ax = gamePad.GetAxisLX();
+    float ay = gamePad.GetAxisLY();*/
 
     float length{ sqrtf(velocity.x * velocity.x + velocity.z * velocity.z) };
 
@@ -254,6 +265,11 @@ void Player::UpdateVelocity(float elapsedTime)
             length = maxSpeed;
         }
     }
+}
+
+void Player::AvoidUpdate(float elapsedTime)
+{
+
 }
 
 void Player::CameraControllerUpdate(float elapsedTime)

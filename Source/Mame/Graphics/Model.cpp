@@ -82,11 +82,19 @@ void Model::DrawDebug()
 {
     GetTransform()->DrawDebug();
 
+    static int index;
+
     if (ImGui::TreeNode("Animation"))
     {
         ImGui::SliderFloat("weight", &weight, 0.0f, 1.0f);
         ImGui::SliderFloat("threshold", &blendThreshold, 0.0f, 1.0f);
         ImGui::InputInt("Current Index", &currentAnimationIndex);
+
+        ImGui::SliderInt("set Index", &index, 0, skinned_meshes->animation_clips.size() -  1);
+        if (ImGui::Button("Play Animation"))
+        {
+            PlayAnimation(index,true);
+        }
 
         ImGui::SliderFloat("Animation Speed", &animationSpeed, 0.0f, 3.0f);
 
@@ -107,6 +115,10 @@ void Model::PlayAnimation(
     currentAnimationIndex   = index;    // 再生するアニメーション番号を設定
     currentAnimationSeconds = 0.0f;     // アニメーション再生時間リセット
 
+    blendAnimationIndex1 = -1;    // 再生するアニメーション番号を設定
+    blendAnimationIndex2 = -1;    // 再生するアニメーション番号を設定
+
+
     animationLoopFlag       = loop;     // ループさせるか
     animationEndFlag        = false;    // 再生終了フラグをリセット
 
@@ -120,6 +132,8 @@ void Model::PlayBlendAnimation(const int& index1, const int& index2, const bool&
 {
     // 設定用のアニメーション番号が現在のアニメーション番号と同じ場合はreturn
     if (blendAnimationIndex1 == index1 && blendAnimationIndex2 == index2) return;
+
+    currentAnimationIndex = -1;
 
     blendAnimationIndex1 = index1;    // 再生するアニメーション番号を設定
     blendAnimationIndex2 = index2;    // 再生するアニメーション番号を設定
