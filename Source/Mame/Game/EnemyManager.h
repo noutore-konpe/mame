@@ -18,13 +18,15 @@ public:
         return instance;
     }
 
-    void Initialize();                      // 初期化
+    void Initialize();
     void Finalize();
     void Begin();
-    void Update(const float elapsedTime);  // 更新処理
+    void Update(const float elapsedTime);
     void End();
-    void Render(const float scale, ID3D11PixelShader* psShader = nullptr);  // 描画処理
-    void DrawDebug();                       // デバッグ描画
+    void Render(const float scale, ID3D11PixelShader* psShader = nullptr);
+    void DrawDebug();
+
+    void CollisionEnemyVsEnemy(const float elapsedTime);
 
 public:
     // エネミー登録

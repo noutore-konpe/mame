@@ -44,6 +44,8 @@ public: // æ“¾Eİ’è
     void SetRunTimer(const float runTimer) { runTimer_ = runTimer; }
     void ElapseRunTimer(const float elapsedTime) { runTimer_ = (std::max)(0.0f, runTimer_ - elapsedTime); }
 
+    const float GetRadius() const { return radius_; }
+
 public:
     void Move(
         const float vx,
@@ -98,6 +100,7 @@ protected:
 
     float hp_           = 1.0f;
     float attackDamage_ = 1.0f;
+    float radius_       = 0.5f;
 
     bool isGround_      = false;
 

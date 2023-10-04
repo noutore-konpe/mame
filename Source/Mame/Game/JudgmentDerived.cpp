@@ -18,7 +18,7 @@ const bool CloseRangeAttackJudgment::Judgment()
 		return false;
 	}
 
-	// CRA : 2.Judgment : 近接攻撃行動クールタイムが終わっていなければfalse
+	// CRA : 3.Judgment : 近接攻撃行動クールタイムが終わっていなければfalse
 	if (enemyManager.GetCRAActionCoolTimer() > 0.0f)
 	{
 		return false;
@@ -36,6 +36,23 @@ const bool CloseRangeAttackJudgment::Judgment()
 	if (lengthSq > attackLength * attackLength)
 	{
 		return false;
+	}
+
+	// 他の敵の方がプレイヤーに近ければfalse
+	const size_t enemyCount = enemyManager.GetEnemyCount();
+	for (size_t i = 0; i < enemyCount; ++i)
+	{
+		BaseEnemyAI* enemy = enemyManager.GetEnemy(i);
+
+		if (enemy != owner_)
+		{
+			const XMFLOAT3	otherPosition	= enemy->GetPosition();
+			const float		otherVx			= targetPosition.x - otherPosition.x;
+			const float		otherVz			= targetPosition.z - otherPosition.z;
+			const float		otherLengthSq	= (otherVx * otherVx + otherVz * otherVz);
+
+			if (lengthSq > otherLengthSq) return false;
+		}
 	}
 
 	return true;

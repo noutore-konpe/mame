@@ -1,5 +1,8 @@
 #include "EnemyManager.h"
+
 #include "../../Taki174/Common.h"
+#include "../../Taki174/FunctionXMFloat3.h"
+#include "../Game/Collision.h"
 
 void EnemyManager::Initialize()
 {
@@ -63,9 +66,9 @@ void EnemyManager::Update(const float elapsedTime)
         removes_.clear();
     }
 
-
     // エネミー同士の衝突判定処理
-    //CollisionEnemyVsEnemy();
+    CollisionEnemyVsEnemy(elapsedTime);
+
 }
 
 void EnemyManager::End()
@@ -138,4 +141,54 @@ void EnemyManager::DrawDebug()
     ImGui::Separator();
 
 #endif
+}
+
+
+void EnemyManager::CollisionEnemyVsEnemy(const float elapsedTime)
+{
+    using DirectX::XMFLOAT3;
+
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    const size_t enemyCount = enemyManager.GetEnemyCount();
+    for (size_t a = 0; a < enemyCount; ++a)
+    {
+        BaseEnemyAI* enemyA = enemyManager.GetEnemy(a);
+
+        // a以降の敵と判定を行う（a以前はすでに判定済みのため）
+        for (size_t b = a + 1; b < enemyCount; ++b)
+        {
+            BaseEnemyAI* enemyB = enemyManager.GetEnemy(b);
+
+            const XMFLOAT3  positionA   = enemyA->GetPosition();
+            const XMFLOAT3  positionB   = enemyB->GetPosition();
+            const float     radiusA     = enemyA->GetRadius();
+            const float     radiusB     = enemyB->GetRadius();
+
+            const XMFLOAT3  vecAtoB     = positionB - positionA;
+            const float     lengthSq    = ::XMFloat3LengthSq(vecAtoB);
+            const float     range       = radiusA + radiusB;
+
+
+            if (lengthSq > (range * range)) continue;
+
+
+            const XMFLOAT3 vecAtoB_N = ::XMFloat3Normalize(vecAtoB);
+
+            // CRA : 7.Collisition : 近接攻撃中じゃない方の敵を押し出す
+            if (enemyB->GetActiveNode() != nullptr &&
+                "CloseRangeAttack" == enemyB->GetActiveNode()->GetName())
+            {
+                const XMFLOAT3 vecBtoA_N = vecAtoB_N * (-1.0f);
+                enemyA->SetPosition(positionB + vecBtoA_N * range);
+            }
+            else
+            {
+                enemyB->SetPosition(positionA + vecAtoB_N * range);
+            }
+
+        }
+
+    }
+
 }

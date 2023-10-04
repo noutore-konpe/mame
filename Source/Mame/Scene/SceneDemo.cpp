@@ -326,7 +326,7 @@ void SceneDemo::Update(const float& elapsedTime)
             enemySlime[1]->GetTransform()->GetPosition(),
             //enemySlime1position,
             enemySlime[1]->GetRange(),
-            outPosition
+            &outPosition
         ))
         {
             enemySlime[1]->GetTransform()->SetPosition(outPosition);

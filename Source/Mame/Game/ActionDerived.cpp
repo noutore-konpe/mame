@@ -22,7 +22,7 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 	switch (step_)
 	{
 	case 0:
-		owner_->SetRunTimer(::RandFloat(1.0f, 2.0f));
+	//	owner_->SetRunTimer(::RandFloat(1.0f, 2.0f));
 	//	owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::IdleNormal), true);
 
 		++step_;
@@ -138,7 +138,7 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 	{
 	case 0:
 		// 目標地点をプレイヤー位置に設定
-		//owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
+		owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
 		owner_->SetRunTimer(::RandFloat(+1.0f, +1.0f));
 		//owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::RunFWD), true);
 
@@ -152,20 +152,20 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 		owner_->ElapseRunTimer(elapsedTime);
 
 		// 目標地点をプレイヤー位置に設定
-		//owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
+		owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
 
 		// 行動しているのがわかりやすいように仮で回転させる
-		owner_->GetTransform()->AddRotationY(ToRadian(1000.0f) * elapsedTime);
+		owner_->GetTransform()->AddRotationY(ToRadian(1080.0f) * elapsedTime);
 
 		// 行動時間が過ぎた時
 		if (owner_->GetRunTimer() <= 0.0f)
 		{
 			step_ = 0;
 
-			// CRA : 4.Action : 近接攻撃行動実行中フラグを下ろす
+			// CRA : 5.Action : 近接攻撃行動実行中フラグを下ろす
 			enemyManager.SetIsRunningCRAAction(false);
 
-			// CRA : 4.Action : 近接攻撃行動クールタイマー設定
+			// CRA : 6.Action : 近接攻撃行動クールタイマー設定
 			constexpr float craCoolTime = 0.0f;
 			enemyManager.SetCRAActionCoolTimer(craCoolTime);
 
