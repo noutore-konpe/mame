@@ -11,9 +11,16 @@
 #include "../Game/Collision.h"
 
 #include "../Game/PlayerManager.h"
+
 #include "../Game/ItemManager.h"
 #include "../Game/Book.h"
+
 #include "../Game/ProjectileManager.h"
+
+#include "../Game/EnemyManager.h"
+#include "../Game/EnemyTestAI.h"
+#include "../Game/EnemyAura.h"
+
 
 bool SceneDemo::isDebugRender = true;
 
@@ -87,13 +94,17 @@ void SceneDemo::CreateResource()
         //effect[0] = std::make_unique<Effect>("./Resources/Effect/old/ring.efk");
     }
 
-    // slime
+    // Enemy
     {
-        enemySlime[0] = std::make_unique<EnemySlime>();
-        enemySlime[1] = std::make_unique<EnemySlime>();
-    }
+        // slime
+        {
+            enemySlime[0] = std::make_unique<EnemySlime>();
+            enemySlime[1] = std::make_unique<EnemySlime>();
+        }
 
-    enemyAura = std::make_unique<EnemyAura>();
+        EnemyManager::Instance().Register(new EnemyTestAI);
+        EnemyManager::Instance().Register(new EnemyAura);
+    }
 
     // player
     {
@@ -188,8 +199,10 @@ void SceneDemo::Initialize()
     {
         enemySlime[0]->Initialize();
         enemySlime[1]->Initialize();
+
+        EnemyManager::Instance().Initialize();
     }
-    enemyAura->Initialize();
+    //enemyAura->Initialize();
 
     // ƒJƒƒ‰
     Camera::Instance().Initialize();
@@ -212,6 +225,8 @@ void SceneDemo::Finalize()
     // item
     ItemManager::Instance().Finalize();
 
+    EnemyManager::Instance().Finalize();
+
     // player
     PlayerManager::Instance().Finalize();
 }
@@ -227,7 +242,7 @@ void SceneDemo::Update(const float& elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
 
-    
+
 #if PARTICLE
     if (gamePad.GetButtonDown() & GamePad::BTN_A)
     {
@@ -267,7 +282,7 @@ void SceneDemo::Update(const float& elapsedTime)
     // Debug—pƒJƒƒ‰
     if (gamePad.GetButtonDown() & GamePad::BTN_X)isDebugCamera = isDebugCamera ? false : true;
     if (isDebugCamera)
-    {        
+    {
         int posX = 1980 / 2;
         int posY = 1080 / 2;
 
@@ -282,7 +297,7 @@ void SceneDemo::Update(const float& elapsedTime)
         DirectX::XMFLOAT2 moveVectorFloat2;
         DirectX::XMStoreFloat2(&moveVectorFloat2, moveVector);
 
-        Camera::Instance().UpdateDebug(elapsedTime, moveVectorFloat2);        
+        Camera::Instance().UpdateDebug(elapsedTime, moveVectorFloat2);
 
         SetCursorPos(posX, posY);
     }
@@ -293,10 +308,10 @@ void SceneDemo::Update(const float& elapsedTime)
     }
 
     // slime
-    {        
+    {
         enemySlime[0]->Update(elapsedTime);
         enemySlime[1]->Update(elapsedTime);
-        
+
         //DirectX::XMFLOAT3 enemySlime0offset = enemySlime[0]->GetDebugSqhereOffset();
         //DirectX::XMFLOAT3 enemySlime1offset = enemySlime[1]->GetDebugSqhereOffset();
         //DirectX::XMFLOAT3 enemySlime0position = enemySlime[0]->GetTransform()->GetPosition();
@@ -312,18 +327,20 @@ void SceneDemo::Update(const float& elapsedTime)
             enemySlime[1]->GetTransform()->GetPosition(),
             //enemySlime1position,
             enemySlime[1]->GetRange(),
-            outPosition
+            &outPosition
         ))
         {
             enemySlime[1]->GetTransform()->SetPosition(outPosition);
         }
+
+        EnemyManager::Instance().Update(elapsedTime);
     }
 
-    enemyAura->Update(elapsedTime);
+    //enemyAura->Update(elapsedTime);
 
     // player
     PlayerManager::Instance().Update(elapsedTime);
-    
+
     // item
     ItemManager::Instance().Update(elapsedTime);
 
@@ -404,7 +421,8 @@ void SceneDemo::Render(const float& elapsedTime)
                 enemySlime[0]->Render(enemyScaleFactor);
                 enemySlime[1]->Render(enemyScaleFactor);
 
-                enemyAura->Render(enemyScaleFactor);
+                EnemyManager::Instance().Render(playerScaleFactor);
+                //enemyAura->Render(enemyScaleFactor);
             }
 
             shadow.shadowMap->Deactivete(graphics.GetDeviceContext());
@@ -470,13 +488,15 @@ void SceneDemo::Render(const float& elapsedTime)
         PlayerManager::Instance().Render(playerScaleFactor);
     }
 
-    // slime
+    // Enemy
     {
         shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
         enemySlime[0]->Render(enemyScaleFactor, sagePS.Get());
         enemySlime[1]->Render(enemyScaleFactor, emissiveTextureUVScrollPS.Get());
+
+        EnemyManager::Instance().Render(playerScaleFactor);
     }
-    enemyAura->Render(enemyScaleFactor);
+    //enemyAura->Render(enemyScaleFactor);
 
     // item
     {
@@ -530,7 +550,7 @@ void SceneDemo::Render(const float& elapsedTime)
 
     framebuffers[0]->Deactivate(graphics.GetDeviceContext());
 
-    
+
     // FOG
 #if FOG
     {
@@ -547,7 +567,7 @@ void SceneDemo::Render(const float& elapsedTime)
         shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_OFF_ZW_OFF));
         shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::CULL_NONE));
         ID3D11ShaderResourceView* shaderResourceView[]
-        { 
+        {
             framebuffers[0]->shaderResourceViews[0].Get(),
             framebuffers[0]->shaderResourceViews[0].Get(),/*dummy*/
             framebuffers[1]->shaderResourceViews[0].Get(),
@@ -621,12 +641,13 @@ void SceneDemo::DrawDebug()
 #endif // SPRITE
     }
 
-    // slime
+    // Enemy
     {
         enemySlime[0]->DrawDebug();
         enemySlime[1]->DrawDebug();
 
-        enemyAura->DrawDebug();
+        EnemyManager::Instance().DrawDebug();
+        //enemyAura->DrawDebug();
     }
 
     // player

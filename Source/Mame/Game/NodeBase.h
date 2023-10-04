@@ -85,10 +85,8 @@ public:
 protected:
 	std::string					name_;			// 名前
 	BehaviorTree::SelectRule	selectRule_;	// 選択ルール
-	//JudgmentBase*				judgment_;		// 判定クラス
-	//ActionBase*				action_;		// 実行クラス
-	std::unique_ptr<JudgmentBase>	judgment_;		// 判定クラス
-	std::unique_ptr<ActionBase>		action_;		// 実行クラス
+	JudgmentBase*				judgment_;		// 判定クラス
+	ActionBase*					action_;		// 実行クラス
 	unsigned int				priority_;		// 優先順位
 	NodeBase*					parent_;		// 親ノード
 	NodeBase*					sibling_;		// 兄弟ノード

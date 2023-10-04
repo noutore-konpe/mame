@@ -10,12 +10,21 @@
 #include "SceneLoading.h"
 #include "SceneTitle.h"
 
-#include "../Graphics/EffectManager.h"
+#include "../../Taki174/Common.h"
+
 #include "../Game/PlayerManager.h"
 #include "../Game/ItemManager.h"
 #include "../Game/Book.h"
+
 #include "../Game/MagicCircle.h"
+
+
+#include "../Game/EnemyManager.h"
+#include "../Game/EnemyTestAI.h"
+#include "../Game/EnemyAura.h"
+
 #include "../Game/ProjectileManager.h"
+#include "../Graphics/EffectManager.h"
 
 #ifdef _DEBUG
 bool SceneGame::isDebugRender = false;
@@ -27,16 +36,12 @@ void SceneGame::CreateResource()
     Graphics& graphics = Graphics::Instance();
 
 
+    using DirectX::XMFLOAT3;
 
     // stage
     {
         stageBase = std::make_unique<Stage>();
         stageWall = std::make_unique<Stage>("./Resources/Model/Stage/stageWall.fbx");
-    }
-
-    // enemy
-    {
-        enemyAura = std::make_unique<EnemyAura>();
     }
 
     // player
@@ -48,6 +53,20 @@ void SceneGame::CreateResource()
     {
         //ItemManager::Instance().Register(new Book());
         ItemManager::Instance().Register(new MagicCircle());
+    }
+
+    // enemy
+    {
+        // max 6~7
+        //enemyAura = std::make_unique<EnemyAura>();
+        EnemyManager& enemyManager = EnemyManager::Instance();
+        for (int i = 0; i < 7; ++i)
+        {
+            EnemyAura* enemyAura = new EnemyAura;
+            const XMFLOAT3 setPosition = { ::RandFloat(-5.0f, +5.0f), 0.0f, ::RandFloat(-5.0f, +5.0f) };
+            enemyAura->SetPosition(setPosition);
+            enemyManager.Register(enemyAura);
+        }
     }
 
     // ps Shader
@@ -78,7 +97,7 @@ void SceneGame::CreateResource()
     framebuffers[0] = std::make_unique<FrameBuffer>(graphics.GetDevice(), 1280, 720);
     bitBlockTransfer = std::make_unique<FullscreenQuad>(graphics.GetDevice());
 
-    // baseColor : finalPass 
+    // baseColor : finalPass
     CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/finalPassPs.cso", colorPS.GetAddressOf());
 
     // bloom
@@ -123,14 +142,16 @@ void SceneGame::Initialize()
     // ÉJÉÅÉâ
     Camera::Instance().Initialize();
 
-    // enemy
-    enemyAura->Initialize();
-
     // player
     PlayerManager::Instance().Initialize();
 
     // item
     ItemManager::Instance().Initialize();
+
+    // enemy
+    EnemyManager& enemyManager = EnemyManager::Instance();
+    enemyManager.Initialize();
+    //enemyAura->Initialize();
 
     // stage
     stageBase->Initialize();
@@ -140,7 +161,11 @@ void SceneGame::Initialize()
 // èIóπâª
 void SceneGame::Finalize()
 {
+    EnemyManager& enemyManager = EnemyManager::Instance();
+    enemyManager.Finalize();
+
     ItemManager::Instance().Finalize();
+
     PlayerManager::Instance().Finalize();
 
     // effect
@@ -199,16 +224,18 @@ void SceneGame::Update(const float& elapsedTime)
         Camera::Instance().Update();
     }
 
-    // enemy
-    {
-        enemyAura->Update(elapsedTime);
-    }
-
     // player
     PlayerManager::Instance().Update(elapsedTime);
 
     // item
     ItemManager::Instance().Update(elapsedTime);
+
+    // enemy
+    {
+        EnemyManager& enemyManager = EnemyManager::Instance();
+        enemyManager.Update(elapsedTime);
+        //enemyAura->Update(elapsedTime);
+    }
 
     // effect
     EffectManager::Instance().Update(elapsedTime);
@@ -280,7 +307,9 @@ void SceneGame::Render(const float& elapsedTime)
             {
                 PlayerManager::Instance().Render(playerScaleFactor);
 
-                enemyAura->Render(enemyScaleFactor);
+                EnemyManager& enemyManager = EnemyManager::Instance();
+                enemyManager.Render(enemyScaleFactor);
+                //enemyAura->Render(enemyScaleFactor);
             }
 
             shadow.shadowMap->Deactivete(graphics.GetDeviceContext());
@@ -325,7 +354,10 @@ void SceneGame::Render(const float& elapsedTime)
 
         // enemy
         {
-            enemyAura->Render(enemyScaleFactor);
+            EnemyManager& enemyManager = EnemyManager::Instance();
+            enemyManager.Render(enemyScaleFactor);
+            //enemyAura->Render(enemyScaleFactor);
+
             //shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
             //enemySlime[0]->Render(enemyScaleFactor, sagePS.Get());
             //enemySlime[1]->Render(enemyScaleFactor, emissiveTextureUVScrollPS.Get());
@@ -445,6 +477,16 @@ void SceneGame::DrawDebug()
     // ÉJÉÅÉâ
     Camera::Instance().DrawDebug();
 
+
     ImGui::End();
+
+    PlayerManager::Instance().DrawDebug();
+
+    EnemyManager& enemyManager = EnemyManager::Instance();
+    enemyManager.DrawDebug();
+
 #endif
+
+    
+
 }

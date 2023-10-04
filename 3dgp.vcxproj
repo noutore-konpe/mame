@@ -127,7 +127,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>.\External\DirectXTK-main\Bin\Desktop_2019\x64\Debug;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\x64\debug;%(AdditionalLibraryDirectories);.\External\Effekseer170b\lib\vs2019\MD\x64\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;zlib-md.lib;libxml2-md.lib;libfbxsdk-md.lib;DirectXTK.lib;Effekseer.lib;EffekseerRendererDX11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;zlib-md.lib;libxml2-md.lib;libfbxsdk-md.lib
+;DirectXTK.lib;Effekseer.lib;EffekseerRendererDX11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -166,7 +167,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
@@ -207,12 +208,13 @@
     <ClCompile Include="Source\Mame\Game\Ability.cpp" />
     <ClCompile Include="Source\Mame\Game\AbilityManager.cpp" />
     <ClCompile Include="Source\Mame\Game\ActionDerived.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\AttackSkill.cpp" />
     <ClCompile Include="Source\Mame\Game\BaseCharacterAI.cpp" />
     <ClCompile Include="Source\Mame\Game\BaseSkill.cpp" />
+    <ClCompile Include="Source\Mame\Game\BaseEnemyAI.cpp" />
     <ClCompile Include="Source\Mame\Game\BehaviorData.cpp" />
     <ClCompile Include="Source\Mame\Game\BehaviorTree.cpp" />
     <ClCompile Include="Source\Mame\Game\Book.cpp" />
@@ -221,14 +223,15 @@
     <ClCompile Include="Source\Mame\Game\Collision.cpp" />
     <ClCompile Include="Source\Mame\Game\DemoStateDerived.cpp" />
     <ClCompile Include="Source\Mame\Game\Enemy.cpp" />
+    <ClCompile Include="Source\Mame\Game\EnemyManager.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyAura.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemySlime.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyTestAI.cpp" />
     <ClCompile Include="Source\Mame\Game\Item.cpp" />
     <ClCompile Include="Source\Mame\Game\ItemManager.cpp" />
     <ClCompile Include="Source\Mame\Game\JudgmentDerived.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\MagicCircle.cpp" />
     <ClCompile Include="Source\Mame\Game\NodeBase.cpp" />
@@ -297,6 +300,7 @@
     <ClInclude Include="Source\Mame\Game\AttackSkill.h" />
     <ClInclude Include="Source\Mame\Game\BaseCharacterAI.h" />
     <ClInclude Include="Source\Mame\Game\BaseSkill.h" />
+    <ClInclude Include="Source\Mame\Game\BaseEnemyAI.h" />
     <ClInclude Include="Source\Mame\Game\BehaviorData.h" />
     <ClInclude Include="Source\Mame\Game\BehaviorTree.h" />
     <ClInclude Include="Source\Mame\Game\Book.h" />
@@ -305,6 +309,7 @@
     <ClInclude Include="Source\Mame\Game\Collision.h" />
     <ClInclude Include="Source\Mame\Game\DemoStateDerived.h" />
     <ClInclude Include="Source\Mame\Game\Enemy.h" />
+    <ClInclude Include="Source\Mame\Game\EnemyManager.h" />
     <ClInclude Include="Source\Mame\Game\EnemyAura.h" />
     <ClInclude Include="Source\Mame\Game\EnemySlime.h" />
     <ClInclude Include="Source\Mame\Game\EnemyTestAI.h" />

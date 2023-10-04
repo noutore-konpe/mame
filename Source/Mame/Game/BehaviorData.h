@@ -28,7 +28,7 @@ public:
 	// シーケンスステップのゲッター
 	const int GetSequenceStep(const std::string& name);
 	// シーケンスステップのセッター
-	void SetSequenceStep(const std::string& name, const int step);
+	void SetSequenceStep(const std::string& name, const int step_);
 
 
 private:

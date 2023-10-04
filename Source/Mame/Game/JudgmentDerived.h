@@ -2,52 +2,70 @@
 #include "JudgmentBase.h"
 //#include "EnemyBlueSlime.h"
 
+class PursuitJudgment : public JudgmentBase
+{
+public:
+	template <class TemplateAI>
+	PursuitJudgment(TemplateAI* enemy) : JudgmentBase(enemy) {}
+	const bool Judgment() override;
+};
+
+
+class CloseRangeAttackJudgment : public JudgmentBase
+{
+public:
+	template <class TemplateAI>
+	CloseRangeAttackJudgment(TemplateAI* enemy) : JudgmentBase(enemy) {}
+	const bool Judgment() override;
+};
+
 // BattleNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
-template <class TemplateAI>
 class BattleJudgment : public JudgmentBase
 {
 public:
-	BattleJudgment(TemplateAI* enemy) :JudgmentBase(enemy) {};
+template <class TemplateAI>
+	BattleJudgment(TemplateAI* enemy) : JudgmentBase(enemy) {}
 	// ”»’è
-	bool Judgment();
+	const bool Judgment() override;
 };
 
 // AttackNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
-template <class TemplateAI>
 class AttackJudgment : public JudgmentBase
 {
 public:
-	AttackJudgment(TemplateAI* enemy) :JudgmentBase(enemy) {};
+template <class TemplateAI>
+	AttackJudgment(TemplateAI* enemy) : JudgmentBase(enemy) {}
 	// ”»’è
-	bool Judgment();
+	const bool Judgment() override;
 };
 
 // SkillNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
-template <class TemplateAI>
 class SkillShotJudgment : public JudgmentBase
 {
 public:
-	SkillShotJudgment(TemplateAI* enemy) :JudgmentBase(enemy) {};
+template <class TemplateAI>
+	SkillShotJudgment(TemplateAI* enemy) : JudgmentBase(enemy) {}
 	// ”»’è
-	bool Judgment();
+	const bool Judgment() override;
 };
 
+
 // WanderNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
-template <class TemplateAI>
 class WanderJudgment : public JudgmentBase
 {
 public:
-	WanderJudgment(EnemyBlueSlime* enemy) :JudgmentBase(enemy) {};
+template <class TemplateAI>
+	WanderJudgment(TemplateAI* enemy) : JudgmentBase(enemy) {}
 	// ”»’è
-	bool Judgment();
+	const bool Judgment() override;
 };
-
 
 // Escape‚É‘JˆÚ‚Å‚«‚é‚©”»’è
 class EscapeJudgment : public JudgmentBase
 {
 public:
-	EscapeJudgment(EnemyBlueSlime* enemy) :JudgmentBase(enemy) {};
+	template <class TemplateAI>
+	EscapeJudgment(TemplateAI* enemy) : JudgmentBase(enemy) {}
 	// ”»’è
-	bool Judgment();
+	const bool Judgment() override;
 };

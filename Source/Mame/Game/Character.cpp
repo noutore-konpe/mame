@@ -47,7 +47,7 @@ void Character::Render(const float& scale, ID3D11PixelShader* psShader)
     model->Render(scale, psShader);
 
 #ifdef _DEBUG
-    if(SceneGame::isDebugRender)debugSqhere->Render(1.0f, 1);
+    // if(SceneDemo::isDebugRender)debugSqhere->Render(1.0f, 1);
 #endif // _DEBUG
 }
 
@@ -57,7 +57,7 @@ void Character::DrawDebug()
 #ifdef USE_IMGUI
 
     //GetTransform()->DrawDebug();
-    
+
     model->DrawDebug();
 
 #ifdef _DEBUG

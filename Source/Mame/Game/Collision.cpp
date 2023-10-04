@@ -1,8 +1,14 @@
 #include "Collision.h"
+#include "../../Taki174/FunctionXMFloat3.h"
+
 
 // 球と球の交差判定
-bool Collision::IntersectSphereVsSphere(const DirectX::XMFLOAT3& positionA, const float& radiusA, const DirectX::XMFLOAT3& positionB, const float& radiusB, DirectX::XMFLOAT3& outPositionB)
+bool Collision::IntersectSphereVsSphere(
+    const DirectX::XMFLOAT3& positionA, const float radiusA,
+    const DirectX::XMFLOAT3& positionB, const float radiusB,
+    DirectX::XMFLOAT3* outPosition)
 {
+#if 0
     // B → Aの単位ベクトルを算出
     DirectX::XMVECTOR PositionA = DirectX::XMLoadFloat3(&positionA);
     DirectX::XMVECTOR PositionB = DirectX::XMLoadFloat3(&positionB);
@@ -25,4 +31,20 @@ bool Collision::IntersectSphereVsSphere(const DirectX::XMFLOAT3& positionA, cons
     DirectX::XMStoreFloat3(&outPositionB, PositionB);
 
     return true;
+
+#else
+    using DirectX::XMFLOAT3;
+
+    const XMFLOAT3 vec      = positionB - positionA;
+    const float    lengthSq = ::XMFloat3LengthSq(vec);
+    const float    range    = radiusA + radiusB;
+
+    if (lengthSq > (range * range)) return false;
+
+    const XMFLOAT3 vecN = ::XMFloat3Normalize(vec);
+    (*outPosition) = (positionA + vecN * range);
+
+    return true;
+
+#endif
 }

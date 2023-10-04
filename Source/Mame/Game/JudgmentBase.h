@@ -1,19 +1,19 @@
 #pragma once
 
 //class EnemyBlueSlime;
-class BaseCharacterAI;
+class BaseEnemyAI;
 
 // é¿çsîªíË
 class JudgmentBase
 {
 public:
 	template <class TemplateAI>
-	JudgmentBase(TemplateAI* enemy) :owner_(enemy) {}
+	JudgmentBase(TemplateAI* enemy) : owner_(enemy) {}
 	virtual ~JudgmentBase() {}
 
-	virtual bool Judgment() = 0;
+	virtual const bool Judgment() = 0;
 
 protected:
-	BaseCharacterAI* owner_;
+	BaseEnemyAI* owner_;
 
 };

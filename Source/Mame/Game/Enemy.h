@@ -17,9 +17,7 @@ public:
     virtual void Render(const float& scale, ID3D11PixelShader* psShader);  // 描画処理
     virtual void DrawDebug() = 0;                                       // デバッグ描画
 
-    virtual void UpdateConstants() = 0;
-
-private:
+    //virtual void UpdateConstants() = 0;
 
 };
 

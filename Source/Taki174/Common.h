@@ -45,10 +45,13 @@ inline void rotate(
 
 // float版rand関数(※事前にsrand処理が必要)
 inline const float RandFloat(
-    const float max,
-    const float min)
+    const float min,
+    const float max)
 {
-    const     float randF = static_cast<float>(rand());
-    constexpr float randMax = 0x7fff;
-    return randF / (randMax / ((max + 1.0f) - min)) + min;
+    // 0.0～1.0の間までのランダム値
+    constexpr float randMaxf = 0x7fff;
+    const float value = static_cast<float>(::rand()) / randMaxf;
+
+    // min～maxまでのランダム値に変換
+    return value * (max - min) + min;
 }

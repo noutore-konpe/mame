@@ -13,6 +13,8 @@ public:
     virtual void Render(const float& scale, ID3D11PixelShader* psShader = nullptr);
     virtual void DrawDebug();
 
+    virtual void UpdateConstants() {}
+
 public: // GPU_Instancing
     struct Instance
     {
@@ -55,6 +57,9 @@ public: // アニメーション関数関連
 public: // 取得・設定　関連
     Transform* GetTransform() { return model->GetTransform(); }
     Transform* GetCollisionSqhereTransform() { return &collisionSqhereTransform; }
+
+    const DirectX::XMFLOAT3 GetPosition() { return GetTransform()->GetPosition(); }
+    void SetPosition(const DirectX::XMFLOAT3& pos) { GetTransform()->SetPosition(pos); }
 
     void SetDebugSqhereOffset(DirectX::XMFLOAT3 offset) { debugSqhereOffset = offset; }
     DirectX::XMFLOAT3 GetDebugSqhereOffset() { return debugSqhereOffset; }
@@ -100,8 +105,8 @@ private:
     Transform collisionSqhereTransform{};
     DirectX::XMFLOAT3 debugSqhereOffset{};  // 当たり判定用
     float range = 1.0f;                     // 球当たり判定半径
-    
-    
+
+
 public: // --- ImGui用 --- //
     const char* GetName() const { return name.c_str(); }
     void SetName(std::string n) { name = n; }

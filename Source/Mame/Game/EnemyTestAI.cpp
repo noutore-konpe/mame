@@ -1,7 +1,10 @@
 #include "EnemyTestAI.h"
 
 #include <memory>
+
 #include "../Graphics/Graphics.h"
+#include "JudgmentDerived.h"
+#include "ActionDerived.h"
 
 int EnemyTestAI::nameNum_ = 0;
 
@@ -15,16 +18,23 @@ EnemyTestAI::EnemyTestAI()
 
     model = {
         make_unique<Model>(graphics.GetDevice(),
-        "./Resources/Model/yoshiakiModel/Cube.fbx")
+        "./Resources/Model/Character/Player/P_Chara.fbx")
     };
 
     behaviorData_ = make_unique<BehaviorData>();
     behaviorTree_ = make_unique<BehaviorTree>(this);
 
     behaviorTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);
+    behaviorTree_->AddNode("Root", "Pursuit", 1, SelectRule::Non, nullptr, new PursuitAction(this));
 
     // ImGuiñºëOê›íË
     SetName("EnemyTestAI_" + to_string(nameNum_++));
+}
+
+
+EnemyTestAI::~EnemyTestAI()
+{
+    --nameNum_;
 }
 
 
@@ -33,13 +43,13 @@ void EnemyTestAI::Initialize()
 }
 
 
-void EnemyTestAI::Update(const float elapsedTime)
+void EnemyTestAI::Update(const float& elapsedTime)
 {
-    BaseCharacterAI::Update(elapsedTime);
+    BaseEnemyAI::Update(elapsedTime);
 }
 
 
-void EnemyTestAI::Render(const float elapsedTime, const float scale)
+void EnemyTestAI::Render(const float& scale, ID3D11PixelShader* psShader)
 {
-    BaseCharacterAI::Render(elapsedTime, scale);
+    BaseEnemyAI::Render(scale, psShader);
 }

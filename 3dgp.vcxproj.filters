@@ -343,9 +343,6 @@
     <ClCompile Include="Source\Mame\Resource\Metarmorphose.cpp">
       <Filter>mamelib\Mame\Resource\Model\Metamorphos</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Game\EnemyAura.cpp">
-      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Mame\Game\EnemyTestAI.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClCompile>
@@ -360,9 +357,6 @@
     </ClCompile>
     <ClCompile Include="Source\Taki174\Common.cpp">
       <Filter>mamelib\Taki174</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Mame\Game\BaseCharacterAI.cpp">
-      <Filter>mamelib\Mame\Game\Character</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\JudgmentDerived.cpp">
       <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
@@ -381,6 +375,18 @@
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\BaseSkill.cpp">
       <Filter>mamelib\Mame\Game\Character\Player\Skill</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyManager.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\BaseEnemyAI.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyTestAI.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyAura.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -632,9 +638,6 @@
     <ClInclude Include="Source\Taki174\OperatorXMFloat4.h">
       <Filter>mamelib\Taki174</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\Game\BaseCharacterAI.h">
-      <Filter>mamelib\Mame\Game\Character</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Mame\Game\JudgmentDerived.h">
       <Filter>mamelib\Mame\Game\Character\BehaviorTree</Filter>
     </ClInclude>
@@ -658,6 +661,18 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\ParametricSkill.h">
       <Filter>mamelib\Mame\Game\Character\Player\Skill</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyManager.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\BaseEnemyAI.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyTestAI.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyAura.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -845,6 +860,9 @@
     </Filter>
     <Filter Include="mamelib\Mame\Game\Character\Player\Skill">
       <UniqueIdentifier>{b0d5c975-3b90-4186-a2d6-36d312de7cda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Character\Enemy\EnemyAI">
+      <UniqueIdentifier>{175a548b-8958-4184-bfec-73213a0b20fc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
