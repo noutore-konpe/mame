@@ -1,10 +1,14 @@
 #include "Item.h"
 
+#include "../Graphics/Graphics.h"
+
 int Item::nameNum = 0;
 
 // •`‰æˆ—
 void Item::Render(const float& scale, ID3D11PixelShader* psShader)
 {
+    Graphics::Instance().GetShader()->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::SOLID));
+
     model->Render(scale, psShader);
 }
 

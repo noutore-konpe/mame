@@ -26,7 +26,7 @@ float3 reinhardToneMapping(float3 color)
 }
 
 float4 main(VS_OUT psIn) : SV_TARGET
-{
+{    
     float4 color = textureMaps[0].Sample(samplerStates[POINT], psIn.texcoord);
     float4 bloom = textureMaps[1].Sample(samplerStates[POINT], psIn.texcoord);
     float4 fog = textureMaps[2].Sample(samplerStates[LINEAR_BORDER_BLACK], psIn.texcoord);

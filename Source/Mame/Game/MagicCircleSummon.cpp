@@ -40,7 +40,6 @@ void MagicCircleSummon::Initialize()
     for (int i = 0; i < 3; ++i)
     {
         magicCircle[i]->GetTransform()->SetScale(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
-        magicCircle[i]->SetEmissiveColor(DirectX::XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f));
     }
 }
 
@@ -50,12 +49,20 @@ void MagicCircleSummon::Finalize()
 
 void MagicCircleSummon::Update(const float& elapsedTime)
 {
+
+
     // ステートマシン更新
     GetStateMachine()->Update(elapsedTime);
 }
 
 void MagicCircleSummon::Render()
 {
+    // カラー
+    for (int i = 0; i < 3; ++i)
+    {
+        magicCircle[i]->SetEmissiveColor(DirectX::XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f));
+    }
+
     for (int i = 0; i < 3; ++i)
     {
         magicCircle[i]->Render(0.01f);

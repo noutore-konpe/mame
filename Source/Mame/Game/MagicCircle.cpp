@@ -4,6 +4,8 @@
 
 #include "../Resource/texture.h"
 
+int MagicCircle::nameNum = 0;
+
 // コンストラクタ
 MagicCircle::MagicCircle()
 {
@@ -74,8 +76,9 @@ void MagicCircle::Render(const float& scale, ID3D11PixelShader* psShader)
     Graphics::Instance().GetDeviceContext()->PSSetShaderResources(16, 1, emissiveTexture.GetAddressOf());
 
     Graphics::Instance().GetShader()->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
+    Graphics::Instance().GetShader()->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::CULL_NONE));
 
-    Item::Render(1.0f, magicCirclePS.Get());
+    model->Render(1.0f, magicCirclePS.Get());
 }
 
 void MagicCircle::DrawDebug()

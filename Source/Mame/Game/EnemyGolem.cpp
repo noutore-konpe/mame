@@ -10,6 +10,9 @@ EnemyGolem::EnemyGolem()
     model = std::make_unique<Model>(graphics.GetDevice(),
         "./Resources/Model/Character/Enemy/golem.fbx");
 
+    magicCircleGolem = std::make_unique<MagicCircleGolem>();
+    magicCircleEnemySummon = std::make_unique<MagicCircleEnemySummon>();
+
     // ImGui名前設定
     SetName("EnemyGolem" + std::to_string(nameNum++));
 }
@@ -23,6 +26,9 @@ EnemyGolem::~EnemyGolem()
 void EnemyGolem::Initialize()
 {
     Enemy::Initialize();
+
+    magicCircleGolem->Initialize();
+    magicCircleEnemySummon->Initialize();
 
     // アニメーション再生
     Character::PlayAnimation(0, true);
@@ -42,6 +48,9 @@ void EnemyGolem::Update(const float& elapsedTime)
 {
     Enemy::Update(elapsedTime);
 
+    magicCircleGolem->Update(elapsedTime);
+    magicCircleEnemySummon->Update(elapsedTime);
+
     // アニメーション更新
     //Character::UpdateAnimation(elapsedTime);
 }
@@ -59,6 +68,9 @@ void EnemyGolem::Render(const float& scale, ID3D11PixelShader* psShader)
     UpdateConstants();
 
     Enemy::Render(scale, psShader);
+
+    magicCircleGolem->Render();
+    magicCircleEnemySummon->Render(DirectX::XMFLOAT4(0.8f, 0.44f, 0.24f, 1.0f));
 }
 
 void EnemyGolem::DrawDebug()
@@ -69,6 +81,11 @@ void EnemyGolem::DrawDebug()
         Character::DrawDebug();
 
         model->skinned_meshes->Drawdebug();
+
+        if (ImGui::Button("magicCircle"))
+        {
+            magicCircleEnemySummon->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleEnemySummon::StateMachineState::AppearState));
+        }
 
         ImGui::EndMenu();
     }

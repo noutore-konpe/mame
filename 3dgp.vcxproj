@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -127,8 +127,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>.\External\DirectXTK-main\Bin\Desktop_2019\x64\Debug;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\x64\debug;%(AdditionalLibraryDirectories);.\External\Effekseer170b\lib\vs2019\MD\x64\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;zlib-md.lib;libxml2-md.lib;libfbxsdk-md.lib
-;DirectXTK.lib;Effekseer.lib;EffekseerRendererDX11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;zlib-md.lib;libxml2-md.lib;libfbxsdk-md.lib;DirectXTK.lib;Effekseer.lib;EffekseerRendererDX11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -229,6 +228,10 @@
     <ClCompile Include="Source\Mame\Game\ItemManager.cpp" />
     <ClCompile Include="Source\Mame\Game\JudgmentDerived.cpp" />
     <ClCompile Include="Source\Mame\Game\MagicCircle.cpp" />
+    <ClCompile Include="Source\Mame\Game\MagicCircleEnemySummon.cpp" />
+    <ClCompile Include="Source\Mame\Game\MagicCircleEnemySummonState.cpp" />
+    <ClCompile Include="Source\Mame\Game\MagicCircleGolemState.cpp" />
+    <ClCompile Include="Source\Mame\Game\MagicCircleGolem.cpp" />
     <ClCompile Include="Source\Mame\Game\MagicCircleState.cpp" />
     <ClCompile Include="Source\Mame\Game\MagicCircleSummon.cpp" />
     <ClCompile Include="Source\Mame\Game\NodeBase.cpp" />
@@ -316,6 +319,10 @@
     <ClInclude Include="Source\Mame\Game\JudgmentBase.h" />
     <ClInclude Include="Source\Mame\Game\JudgmentDerived.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircle.h" />
+    <ClInclude Include="Source\Mame\Game\MagicCircleEnemySummon.h" />
+    <ClInclude Include="Source\Mame\Game\MagicCircleEnemySummonState.h" />
+    <ClInclude Include="Source\Mame\Game\MagicCircleGolemState.h" />
+    <ClInclude Include="Source\Mame\Game\MagicCircleGolem.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircleState.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircleSummon.h" />
     <ClInclude Include="Source\Mame\Game\NodeBase.h" />

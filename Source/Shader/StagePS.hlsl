@@ -113,31 +113,7 @@ float4 main(PSIn psIn) : SV_TARGET
     // 最終的なカラー
     float3 finalColor = directionLight;
     
-    // POINT_LIGHT
-#if POINT_LIGHT
-#if POINT_LIGHT_ONE
-    float3 pointLight = CalcLightFromPointLight(psIn);
-    finalColor += pointLight;
-#else
-    for (int i = 0; i < 8; ++i)
-    {
-        float3 pointLight = CalcLightFromPointLight(psIn, pointLig[i]);
-        finalColor += pointLight;
-    }
-#endif// POINT_LIGHT_ONE
-#endif
-    
-    // SPOT_LIGHT
-#if SPOT_LIGHT
-    float3 spotLight = CalcLightFormSpotLight(psIn);
-    finalColor += spotLight;
-#endif
-    
-    // LIM_LIGHT
-#if LIM_LIGHT
-    float3 limLight = color.rgb * CalcLimLight(psIn);
-    finalColor += limLight;
-#endif
+
     
     // HEMISPHERE_LIGHT
 #if HEMISPHERE_LIGHT

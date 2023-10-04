@@ -32,7 +32,7 @@ Model::Model(ID3D11Device* device, const char* fbx_filename, std::vector<std::st
 }
 
 // 描画
-void Model::Render(const float& scale, int rasterizeState)
+void Model::Render(const float& scale, ID3D11PixelShader* psShader)
 {
     Graphics& graphics = Graphics::Instance();
     Shader* shader = graphics.GetShader();
@@ -40,32 +40,6 @@ void Model::Render(const float& scale, int rasterizeState)
     // world行列更新
     DirectX::XMFLOAT4X4 world = {};
     DirectX::XMStoreFloat4x4(&world, GetTransform()->CalcWorldMatrix(scale));
-
-    // ステートセット
-    shader->SetRasterizerState(rasterizeState);
-
-    // Model描画
-    if (&keyframe)
-    {
-        skinned_meshes->render(graphics.GetDeviceContext(), world, GetModelColor(), &keyframe);
-    }
-    else
-    {
-        skinned_meshes->render(graphics.GetDeviceContext(), world, GetModelColor(), nullptr);
-    }
-}
-
-void Model::Render(const float& scale, ID3D11PixelShader* psShader, int rasterizeState)
-{
-    Graphics& graphics = Graphics::Instance();
-    Shader* shader = graphics.GetShader();
-
-    // world行列更新
-    DirectX::XMFLOAT4X4 world = {};
-    DirectX::XMStoreFloat4x4(&world, GetTransform()->CalcWorldMatrix(scale));
-
-    // ステートセット
-    shader->SetRasterizerState(rasterizeState);
 
     // Model描画
     if (&keyframe)
