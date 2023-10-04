@@ -77,7 +77,6 @@ private: // GPU用定数・変数
     } shadow;
     Microsoft::WRL::ComPtr<ID3D11Buffer> shadowConstantBuffer;
 
-    Microsoft::WRL::ComPtr<ID3D11PixelShader> colorPS;
 
     // BLOOM
     std::unique_ptr<Bloom> bloomer;
@@ -89,10 +88,6 @@ private: // GPU用定数・変数
     // PARTICLE
     std::unique_ptr<Particles> particles;
     bool integrateParticles = true;
-
-    // SKYBOX
-    std::shared_ptr<Sprite> skyBoxSprite;
-    std::unique_ptr<SkyBox> skyBox;
 
     // EMISSIVE
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> emissiveTexture;

@@ -16,8 +16,7 @@ public:
     ~Model() {}
 
 
-    void Render(const float& scale, int rasterizeState = 0);
-    void Render(const float& scale, ID3D11PixelShader* psShader = nullptr, int rasterizeState = 0);
+    void Render(const float& scale, ID3D11PixelShader* psShader = nullptr);
      
     void DrawDebug();
 

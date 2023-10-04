@@ -2,6 +2,9 @@
 
 #include "Enemy.h"
 
+#include "MagicCircleGolem.h"
+#include "MagicCircleEnemySummon.h"
+
 class EnemyGolem : public Enemy
 {
 public:
@@ -17,5 +20,9 @@ public:
     void DrawDebug()                                            override; // デバッグ描画
 
     void UpdateConstants() override;
+
+private:
+    std::unique_ptr<MagicCircleGolem> magicCircleGolem;
+    std::unique_ptr<MagicCircleEnemySummon> magicCircleEnemySummon;
 };
 

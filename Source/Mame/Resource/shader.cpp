@@ -301,7 +301,7 @@ Shader::Shader(ID3D11Device* device)
         desc.AntialiasedLineEnable = TRUE;
         hr = device->CreateRasterizerState(&desc, rasterizerStates[static_cast<size_t>(RASTER_STATE::WIREFRAME)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
+        
         desc.FillMode = D3D11_FILL_SOLID;
         desc.CullMode = D3D11_CULL_NONE;
         desc.AntialiasedLineEnable = TRUE;

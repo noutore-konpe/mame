@@ -72,12 +72,7 @@ void SceneGame::CreateResource()
         //CreatePsFromCso(graphics.GetDevice(),"./Resources/Shader/EmissiveTextureUVScrollPS.cso",emissiveTexture)
     }
 
-    // skyBox
-    {
-        skyBoxSprite = std::make_unique<Sprite>(graphics.GetDevice(),
-            L"./Resources/Image/SkyBox/skybox3.jpg");
-        skyBox = std::make_unique<SkyBox>(graphics.GetDevice(), skyBoxSprite);
-    }
+
 
     // particle
     {
@@ -87,9 +82,8 @@ void SceneGame::CreateResource()
     framebuffers[0] = std::make_unique<FrameBuffer>(graphics.GetDevice(), 1280, 720);
     bitBlockTransfer = std::make_unique<FullscreenQuad>(graphics.GetDevice());
 
-    // baseColor : finalPass 
-    CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/finalPassPs.cso", colorPS.GetAddressOf());
-
+    
+    
     // bloom
     {
         bloomer = std::make_unique<Bloom>(graphics.GetDevice(), 1280 / 1, 720 / 1);
@@ -328,9 +322,6 @@ void SceneGame::Render(const float& elapsedTime)
     framebuffers[0]->Clear(graphics.GetDeviceContext());
     framebuffers[0]->Activate(graphics.GetDeviceContext());
 
-    // skybox
-    skyBox->Render(graphics.GetDeviceContext(),
-        Camera::Instance().GetViewMatrix(), Camera::Instance().GetProjectionMatrix());
 
     // SHADOW : bind shadow map at slot 8
     graphics.GetDeviceContext()->PSSetShaderResources(8, 1, shadow.shadowMap->shaderResourceView.GetAddressOf());
@@ -357,6 +348,11 @@ void SceneGame::Render(const float& elapsedTime)
             PlayerManager::Instance().Render(playerScaleFactor);
         }
 
+        // item
+        {
+            ItemManager::Instance().Render(0.01f);
+        }
+
         // enemy
         {
             enemyAura->Render(enemyScaleFactor);
@@ -365,12 +361,6 @@ void SceneGame::Render(const float& elapsedTime)
             //enemySlime[0]->Render(enemyScaleFactor, sagePS.Get());
             //enemySlime[1]->Render(enemyScaleFactor, emissiveTextureUVScrollPS.Get());
         }
-
-        // item
-        {
-            ItemManager::Instance().Render(0.01f);
-        }
-
         // –‚–@w
         if (isSeveralNum)
         {
@@ -450,7 +440,7 @@ void SceneGame::Render(const float& elapsedTime)
             framebuffers[0]->shaderResourceViews[0].Get(),/*dummy*/
             framebuffers[1]->shaderResourceViews[0].Get(),
         };
-        bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceView, 0, _countof(shaderResourceView), colorPS.Get());
+        //bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceView, 0, _countof(shaderResourceView), colorPS.Get());
     }
 
     // BLOOM

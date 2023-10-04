@@ -44,10 +44,12 @@ void Character::Update(const float& elapsedTime)
 // •`‰æˆ—
 void Character::Render(const float& scale, ID3D11PixelShader* psShader)
 {
+    Graphics::Instance().GetShader()->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::SOLID));
     model->Render(scale, psShader);
 
 #ifdef _DEBUG
-    if(SceneGame::isDebugRender)debugSqhere->Render(1.0f, 1);
+    Graphics::Instance().GetShader()->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::WIREFRAME));
+    if(SceneGame::isDebugRender)debugSqhere->Render(1.0f);
 #endif // _DEBUG
 }
 

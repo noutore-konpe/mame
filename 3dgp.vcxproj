@@ -231,6 +231,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\MagicCircle.cpp" />
+    <ClCompile Include="Source\Mame\Game\MagicCircleEnemySummon.cpp" />
+    <ClCompile Include="Source\Mame\Game\MagicCircleEnemySummonState.cpp" />
+    <ClCompile Include="Source\Mame\Game\MagicCircleGolemState.cpp" />
+    <ClCompile Include="Source\Mame\Game\MagicCircleGolem.cpp" />
     <ClCompile Include="Source\Mame\Game\MagicCircleState.cpp" />
     <ClCompile Include="Source\Mame\Game\MagicCircleSummon.cpp" />
     <ClCompile Include="Source\Mame\Game\NodeBase.cpp" />
@@ -315,6 +319,10 @@
     <ClInclude Include="Source\Mame\Game\JudgmentBase.h" />
     <ClInclude Include="Source\Mame\Game\JudgmentDerived.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircle.h" />
+    <ClInclude Include="Source\Mame\Game\MagicCircleEnemySummon.h" />
+    <ClInclude Include="Source\Mame\Game\MagicCircleEnemySummonState.h" />
+    <ClInclude Include="Source\Mame\Game\MagicCircleGolemState.h" />
+    <ClInclude Include="Source\Mame\Game\MagicCircleGolem.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircleState.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircleSummon.h" />
     <ClInclude Include="Source\Mame\Game\NodeBase.h" />
