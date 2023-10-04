@@ -46,7 +46,7 @@ void SceneGame::CreateResource()
 
     // item
     {
-        ItemManager::Instance().Register(new Book());
+        //ItemManager::Instance().Register(new Book());
         ItemManager::Instance().Register(new MagicCircle());
     }
 
@@ -415,6 +415,9 @@ void SceneGame::Render(const float& elapsedTime)
         framebuffers[1]->shaderResourceViews[0].Get(),
     };
     bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceViews, 0, _countof(shaderResourceViews), bloomPS.Get());
+
+    //ƒuƒ‹[ƒ€–³‚µ
+    PlayerManager::Instance().GetPlayer()->SkillImagesRender();
 }
 
 // debug—p

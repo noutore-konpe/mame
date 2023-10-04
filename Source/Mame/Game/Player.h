@@ -6,6 +6,7 @@
 
 #include "BaseSkill.h"
 #include "AttackSkill.h"
+#include "ParametricSkill.h"
 
 class Player : public Character
 {
@@ -43,6 +44,8 @@ public:
     
     void Render(const float& scale, ID3D11PixelShader* psShader = nullptr) override; // 描画処理
     
+    void SkillImagesRender();
+
     void DrawDebug() override;  // ImGui用
 
     static bool InputAttack()
@@ -55,11 +58,22 @@ public:
         return (Input::Instance().GetGamePad().GetButton() & GamePad::BTN_RIGHT_SHOULDER);
     }
 
+    //getter,setter
+    void AddMaxSpeed(const float spd) { maxSpeed += spd; }
+
+    void AddBaseAttackPower(const float power) { baseAttackPower += power; }
+
+    const float GetAttackSpeed() const { return attackSpeed; }
+    void SetAttackSpeed(const float spd) { attackSpeed = spd; }
+    void AddAttackSpeed(const float spd) { attackSpeed += spd; }
+
+    std::vector<BaseSkill*>& GetSkillArray() { return skillArray; }
+
 private:
     void LevelUpdate();
 
 public:
-    bool isSelectingAbility;//能力の選択演出中かのフラグ
+    bool isSelectingSkill;//能力の選択演出中かのフラグ
 
 private:
     //----------------------------カメラ関係----------------------------------
@@ -94,6 +108,15 @@ private:
     std::vector<BaseSkill*> skillArray;
 
     std::unique_ptr<PlayerSkill::Drain> drainSkill;
+    std::unique_ptr<PlayerSkill::MoveSpeedUp> moveSpeedUpSkill;
+    std::unique_ptr<PlayerSkill::AttackPowerUp> attackPowerUpSkill;
+    std::unique_ptr<PlayerSkill::AttackSpeedUp> attackSpeedUpSkill;
+    std::unique_ptr<PlayerSkill::BookIncrease> bookIncreaseSkill;
+
+    //---------------------------攻撃関係-------------------------------
+    float baseAttackPower;//基礎攻撃力（これにモーション倍率を掛けて計算する）
+
+    float attackSpeed;//攻撃速度
     //-----------------------------------------------------------------------
 };
 

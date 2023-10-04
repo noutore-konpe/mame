@@ -212,6 +212,7 @@
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\AttackSkill.cpp" />
     <ClCompile Include="Source\Mame\Game\BaseCharacterAI.cpp" />
+    <ClCompile Include="Source\Mame\Game\BaseSkill.cpp" />
     <ClCompile Include="Source\Mame\Game\BehaviorData.cpp" />
     <ClCompile Include="Source\Mame\Game\BehaviorTree.cpp" />
     <ClCompile Include="Source\Mame\Game\Book.cpp" />

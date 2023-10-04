@@ -21,11 +21,18 @@ namespace PlayerSkill
 
     void Drain::DrawDebug()
     {
-        if (ImGui::TreeNode("Drain"))
+        if (ImGui::BeginMenu("Drain"))
         {
             ImGui::SliderFloat("Drain Coefficient",&drainCoefficient,0.0f,1.0f);
 
-            ImGui::TreePop();
+            ImGui::InputInt("Overlap", &overlap);
+
+            if (ImGui::Button("Overlaping"))
+            {
+                Overlaping();
+            }
+
+            ImGui::EndMenu();
         }
     }
 

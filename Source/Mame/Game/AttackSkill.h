@@ -1,12 +1,17 @@
 #pragma once
 #include "BaseSkill.h"
 
+//çUåÇÇ…ä÷Ç∑ÇÈÉXÉLÉã
 namespace PlayerSkill
 {
     class Drain : public BaseSkill
     {
     public:
-        Drain(Player* player) : BaseSkill(player) {}
+        Drain(Player* player) :
+            BaseSkill(player, 
+                L"./Resources/Image/Card/sampleCard.png",
+                L"./Resources/Image/Icon/sampleIcon.png",
+                "Drain") {}
         ~Drain() {}
 
         void Initialize()override;

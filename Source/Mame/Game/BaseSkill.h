@@ -1,24 +1,48 @@
 #pragma once
+#include "../Resource/sprite.h"
+#include "../Graphics/Graphics.h"
 
 class Player;
 
 class BaseSkill
 {
 public:
-    BaseSkill(Player* player):player(player), overlap(0) {}
+    BaseSkill(
+        Player* player,
+        const wchar_t* cardImageFilename,
+        const wchar_t* iconImageFilename,
+        const char* name) :player(player), name(name), overlap(0)
+    {
+        card = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), cardImageFilename, "./Resources/Shader/sprite_dissolve_ps.cso");
+        icon = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), iconImageFilename);
+    }
     ~BaseSkill() {}
 
-    virtual void Initialize() = 0;
+    virtual void Initialize()
+    {
+        overlap = 0;
+    }
     virtual void Update(float elapsedTime) {};
-    virtual void Render() {};
-    virtual void DrawDebug() {};
+    virtual void Render();
+    
+    virtual void DrawDebug();
 
     virtual void Overlaping() = 0;//このスキルを取得するたびに入る処理
+
+    void SetIconPos(const DirectX::XMFLOAT2 pos) { icon->GetSpriteTransform()->SetPos(pos); }
+    void SetCardPos(const DirectX::XMFLOAT2 pos) { card->GetSpriteTransform()->SetPos(pos); }
+
+    const int GetOverlapNum() const { return overlap; }
 
 protected:
     int probability;//このスキルが出にくさ　値が大きいほど出現する確率が低い
     int overlap;//重複回数（同じスキルを重複してとることで能力が強くなる）
 
     Player* player;
+
+    std::unique_ptr<Sprite> card;//カード画像
+    std::unique_ptr<Sprite> icon;//アイコン画像
+
+    std::string name;
 };
 

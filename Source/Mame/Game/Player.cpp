@@ -42,25 +42,42 @@ void Player::Initialize()
     //stateMachine.RegisterState(new PlayerState::NormalState());
 
     GetTransform()->SetScaleFactor(0.7f);
-    maxSpeed = 4.2f;
 
-    level = 1;
-    curExp = 0;
-    totalExp = 0;
-    levelUpExp = 100;
-    isSelectingAbility = 0;
+    //-------------------------スキルが関係するパラメータの初期化--------------------------------
+    level = 1;//レベル
+    curExp = 0;//経験値
+    totalExp = 0;//合計経験値
+    levelUpExp = 100;//レベルアップに必要な経験値
+    isSelectingSkill = false;//スキルの選択演出中かどうかのフラグ
+
+    maxSpeed = 4.2f;
+    baseAttackPower = 10.0f;
+    attackSpeed = 1.0f;
 
     //初回時のみスキルの生成と配列挿入をする
-    static bool callOnce = [&]() { //一度だけ呼び出す処理
+    if (drainSkill == nullptr)
+    {
+        //ドレイン
         drainSkill = std::make_unique<PlayerSkill::Drain>(this);
         skillArray.emplace_back(drainSkill.get());
-        
-        return true; 
-    }(); // 右辺はラムダ式の実行
+        //移動速度アップ
+        moveSpeedUpSkill = std::make_unique<PlayerSkill::MoveSpeedUp>(this);
+        skillArray.emplace_back(moveSpeedUpSkill.get());
+        //攻撃力アップ
+        attackPowerUpSkill = std::make_unique<PlayerSkill::AttackPowerUp>(this);
+        skillArray.emplace_back(attackPowerUpSkill.get());
+        //攻撃速度アップ
+        attackSpeedUpSkill = std::make_unique<PlayerSkill::AttackSpeedUp>(this);
+        skillArray.emplace_back(attackSpeedUpSkill.get());
+        //本の数増加
+        bookIncreaseSkill = std::make_unique<PlayerSkill::BookIncrease>(this);
+        skillArray.emplace_back(bookIncreaseSkill.get());
+    }
     for (auto& skill : skillArray)
     {
         skill->Initialize();
     }
+    //------------------------------------------------------------------------------------------
 }
 
 // 終了化
@@ -269,9 +286,21 @@ void Player::Render(const float& scale, ID3D11PixelShader* psShader)
 {
     Character::Render(scale, psShader);
 
-    for (auto& skill : skillArray)
+    /*for (auto& skill : skillArray)
     {
         skill->Render();
+    }*/
+}
+
+void Player::SkillImagesRender()
+{
+    int i = 0;
+    for (auto& skill : skillArray)
+    {
+        if (skill->GetOverlapNum() == 0)continue;
+        //skill->SetIconPos();
+        skill->Render();
+        i++;
     }
 }
 
@@ -306,6 +335,10 @@ void Player::DrawDebug()
 
         ImGui::End();
 
+        if (ImGui::Button("Initialize"))
+        {
+            Initialize();
+        }
 
         ImGui::EndMenu();
     }
@@ -320,6 +353,6 @@ void Player::LevelUpdate()
         curExp -= levelUpExp;
 
         //レベルが上がると能力を取得出来る
-        isSelectingAbility = true;
+        isSelectingSkill = true;
     }
 }
