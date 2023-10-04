@@ -546,6 +546,11 @@ void Graphics::OnSizeChanged(UINT64 width, UINT height, const HWND hwnd)
 #endif // ENABLE_DIRECT2D
 
 		Microsoft::WRL::ComPtr<IDXGIFactory6> dxgiFactory6;
+
+
+
+
+
 		hr = swapchain->GetParent(IID_PPV_ARGS(dxgiFactory6.GetAddressOf()));
 		_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 		CreateSwapChain(dxgiFactory6.Get(), hwnd);

@@ -13,6 +13,12 @@
 
 #include "../Game/Stage.h"
 
+#include "../Game/EnemySlime.h"
+#include "../Game/EnemyAura.h"
+#include "../Game/EnemyGolem.h"
+
+#include  "../Game/MagicCircleSummon.h"
+
 class SceneGame : public Mame::Scene::BaseScene
 {
 public: // 基底クラスにある関数
@@ -39,7 +45,15 @@ private: // 変数等々
     std::unique_ptr<Stage> stageWall;
 
     // enemy
+
     //std::unique_ptr<EnemyAura> enemyAura;
+
+    std::unique_ptr<EnemyAura> enemyAura;
+    std::unique_ptr<EnemyGolem> enemyGolem;
+
+    // 魔法陣
+    std::unique_ptr<MagicCircleSummon> magicCircleSummon[10];
+    bool isSeveralNum = false;
 
     // effect
     Effect* effect[4];

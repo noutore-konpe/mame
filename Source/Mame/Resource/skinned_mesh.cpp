@@ -815,6 +815,49 @@ void skinned_mesh::fetch_scene(const char* fbx_filename, bool triangulate, float
     fbx_manager->Destroy();
 }
 
+// JOINT_POSITION
+DirectX::XMFLOAT3 skinned_mesh::JointPosition(const std::string& meshName, const std::string& boneName, const animation::keyframe* keyframe, const DirectX::XMFLOAT4X4& transform)
+{
+    DirectX::XMFLOAT3 position = {}; // worldÀ•W
+
+    for (const skinned_mesh::mesh& mesh : meshes)
+    {
+        if (mesh.name == meshName)
+        {
+            for (const skeleton::bone& bone : mesh.bind_pose.bones)
+            {
+                if (bone.name == boneName)
+                {
+                    const animation::keyframe::node& node = keyframe->nodes.at(bone.node_index);
+                    DirectX::XMFLOAT4X4 globalTransform = node.global_transform;
+                    position.x = globalTransform._41;
+                    position.y = globalTransform._42;
+                    position.z = globalTransform._43;
+                    DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&mesh.default_global_transform) * DirectX::XMLoadFloat4x4(&transform);
+                    DirectX::XMStoreFloat3(&position, DirectX::XMVector3Transform(DirectX::XMLoadFloat3(&position), M));
+                    return position;
+                }
+            }
+        }
+    }
+
+    _ASSERT_EXPR(FALSE, "Joint not found");
+
+    return {};
+}
+
+// JOINT_POSITION
+DirectX::XMFLOAT3 skinned_mesh::JointPosition(size_t meshIndex, size_t boneIndex, const animation::keyframe* keyframe, const DirectX::XMFLOAT4X4& transform)
+{
+    DirectX::XMFLOAT3 position = { 0,0,0 };
+    const mesh& mesh = meshes.at(meshIndex);
+    const skeleton::bone& bone = mesh.bind_pose.bones.at(boneIndex);
+    const animation::keyframe::node& boneNode = keyframe->nodes.at(bone.node_index);
+    DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&boneNode.global_transform) * DirectX::XMLoadFloat4x4(&transform);
+    DirectX::XMStoreFloat3(&position, DirectX::XMVector3TransformCoord(DirectX::XMLoadFloat3(&position), M));
+    return position;
+}
+
 void skinned_mesh::update_animation(animation::keyframe& keyframe)
 {
     size_t node_count{ keyframe.nodes.size() };

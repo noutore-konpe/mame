@@ -21,24 +21,14 @@ void main(uint3 dtid : SV_DISPATCHTHREADID)
     
     p.position = emitterPosition;
     
-    p.velocity.x = 0.5 * sin(2 * 3.14 * f0);
+    p.velocity.x = 1.5 * sin(2 * 3.14 * f0);
     p.velocity.y = 2.0 * f1;
-    p.velocity.z = 0.5 * cos(2 * 3.14 * f0);
+    p.velocity.z = 1.5 * cos(2 * 3.14 * f0);
     
-#if 0
-    p.color.x = 1.0;
-    p.color.y = f0 * 0.5;
-    p.color.z = f0 * 0.05;
-    p.color.xyz *= 3.0;
-#else    
-    p.color.xyz = particleColor.rgb;
     
-    //p.color.x = particleColor.x;
-    //p.color.y = f0 * particleColor.y;
-    //p.color.z = f0 * particleColor.z;
-    //p.color.xyz *= 3.0;
     
-#endif
+    
+        p.color.xyz = particleColor.rgb;
     p.color.w = 1.0f;
     
     p.age = 10.0 * f2;

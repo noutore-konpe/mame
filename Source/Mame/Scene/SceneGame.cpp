@@ -21,7 +21,6 @@
 
 #include "../Game/EnemyManager.h"
 #include "../Game/EnemyTestAI.h"
-#include "../Game/EnemyAura.h"
 
 #include "../Game/ProjectileManager.h"
 #include "../Graphics/EffectManager.h"
@@ -44,6 +43,13 @@ void SceneGame::CreateResource()
         stageWall = std::make_unique<Stage>("./Resources/Model/Stage/stageWall.fbx");
     }
 
+
+    // enemy
+    {
+        enemyAura = std::make_unique<EnemyAura>();
+        enemyGolem = std::make_unique<EnemyGolem>();
+    }
+
     // player
     {
         PlayerManager::Instance().GetPlayer() = std::make_unique<Player>();
@@ -53,6 +59,14 @@ void SceneGame::CreateResource()
     {
         //ItemManager::Instance().Register(new Book());
         ItemManager::Instance().Register(new MagicCircle());
+    }
+
+    // 魔法陣
+    {
+        for (int i = 0; i < 10; ++i)
+        {
+            magicCircleSummon[i] = std::make_unique<MagicCircleSummon>();
+        }
     }
 
     // enemy
@@ -142,6 +156,11 @@ void SceneGame::Initialize()
     // カメラ
     Camera::Instance().Initialize();
 
+
+    // enemy
+    enemyAura->Initialize();
+    enemyGolem->Initialize();
+
     // player
     PlayerManager::Instance().Initialize();
 
@@ -156,6 +175,12 @@ void SceneGame::Initialize()
     // stage
     stageBase->Initialize();
     stageWall->Initialize();
+
+    // 魔法陣
+    for (int i = 0; i < 10; ++i)
+    {
+        magicCircleSummon[i]->Initialize();
+    }
 }
 
 // 終了化
@@ -193,7 +218,17 @@ void SceneGame::Update(const float& elapsedTime)
     GamePad& gamePad = Input::Instance().GetGamePad();
 
     if (gamePad.GetButtonDown() & GamePad::BTN_A)
-        Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
+    {
+        particles->Initialize(Graphics::Instance().GetDeviceContext(), 0);
+    }
+
+    if (integrateParticles)
+    {
+        particles->Integrate(Graphics::Instance().GetDeviceContext(), elapsedTime);
+    }
+        
+    //if (gamePad.GetButtonDown() & GamePad::BTN_B)
+    //    Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
 
 #ifdef _DEBUG
     // Debug用カメラ
@@ -224,6 +259,12 @@ void SceneGame::Update(const float& elapsedTime)
         Camera::Instance().Update();
     }
 
+    // enemy
+    {
+        enemyAura->Update(elapsedTime);
+        enemyGolem->Update(elapsedTime);
+    }
+
     // player
     PlayerManager::Instance().Update(elapsedTime);
 
@@ -235,6 +276,12 @@ void SceneGame::Update(const float& elapsedTime)
         EnemyManager& enemyManager = EnemyManager::Instance();
         enemyManager.Update(elapsedTime);
         //enemyAura->Update(elapsedTime);
+    }
+
+    // 魔法陣
+    for (int i = 0; i < 10; ++i)
+    {
+        magicCircleSummon[i]->Update(elapsedTime);
     }
 
     // effect
@@ -310,6 +357,9 @@ void SceneGame::Render(const float& elapsedTime)
                 EnemyManager& enemyManager = EnemyManager::Instance();
                 enemyManager.Render(enemyScaleFactor);
                 //enemyAura->Render(enemyScaleFactor);
+
+                enemyAura->Render(enemyScaleFactor);
+                enemyGolem->Render(0.01f);
             }
 
             shadow.shadowMap->Deactivete(graphics.GetDeviceContext());
@@ -358,6 +408,8 @@ void SceneGame::Render(const float& elapsedTime)
             enemyManager.Render(enemyScaleFactor);
             //enemyAura->Render(enemyScaleFactor);
 
+            enemyAura->Render(enemyScaleFactor);
+            enemyGolem->Render(0.01f);
             //shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
             //enemySlime[0]->Render(enemyScaleFactor, sagePS.Get());
             //enemySlime[1]->Render(enemyScaleFactor, emissiveTextureUVScrollPS.Get());
@@ -367,8 +419,25 @@ void SceneGame::Render(const float& elapsedTime)
         {
             ItemManager::Instance().Render(0.01f);
         }
+
+        // 魔法陣
+        if (isSeveralNum)
+        {
+            for (int i = 0; i < 10; ++i)
+            {
+                magicCircleSummon[i]->Render();
+            }
+        }
+        else
+        {
+            magicCircleSummon[0]->Render();
+        }
     }
 
+    shader->SetDepthStencileState(static_cast<size_t>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
+    shader->SetRasterizerState(static_cast<size_t>(Shader::RASTER_STATE::CULL_NONE));
+    shader->SetBlendState(static_cast<size_t>(Shader::BLEND_STATE::ADD));
+    shader->GSSetConstantBuffer();
     particles->Render(graphics.GetDeviceContext());
 
     // シェーダーエフェクト
@@ -470,10 +539,48 @@ void SceneGame::DrawDebug()
         ItemManager::Instance().Register(new Book());
     }
 
+    if (ImGui::Button("isSeveral"))
+    {
+        isSeveralNum = isSeveralNum ? false : true;
+    }
+
+    // 魔法陣再生
+    if (ImGui::Button("magicCircle"))
+    {
+        if (isSeveralNum)
+        {
+            for (int i = 0; i < 10; ++i)
+            {
+                for (int j = 0; j < 3; ++j)
+                {
+                    magicCircleSummon[i]->magicCircle[j]->GetTransform()->
+                        SetPosition(DirectX::XMFLOAT3(cosf(i) * 7.0f, 0.0f, sinf(i) * 7.0f));
+                }
+
+                magicCircleSummon[i]->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleSummon::StateMachineState::AppearState));
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 3; ++i)
+            {
+                magicCircleSummon[0]->magicCircle[i]->GetTransform()->
+                    SetPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
+            }
+
+            magicCircleSummon[0]->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleSummon::StateMachineState::AppearState));
+        }
+    }
+
     PlayerManager::Instance().DrawDebug();
 
     ItemManager::Instance().DrawDebug();
     
+    particles->DrawDebug();
+
+    enemyAura->DrawDebug();
+    enemyGolem->DrawDebug();
+
     // カメラ
     Camera::Instance().DrawDebug();
 

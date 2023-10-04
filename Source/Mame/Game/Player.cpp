@@ -19,6 +19,7 @@ Player::Player()
             //"./Resources/Model/Character/Player/sotai.fbx");
             //"./Resources/Model/Character/Player/P_Chara.fbx");
             "./Resources/Model/Character/Player/P_Motion.fbx");
+
     }
 }
 
