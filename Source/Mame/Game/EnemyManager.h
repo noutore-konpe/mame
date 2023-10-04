@@ -43,9 +43,19 @@ public:
     // エネミー取得
     BaseEnemyAI* GetEnemy(const size_t index) { return enemies_.at(index); }
 
+    const bool GetIsRunningCRAAction() const { return isRunningCRAAction_; }
+    void SetIsRunningCRAAction(const bool isRunningCRAAction) { isRunningCRAAction_ = isRunningCRAAction; }
+
+    const float GetCRAActionCoolTimer() const { return craActionCoolTimer_; }
+    void SetCRAActionCoolTimer(const float craActionCoolTime) { craActionCoolTimer_ = craActionCoolTime; }
+
 private:
     std::vector<BaseEnemyAI*> enemies_ = {};
     std::set<BaseEnemyAI*>    removes_ = {};
+
+protected:
+    bool    isRunningCRAAction_ = false;    // 誰かが近接攻撃行動を実行中か
+    float   craActionCoolTimer_ = 0.0f;     // 近接攻撃行動クールタイマー
 
 };
 

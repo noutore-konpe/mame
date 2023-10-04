@@ -45,8 +45,8 @@ inline void rotate(
 
 // float版rand関数(※事前にsrand処理が必要)
 inline const float RandFloat(
-    const float max,
-    const float min)
+    const float min,
+    const float max)
 {
     // 0.0～1.0の間までのランダム値
     constexpr float randMaxf = 0x7fff;

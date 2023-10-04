@@ -10,6 +10,8 @@
 #include "SceneLoading.h"
 #include "SceneTitle.h"
 
+#include "../../Taki174/Common.h"
+
 #include "../Game/PlayerManager.h"
 #include "../Game/ItemManager.h"
 #include "../Game/Book.h"
@@ -25,6 +27,8 @@
 void SceneGame::CreateResource()
 {
     Graphics& graphics = Graphics::Instance();
+
+    using DirectX::XMFLOAT3;
 
     // effect
     {
@@ -51,7 +55,13 @@ void SceneGame::CreateResource()
     {
         //enemyAura = std::make_unique<EnemyAura>();
         EnemyManager& enemyManager = EnemyManager::Instance();
-        enemyManager.Register(new EnemyAura());
+        for (int i = 0; i < 5; ++i)
+        {
+            EnemyAura* enemyAura = new EnemyAura;
+            const XMFLOAT3 setPosition = { ::RandFloat(-5.0f, +5.0f), 0.0f, ::RandFloat(-5.0f, +5.0f) };
+            enemyAura->SetPosition(setPosition);
+            enemyManager.Register(enemyAura);
+        }
     }
 
     // ps Shader

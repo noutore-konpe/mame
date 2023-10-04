@@ -3,6 +3,10 @@
 
 void EnemyManager::Initialize()
 {
+    // CRA : 0.Initialize : 初期化
+    isRunningCRAAction_ = false;
+    craActionCoolTimer_ = 0.0f;
+
     for (BaseEnemyAI*& enemy : enemies_)
     {
         enemy->Initialize();
@@ -29,6 +33,9 @@ void EnemyManager::Begin()
 // 更新処理
 void EnemyManager::Update(const float elapsedTime)
 {
+    // CRA : 1.Update : 近接攻撃行動クールタイマー減少
+    craActionCoolTimer_ = (std::max)(0.0f, craActionCoolTimer_ - elapsedTime);
+
     // 更新
     for (BaseEnemyAI*& enemy : enemies_)
     {
@@ -111,9 +118,24 @@ void EnemyManager::Clear()
 void EnemyManager::DrawDebug()
 {
 #ifdef USE_IMGUI
-    for (BaseEnemyAI*& enemy : enemies_)
+    if (ImGui::BeginMenu("Enemies"))
     {
-        enemy->DrawDebug();
+        for (BaseEnemyAI*& enemy : enemies_)
+        {
+            enemy->DrawDebug();
+        }
+
+        ImGui::EndMenu();
+
+        for (BaseEnemyAI*& enemy : enemies_)
+        {
+            std::string str = (enemy->GetActiveNode() != nullptr)
+                ? enemy->GetActiveNode()->GetName()
+                : u8"なし";
+            ImGui::Text(u8"Behavior：%s", str.c_str());
+        }
     }
+    ImGui::Separator();
+
 #endif
 }

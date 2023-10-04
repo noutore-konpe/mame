@@ -22,6 +22,17 @@ template <class TemplateAI>
 	const ActionBase::State Run(const float elapsedTime) override;
 };
 
+
+// í«ê’çsìÆ
+class CloseRangeAttackAction : public ActionBase
+{
+public:
+	template <class TemplateAI>
+	CloseRangeAttackAction(TemplateAI* enemy) : ActionBase(enemy) {}
+	const ActionBase::State Run(const float elapsedTime) override;
+};
+
+
 // í èÌçUåÇ
 class NormalAction : public ActionBase
 {

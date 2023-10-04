@@ -41,8 +41,9 @@ EnemyAura::EnemyAura()
         behaviorTree_ = make_unique<BehaviorTree>(this);
 
         behaviorTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);
-        behaviorTree_->AddNode("Root", "Pursuit", 1, SelectRule::Non, new PursuitJudgment(this), new PursuitAction(this));
-        behaviorTree_->AddNode("Root", "Idle",    2, SelectRule::Non, nullptr, new IdleAction(this));
+        behaviorTree_->AddNode("Root", "CloseRangeAttack", 1, SelectRule::Non, new CloseRangeAttackJudgment(this), new CloseRangeAttackAction(this));
+        behaviorTree_->AddNode("Root", "Pursuit",          2, SelectRule::Non, new PursuitJudgment(this), new PursuitAction(this));
+        behaviorTree_->AddNode("Root", "Idle",             3, SelectRule::Non, nullptr, new IdleAction(this));
     }
 
 

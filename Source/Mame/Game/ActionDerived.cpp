@@ -6,6 +6,7 @@
 
 //#include "EnemyBlueSlime.h"
 #include "BaseEnemyAI.h"
+#include "EnemyManager.h"
 #include "PlayerManager.h"
 //#include "Mathf.h"
 
@@ -21,7 +22,7 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 	switch (step_)
 	{
 	case 0:
-		owner_->SetRunTimer(::RandFloat(2.0f, 1.0f));
+		owner_->SetRunTimer(::RandFloat(1.0f, 2.0f));
 	//	owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::IdleNormal), true);
 
 		++step_;
@@ -122,6 +123,60 @@ const ActionBase::State PursuitAction::Run(const float elapsedTime)
 
 	return ActionBase::State::Run;
 
+}
+
+
+const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
+{
+	using DirectX::XMFLOAT3;
+
+	PlayerManager&	playerManager	= PlayerManager::Instance();
+	EnemyManager&	enemyManager	= EnemyManager::Instance();
+
+	//float runTimer = owner_->GetRunTimer();
+	switch (step_)
+	{
+	case 0:
+		// 目標地点をプレイヤー位置に設定
+		//owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
+		owner_->SetRunTimer(::RandFloat(+1.0f, +1.0f));
+		//owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::RunFWD), true);
+
+		++step_;
+		[[fallthrough]];
+		//break;
+	case 1:
+		//runTimer -= elapsedTime;
+		//owner_->SetRunTimer(runTimer);
+		// タイマー更新
+		owner_->ElapseRunTimer(elapsedTime);
+
+		// 目標地点をプレイヤー位置に設定
+		//owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
+
+		// 行動しているのがわかりやすいように仮で回転させる
+		owner_->GetTransform()->AddRotationY(ToRadian(1000.0f) * elapsedTime);
+
+		// 行動時間が過ぎた時
+		if (owner_->GetRunTimer() <= 0.0f)
+		{
+			step_ = 0;
+
+			// CRA : 4.Action : 近接攻撃行動実行中フラグを下ろす
+			enemyManager.SetIsRunningCRAAction(false);
+
+			// CRA : 4.Action : 近接攻撃行動クールタイマー設定
+			constexpr float craCoolTime = 0.0f;
+			enemyManager.SetCRAActionCoolTimer(craCoolTime);
+
+			//return ActionBase::State::Failed;
+			return ActionBase::State::Complete;
+		}
+
+		break;
+	}
+
+	return ActionBase::State::Run;
 }
 
 
@@ -294,3 +349,5 @@ const ActionBase::State RecoverAction::Run(const float elapsedTime)
 
 	return ActionBase::State::Run;
 }
+
+

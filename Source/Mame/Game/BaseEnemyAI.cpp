@@ -2,7 +2,6 @@
 
 #include "../../Taki174/Common.h"
 
-
 BaseEnemyAI::~BaseEnemyAI()
 {
     SafeDeletePtr(activeNode_);
@@ -59,6 +58,8 @@ void BaseEnemyAI::DrawDebug()
 
         ImGui::EndMenu();
     }
+    ImGui::Separator();
+
 #endif // USE_IMGUI
 }
 

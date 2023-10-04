@@ -10,6 +10,15 @@ public:
 	const bool Judgment() override;
 };
 
+
+class CloseRangeAttackJudgment : public JudgmentBase
+{
+public:
+	template <class TemplateAI>
+	CloseRangeAttackJudgment(TemplateAI* enemy) : JudgmentBase(enemy) {}
+	const bool Judgment() override;
+};
+
 // BattleNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
 class BattleJudgment : public JudgmentBase
 {

@@ -31,6 +31,8 @@ public:
     );
 
 public: // æ“¾Eİ’è
+    NodeBase* GetActiveNode() const { return activeNode_; }
+
     const DirectX::XMFLOAT3& GetTargetPosition() const { return targetPosition_; }
     void SetTargetPosition(const DirectX::XMFLOAT3& position) { targetPosition_ = position; }
 
@@ -40,8 +42,7 @@ public: // æ“¾Eİ’è
 
     const float GetRunTimer() const { return runTimer_; }
     void SetRunTimer(const float runTimer) { runTimer_ = runTimer; }
-    void ElapseRunTimer(const float elapsedTime) { runTimer_ -= elapsedTime; }
-
+    void ElapseRunTimer(const float elapsedTime) { runTimer_ = (std::max)(0.0f, runTimer_ - elapsedTime); }
 
 public:
     void Move(

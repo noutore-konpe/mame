@@ -9,7 +9,7 @@
 //#include "EnemyBlueSlime.h"
 #include "BehaviorData.h"
 #include "ActionBase.h"
-
+#include "EnemyManager.h"
 
 NodeBase::NodeBase(
 	const std::string& name,
@@ -143,6 +143,12 @@ NodeBase* NodeBase::Inference(BehaviorData* data)
 		// 行動があれば終了
 		if (true == selectNode->HasAction())
 		{
+			// CRA : 3.Inference : 実行ノードが近接攻撃ノードなら近接攻撃行動実行中フラグを立てる
+			if (selectNode->name_ == "CloseRangeAttack")
+			{
+				EnemyManager::Instance().SetIsRunningCRAAction(true);
+			}
+
 			return selectNode;
 		}
 		else
