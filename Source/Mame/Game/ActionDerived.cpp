@@ -32,7 +32,7 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 			const float		localPositionX	= position.x - playerPosition.x;
 			const float		localPositionZ	= position.z - playerPosition.z;
 
-			owner_->circleRotation = ::atan2f(localPositionX, localPositionZ); // return Radian Angle
+			circleRotation_ = ::atan2f(localPositionX, localPositionZ); // return Radian Angle
 		}
 
 		++step_;
@@ -74,13 +74,36 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 
 		// â~à⁄ìÆÇ‡Ç«Ç´
 		{
+			// ç∂âEîªíË
+			const float playerRotationY = playerManager.GetPlayer()->GetTransform()->GetRotation().y;
+			const float frontX = ::sinf(playerRotationY);
+			const float frontZ = ::cosf(playerRotationY);
+			float cross = (frontZ * (-vx)) - (frontX * (-vz));
+
+#if 0
+#ifdef USE_IMGUI
+			ImGui::Begin("Cross");
+			ImGui::DragFloat("Cross", &cross);
+			ImGui::End();
+#endif
+#endif
+
+			// îwå„Ç…âÒÇËêÿÇ¡ÇΩÇÁèIóπ
+			if (fabsf(cross) <= 0.01f)
+			{
+				step_ = 0;
+				return ActionBase::State::Complete;
+			}
+
+			const float addRotate = (cross < 0.0f) ? ToRadian(-25.0f) : ToRadian(25.0f);
+
 			// ÉvÉåÉCÉÑÅ[ÇíÜêSÇ…(+1.0~-1.0)Åñîºåa(=çUåÇãóó£)ï™ÇâÒì]
-			owner_->circleRotation += ToRadian(25.0f) * elapsedTime;
+			circleRotation_ += addRotate * elapsedTime;
 
 			const XMFLOAT3 targetPosition = {
-				playerPosition.x + ::sinf(owner_->circleRotation) * attackLength, // -1.0~+1.0
+				playerPosition.x + ::sinf(circleRotation_) * attackLength, // -1.0~+1.0
 				0.0f,
-				playerPosition.z + ::cosf(owner_->circleRotation) * attackLength, // -1.0~+1.0
+				playerPosition.z + ::cosf(circleRotation_) * attackLength, // -1.0~+1.0
 			};
 
 			owner_->SetTargetPosition(targetPosition);

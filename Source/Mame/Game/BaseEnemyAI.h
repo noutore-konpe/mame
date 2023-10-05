@@ -78,9 +78,6 @@ private:
     // 水平移動更新処理
     void UpdateHorizontalMove(const float elapsedTime);
 
-public:
-    float circleRotation = 0.0f;
-
 protected:
     std::unique_ptr<BehaviorTree>   behaviorTree_;
     std::unique_ptr<BehaviorData>   behaviorData_; // 主にシーケンスに使う
