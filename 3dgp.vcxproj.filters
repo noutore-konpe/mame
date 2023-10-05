@@ -413,6 +413,9 @@
     <ClCompile Include="Source\Mame\Game\EnemyManager.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyGolemState.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -720,6 +723,9 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\EnemyManager.h">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyGolemState.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

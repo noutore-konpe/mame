@@ -4,6 +4,8 @@
 
 #include "../Other/MathHelper.h"
 
+#include "EnemyGolemState.h"
+
 // コンストラクタ
 EnemyGolem::EnemyGolem()
 {
@@ -14,6 +16,18 @@ EnemyGolem::EnemyGolem()
 
     magicCircleGolem = std::make_unique<MagicCircleGolem>();
     magicCircleEnemySummon = std::make_unique<MagicCircleEnemySummon>();
+
+    // ステートマシン
+    {
+        stateMachine.reset(new StateMachine<State<EnemyGolem>>);
+
+        GetStateMachine()->RegisterState(new EnemyGolemState::IdleState(this));
+        GetStateMachine()->RegisterState(new EnemyGolemState::EntryState(this));
+        GetStateMachine()->RegisterState(new EnemyGolemState::RoarState(this));
+        GetStateMachine()->RegisterState(new EnemyGolemState::SummonState(this));
+
+        GetStateMachine()->SetState(static_cast<UINT>(StateMachineState::IdleState));
+    }
 
     // ImGui名前設定
     SetName("EnemyGolem" + std::to_string(nameNum++));
@@ -53,8 +67,11 @@ void EnemyGolem::Update(const float& elapsedTime)
     magicCircleGolem->Update(elapsedTime);
     magicCircleEnemySummon->Update(elapsedTime);
 
-    // 召喚魔法陣更新処理
+
     UpdateSummoningMagicCircle(4.0f, 3.0f, DirectX::XMConvertToRadians(45));
+
+    // ステートマシン更新
+    GetStateMachine()->Update(elapsedTime);
 
     // アニメーション更新
     //Character::UpdateAnimation(elapsedTime);
@@ -75,7 +92,7 @@ void EnemyGolem::Render(const float& scale, ID3D11PixelShader* psShader)
     Enemy::Render(scale, psShader);
 
     magicCircleGolem->Render();
-    magicCircleEnemySummon->Render(DirectX::XMFLOAT4(0.8f, 0.44f, 0.24f, 1.0f));
+    magicCircleEnemySummon->Render(DirectX::XMFLOAT4(magicCircleColor[2]));
 }
 
 // 影描画用
@@ -96,6 +113,9 @@ void EnemyGolem::DrawDebug()
 
         model->skinned_meshes->Drawdebug();
 
+        magicCircleGolem->DrawDebug();
+        magicCircleEnemySummon->DrawDebug();
+
         if (ImGui::Button("magicCircle"))
         {
             magicCircleEnemySummon->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleEnemySummon::StateMachineState::AppearState));
@@ -110,6 +130,7 @@ void EnemyGolem::UpdateConstants()
 {
 }
 
+// 召喚魔法陣更新処理
 void EnemyGolem::UpdateSummoningMagicCircle(const float& lengthX, const float& lengthZ, const float& angle)
 {
     // ゴーレムの位置
