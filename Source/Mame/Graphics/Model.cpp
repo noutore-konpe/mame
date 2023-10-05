@@ -163,6 +163,9 @@ void Model::UpdateAnimation(const float& elapsedTime)
     const float  frameIndex_float = (currentAnimationSeconds * animation.sampling_rate) * animationSpeed; // 警告がじゃまなので一時的にfloat変数に格納
     const size_t frameIndex = static_cast<const size_t>(frameIndex_float);
 
+    //外部から現在のフレームを取ってこれるようにする
+    currentKeyframeIndex = frameIndex;
+
     // 最後のフレームを取得
     const size_t frameEnd = (animation.sequence.size() - 1);
 

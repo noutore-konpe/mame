@@ -43,7 +43,7 @@ void Player::Initialize()
     stateMachine = std::make_unique<StateMachine<State<Player>>>();
 
     stateMachine->RegisterState(new PlayerState::NormalState(this));
-    stateMachine->RegisterState(new PlayerState::AttackState(this));
+    stateMachine->RegisterState(new PlayerState::JabAttackState(this));
     stateMachine->RegisterState(new PlayerState::AvoidState(this));
     stateMachine->RegisterState(new PlayerState::DieState(this));
 
@@ -381,6 +381,8 @@ void Player::DrawDebug()
     if (ImGui::BeginMenu("player"))
     {
         Character::DrawDebug();
+
+        stateMachine->DrawDebug();
 
         if (ImGui::TreeNode("Camera"))
         {

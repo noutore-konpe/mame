@@ -15,7 +15,7 @@ public: // enumŠÖ˜A
     enum STATE
     {
         NORMAL,   // ˆÚ“®A‘Ò‹@“™
-        ATTACK,   // UŒ‚
+        ATTACK_JAB,   // ãUŒ‚
         AVOID,   // ‰ñ”ğ
         DIE,   // €–S
     };
@@ -66,7 +66,7 @@ public:
 
 
     //“ü—ÍŠÖ”
-    static bool InputAttack()
+    static bool InputJabAttack()
     {
         return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X);
     }
@@ -76,7 +76,7 @@ public:
         return (Input::Instance().GetGamePad().GetButton() & GamePad::BTN_RIGHT_SHOULDER);
     }
 
-    static bool inputAvoid()
+    static bool InputAvoid()
     {
         return (Input::Instance().GetGamePad().GetButton() & GamePad::BTN_A);
     }
@@ -95,6 +95,8 @@ public:
     void SetAcceleration(const float accel) { acceleration = accel; }
 
     StateMachine<State<Player>>* GetStateMachine() { return stateMachine.get(); }
+
+    void ChangeState(int newState) { stateMachine->ChangeState(newState); }
 
 private:
     void LevelUpdate();

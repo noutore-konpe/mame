@@ -10,23 +10,130 @@ namespace PlayerState
     void NormalState::Update(const float& elapsedTime)
     {
         owner->MoveUpdate(elapsedTime);
-        if (owner->inputAvoid())
+        if (owner->InputAvoid())
         {
-            owner->GetStateMachine()->ChangeState(Player::STATE::AVOID);
+            owner->ChangeState(Player::STATE::AVOID);
+        }
+        else if (owner->InputJabAttack())
+        {
+            owner->ChangeState(Player::STATE::ATTACK_JAB);
         }
     }
     void NormalState::Finalize()
     {
     }
 
-    void AttackState::Initialize()
+    void JabAttackState::Initialize()
+    {
+        initialize = false;
+    }
+    void JabAttackState::Update(const float& elapsedTime)
+    {
+        switch (combo)
+        {
+        case 0: //1撃目
+            //初期化処理
+            if (!initialize)
+            {
+                state = UPDATE_FRAME;
+                owner->PlayAnimation(Player::Animation::Jab_1, false, owner->GetAttackSpeed());
+                initialize = true;
+            }
+
+            //更新処理(次のコンボへの遷移もしている)
+            {
+                AttackUpdate(dodgeCanselFrame1,comboCanselFrame1);
+            }
+
+            
+            break;
+        case 1://2撃目
+            //初期化処理
+            if (!initialize)
+            {
+                state = UPDATE_FRAME;
+                owner->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
+                initialize = true;
+            }
+
+            //更新処理(次のコンボへの遷移もしている)
+            {
+                AttackUpdate(dodgeCanselFrame2, comboCanselFrame2);
+            }
+
+            break;
+        case 2://3撃目
+            //初期化処理
+            if (!initialize)
+            {
+                state = UPDATE_FRAME;
+                owner->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
+                initialize = true;
+            }
+
+            //更新処理(次のコンボへの遷移もしている)
+            {
+                AttackUpdate(dodgeCanselFrame3, comboCanselFrame3);
+            }
+
+            break;
+        }
+
+        //終了処理　通常行動へ遷移
+        if (!owner->IsPlayAnimation())
+        {
+            owner->ChangeState(Player::STATE::NORMAL);
+        }
+    }
+    void JabAttackState::Finalize()
     {
     }
-    void AttackState::Update(const float& elapsedTime)
+
+    void JabAttackState::HitCollisionUpdate()
     {
+        if (!collisionOn)return;
+
     }
-    void AttackState::Finalize()
+
+    void JabAttackState::AttackUpdate(int dodgeCanselFrame,int comboCanselFrame)
     {
+        const float keyframeIndex = owner->model->GetCurrentKeyframeIndex();
+
+        switch (state)
+        {
+        case UPDATE_FRAME:
+            if (keyframeIndex > dodgeCanselFrame)
+            {
+                state++;
+            }
+            break;
+        case DODGE_CANSEL_FRAME:
+            if (owner->InputAvoid())//回避キャンセル
+            {
+                owner->ChangeState(Player::STATE::AVOID);
+            }
+
+            if (keyframeIndex > comboCanselFrame)
+            {
+                state++;
+            }
+            break;
+        case COMBO_AND_DODGE_CANSEL_FRAME:
+            if (owner->InputAvoid())//回避キャンセル
+            {
+                owner->ChangeState(Player::STATE::AVOID);
+            }
+
+            else if (owner->InputJabAttack())//コンボ続行
+            {
+                combo++;
+                initialize = false;
+
+                //コンボは３連撃以降ないので制限
+                if (combo > 2)combo = 2;
+            }
+            break;
+        }
     }
 
     void AvoidState::Initialize()

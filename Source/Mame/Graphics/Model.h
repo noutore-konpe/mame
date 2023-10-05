@@ -36,6 +36,9 @@ public: // 取得・設定関数関連
     // アニメーション再生速度設定（途中で再生速度を変えたいときなどに）
     void SetAnimationSpeed(const float& speed) { animationSpeed = speed; }
 
+    //現在のアニメーションが何フレーム目かの取得
+    const int GetCurrentKeyframeIndex() const { return currentKeyframeIndex; }
+
 public: // アニメーション関数関連
     // アニメーション再生設定
     // (アニメーション番号・ループするかどうか・アニメーション再生速度・スムーズ切り替え時間（速度）)
@@ -81,6 +84,8 @@ public:
     float       animationSpeed          = 1.0f;     // アニメーション再生速度
 private:
     float       currentAnimationSeconds = 0.0f;     // 現在のアニメーション再生時間
+
+    int currentKeyframeIndex;//現在のアニメーション再生フレーム
 
     float       animationBlendTime      = 0.0f;     // 現在のブレンドタイマー
     float       animationBlendSeconds   = 0.0f;     // ブレンド時間
