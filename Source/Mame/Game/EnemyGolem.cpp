@@ -67,16 +67,19 @@ void EnemyGolem::Update(const float& elapsedTime)
         float length = 5.0f;
 
         // 角度
-        float angle = 45.0f;
+        float angle = DirectX::XMConvertToRadians(45);
 
         // base
         {
             {   // 一つ目
                 // 方向取得
                 DirectX::XMFLOAT3 setPosition = {
-                    ownerVec.x * sinf(DirectX::XMConvertToRadians(angle)),
+                    /*ownerVec.x * sinf(DirectX::XMConvertToRadians(angle)),
                     0.0f,
-                    ownerVec.z * cosf(DirectX::XMConvertToRadians(angle)) };
+                    ownerVec.z * cosf(DirectX::XMConvertToRadians(angle)) };*/
+                    ownerFrontVec.x * sinf(angle) + ownerRightVec.x * cosf(angle),
+                    0.0f,
+                    ownerFrontVec.z* sinf(angle) + ownerRightVec.z * cosf(angle) };
                 // ベクトルを求める
                 setPosition = setPosition * length;
                 // 位置を算出
@@ -88,9 +91,12 @@ void EnemyGolem::Update(const float& elapsedTime)
             {   // 二つ目  
                  // 方向取得
                 DirectX::XMFLOAT3 setPosition = {
-                    -ownerVec.x * sinf(DirectX::XMConvertToRadians(angle)),
+                    /*-ownerVec.x * sinf(angle),
                     0.0f,
-                    ownerVec.z * cosf(DirectX::XMConvertToRadians(angle)) };
+                    ownerVec.z * cosf(angle) };*/
+                    ownerFrontVec.x* sinf(angle) - ownerRightVec.x * cosf(angle),
+                    0.0f,
+                    ownerFrontVec.z* sinf(angle) - ownerRightVec.z * cosf(angle) };
                 // ベクトルを求める
                 setPosition = setPosition * length;
                 // 位置を算出
