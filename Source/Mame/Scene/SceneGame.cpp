@@ -18,9 +18,9 @@
 
 #include "../Game/MagicCircle.h"
 
-
 #include "../Game/EnemyManager.h"
 #include "../Game/EnemyTestAI.h"
+#include "../Game/EnemyAI_1.h"
 
 #include "../Game/ProjectileManager.h"
 #include "../Graphics/EffectManager.h"
@@ -34,7 +34,6 @@ void SceneGame::CreateResource()
 {
     Graphics& graphics = Graphics::Instance();
 
-
     using DirectX::XMFLOAT3;
 
     // stage
@@ -42,7 +41,6 @@ void SceneGame::CreateResource()
         stageBase = std::make_unique<Stage>();
         stageWall = std::make_unique<Stage>("./Resources/Model/Stage/stageWall.fbx");
     }
-
 
     // enemy
     {
@@ -76,10 +74,10 @@ void SceneGame::CreateResource()
         EnemyManager& enemyManager = EnemyManager::Instance();
         for (int i = 0; i < 3; ++i)
         {
-            EnemyAura* enemyAura = new EnemyAura;
-            const XMFLOAT3 setPosition = { ::RandFloat(-5.0f, +5.0f), 0.0f, ::RandFloat(-5.0f, +5.0f) };
-            enemyAura->SetPosition(setPosition);
-            enemyManager.Register(enemyAura);
+            EnemyAI_1* enemyAI_1 = new EnemyAI_1;
+            const XMFLOAT3 setPosition = { ::RandFloat(-10.0f, +10.0f), 0.0f, ::RandFloat(-10.0f, +10.0f) };
+            enemyAI_1->SetPosition(setPosition);
+            enemyManager.Register(enemyAI_1);
         }
     }
 
@@ -222,7 +220,7 @@ void SceneGame::Update(const float& elapsedTime)
     {
         particles->Integrate(Graphics::Instance().GetDeviceContext(), elapsedTime);
     }
-        
+
     //if (gamePad.GetButtonDown() & GamePad::BTN_B)
     //    Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
 
@@ -567,25 +565,22 @@ void SceneGame::DrawDebug()
     PlayerManager::Instance().DrawDebug();
 
     ItemManager::Instance().DrawDebug();
-    
+
     particles->DrawDebug();
 
     enemyAura->DrawDebug();
     enemyGolem->DrawDebug();
 
-    // ÉJÉÅÉâ
-    Camera::Instance().DrawDebug();
-
-
-    ImGui::End();
-
-    PlayerManager::Instance().DrawDebug();
-
     EnemyManager& enemyManager = EnemyManager::Instance();
     enemyManager.DrawDebug();
 
+    // ÉJÉÅÉâ
+    Camera::Instance().DrawDebug();
+
+    ImGui::End();
+
 #endif
 
-    
+
 
 }

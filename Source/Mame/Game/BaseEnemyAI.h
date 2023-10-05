@@ -27,7 +27,8 @@ public:
     // 目的地点へ移動
     void MoveToTarget(
         const float elapsedTime,
-        const float speedRate
+        const float speedRate,
+        const bool isLookAtTarget = true
     );
 
 public: // 取得・設定
@@ -77,6 +78,9 @@ private:
     // 水平移動更新処理
     void UpdateHorizontalMove(const float elapsedTime);
 
+public:
+    float circleRotation = 0.0f;
+
 protected:
     std::unique_ptr<BehaviorTree>   behaviorTree_;
     std::unique_ptr<BehaviorData>   behaviorData_; // 主にシーケンスに使う
@@ -95,7 +99,7 @@ protected:
     float airControl_   = 0.3f;
     float acceleration_ = 1.0f;
 
-    float attackLength_ = 2.0f; // 攻撃距離
+    float attackLength_ = 3.0f; // 攻撃距離
     float runTimer_     = 0.0f;
 
     float hp_           = 1.0f;

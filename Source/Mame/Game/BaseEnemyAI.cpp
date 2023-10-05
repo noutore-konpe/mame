@@ -363,7 +363,8 @@ void BaseEnemyAI::UpdateHorizontalMove(const float elapsedTime)
 // –Ú“I’n“_‚ÖˆÚ“®
 void BaseEnemyAI::MoveToTarget(
     const float elapsedTime,
-    const float speedRate)
+    const float speedRate,
+    const bool isLookAtTarget)
 {
     using DirectX::XMFLOAT3;
 
@@ -377,6 +378,8 @@ void BaseEnemyAI::MoveToTarget(
 
     // ˆÚ“®ˆ—
     Move(vx, vz, moveSpeed_ * speedRate);
-    Turn(elapsedTime, vx, vz, turnSpeed_ * speedRate);
-
+    if (true == isLookAtTarget)
+    {
+        Turn(elapsedTime, vx, vz, turnSpeed_ * speedRate);
+    }
 }
