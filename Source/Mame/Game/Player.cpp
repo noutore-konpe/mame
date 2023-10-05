@@ -1,7 +1,8 @@
 #include "Player.h"
 
 #include "../Graphics/Graphics.h"
-
+#include "../Other/Easing.h"
+#include "../Other/MathHelper.h"
 
 #include "AbilityManager.h"
 #include "PlayerState.h"
@@ -125,13 +126,8 @@ void Player::End()
 {
 }
 
-void Player::MoveUpdate(float elapsedTime)
+void Player::MoveUpdate(float elapsedTime,float ax,float ay)
 {
-    GamePad& gamePad = Input::Instance().GetGamePad();
-
-    float aLx = gamePad.GetAxisLX();
-    float aLy = gamePad.GetAxisLY();
-
     DirectX::XMFLOAT3 pos = GetTransform()->GetPosition();
 
     auto cTransform = Camera::Instance().GetTransform();
@@ -156,14 +152,14 @@ void Player::MoveUpdate(float elapsedTime)
         pos.z += speed * moveVec.z;
     }
 #else
-    if (aLx || aLy)
+    if (ax || ay)
     {
         auto forward = cTransform->CalcForward();
         auto right = cTransform->CalcRight();
-        forward.x *= aLy;
-        forward.z *= aLy;
-        right.x *= aLx;
-        right.z *= aLx;
+        forward.x *= ay;
+        forward.z *= ay;
+        right.x *= ax;
+        right.z *= ax;
 
         moveVec = { right.x + forward.x,0,right.z + forward.z };
         float length = sqrtf(moveVec.x * moveVec.x + moveVec.y * moveVec.y);
@@ -171,16 +167,16 @@ void Player::MoveUpdate(float elapsedTime)
         moveVec.z /= length;
     }
 
-    UpdateVelocity(elapsedTime,aLx,aLy);
+    UpdateVelocity(elapsedTime,ax,ay);
 #endif // 0
     
     //GetTransform()->SetPosition(pos);
-    DirectX::XMFLOAT3 velo = {
+    DirectX::XMFLOAT3 move = {
         velocity.x * elapsedTime,
         velocity.y * elapsedTime,
         velocity.z * elapsedTime
     };
-    GetTransform()->AddPosition(velo);
+    GetTransform()->AddPosition(move);
 
     Turn(elapsedTime,moveVec.x, moveVec.z,360.0f);
 }
@@ -415,6 +411,30 @@ void Player::DrawDebug()
         ImGui::EndMenu();
     }
 #endif // USE_IMGUI
+}
+
+void Player::AttackSteppingUpdate(float elapsedTime)
+{
+    //タイマーのリセットはステートマシンの方で行う
+    if (steppingTimer > steppingTime)return;
+
+    //速度算出
+    float maxSpeed = Easing::OutQuart(steppingTimer,steppingTime,steppingSpeed,0.0f);
+    auto front = GetTransform()->CalcForward();
+    velocity = front * maxSpeed;
+
+    //移動処理
+    DirectX::XMFLOAT3 move = velocity * elapsedTime;
+    GetTransform()->AddPosition(move);
+
+    //回転処理
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    float ax = gamePad.GetAxisLX();
+    float ay = gamePad.GetAxisLY();
+    MoveVecUpdate(ax,ay);
+    Turn(elapsedTime, moveVec.x, moveVec.z, 360.0f);
+
+    steppingTimer += elapsedTime;
 }
 
 void Player::LevelUpdate()
