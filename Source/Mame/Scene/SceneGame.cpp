@@ -74,7 +74,7 @@ void SceneGame::CreateResource()
         // max 6~7
         //enemyAura = std::make_unique<EnemyAura>();
         EnemyManager& enemyManager = EnemyManager::Instance();
-        for (int i = 0; i < 7; ++i)
+        for (int i = 0; i < 3; ++i)
         {
             EnemyAura* enemyAura = new EnemyAura;
             const XMFLOAT3 setPosition = { ::RandFloat(-5.0f, +5.0f), 0.0f, ::RandFloat(-5.0f, +5.0f) };
