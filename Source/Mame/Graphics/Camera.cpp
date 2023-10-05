@@ -14,54 +14,6 @@ void Camera::Initialize()
 
 void Camera::Update()
 {
-#if 0
-    Transform* playerTransform = PlayerManager::Instance().GetPlayer()->GetTransform();
-    DirectX::XMFLOAT3 playerPos = playerTransform->GetPosition();
-    DirectX::XMFLOAT4 playerRot = playerTransform->GetRotation();
-
-    playerPos.y += 2;
-    playerPos.z -= 5;
-    playerRot.x += DirectX::XMConvertToRadians(15.0f);
-
-    GetTransform()->SetPosition(playerPos);
-    GetTransform()->SetRotation(DirectX::XMFLOAT4(DirectX::XMConvertToRadians(10),0,0,0));
-    //GetTransform()->SetRotation(playerRot);
-#else
-    //Transform* playerTransform = PlayerManager::Instance().GetPlayer()->GetTransform();
-    //const DirectX::XMFLOAT3 playerPos = playerTransform->GetPosition();
-    //const DirectX::XMFLOAT4 playerRot = playerTransform->GetRotation();
-    //const DirectX::XMFLOAT3 playerFrontVec = playerTransform->CalcForward();
-    //
-    //// カメラ位置をプレイヤーの後ろにしたい
-    //{
-    //    float length = 5.0f;
-
-    //    // プレイヤーの上に高さを合わせる
-    //    DirectX::XMFLOAT3 offset{ 0, 2, 0 };
-
-    //    // プレイヤーの後ろ向きベクトル
-    //    DirectX::XMFLOAT3 playerBack =
-    //    {
-    //        playerPos.x - playerFrontVec.x * length + offset.x,
-    //        playerPos.y - playerFrontVec.y * length + offset.y,
-    //        playerPos.z - playerFrontVec.z * length + offset.z
-    //    };
-
-    //    GetTransform()->SetPosition(playerBack);
-    //}
-
-    // カメラの角度調整
-    {
-        // 斜めで見えるようにする
-        /*DirectX::XMFLOAT4 cameraRot = playerRot;
-        cameraRot.x += DirectX::XMConvertToRadians(15.0f);
-
-        GetTransform()->SetRotation(cameraRot);*/
-    }
-
-#endif
-
-
 }
 
 void Camera::UpdateDebug(const float& elapsedTime, DirectX::XMFLOAT2 moveVector)

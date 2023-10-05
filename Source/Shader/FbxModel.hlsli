@@ -52,16 +52,9 @@ cbuffer SCENE_CONSTANT_BUFFER : register(b1)
     row_major float4x4 viewProjection;
     float4 lightDirection;
     float4 cameraPosition;
+    row_major float4x4 lightViewProjection;
 };
 
-// SHADOW
-cbuffer SHADOW_CONSTANT_BUFFER : register(b10)
-{
-    row_major float4x4 shadowViewProjection;
-    float4 shadowLightDirection;
-    float4 shdowCameraPosition;
-    row_major float4x4 shadowLightViewProjection;
-};
 
 // ディレクションライト
 struct DirectionLight

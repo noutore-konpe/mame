@@ -25,6 +25,8 @@
 #include "../Game/ProjectileManager.h"
 #include "../Graphics/EffectManager.h"
 
+#include "../framework.h"
+
 #ifdef _DEBUG
 bool SceneGame::isDebugRender = false;
 #endif // _DEBUG
@@ -46,7 +48,6 @@ void SceneGame::CreateResource()
 
     // enemy
     {
-        enemyAura = std::make_unique<EnemyAura>();
         enemyGolem = std::make_unique<EnemyGolem>();
     }
 
@@ -144,6 +145,23 @@ void SceneGame::CreateResource()
         effect[0] = new Effect("./Resources/Effect/explosion4.efk");
         //effect[0] = std::make_unique<Effect>("./Resources/Effect/explosion4.efk");
     }
+
+    // 定数バッファー
+    {
+        HRESULT hr{ S_OK };
+
+        D3D11_BUFFER_DESC bufferDesc{};
+        bufferDesc.ByteWidth = sizeof(Shader::SceneConstants);
+        bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        bufferDesc.CPUAccessFlags = 0;
+        bufferDesc.MiscFlags = 0;
+        bufferDesc.StructureByteStride = 0;
+        // SceneConstants
+        hr = graphics.GetDevice()->CreateBuffer(&bufferDesc, nullptr,
+            ConstantBuffer.GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+    }
 }
 
 // 初期化
@@ -154,7 +172,6 @@ void SceneGame::Initialize()
 
 
     // enemy
-    enemyAura->Initialize();
     enemyGolem->Initialize();
 
     // player
@@ -257,7 +274,6 @@ void SceneGame::Update(const float& elapsedTime)
 
     // enemy
     {
-        enemyAura->Update(elapsedTime);
         enemyGolem->Update(elapsedTime);
     }
 
@@ -296,8 +312,8 @@ void SceneGame::Render(const float& elapsedTime)
     Graphics& graphics = Graphics::Instance();
     Shader* shader = graphics.GetShader();
 
-    Shader::ShadowConstants shadowConstants{};
-
+    Shader::SceneConstants sceneConstants{};
+    
     float playerScaleFactor = 0.01f;
     float enemyScaleFactor = 0.001f;
 
@@ -306,9 +322,6 @@ void SceneGame::Render(const float& elapsedTime)
         // 描画の初期設定※必ず呼ぶこと！！！
         Mame::Scene::BaseScene::RenderInitialize();
 
-        // SHADOW
-        shadowConstants.lightDirection = graphics.GetShader()->view.position;
-        shadowConstants.cameraPosition = graphics.GetShader()->view.camera;
 
         // SHADOW : make shadow map
         {
@@ -338,49 +351,72 @@ void SceneGame::Render(const float& elapsedTime)
                 shadow.lightViewSize,shadow.lightViewNearZ,shadow.lightViewFarZ)
             };
 
-            DirectX::XMStoreFloat4x4(&shadowConstants.viewProjection, V * P);
-            shadowConstants.lightViewProjection = shadowConstants.viewProjection;
-            graphics.GetDeviceContext()->UpdateSubresource(shadowConstantBuffer.Get(), 0, 0, &shadowConstants, 0, 0);
+            DirectX::XMStoreFloat4x4(&sceneConstants.viewProjection, V * P);
+            sceneConstants.lightViewProjection = sceneConstants.viewProjection;
+            graphics.GetDeviceContext()->UpdateSubresource(shadowConstantBuffer.Get(), 0, 0, &sceneConstants, 0, 0);
             graphics.GetDeviceContext()->VSSetConstantBuffers(1, 1, shadowConstantBuffer.GetAddressOf());
 
             shadow.shadowMap->Clear(graphics.GetDeviceContext(), 1.0f);
             shadow.shadowMap->Activate(graphics.GetDeviceContext());
-
+            
+            // ステートセット
+            shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
+            shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::NONE));
+            shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::SOLID));
+            
             // SHADOW : 影つけたいモデルはここにRenderする
             {
                 PlayerManager::Instance().Render(playerScaleFactor);
 
                 EnemyManager& enemyManager = EnemyManager::Instance();
                 enemyManager.Render(enemyScaleFactor);
-                //enemyAura->Render(enemyScaleFactor);
 
-                enemyAura->Render(enemyScaleFactor);
-                enemyGolem->Render(0.01f);
+
+                enemyGolem->Render(0.01f, true);
             }
 
             shadow.shadowMap->Deactivete(graphics.GetDeviceContext());
         }
     }
 
+    Camera& camera = Camera::Instance();
 
-    // EMISSIVE
-    graphics.GetDeviceContext()->PSSetShaderResources(16, 1, emissiveTexture.GetAddressOf());
+    shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
+    shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::NONE));
+    shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::SOLID));
 
-    framebuffers[0]->Clear(graphics.GetDeviceContext());
-    framebuffers[0]->Activate(graphics.GetDeviceContext());
+    camera.SetPerspectiveFov(graphics.GetDeviceContext());
+    DirectX::XMStoreFloat4x4(&sceneConstants.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
+    sceneConstants.lightDirection = shader->GetViewPosition();
+    sceneConstants.cameraPosition = shader->GetViewCamera();
 
+    DirectX::XMStoreFloat4x4(&sceneConstants.inverseProjection, DirectX::XMMatrixInverse(NULL, camera.GetProjectionMatrix()));
+    DirectX::XMStoreFloat4x4(&sceneConstants.inverseViewProjection, DirectX::XMMatrixInverse(NULL, camera.GetViewMatrix() * camera.GetProjectionMatrix()));
+    sceneConstants.time = framework::tictoc.time_stamp();
 
-    // SHADOW : bind shadow map at slot 8
-    graphics.GetDeviceContext()->PSSetShaderResources(8, 1, shadow.shadowMap->shaderResourceView.GetAddressOf());
+    graphics.GetDeviceContext()->UpdateSubresource(ConstantBuffer.Get(), 0, 0, &sceneConstants, 0, 0);
+    graphics.GetDeviceContext()->VSSetConstantBuffers(1, 1, ConstantBuffer.GetAddressOf());
+    graphics.GetDeviceContext()->PSSetConstantBuffers(1, 1, ConstantBuffer.GetAddressOf());
 
-    // ※ skyBox の描画の後に書くこと
     {
         // カメラ関係
         RenderContext rc;
         rc.lightDirection = { 0.0f, -1.0f, 0.0f, 0.0f };
 
-        shader->Begin(graphics.GetDeviceContext(), rc, shadowConstants);
+        shader->Begin(graphics.GetDeviceContext(), rc);
     }
+
+
+
+    // EMISSIVE
+    graphics.GetDeviceContext()->PSSetShaderResources(16, 1, emissiveTexture.GetAddressOf());
+
+    // SHADOW : bind shadow map at slot 8
+    graphics.GetDeviceContext()->PSSetShaderResources(8, 1, shadow.shadowMap->shaderResourceView.GetAddressOf());
+    
+    framebuffers[0]->Clear(graphics.GetDeviceContext());
+    framebuffers[0]->Activate(graphics.GetDeviceContext());
+
 
     // モデル描画
     {
@@ -404,13 +440,9 @@ void SceneGame::Render(const float& elapsedTime)
         {
             EnemyManager& enemyManager = EnemyManager::Instance();
             enemyManager.Render(enemyScaleFactor);
-            //enemyAura->Render(enemyScaleFactor);
 
-            enemyAura->Render(enemyScaleFactor);
+
             enemyGolem->Render(0.01f);
-            //shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
-            //enemySlime[0]->Render(enemyScaleFactor, sagePS.Get());
-            //enemySlime[1]->Render(enemyScaleFactor, emissiveTextureUVScrollPS.Get());
         }
         // 魔法陣
         if (isSeveralNum)
@@ -570,7 +602,6 @@ void SceneGame::DrawDebug()
     
     particles->DrawDebug();
 
-    enemyAura->DrawDebug();
     enemyGolem->DrawDebug();
 
     // カメラ
@@ -583,9 +614,18 @@ void SceneGame::DrawDebug()
 
     EnemyManager& enemyManager = EnemyManager::Instance();
     enemyManager.DrawDebug();
-
-#endif
-
     
 
+    // SHADOW
+    {
+        ImGui::Begin("shadow");
+        ImGui::DragFloat4("lightViewFocus", &shadow.lightViewFocus.x);
+        ImGui::SliderFloat("lightViewDistance", &shadow.lightViewDistance, 1.0f, 100.0f);
+        ImGui::SliderFloat("lightViewSize", &shadow.lightViewSize, 1.0f, 100.0f);
+        ImGui::SliderFloat("lightViewNearZ", &shadow.lightViewNearZ, 1.0f, shadow.lightViewFarZ - 1.0f);
+        ImGui::SliderFloat("lightViewFarZ", &shadow.lightViewFarZ, shadow.lightViewNearZ + 1.0f, 100.0f);
+        ImGui::Image(reinterpret_cast<void*>(shadow.shadowMap->shaderResourceView.Get()), ImVec2(shadow.shadowMapWidth / 5.0f, shadow.shadowMapHeight / 5.0f));
+        ImGui::End();
+    }
+#endif
 }

@@ -53,104 +53,8 @@ void EnemyGolem::Update(const float& elapsedTime)
     magicCircleGolem->Update(elapsedTime);
     magicCircleEnemySummon->Update(elapsedTime);
 
-    {
-        // ゴーレムの位置
-        DirectX::XMFLOAT3 ownerPosition = GetTransform()->GetPosition();
-        // ゴーレムの前ベクトル
-        DirectX::XMFLOAT3 ownerFrontVec = GetTransform()->CalcForward();
-        // ゴーレムの右ベクトル
-        DirectX::XMFLOAT3 ownerRightVec = GetTransform()->CalcRight();
-        // ゴーレムの前・右ベクトルの合計
-        DirectX::XMFLOAT3 ownerVec = ownerFrontVec + ownerRightVec;
-
-        // ベクトルの大きさ調整
-        float length = 5.0f;
-
-        // 角度
-        float angle = DirectX::XMConvertToRadians(45);
-
-        // base
-        {
-            {   // 一つ目
-                // 方向取得
-                DirectX::XMFLOAT3 setPosition = {
-                    /*ownerVec.x * sinf(DirectX::XMConvertToRadians(angle)),
-                    0.0f,
-                    ownerVec.z * cosf(DirectX::XMConvertToRadians(angle)) };*/
-                    ownerFrontVec.x * sinf(angle) + ownerRightVec.x * cosf(angle),
-                    0.0f,
-                    ownerFrontVec.z* sinf(angle) + ownerRightVec.z * cosf(angle) };
-                // ベクトルを求める
-                setPosition = setPosition * length;
-                // 位置を算出
-                setPosition = setPosition + ownerPosition;
-
-                // 位置を設定
-                magicCircleEnemySummon->magicCircle[0]->GetTransform()->SetPosition(DirectX::XMFLOAT3(setPosition));
-            }
-            {   // 二つ目  
-                 // 方向取得
-                DirectX::XMFLOAT3 setPosition = {
-                    /*-ownerVec.x * sinf(angle),
-                    0.0f,
-                    ownerVec.z * cosf(angle) };*/
-                    ownerFrontVec.x* sinf(angle) - ownerRightVec.x * cosf(angle),
-                    0.0f,
-                    ownerFrontVec.z* sinf(angle) - ownerRightVec.z * cosf(angle) };
-                // ベクトルを求める
-                setPosition = setPosition * length;
-                // 位置を算出
-                setPosition = setPosition + ownerPosition;
-
-                // 位置を設定
-                magicCircleEnemySummon->magicCircle[1]->GetTransform()->SetPosition(DirectX::XMFLOAT3(setPosition));
-            }
-        }
-        // move
-        {
-            // 一つ目
-            {
-                for (int i = 0; i < 3; ++i)
-                {
-                    float magicCirclePosY = magicCircleEnemySummon->magicCircleMove[0][i]->GetTransform()->GetPosition().y;
-                    // 方向取得
-                    DirectX::XMFLOAT3 setPosition = {
-                        ownerVec.x * sinf(DirectX::XMConvertToRadians(angle)),
-                        0.0f,
-                        ownerVec.z * cosf(DirectX::XMConvertToRadians(angle)) };
-                    // ベクトルを求める
-                    setPosition = setPosition * length;
-                    // 位置を算出
-                    setPosition = setPosition + ownerPosition;
-                    setPosition.y = magicCirclePosY;
-
-                    // 位置を設定
-                    magicCircleEnemySummon->magicCircleMove[0][i]->GetTransform()->SetPosition(DirectX::XMFLOAT3(setPosition));
-                }
-            }
-
-            // 二つ目
-            {
-                for (int i = 0; i < 3; ++i)
-                {
-                    float magicCirclePosY = magicCircleEnemySummon->magicCircleMove[0][i]->GetTransform()->GetPosition().y;
-                    // 方向取得
-                    DirectX::XMFLOAT3 setPosition = {
-                        -ownerVec.x * sinf(DirectX::XMConvertToRadians(angle)),
-                        0.0f,
-                        ownerVec.z * cosf(DirectX::XMConvertToRadians(angle)) };
-                    // ベクトルを求める
-                    setPosition = setPosition * length;
-                    // 位置を算出
-                    setPosition = setPosition + ownerPosition;
-                    setPosition.y = magicCirclePosY;
-
-                    // 位置を設定
-                    magicCircleEnemySummon->magicCircleMove[1][i]->GetTransform()->SetPosition(DirectX::XMFLOAT3(setPosition));
-                }
-            }
-        }
-    }
+    // 召喚魔法陣更新処理
+    UpdateSummoningMagicCircle(4.0f, 3.0f, DirectX::XMConvertToRadians(45));
 
     // アニメーション更新
     //Character::UpdateAnimation(elapsedTime);
@@ -174,6 +78,15 @@ void EnemyGolem::Render(const float& scale, ID3D11PixelShader* psShader)
     magicCircleEnemySummon->Render(DirectX::XMFLOAT4(0.8f, 0.44f, 0.24f, 1.0f));
 }
 
+// 影描画用
+void EnemyGolem::Render(const float& scale, bool shadow, ID3D11PixelShader* psShader)
+{
+    // 定数バッファー更新
+    UpdateConstants();
+
+    Enemy::Render(scale, psShader);
+}
+
 void EnemyGolem::DrawDebug()
 {
 #ifdef USE_IMGUI
@@ -195,4 +108,90 @@ void EnemyGolem::DrawDebug()
 
 void EnemyGolem::UpdateConstants()
 {
+}
+
+void EnemyGolem::UpdateSummoningMagicCircle(const float& lengthX, const float& lengthZ, const float& angle)
+{
+    // ゴーレムの位置
+    DirectX::XMFLOAT3 ownerPosition = GetTransform()->GetPosition();
+    // ゴーレムの前ベクトル
+    DirectX::XMFLOAT3 ownerFrontVec = GetTransform()->CalcForward();
+    // ゴーレムの右ベクトル
+    DirectX::XMFLOAT3 ownerRightVec = GetTransform()->CalcRight();
+
+    // base
+    {
+        {   // 一つ目
+            // 方向取得
+            DirectX::XMFLOAT3 setPosition = {
+                ownerFrontVec.x * sinf(angle) + ownerRightVec.x * cosf(angle),
+                0.0f,
+                ownerFrontVec.z * sinf(angle) + ownerRightVec.z * cosf(angle) };
+            // ベクトルを求める
+            setPosition = { setPosition.x * lengthX, 0.0f, setPosition.z * lengthZ };
+            // 位置を算出
+            setPosition = setPosition + ownerPosition;
+
+            // 位置を設定
+            magicCircleEnemySummon->magicCircle[0]->GetTransform()->SetPosition(DirectX::XMFLOAT3(setPosition));
+        }
+        {   // 二つ目  
+             // 方向取得
+            DirectX::XMFLOAT3 setPosition = {
+                ownerFrontVec.x * sinf(angle) - ownerRightVec.x * cosf(angle),
+                0.0f,
+                ownerFrontVec.z * sinf(angle) - ownerRightVec.z * cosf(angle) };
+            // ベクトルを求める
+            setPosition = { setPosition.x * lengthX, 0.0f, setPosition.z * lengthZ };
+            // 位置を算出
+            setPosition = setPosition + ownerPosition;
+
+            // 位置を設定
+            magicCircleEnemySummon->magicCircle[1]->GetTransform()->SetPosition(DirectX::XMFLOAT3(setPosition));
+        }
+    }
+    // move
+    {
+        // 一つ目
+        {
+            for (int i = 0; i < 3; ++i)
+            {
+                float magicCirclePosY = magicCircleEnemySummon->magicCircleMove[0][i]->GetTransform()->GetPosition().y;
+                // 方向取得
+                DirectX::XMFLOAT3 setPosition = {
+                ownerFrontVec.x* sinf(angle) + ownerRightVec.x * cosf(angle),
+                0.0f,
+                ownerFrontVec.z* sinf(angle) + ownerRightVec.z * cosf(angle) };
+                // ベクトルを求める
+                setPosition = { setPosition.x * lengthX, 0.0f, setPosition.z * lengthZ };
+                // 位置を算出
+                setPosition = setPosition + ownerPosition;
+                setPosition.y = magicCirclePosY;
+
+                // 位置を設定
+                magicCircleEnemySummon->magicCircleMove[0][i]->GetTransform()->SetPosition(DirectX::XMFLOAT3(setPosition));
+            }
+        }
+
+        // 二つ目
+        {
+            for (int i = 0; i < 3; ++i)
+            {
+                float magicCirclePosY = magicCircleEnemySummon->magicCircleMove[0][i]->GetTransform()->GetPosition().y;
+                // 方向取得
+                DirectX::XMFLOAT3 setPosition = {
+                ownerFrontVec.x* sinf(angle) - ownerRightVec.x * cosf(angle),
+                0.0f,
+                ownerFrontVec.z* sinf(angle) - ownerRightVec.z * cosf(angle) };
+                // ベクトルを求める
+                setPosition = { setPosition.x * lengthX, 0.0f, setPosition.z * lengthZ };
+                // 位置を算出
+                setPosition = setPosition + ownerPosition;
+                setPosition.y = magicCirclePosY;
+
+                // 位置を設定
+                magicCircleEnemySummon->magicCircleMove[1][i]->GetTransform()->SetPosition(DirectX::XMFLOAT3(setPosition));
+            }
+        }
+    }
 }
