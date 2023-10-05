@@ -7,14 +7,27 @@ class Player;
 class BaseSkill
 {
 public:
+    enum RARITY
+    {
+        COMMON,
+        UNCOMMON,
+        RARE,
+        SUPER_REAR,
+        ULTRA_REAR,
+        END
+    };
+
     BaseSkill(
         Player* player,
         const wchar_t* cardImageFilename,
         const wchar_t* iconImageFilename,
-        const char* name) :player(player), name(name), overlap(0)
+        const char* name,
+        RARITY rear) :player(player), name(name), rarity(rear),overlap(0)
     {
         card = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), cardImageFilename, "./Resources/Shader/sprite_dissolve_ps.cso");
         icon = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), iconImageFilename);
+
+        icon->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(60, 60));
     }
     ~BaseSkill() {}
 
@@ -34,14 +47,15 @@ public:
 
     const int GetOverlapNum() const { return overlap; }
 
+    std::unique_ptr<Sprite> card;//カード画像
+    std::unique_ptr<Sprite> icon;//アイコン画像
+    int rarity;//レアリティ
 protected:
-    int probability;//このスキルが出にくさ　値が大きいほど出現する確率が低い
+    //int probability;//このスキルが出にくさ　値が大きいほど出現する確率が低い
     int overlap;//重複回数（同じスキルを重複してとることで能力が強くなる）
 
     Player* player;
 
-    std::unique_ptr<Sprite> card;//カード画像
-    std::unique_ptr<Sprite> icon;//アイコン画像
 
     std::string name;
 };

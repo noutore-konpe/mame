@@ -362,11 +362,13 @@ void Player::Render(const float& scale, ID3D11PixelShader* psShader)
 void Player::SkillImagesRender()
 {
     int i = 0;
+    float posX = 1220.0f;
     for (auto& skill : skillArray)
     {
         if (skill->GetOverlapNum() == 0)continue;
-        //skill->SetIconPos();
+        skill->SetIconPos(DirectX::XMFLOAT2(posX,0));
         skill->Render();
+        posX -= skill->icon->GetSpriteTransform()->GetSize().x;
         i++;
     }
 }
@@ -436,6 +438,34 @@ void Player::AttackSteppingUpdate(float elapsedTime)
     Turn(elapsedTime, moveVec.x, moveVec.z, 360.0f);
 
     steppingTimer += elapsedTime;
+}
+
+void Player::SelectSkillUpdate(float elapsedTime)
+{
+    
+}
+
+BaseSkill* Player::Lottery()
+{
+    std::vector<BaseSkill*> lotSkills;
+    while (true)
+    {
+        int rarity = rand() % BaseSkill::END;
+
+        //抽選対象のレア度のスキルを格納
+        for (auto& skill : skillArray)
+        {
+            if (skill->rarity == rarity)
+            {
+                lotSkills.emplace_back(skill);
+            }
+        }
+        if (lotSkills.size() > 0)break;
+        else lotSkills.clear();
+    }
+
+    return lotSkills.at(rand() % lotSkills.size());
+    
 }
 
 void Player::LevelUpdate()

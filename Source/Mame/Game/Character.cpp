@@ -33,6 +33,8 @@ void Character::Update(const float& elapsedTime)
     GetCollisionSqhereTransform()->SetScaleFactor(range);
     GetCollisionSqhereTransform()->SetRotation(GetTransform()->GetRotation());
 
+    if (invincibleTime > 0.0f)invincibleTime -= elapsedTime;
+
 #ifdef _DEBUG
     debugSqhere->GetTransform()->SetPosition(GetCollisionSqhereTransform()->GetPosition());
     debugSqhere->GetTransform()->SetScaleFactor(range);

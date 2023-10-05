@@ -102,6 +102,12 @@ public:
     void SetVelocity(const DirectX::XMFLOAT3 velo) { velocity = velo; }
 
     void ResetSteppingTimer() { steppingTimer = 0; }
+
+    //レベルアップ時すべての更新処理を止めてスキル選択演出をする
+    void SelectSkillUpdate(float elapsedTime);
+
+    BaseSkill* Lottery();//カードを抽選
+
 private:
     void LevelUpdate();
 
