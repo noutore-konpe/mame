@@ -36,6 +36,11 @@ void SceneGame::CreateResource()
 {
     Graphics& graphics = Graphics::Instance();
 
+#ifdef _DEBUG
+    //sprite = std::make_unique<Sprite>(graphics.GetDevice(),
+    //    L"./Resources/Image/mameoTitle.png",
+    //    "./Resources/Shader/SpriteColorDissolvePS.cso");
+#endif
 
     using DirectX::XMFLOAT3;
 
@@ -299,6 +304,7 @@ void SceneGame::Update(const float& elapsedTime)
     // effect
     EffectManager::Instance().Update(elapsedTime);
 
+
 }
 
 // Updateの後に呼び出される
@@ -542,7 +548,11 @@ void SceneGame::Render(const float& elapsedTime)
     bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceViews, 0, _countof(shaderResourceViews), bloomPS.Get());
 
     //ブルーム無し
-    PlayerManager::Instance().GetPlayer()->SkillImagesRender();
+    {
+        PlayerManager::Instance().GetPlayer()->SkillImagesRender();
+
+
+    }
 }
 
 // debug用
@@ -550,6 +560,8 @@ void SceneGame::DrawDebug()
 {
 #ifdef USE_IMGUI
     ImGui::Begin("sceneGame");
+
+
 
     // デバッグプリミティブ描画
     if (ImGui::Button("drawDebug"))
