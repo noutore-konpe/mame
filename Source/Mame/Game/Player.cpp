@@ -108,9 +108,10 @@ void Player::Update(const float& elapsedTime)
 {
     Character::Update(elapsedTime);
 
+    stateMachine->Update(elapsedTime);
+
     Character::UpdateAnimation(elapsedTime);
 
-    stateMachine->Update(elapsedTime);
     //MoveUpdate(elapsedTime);
 
     CameraControllerUpdate(elapsedTime);

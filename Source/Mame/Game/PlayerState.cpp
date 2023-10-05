@@ -99,6 +99,7 @@ namespace PlayerState
     }
     void JabAttackState::Finalize()
     {
+        //owner->model->weight = 0.0f;
         owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
     }
 

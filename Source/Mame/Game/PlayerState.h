@@ -65,7 +65,7 @@ namespace PlayerState
         void Finalize() override;
 
     private:
-        float dodgeSpeed  = 15.0f;
+        float dodgeSpeed  = 20.0f;
     };
 
     //Ž€–S
