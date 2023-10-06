@@ -277,7 +277,7 @@
     <ClCompile Include="Source\Mame\Game\ProjectileManager.cpp">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Game\ProjectileStraite.cpp">
+    <ClCompile Include="Source\Mame\Game\ProjectileStraight.cpp">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\Enemy.cpp">
@@ -421,7 +421,9 @@
     <ClCompile Include="Source\Mame\Game\EnemyAI_2.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Game\EnemyAI_3.cpp" />
+    <ClCompile Include="Source\Mame\Game\EnemyAI_3.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -561,7 +563,7 @@
     <ClInclude Include="Source\Mame\Game\ProjectileManager.h">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\Game\ProjectileStraite.h">
+    <ClInclude Include="Source\Mame\Game\ProjectileStraight.h">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\Enemy.h">
@@ -738,7 +740,9 @@
     <ClInclude Include="Source\Mame\Game\EnemyAI_2.h">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\Game\EnemyAI_3.h" />
+    <ClInclude Include="Source\Mame\Game\EnemyAI_3.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">

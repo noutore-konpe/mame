@@ -46,6 +46,7 @@ public:
 
     // エネミー取得
     BaseEnemyAI* GetEnemy(const size_t index) { return enemies_.at(index); }
+    ProjectileManager* GetProjectileManager() { return &projectileManager_; }
 
     const bool GetIsRunningCRAAction() const { return isRunningCRAAction_; }
     void SetIsRunningCRAAction(const bool isRunningCRAAction) { isRunningCRAAction_ = isRunningCRAAction; }

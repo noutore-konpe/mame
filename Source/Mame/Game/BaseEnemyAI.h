@@ -8,10 +8,12 @@
 #include "BehaviorData.h"
 #include "NodeBase.h"
 
+class ProjectileManager;
+
 class BaseEnemyAI : public Character
 {
 public:
-    BaseEnemyAI() {}
+    BaseEnemyAI();
     ~BaseEnemyAI() override {}
 
     void Initialize() override;
@@ -33,6 +35,8 @@ public:
 
 public: // 取得・設定
     NodeBase* GetActiveNode() const { return activeNode_; }
+
+    ProjectileManager* GetProjectileManager() const { return projectileManager_; }
 
     const DirectX::XMFLOAT3& GetTargetPosition() const { return targetPosition_; }
     void SetTargetPosition(const DirectX::XMFLOAT3& position) { targetPosition_ = position; }
@@ -83,6 +87,8 @@ protected:
     std::unique_ptr<BehaviorData>   behaviorData_; // 主にシーケンスに使う
 
     NodeBase* activeNode_ = nullptr; // BehaviorTreeのノードを指すだけのポインタなのでdeleteしない
+
+    ProjectileManager* projectileManager_ = nullptr;
 
     DirectX::XMFLOAT3 targetPosition_ = {};
     DirectX::XMFLOAT3 moveVec_  = {};

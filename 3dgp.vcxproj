@@ -244,7 +244,7 @@
     <ClCompile Include="Source\Mame\Game\PlayerState.cpp" />
     <ClCompile Include="Source\Mame\Game\Projectile.cpp" />
     <ClCompile Include="Source\Mame\Game\ProjectileManager.cpp" />
-    <ClCompile Include="Source\Mame\Game\ProjectileStraite.cpp" />
+    <ClCompile Include="Source\Mame\Game\ProjectileStraight.cpp" />
     <ClCompile Include="Source\Mame\Game\Stage.cpp" />
     <ClCompile Include="Source\Mame\Graphics\AuraEffect.cpp" />
     <ClCompile Include="Source\Mame\Graphics\Bloom.cpp" />
@@ -338,7 +338,7 @@
     <ClInclude Include="Source\Mame\Game\PlayerState.h" />
     <ClInclude Include="Source\Mame\Game\Projectile.h" />
     <ClInclude Include="Source\Mame\Game\ProjectileManager.h" />
-    <ClInclude Include="Source\Mame\Game\ProjectileStraite.h" />
+    <ClInclude Include="Source\Mame\Game\ProjectileStraight.h" />
     <ClInclude Include="Source\Mame\Game\Stage.h" />
     <ClInclude Include="Source\Mame\Game\State.h" />
     <ClInclude Include="Source\Mame\Game\StateMachine.h" />

@@ -8,6 +8,7 @@
 #include "EnemyManager.h"
 #include "PlayerManager.h"
 
+#include "ProjectileStraight.h"
 
 // 待機行動
 const ActionBase::State IdleAction::Run(const float elapsedTime)
@@ -16,7 +17,7 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 	using DirectX::XMFLOAT4;
 
 	PlayerManager& playerManager = PlayerManager::Instance();
-	EnemyManager& enemyManager = EnemyManager::Instance();
+	//EnemyManager& enemyManager = EnemyManager::Instance();
 
 	switch (step_)
 	{
@@ -243,7 +244,7 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 	using DirectX::XMFLOAT3;
 
 	PlayerManager&	playerManager	= PlayerManager::Instance();
-	EnemyManager&	enemyManager	= EnemyManager::Instance();
+	//EnemyManager&	enemyManager	= EnemyManager::Instance();
 
 	switch (step_)
 	{
@@ -251,6 +252,7 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 		// 目標地点をプレイヤー位置に設定
 		//owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
 		//owner_->SetRunTimer(::RandFloat(+1.0f, +1.0f));
+		owner_->SetRunTimer(3.0f);
 		//owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::RunFWD), true);
 
 		++step_;
@@ -258,27 +260,36 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 		//break;
 	case 1:
 		// タイマー更新
-		//owner_->ElapseRunTimer(elapsedTime);
+		owner_->ElapseRunTimer(elapsedTime);
 
 		// 目標地点をプレイヤー位置に設定
 		owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
 
-		//// 行動時間が過ぎた時
-		//if (owner_->GetRunTimer() <= 0.0f)
-		//{
-		//	step_ = 0;
-		//	return ActionBase::State::Complete;
-		//}
-
 		const XMFLOAT3	position		= owner_->GetPosition();
 		const XMFLOAT3	playerPosition	= playerManager.GetPlayer()->GetPosition();
-		const float		vx				= playerPosition.x - position.x;
-		const float		vz				= playerPosition.z - position.z;
+		const XMFLOAT3  vec				= playerPosition - position;
+		const XMFLOAT3	vecN			= ::XMFloat3Normalize(vec);
 
 		// 回転
-		owner_->Turn(elapsedTime, vx, vz, owner_->GetTurnSpeed());
+		owner_->Turn(elapsedTime, vec.x, vec.z, owner_->GetTurnSpeed());
 
-		//owner_->Launch();
+		// 行動時間が過ぎた時
+		if (owner_->GetRunTimer() <= 0.0f)
+		{
+			// 弾丸発射
+			{
+				const XMFLOAT3 launchPosition = {
+					position.x,
+					position.y + 0.4f,
+					position.z,
+				};
+				ProjectileStraight* projectile = new ProjectileStraight(owner_->GetProjectileManager());
+				projectile->Launch(vecN, launchPosition);
+			}
+
+			step_ = 0;
+			return ActionBase::State::Complete;
+		}
 
 		break;
 	}
@@ -288,7 +299,7 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 
 
 // 攻撃行動
-const ActionBase::State NormalAction::Run(const float elapsedTime)
+const ActionBase::State NormalAction::Run(const float /*elapsedTime*/)
 {
 	//switch (step_)
 	//{
@@ -315,7 +326,7 @@ const ActionBase::State NormalAction::Run(const float elapsedTime)
 }
 
 // スキル攻撃行動
-const ActionBase::State SkillAction::Run(const float elapsedTime)
+const ActionBase::State SkillAction::Run(const float /*elapsedTime*/)
 {
 	//switch (step_)
 	//{
@@ -340,7 +351,7 @@ const ActionBase::State SkillAction::Run(const float elapsedTime)
 }
 
 // 徘徊行動
-const ActionBase::State WanderAction::Run(const float elapsedTime)
+const ActionBase::State WanderAction::Run(const float /*elapsedTime*/)
 {
 	//switch (step_)
 	//{
@@ -384,7 +395,7 @@ const ActionBase::State WanderAction::Run(const float elapsedTime)
 
 
 // 逃走行動
-const ActionBase::State LeaveAction::Run(const float elapsedTime)
+const ActionBase::State LeaveAction::Run(const float /*elapsedTime*/)
 {
 	//DirectX::XMFLOAT3 targetPosition;
 	//switch (step_)
@@ -436,7 +447,7 @@ const ActionBase::State LeaveAction::Run(const float elapsedTime)
 }
 
 // 回復行動
-const ActionBase::State RecoverAction::Run(const float elapsedTime)
+const ActionBase::State RecoverAction::Run(const float /*elapsedTime*/)
 {
 	//switch (step_)
 	//{

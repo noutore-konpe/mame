@@ -42,6 +42,7 @@ EnemyAI_3::EnemyAI_3()
         behaviorTree_ = make_unique<BehaviorTree>(this);
 
         behaviorTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);
+        behaviorTree_->AddNode("Root", "LongRangeAttack", 1, SelectRule::Non, new LongRangeAttackJudgment(this), new LongRangeAttackAction(this));
         behaviorTree_->AddNode("Root", "Pursuit", 2, SelectRule::Non, new PursuitJudgment(this), new PursuitAction(this));
         behaviorTree_->AddNode("Root", "Idle", 3, SelectRule::Non, nullptr, new IdleAction(this));
     }

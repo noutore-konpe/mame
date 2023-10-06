@@ -1,12 +1,12 @@
-#include "ProjectileStraite.h"
+#include "ProjectileStraight.h"
 
 #include "../../Taki174/OperatorXMFloat3.h"
 #include "../Graphics/Graphics.h"
 
-int ProjectileStraite::nameNum_ = 0;
+int ProjectileStraight::nameNum_ = 0;
 
 // コンストラクタ
-ProjectileStraite::ProjectileStraite(ProjectileManager* manager)
+ProjectileStraight::ProjectileStraight(ProjectileManager* manager)
     : Projectile(manager)
 {
     Graphics& graphics = Graphics::Instance();
@@ -18,20 +18,26 @@ ProjectileStraite::ProjectileStraite(ProjectileManager* manager)
 }
 
 
-ProjectileStraite::~ProjectileStraite()
+ProjectileStraight::~ProjectileStraight()
 {
     --nameNum_;
 }
 
 
 // 初期化
-void ProjectileStraite::Initialize()
+void ProjectileStraight::Initialize()
 {
-    lifeTimer_ = 10.0f;
+    // とりあえずLaunch関数で呼び出している
+
+    using DirectX::XMFLOAT3;
+
+    //lifeTimer_ = 10.0f;
+    constexpr float scale = 100.0f;
+    GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
 }
 
 // 更新処理
-void ProjectileStraite::Update(const float& elapsedTime)
+void ProjectileStraight::Update(const float& elapsedTime)
 {
     // 寿命処理
     {
@@ -48,13 +54,13 @@ void ProjectileStraite::Update(const float& elapsedTime)
 }
 
 // 描画処理
-void ProjectileStraite::Render(const float& scale, ID3D11PixelShader* psShader)
+void ProjectileStraight::Render(const float& scale, ID3D11PixelShader* psShader)
 {
     Projectile::Render(scale, psShader);
 }
 
 // ImGui用
-void ProjectileStraite::DrawDebug()
+void ProjectileStraight::DrawDebug()
 {
 #ifdef USE_IMGUI
 
@@ -69,10 +75,12 @@ void ProjectileStraite::DrawDebug()
 }
 
 // 発射
-void ProjectileStraite::Launch(
+void ProjectileStraight::Launch(
     const DirectX::XMFLOAT3& direction,
     const DirectX::XMFLOAT3& position)
 {
+    Initialize();
+
     direction_ = direction;
     GetTransform()->SetPosition(position);
 }

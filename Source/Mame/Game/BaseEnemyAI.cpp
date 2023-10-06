@@ -1,7 +1,13 @@
 #include "BaseEnemyAI.h"
 
 #include "../../Taki174/Common.h"
+#include "EnemyManager.h"
 
+BaseEnemyAI::BaseEnemyAI()
+{
+    // EnemyManagerのProjectileManagerにアクセスできるようにポインタを持っておく
+    projectileManager_ = EnemyManager::Instance().GetProjectileManager();
+}
 
 void BaseEnemyAI::Initialize()
 {
