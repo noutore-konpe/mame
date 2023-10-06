@@ -48,7 +48,7 @@ EnemyAI_3::EnemyAI_3()
 
 
     // ImGui名前設定
-    SetName("EnemyAI_1 : " + std::to_string(nameNum_++));
+    SetName("EnemyAI_3 : " + std::to_string(nameNum_++));
 }
 
 // デストラクタ

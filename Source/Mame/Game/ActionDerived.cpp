@@ -182,6 +182,7 @@ const ActionBase::State PursuitAction::Run(const float elapsedTime)
 }
 
 
+// 近接攻撃行動
 const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 {
 	using DirectX::XMFLOAT3;
@@ -228,6 +229,56 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 			//return ActionBase::State::Failed;
 			return ActionBase::State::Complete;
 		}
+
+		break;
+	}
+
+	return ActionBase::State::Run;
+}
+
+
+// 遠距離攻撃行動
+const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
+{
+	using DirectX::XMFLOAT3;
+
+	PlayerManager&	playerManager	= PlayerManager::Instance();
+	EnemyManager&	enemyManager	= EnemyManager::Instance();
+
+	switch (step_)
+	{
+	case 0:
+		// 目標地点をプレイヤー位置に設定
+		//owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
+		//owner_->SetRunTimer(::RandFloat(+1.0f, +1.0f));
+		//owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::RunFWD), true);
+
+		++step_;
+		[[fallthrough]];
+		//break;
+	case 1:
+		// タイマー更新
+		//owner_->ElapseRunTimer(elapsedTime);
+
+		// 目標地点をプレイヤー位置に設定
+		owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
+
+		//// 行動時間が過ぎた時
+		//if (owner_->GetRunTimer() <= 0.0f)
+		//{
+		//	step_ = 0;
+		//	return ActionBase::State::Complete;
+		//}
+
+		const XMFLOAT3	position		= owner_->GetPosition();
+		const XMFLOAT3	playerPosition	= playerManager.GetPlayer()->GetPosition();
+		const float		vx				= playerPosition.x - position.x;
+		const float		vz				= playerPosition.z - position.z;
+
+		// 回転
+		owner_->Turn(elapsedTime, vx, vz, owner_->GetTurnSpeed());
+
+		//owner_->Launch();
 
 		break;
 	}
@@ -405,5 +456,3 @@ const ActionBase::State RecoverAction::Run(const float elapsedTime)
 
 	return ActionBase::State::Run;
 }
-
-

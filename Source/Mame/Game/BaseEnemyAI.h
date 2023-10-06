@@ -99,8 +99,6 @@ protected:
     float attackLength_ = 3.0f; // UŒ‚‹——£
     float runTimer_     = 0.0f;
 
-    float hp_           = 1.0f;
-    float attackDamage_ = 1.0f;
     float radius_       = 0.5f;
 
     bool isGround_      = false;

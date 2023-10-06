@@ -1,8 +1,10 @@
 #pragma once
 
-#include "BaseEnemyAI.h"
 #include <vector>
 #include <set>
+
+#include "BaseEnemyAI.h"
+#include "ProjectileManager.h"
 
 class EnemyManager
 {
@@ -55,9 +57,10 @@ private:
     std::vector<BaseEnemyAI*> enemies_ = {};
     std::set<BaseEnemyAI*>    removes_ = {};
 
-protected:
-    bool    isRunningCRAAction_ = false;    // 誰かが近接攻撃行動を実行中か
+    ProjectileManager projectileManager_ = {};
+
     float   craActionCoolTimer_ = 0.0f;     // 近接攻撃行動クールタイマー
+    bool    isRunningCRAAction_ = false;    // 誰かが近接攻撃行動を実行中か
 
 };
 

@@ -7,22 +7,28 @@
 void EnemyManager::Initialize()
 {
     // CRA : 0.Initialize : 初期化
-    isRunningCRAAction_ = false;
     craActionCoolTimer_ = 0.0f;
+    isRunningCRAAction_ = false;
 
     for (BaseEnemyAI*& enemy : enemies_)
     {
         enemy->Initialize();
     }
+
+    projectileManager_.Initialize();
 }
 
 void EnemyManager::Finalize()
 {
+    projectileManager_.Finalize();
+    projectileManager_.Clear();
+
     for (BaseEnemyAI*& enemy : enemies_)
     {
         enemy->Finalize();
     }
     Clear();
+
 }
 
 void EnemyManager::Begin()
@@ -31,6 +37,8 @@ void EnemyManager::Begin()
     {
         enemy->Begin();
     }
+
+    projectileManager_.Begin();
 }
 
 // 更新処理
@@ -59,12 +67,26 @@ void EnemyManager::Update(const float elapsedTime)
                 enemies_.erase(it);
             }
 
+            // 消去される敵が弾丸の親の場合、弾丸の親情報を消去する
+            const size_t projectileCount = projectileManager_.GetProjectileCount();
+            for (size_t i = 0; i < projectileCount; ++i)
+            {
+                Projectile* projectile = projectileManager_.GetProjectile(i);
+
+                if (nullptr == projectile->GetParent()) continue;
+                if (enemy != projectile->GetParent()) continue;
+
+                projectile->SetParent(nullptr);
+            }
+
             // 敵の破棄処理
             SafeDeletePtr(enemy);
         }
         // 破棄リストをクリア
         removes_.clear();
     }
+
+    projectileManager_.Update(elapsedTime);
 
     // エネミー同士の衝突判定処理
     CollisionEnemyVsEnemy(elapsedTime);
@@ -77,6 +99,8 @@ void EnemyManager::End()
     {
         enemy->End();
     }
+
+    projectileManager_.End();
 }
 
 
@@ -87,6 +111,9 @@ void EnemyManager::Render(const float scale, ID3D11PixelShader* psShader)
     {
         enemy->Render(scale, psShader);
     }
+
+    projectileManager_.Render(scale, psShader);
+
 }
 
 
@@ -127,9 +154,9 @@ void EnemyManager::DrawDebug()
         {
             enemy->DrawDebug();
         }
+        ImGui::Separator();
 
-        ImGui::EndMenu();
-
+        // Behaviorを簡易に見る用
         for (BaseEnemyAI*& enemy : enemies_)
         {
             std::string str = (enemy->GetActiveNode() != nullptr)
@@ -137,8 +164,19 @@ void EnemyManager::DrawDebug()
                 : u8"なし";
             ImGui::Text(u8"Behavior：%s", str.c_str());
         }
+
+        ImGui::EndMenu();
     }
     ImGui::Separator();
+
+
+    if (ImGui::BeginMenu("Enemy_ProjectileManager"))
+    {
+        projectileManager_.DrawDebug();
+        ImGui::EndMenu();
+    }
+    ImGui::Separator();
+
 
 #endif
 }

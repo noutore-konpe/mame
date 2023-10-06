@@ -50,7 +50,7 @@ void Camera::UpdateDebug(const float& elapsedTime, DirectX::XMFLOAT2 moveVector)
 
     if (rotation.y >= DirectX::XMConvertToRadians(360))rotation.y -= DirectX::XMConvertToRadians(360);
     if (rotation.y <= DirectX::XMConvertToRadians(0))rotation.y += DirectX::XMConvertToRadians(360);
-    
+
     transform.SetPosition(position);
     transform.SetRotation(rotation);
 #else
@@ -69,7 +69,7 @@ void Camera::UpdateDebug(const float& elapsedTime, DirectX::XMFLOAT2 moveVector)
         speed *= (speed > 0) ? -1 : 1;
     else
         speed *= (speed < 0) ? -1 : 1;
-    
+
     if (aLx <= -0.3f)position.x -= speed;   // ¶
     if (aLx >=  0.3f)position.x += speed;   // ‰E
     if (aLy <= -0.3f)position.z -= speed;   // Œã
@@ -92,7 +92,7 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
 
     float aspect_ratio{ viewport.Width / viewport.Height };
     P = { DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(30),aspect_ratio,0.1f,1000.0f) };
-    
+
     DirectX::XMVECTOR eye;
     DirectX::XMVECTOR focus;
 
@@ -124,7 +124,7 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
         eye = { DirectX::XMVectorSet(pos.x, pos.y, pos.z, 1.0f) };
         focus = { DirectX::XMVectorSet(pos.x + forward.x, pos.y + forward.y, pos.z + forward.z, 1.0f) };
     }
-   
+
     //DirectX::XMVECTOR eye{ DirectX::XMVectorSet(camera.eye.x,camera.eye.y,camera.eye.z,1.0f) };
     //DirectX::XMVECTOR focus{ DirectX::XMVectorSet(camera.focus.x,camera.focus.y,camera.focus.z,1.0f) };
     DirectX::XMVECTOR up{ DirectX::XMVectorSet(camera.up.x,camera.up.y,camera.up.z,0.0f) };
@@ -159,9 +159,9 @@ void Camera::DrawDebug()
         }
         if (ImGui::TreeNode("player camera"))
         {
-            ImGui::SliderFloat("FocalLength", &focalLength, 0.1f, 20.0f); 
-            ImGui::SliderFloat("OffsetY", &offsetY, 0.1f, 10.0f); 
-            ImGui::SliderFloat("FocusOffsetY", &focusOffsetY, 0.1f, 10.0f); 
+            ImGui::SliderFloat("FocalLength", &focalLength, 0.1f, 20.0f);
+            ImGui::SliderFloat("OffsetY", &offsetY, 0.1f, 10.0f);
+            ImGui::SliderFloat("FocusOffsetY", &focusOffsetY, 0.1f, 10.0f);
             ImGui::TreePop();
         }
 
@@ -190,6 +190,8 @@ void Camera::DrawDebug()
 
         ImGui::EndMenu();
     }
+    ImGui::Separator();
+
 }
 
 void Camera::Reset()

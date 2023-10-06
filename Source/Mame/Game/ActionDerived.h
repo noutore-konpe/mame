@@ -27,7 +27,7 @@ template <class TemplateAI>
 };
 
 
-// ’ÇÕs“®
+// ‹ßÚUŒ‚s“®
 class CloseRangeAttackAction : public ActionBase
 {
 public:
@@ -35,6 +35,16 @@ public:
 	CloseRangeAttackAction(TemplateAI* enemy) : ActionBase(enemy) {}
 	const ActionBase::State Run(const float elapsedTime) override;
 };
+
+// ‰“‹——£UŒ‚s“®
+class LongRangeAttackAction : public ActionBase
+{
+public:
+	template <class TemplateAI>
+	LongRangeAttackAction(TemplateAI* enemy) : ActionBase(enemy) {}
+	const ActionBase::State Run(const float elapsedTime) override;
+};
+
 
 
 // ’ÊíUŒ‚

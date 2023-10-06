@@ -16,7 +16,7 @@ Player::Player()
 
     // モデル生成
     {
-        model = std::make_unique<Model>(graphics.GetDevice(),            
+        model = std::make_unique<Model>(graphics.GetDevice(),
             //"./Resources/Model/Character/Player/sotai.fbx");
             //"./Resources/Model/Character/Player/P_Chara.fbx");
             "./Resources/Model/Character/Player/P_Motion.fbx");
@@ -36,7 +36,7 @@ void Player::Initialize()
 
     // 待機アニメーションに設定してる
     //Character::PlayAnimation(2, true);
-    
+
 
     //カメラがプレイヤーを追いかけるよう設定
     Camera::Instance().SetTraget(GetTransform());
@@ -170,7 +170,7 @@ void Player::MoveUpdate(float elapsedTime,float ax,float ay)
 
     UpdateVelocity(elapsedTime,ax,ay);
 #endif // 0
-    
+
     //GetTransform()->SetPosition(pos);
     DirectX::XMFLOAT3 move = {
         velocity.x * elapsedTime,
@@ -326,7 +326,7 @@ void Player::CameraControllerUpdate(float elapsedTime)
 {
     //カメラ挙動（今は回転のみ）
     auto* cTransform = Camera::Instance().GetTransform();
-    
+
     GamePad& gamePad = Input::Instance().GetGamePad();
 
     float ax = gamePad.GetAxisRX();
@@ -411,6 +411,8 @@ void Player::DrawDebug()
 
         ImGui::EndMenu();
     }
+    ImGui::Separator();
+
 #endif // USE_IMGUI
 }
 

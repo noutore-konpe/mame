@@ -1,5 +1,8 @@
 #include "ProjectileManager.h"
 
+#include "../../Taki174/Common.h"
+
+
 // コンストラクタ
 ProjectileManager::ProjectileManager()
 {
@@ -14,7 +17,7 @@ ProjectileManager::~ProjectileManager()
 // 初期化
 void ProjectileManager::Initialize()
 {
-    for (Projectile*& projectile : projectiles)
+    for (Projectile*& projectile : projectiles_)
     {
         projectile->Initialize();
     }
@@ -23,7 +26,7 @@ void ProjectileManager::Initialize()
 // 終了化
 void ProjectileManager::Finalize()
 {
-    for (Projectile*& projectile : projectiles)
+    for (Projectile*& projectile : projectiles_)
     {
         projectile->Finalize();
     }
@@ -32,56 +35,57 @@ void ProjectileManager::Finalize()
 // Updateの前に呼ばれる
 void ProjectileManager::Begin()
 {
-    for (Projectile*& projectile : projectiles)
+    for (Projectile*& projectile : projectiles_)
     {
         projectile->Begin();
     }
 }
 
 // 更新処理
-void ProjectileManager::Update(const float& elapsedTime)
+void ProjectileManager::Update(const float elapsedTime)
 {
     // 更新処理
-    for (Projectile*& projectile : projectiles)
+    for (Projectile*& projectile : projectiles_)
     {
         projectile->Update(elapsedTime);
     }
 
     // 破棄処理
     {
-        for (Projectile* projectile : removes)
+        for (Projectile* projectile : removes_)
         {
             // vectorから要素を削除する場合はイテレーターで削除
-            std::vector<Projectile*>::iterator it = std::find(projectiles.begin(), projectiles.end(), projectile);
+            auto it = std::find(projectiles_.begin(), projectiles_.end(), projectile);
 
             // std::vectorで管理されている要素を削除するにはerase()関数を使用する
             // (破棄リストのポインタからイテレーターを検索し、erase関数に渡す)
-            if (it != projectiles.end())
+            if (it != projectiles_.end())
             {
-                projectiles.erase(it);
+                projectiles_.erase(it);
             }
 
             // アイテムの破棄
-            delete projectile;
+            SafeDeletePtr(projectile);
         }
         // 破棄リストをクリア
-        removes.clear();
+        removes_.clear();
     }
+
 }
 
 // Updateの後に呼ばれる
 void ProjectileManager::End()
 {
-    for (Projectile*& projectile : projectiles)
+    for (Projectile*& projectile : projectiles_)
     {
         projectile->End();
     }
 }
 
 // 描画処理
-void ProjectileManager::Render(const float& scale, ID3D11PixelShader* psShader)
+void ProjectileManager::Render(const float scale, ID3D11PixelShader* psShader)
 {
-    for (Projectile*& projectile : projectiles)
+    for (Projectile*& projectile : projectiles_)
     {
         projectile->Render(scale, psShader);
     }
@@ -90,7 +94,7 @@ void ProjectileManager::Render(const float& scale, ID3D11PixelShader* psShader)
 // ImGui用
 void ProjectileManager::DrawDebug()
 {
-    for (Projectile*& projectile : projectiles)
+    for (Projectile*& projectile : projectiles_)
     {
         projectile->DrawDebug();
     }
@@ -99,23 +103,23 @@ void ProjectileManager::DrawDebug()
 // 登録
 void ProjectileManager::Register(Projectile* projectile)
 {
-    projectiles.emplace_back(projectile);
+    projectiles_.emplace_back(projectile);
 }
 
 // 削除
 void ProjectileManager::Remove(Projectile* projectile)
 {
     // 破棄リストに追加
-    removes.insert(projectile);
+    removes_.insert(projectile);
 }
 
 // 全削除
 void ProjectileManager::Clear()
 {
-    for (Projectile*& projectile : projectiles)
+    for (Projectile*& projectile : projectiles_)
     {
-        delete projectile;
+        SafeDeletePtr(projectile);
     }
-    projectiles.clear();
-    projectiles.shrink_to_fit();  // vectorの余分なメモリを開放する関数(C++11)
+    projectiles_.clear();
+    projectiles_.shrink_to_fit();  // vectorの余分なメモリを開放する関数(C++11)
 }

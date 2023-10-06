@@ -138,4 +138,6 @@ void Particles::DrawDebug()
 
         ImGui::TreePop();
     }
+    ImGui::Separator();
+
 }
