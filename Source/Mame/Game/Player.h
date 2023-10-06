@@ -43,7 +43,7 @@ public:
     void Update(const float& elapsedTime) override; // 更新処理
     void End();                                     // 毎フレーム一番最後に呼ばれる
 
-    void MoveUpdate(float elapsedTime);
+    void MoveUpdate(float elapsedTime,float ax,float ay);
     void UpdateVelocity(float elapsedTime, float ax, float ay);
 
     //入力をカメラから見たベクトルに変更しmoveVec変数に入れる関数
@@ -64,6 +64,7 @@ public:
     //汎用関数
     void PlayWalkAnimation() { PlayBlendAnimation(Idle, Dash, true); }
 
+    void AttackSteppingUpdate(float elapsedTime);//攻撃間際の踏み込み処理
 
     //入力関数
     static bool InputJabAttack()
@@ -98,6 +99,9 @@ public:
 
     void ChangeState(int newState) { stateMachine->ChangeState(newState); }
 
+    void SetVelocity(const DirectX::XMFLOAT3 velo) { velocity = velo; }
+
+    void ResetSteppingTimer() { steppingTimer = 0; }
 private:
     void LevelUpdate();
 
@@ -148,6 +152,12 @@ private:
     float baseAttackPower;//基礎攻撃力（これにモーション倍率を掛けて計算する）
 
     float attackSpeed;//攻撃速度
+
+    //踏み込み処理はイージングを使って行う
+    //踏み込み中は自機の回転も可能にする
+    const float steppingSpeed = 5.0f;//攻撃間際の踏み込み最高速度
+    const float steppingTime = 0.2f;//踏み込み時間
+    float steppingTimer = 0;
     //-----------------------------------------------------------------------
 
     //----------------------------回避---------------------------------------

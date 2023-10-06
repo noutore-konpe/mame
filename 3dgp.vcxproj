@@ -220,6 +220,7 @@
     <ClCompile Include="Source\Mame\Game\Enemy.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyAI_1.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyAura.cpp" />
+    <ClCompile Include="Source\Mame\Game\EnemyGolemState.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyManager.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemySlime.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyTestAI.cpp" />
@@ -310,6 +311,7 @@
     <ClInclude Include="Source\Mame\Game\Enemy.h" />
     <ClInclude Include="Source\Mame\Game\EnemyAI_1.h" />
     <ClInclude Include="Source\Mame\Game\EnemyAura.h" />
+    <ClInclude Include="Source\Mame\Game\EnemyGolemState.h" />
     <ClInclude Include="Source\Mame\Game\EnemyManager.h" />
     <ClInclude Include="Source\Mame\Game\EnemySlime.h" />
     <ClInclude Include="Source\Mame\Game\EnemyTestAI.h" />
@@ -610,6 +612,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SpriteColorDissolvePS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Source\Shader\sprite_change_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>

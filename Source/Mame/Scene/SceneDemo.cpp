@@ -122,17 +122,7 @@ void SceneDemo::CreateResource()
         stageWall = std::make_unique<Stage>("./Resources/Model/Stage/stageWall.fbx");
     }
 
-    // skybox
-    {
-#if SKYBOX
-        skyBoxSprite = std::make_shared<Sprite>(graphics.GetDevice(),
-            //L"./Resources/Image/SkyBox/skybox0.jpg");
-            //L"./Resources/Image/SkyBox/skybox1.png");
-            //L"./Resources/Image/SkyBox/skybox2.jpg");
-            L"./Resources/Image/SkyBox/skybox3.jpg");
-        skyBox = std::make_unique<SkyBox>(graphics.GetDevice(), skyBoxSprite);
-#endif // SKYBOX
-    }
+
 
 
     framebuffers[0] = std::make_unique<FrameBuffer>(graphics.GetDevice(), 1280, 720);
@@ -365,7 +355,6 @@ void SceneDemo::Render(const float& elapsedTime)
 
     Graphics& graphics = Graphics::Instance();
 
-    Shader::ShadowConstants shadowConstants{};
 
     graphics.GetShader()->SetSamplerState(graphics.GetDeviceContext());
 
@@ -373,60 +362,6 @@ void SceneDemo::Render(const float& elapsedTime)
     {
         // •`‰æ‚Ì‰ŠúÝ’è¦•K‚¸ŒÄ‚Ô‚±‚ÆIII
         Mame::Scene::BaseScene::RenderInitialize();
-
-        // SHADOW
-        shadowConstants.lightDirection = graphics.GetShader()->view.position;
-        shadowConstants.cameraPosition = graphics.GetShader()->view.camera;
-
-        // SHADOW : make shadow map
-        {
-            const float aspectRatio = shadow.shadowMap->viewport.Width / shadow.shadowMap->viewport.Height;
-            DirectX::XMVECTOR F =
-            {
-                DirectX::XMLoadFloat4(&shadow.lightViewFocus)
-            };
-            DirectX::XMVECTOR E =
-            {
-                DirectX::XMVectorSubtract(F,
-                DirectX::XMVectorScale(
-                    DirectX::XMVector3Normalize(
-                        DirectX::XMLoadFloat4(&graphics.GetShader()->view.position)),shadow.lightViewDistance))
-            };
-            DirectX::XMVECTOR U =
-            {
-                DirectX::XMVectorSet(0.0f,1.0f,0.0f,0.0f)
-            };
-            DirectX::XMMATRIX V =
-            {
-                DirectX::XMMatrixLookAtLH(E,F,U)
-            };
-            DirectX::XMMATRIX P =
-            {
-                DirectX::XMMatrixOrthographicLH(shadow.lightViewSize * aspectRatio,
-                shadow.lightViewSize,shadow.lightViewNearZ,shadow.lightViewFarZ)
-            };
-
-            DirectX::XMStoreFloat4x4(&shadowConstants.viewProjection, V * P);
-            shadowConstants.lightViewProjection = shadowConstants.viewProjection;
-            graphics.GetDeviceContext()->UpdateSubresource(SceneConstantBuffer.Get(), 0, 0, &shadowConstants, 0, 0);
-            graphics.GetDeviceContext()->VSSetConstantBuffers(1, 1, SceneConstantBuffer.GetAddressOf());
-
-            shadow.shadowMap->Clear(graphics.GetDeviceContext(), 1.0f);
-            shadow.shadowMap->Activate(graphics.GetDeviceContext());
-
-            // SHADOW : ‰e‚Â‚¯‚½‚¢ƒ‚ƒfƒ‹‚Í‚±‚±‚ÉRender‚·‚é
-            {
-                PlayerManager::Instance().Render(playerScaleFactor);
-
-                enemySlime[0]->Render(enemyScaleFactor);
-                enemySlime[1]->Render(enemyScaleFactor);
-
-                EnemyManager::Instance().Render(playerScaleFactor);
-                //enemyAura->Render(enemyScaleFactor);
-            }
-
-            shadow.shadowMap->Deactivete(graphics.GetDeviceContext());
-        }
     }
 
     // EMISSIVE
@@ -435,17 +370,14 @@ void SceneDemo::Render(const float& elapsedTime)
     framebuffers[0]->Clear(graphics.GetDeviceContext());
     framebuffers[0]->Activate(graphics.GetDeviceContext());
 
-#if SKYBOX
-    skyBox->Render(graphics.GetDeviceContext(),
-        Camera::Instance().GetViewMatrix(), Camera::Instance().GetProjectionMatrix());
-#endif // SKYBOX
+
 
     // ƒJƒƒ‰ŠÖŒW
     RenderContext rc;
     rc.lightDirection = { 0.0f, -1.0f, 0.0f, 0.0f };
 
     Shader* shader = graphics.GetShader();
-    shader->Begin(graphics.GetDeviceContext(), rc, shadowConstants);
+    shader->Begin(graphics.GetDeviceContext(), rc);
 
     // SHADOW : bind shadow map at slot 8
     graphics.GetDeviceContext()->PSSetShaderResources(8, 1, shadow.shadowMap->shaderResourceView.GetAddressOf());

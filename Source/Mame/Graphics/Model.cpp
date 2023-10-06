@@ -69,6 +69,8 @@ void Model::DrawDebug()
         {
             PlayAnimation(index,true);
         }
+        static int index = (currentAnimationIndex > -1) ? currentAnimationIndex : blendAnimationIndex1;
+        ImGui::SliderInt("Keyframe Index", &currentKeyframeIndex, -1, GetAnimation()->at(index).sequence.size() - 1);
 
         ImGui::SliderFloat("Animation Speed", &animationSpeed, 0.0f, 3.0f);
 

@@ -27,7 +27,6 @@
 #define MODEL 0
 #define SPRITE 0
 #define BLOOM 1
-#define SKYBOX 1
 #define FOG 1
 #define PARTICLE 1
 
@@ -106,11 +105,7 @@ private:
     // ZELDA
     Microsoft::WRL::ComPtr<ID3D11PixelShader> sagePS;
 
-    // skybox
-#if SKYBOX
-    std::shared_ptr<Sprite> skyBoxSprite;
-    std::unique_ptr<SkyBox> skyBox;
-#endif // SKYBOX
+
 
 
     // SHADOW

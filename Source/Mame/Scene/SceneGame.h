@@ -44,11 +44,8 @@ private: // 変数等々
     std::unique_ptr<Stage> stageBase;
     std::unique_ptr<Stage> stageWall;
 
-    // enemy
 
-    //std::unique_ptr<EnemyAura> enemyAura;
 
-    std::unique_ptr<EnemyAura> enemyAura;
     std::unique_ptr<EnemyGolem> enemyGolem;
 
     // 魔法陣
@@ -64,6 +61,8 @@ private: // 変数等々
 private: // GPU用定数・変数
     std::unique_ptr<FrameBuffer> framebuffers[3];
     std::unique_ptr<FullscreenQuad> bitBlockTransfer;
+
+    Microsoft::WRL::ComPtr<ID3D11Buffer> ConstantBuffer;
 
     // SHADOW
     struct Shadow

@@ -67,14 +67,18 @@ void MagicCircleEnemySummon::Update(const float& elapsedTime)
 // •`‰æ
 void MagicCircleEnemySummon::Render(const DirectX::XMFLOAT4 color)
 {
+    // ‚±‚¢‚Â‚Íˆê‰ñŒÄ‚Ô‚¾‚¯‚Å‚·‚×‚Ä‚É“K‰ž‚³‚ê‚é(ŒÂ•Ê‚Å•Ï‚¦‚½‚¢ê‡‚Í•Ê)
+    magicCircle[0]->SetEmissiveColor(color);
+    magicCircleMove[0][0]->SetEmissiveColor(color);
+    magicCircle[0]->SetEmissiveIntensity(1.5);
+    magicCircleMove[0][0]->SetEmissiveIntensity(1.5);
+
     for (int i = 0; i < 2; ++i)
     {
-        magicCircle[i]->SetEmissiveColor(color);
         magicCircle[i]->Render(0.01f);
 
         for (int j = 0; j < 3; ++j)
         {
-            magicCircleMove[i][j]->SetEmissiveColor(color);
             magicCircleMove[i][j]->Render(0.01f);
         }
     }

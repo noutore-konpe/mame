@@ -9,7 +9,12 @@ namespace PlayerState
     }
     void NormalState::Update(const float& elapsedTime)
     {
-        owner->MoveUpdate(elapsedTime);
+        GamePad& gamePad = Input::Instance().GetGamePad();
+
+        float ax = gamePad.GetAxisLX();
+        float ay = gamePad.GetAxisLY();
+
+        owner->MoveUpdate(elapsedTime,ax,ay);
         if (owner->InputAvoid())
         {
             owner->ChangeState(Player::STATE::AVOID);
@@ -25,16 +30,21 @@ namespace PlayerState
 
     void JabAttackState::Initialize()
     {
+        combo = 0;
         initialize = false;
     }
     void JabAttackState::Update(const float& elapsedTime)
     {
+        //“¥‚Ýž‚Ýˆ—
+        owner->AttackSteppingUpdate(elapsedTime);
+
         switch (combo)
         {
         case 0: //1Œ‚–Ú
             //‰Šú‰»ˆ—
             if (!initialize)
             {
+                owner->ResetSteppingTimer();
                 state = UPDATE_FRAME;
                 owner->PlayAnimation(Player::Animation::Jab_1, false, owner->GetAttackSpeed());
                 initialize = true;
@@ -51,6 +61,7 @@ namespace PlayerState
             //‰Šú‰»ˆ—
             if (!initialize)
             {
+                owner->ResetSteppingTimer();
                 state = UPDATE_FRAME;
                 owner->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
                 initialize = true;
@@ -66,6 +77,7 @@ namespace PlayerState
             //‰Šú‰»ˆ—
             if (!initialize)
             {
+                owner->ResetSteppingTimer();
                 state = UPDATE_FRAME;
                 owner->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
                 initialize = true;
@@ -87,6 +99,8 @@ namespace PlayerState
     }
     void JabAttackState::Finalize()
     {
+        //owner->model->weight = 0.0f;
+        owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
     }
 
     void JabAttackState::HitCollisionUpdate()

@@ -17,7 +17,7 @@ EnemyAura::EnemyAura()
     Graphics& graphics = Graphics::Instance();
 
     model = std::make_unique<Model>(graphics.GetDevice(),
-        "./Resources/Model/testModel/plantune.fbx");
+        "./Resources/Model/Character/Player/P_Motion.fbx");
 
     // emissiveTextureUVScroll
     {
@@ -102,7 +102,7 @@ void EnemyAura::Render(const float& scale, ID3D11PixelShader* psShader)
     UpdateConstants();
 
     // Aura enemy
-    BaseEnemyAI::Render(scale, emissiveTextureUVScroll.Get());
+    BaseEnemyAI::Render(0.01f, emissiveTextureUVScroll.Get());
 }
 
 void EnemyAura::DrawDebug()

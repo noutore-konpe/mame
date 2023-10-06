@@ -29,11 +29,9 @@ public: // enum関連
 
     enum class CONSTANT_BUFFER 
     {
-        SCENE_CONSTANT,
         CONSTANT_BUFFER_PARAMETRIC,
         LIGHT_CONSTANT,
         FOG_CONSTANT,
-        SHADOW_CONSTANT,
         POST_EFFECT_CONSTANT,
     };
 
@@ -55,22 +53,15 @@ public:
         DirectX::XMFLOAT4 lightDirection;
         DirectX::XMFLOAT4 cameraPosition;
 
+        // SHADOW
+        DirectX::XMFLOAT4X4 lightViewProjection;
+
         // FOG
         DirectX::XMFLOAT4X4 inverseProjection;
         DirectX::XMFLOAT4X4 inverseViewProjection;
         float time;
 
         float pads[3];
-    };
-
-    // SHADOW
-    struct ShadowConstants
-    {
-        DirectX::XMFLOAT4X4 viewProjection;
-        DirectX::XMFLOAT4 lightDirection;
-        DirectX::XMFLOAT4 cameraPosition;
-        // SHADOW
-        DirectX::XMFLOAT4X4 lightViewProjection;
     };
 
     // FOG
@@ -155,7 +146,6 @@ public:
 
     // 描画開始
     void Begin(ID3D11DeviceContext* dc, const RenderContext& rc);
-    void Begin(ID3D11DeviceContext* dc, const RenderContext& rc, const ShadowConstants& shadowConstant);
 
     // 描画
     void Draw(ID3D11DeviceContext* dc, Model* model);
@@ -173,6 +163,9 @@ public:// 各種ステート設定
     void SetSamplerState(ID3D11DeviceContext* deviceContext);
 
 public:
+    const DirectX::XMFLOAT4 GetViewPosition() { return view.position; }
+    const DirectX::XMFLOAT4 GetViewCamera() { return view.camera; }
+
     void EntryLight(); // 登場演出に使う
     void EntryLight2();
     bool isEntryLight = false;

@@ -43,8 +43,8 @@ void MagicCircleGolem::Initialize()
 
 
 
-    magicCircleGolem[0]->GetTransform()->SetPosition(DirectX::XMFLOAT3(-2.0f, 1.0f, 0.0f));
-    magicCircleGolem[1]->GetTransform()->SetPosition(DirectX::XMFLOAT3(2.0f, 1.0f, 0.0f));
+    magicCircleGolem[0]->GetTransform()->SetPosition(DirectX::XMFLOAT3(-3.0f, 2.0f, 0.0f));
+    magicCircleGolem[1]->GetTransform()->SetPosition(DirectX::XMFLOAT3(3.0f, 2.0f, 0.0f));
 }
 
 // I—¹‰»
@@ -82,6 +82,7 @@ void MagicCircleGolem::Render()
     magicCircleGolem[0]->SetEmissiveColor(DirectX::XMFLOAT4(0.8f, 0.44f, 0.24f, 1.0f));
     magicCircleGolem[1]->SetEmissiveColor(DirectX::XMFLOAT4(0.8f, 0.44f, 0.24f, 1.0f));
 
+    magicCircleGolem[0]->SetEmissiveIntensity(1.0f);
 
     magicCircleGolem[static_cast<UINT>(MAGIC_CIRCLE::Left)]->Render(0.01f);
     magicCircleGolem[static_cast<UINT>(MAGIC_CIRCLE::Right)]->Render(0.01f);
