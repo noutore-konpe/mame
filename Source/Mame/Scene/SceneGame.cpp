@@ -21,6 +21,8 @@
 #include "../Game/EnemyManager.h"
 #include "../Game/EnemyTestAI.h"
 #include "../Game/EnemyAI_1.h"
+#include "../Game/EnemyAI_2.h"
+#include "../Game/EnemyAI_3.h"
 
 #include "../Game/ProjectileManager.h"
 #include "../Graphics/EffectManager.h"
@@ -79,13 +81,50 @@ void SceneGame::CreateResource()
         // max 6~7
         //enemyAura = std::make_unique<EnemyAura>();
         EnemyManager& enemyManager = EnemyManager::Instance();
-        for (int i = 0; i < 3; ++i)
+
+        // EnemyAI_1
+        for (int i = 0; i < 2; ++i)
         {
             EnemyAI_1* enemyAI_1 = new EnemyAI_1;
-            const XMFLOAT3 setPosition = { ::RandFloat(-10.0f, +10.0f), 0.0f, ::RandFloat(-10.0f, +10.0f) };
+
+            const XMFLOAT3 setPosition = {
+                ::RandFloat(-10.0f, +10.0f),
+                0.0f,
+                ::RandFloat(-10.0f, +10.0f)
+            };
             enemyAI_1->SetPosition(setPosition);
+
             enemyManager.Register(enemyAI_1);
         }
+        // EnemyAI_2
+        for (int i = 0; i < 2; ++i)
+        {
+            EnemyAI_2* enemyAI_2 = new EnemyAI_2;
+
+            const XMFLOAT3 setPosition = {
+                ::RandFloat(-10.0f, +10.0f),
+                0.0f,
+                ::RandFloat(-10.0f, +10.0f)
+            };
+            enemyAI_2->SetPosition(setPosition);
+
+            enemyManager.Register(enemyAI_2);
+        }
+        // EnemyAI_3
+        for (int i = 0; i < 2; ++i)
+        {
+            EnemyAI_3* enemyAI_3 = new EnemyAI_3;
+
+            const XMFLOAT3 setPosition = {
+                ::RandFloat(-10.0f, +10.0f),
+                0.0f,
+                ::RandFloat(-10.0f, +10.0f)
+            };
+            enemyAI_3->SetPosition(setPosition);
+
+            enemyManager.Register(enemyAI_3);
+        }
+
     }
 
     // ps Shader

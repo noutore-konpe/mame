@@ -220,6 +220,7 @@
     <ClCompile Include="Source\Mame\Game\Enemy.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyAI_1.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyAI_2.cpp" />
+    <ClCompile Include="Source\Mame\Game\EnemyAI_3.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyAura.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyGolemState.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyManager.cpp" />
@@ -312,6 +313,7 @@
     <ClInclude Include="Source\Mame\Game\Enemy.h" />
     <ClInclude Include="Source\Mame\Game\EnemyAI_1.h" />
     <ClInclude Include="Source\Mame\Game\EnemyAI_2.h" />
+    <ClInclude Include="Source\Mame\Game\EnemyAI_3.h" />
     <ClInclude Include="Source\Mame\Game\EnemyAura.h" />
     <ClInclude Include="Source\Mame\Game\EnemyGolemState.h" />
     <ClInclude Include="Source\Mame\Game\EnemyManager.h" />

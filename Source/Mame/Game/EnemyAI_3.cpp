@@ -1,4 +1,4 @@
-#include "EnemyAI_1.h"
+#include "EnemyAI_3.h"
 
 #include "../Graphics/Graphics.h"
 #include "../Resource/texture.h"
@@ -6,10 +6,10 @@
 #include "../Game/ActionDerived.h"
 #include "../Game/JudgmentDerived.h"
 
-int EnemyAI_1::nameNum_ = 0;
+int EnemyAI_3::nameNum_ = 0;
 
 // コンストラクタ
-EnemyAI_1::EnemyAI_1()
+EnemyAI_3::EnemyAI_3()
 {
     using std::make_unique;
     using std::to_string;
@@ -42,7 +42,6 @@ EnemyAI_1::EnemyAI_1()
         behaviorTree_ = make_unique<BehaviorTree>(this);
 
         behaviorTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);
-        behaviorTree_->AddNode("Root", "CloseRangeAttack", 1, SelectRule::Non, new CloseRangeAttackJudgment(this), new CloseRangeAttackAction(this));
         behaviorTree_->AddNode("Root", "Pursuit", 2, SelectRule::Non, new PursuitJudgment(this), new PursuitAction(this));
         behaviorTree_->AddNode("Root", "Idle", 3, SelectRule::Non, nullptr, new IdleAction(this));
     }
@@ -53,15 +52,17 @@ EnemyAI_1::EnemyAI_1()
 }
 
 // デストラクタ
-EnemyAI_1::~EnemyAI_1()
+EnemyAI_3::~EnemyAI_3()
 {
     --nameNum_;
 }
 
 // 初期化
-void EnemyAI_1::Initialize()
+void EnemyAI_3::Initialize()
 {
     BaseEnemyAI::Initialize();
+
+    attackLength_ = 6.0f; // 攻撃が可能な距離をのばす
 
     // アニメーション再生
     Character::PlayAnimation(0, true);
@@ -70,7 +71,7 @@ void EnemyAI_1::Initialize()
 
 
 // 更新処理
-void EnemyAI_1::Update(const float& elapsedTime)
+void EnemyAI_3::Update(const float& elapsedTime)
 {
     BaseEnemyAI::Update(elapsedTime);
 
@@ -78,7 +79,7 @@ void EnemyAI_1::Update(const float& elapsedTime)
 
 
 // 描画処理
-void EnemyAI_1::Render(const float& scale, ID3D11PixelShader* /*psShader*/)
+void EnemyAI_3::Render(const float& scale, ID3D11PixelShader* /*psShader*/)
 {
     Graphics& graphics = Graphics::Instance();
 
@@ -94,7 +95,7 @@ void EnemyAI_1::Render(const float& scale, ID3D11PixelShader* /*psShader*/)
 }
 
 
-void EnemyAI_1::DrawDebug()
+void EnemyAI_3::DrawDebug()
 {
     BaseEnemyAI::DrawDebug();
 
@@ -113,7 +114,7 @@ void EnemyAI_1::DrawDebug()
 }
 
 
-void EnemyAI_1::UpdateConstants()
+void EnemyAI_3::UpdateConstants()
 {
     // emissive
     {
@@ -123,8 +124,8 @@ void EnemyAI_1::UpdateConstants()
         // emissiveTexture ScrollDirection
         SetEmissiveScrollDirection(DirectX::XMFLOAT2(0.25f, 0.5f));
 
-        // color 赤
-        SetEmissiveColor(DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
+        // color 青
+        SetEmissiveColor(DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
     }
 
 }

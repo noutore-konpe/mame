@@ -2,11 +2,11 @@
 
 #include "BaseEnemyAI.h"
 
-class EnemyAI_2 : public BaseEnemyAI
+class EnemyAI_3 : public BaseEnemyAI
 {
 public:
-    EnemyAI_2();
-    ~EnemyAI_2() override;
+    EnemyAI_3();
+    ~EnemyAI_3() override;
 
     void Initialize()                                           override; // ‰Šú‰»
     //void Finalize()                                             override; // I—¹‰»

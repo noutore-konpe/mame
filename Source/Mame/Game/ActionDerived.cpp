@@ -21,8 +21,8 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 	switch (step_)
 	{
 	case 0:
-		//owner_->SetRunTimer(::RandFloat(1.0f, 2.0f));
-		owner_->SetRunTimer(60.0f);
+		owner_->SetRunTimer(::RandFloat(0.5f, 1.0f));
+		//owner_->SetRunTimer(60.0f);
 		//owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::IdleNormal), true);
 
 		// 自分の位置から回転を始めるようにする
@@ -42,13 +42,13 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 		// タイマー更新
 		owner_->ElapseRunTimer(elapsedTime);
 
-		// 誰も近接攻撃中でなくクールタイマーもなければ終了
-		if (false == enemyManager.GetIsRunningCRAAction() &&
-			enemyManager.GetCRAActionCoolTimer() <= 0.0f)
-		{
-			step_ = 0;
-			return ActionBase::State::Complete;
-		}
+		//// 誰も近接攻撃行動中でなく近接攻撃行動クールタイマーもなければ終了
+		//if (false == enemyManager.GetIsRunningCRAAction() &&
+		//	enemyManager.GetCRAActionCoolTimer() <= 0.0f)
+		//{
+		//	step_ = 0;
+		//	return ActionBase::State::Complete;
+		//}
 
 		// 待機時間が過ぎたら終了
 		if (owner_->GetRunTimer() <= 0.0f)
@@ -72,7 +72,7 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 			return ActionBase::State::Complete;
 		}
 
-		// 円移動もどき
+		// 円運動もどき
 		{
 			// 左右判定
 			const float playerRotationY = playerManager.GetPlayer()->GetTransform()->GetRotation().y;

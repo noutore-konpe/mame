@@ -421,6 +421,7 @@
     <ClCompile Include="Source\Mame\Game\EnemyAI_2.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyAI_3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -737,6 +738,7 @@
     <ClInclude Include="Source\Mame\Game\EnemyAI_2.h">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyAI_3.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">
