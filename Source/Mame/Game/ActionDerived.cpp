@@ -81,7 +81,7 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 			float cross = (frontZ * (-vx)) - (frontX * (-vz));
 
 #if 0
-#ifdef USE_IMGUI
+#ifdef (USE_IMGUI && _DEBUG)
 			ImGui::Begin("Cross");
 			ImGui::DragFloat("Cross", &cross);
 			ImGui::End();
