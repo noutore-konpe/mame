@@ -144,7 +144,7 @@ void EnemyManager::DrawDebug()
 }
 
 
-void EnemyManager::CollisionEnemyVsEnemy(const float elapsedTime)
+void EnemyManager::CollisionEnemyVsEnemy(const float /*elapsedTime*/)
 {
     using DirectX::XMFLOAT3;
 

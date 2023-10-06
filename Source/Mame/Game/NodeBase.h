@@ -2,11 +2,12 @@
 
 #include <vector>
 #include <string>
+
 #include "BehaviorTree.h"
 #include "ActionBase.h"
 
-class JudgmentBase;
 class BehaviorData;
+class JudgmentBase;
 
 // メモリリーク調査用
 #define debug_new new(_NORMAL_BLOCK,__FILE__,__LINE__)
@@ -78,6 +79,10 @@ public:
 	NodeBase* Inference(BehaviorData* data);
 	// 実行
 	const ActionBase::State Run(const float elapsedTime);
+
+private:
+	void ClearChildren();				// 全ての子ノードを消去
+	void ClearChild(NodeBase* node);	// 子ノードを消去
 
 public:
 	std::vector<NodeBase*>			children_;		// 子ノード

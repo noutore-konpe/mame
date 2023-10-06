@@ -12,7 +12,7 @@ class BaseEnemyAI : public Character
 {
 public:
     BaseEnemyAI() {}
-    ~BaseEnemyAI() override;
+    ~BaseEnemyAI() override {}
 
     void Initialize() override;
     void Update(const float& elapsedTime) override;
@@ -82,7 +82,7 @@ protected:
     std::unique_ptr<BehaviorTree>   behaviorTree_;
     std::unique_ptr<BehaviorData>   behaviorData_; // 主にシーケンスに使う
 
-    NodeBase* activeNode_ = nullptr;
+    NodeBase* activeNode_ = nullptr; // BehaviorTreeのノードを指すだけのポインタなのでdeleteしない
 
     DirectX::XMFLOAT3 targetPosition_ = {};
     DirectX::XMFLOAT3 moveVec_  = {};

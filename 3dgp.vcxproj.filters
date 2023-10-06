@@ -414,9 +414,12 @@
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\EnemyAI_1.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
-	</ClCompile>
-	<ClCompile Include="Source\Mame\Game\EnemyGolemState.cpp">
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyGolemState.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyAI_2.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -727,9 +730,12 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\EnemyAI_1.h">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
-	</ClInclude>
-	<ClInclude Include="Source\Mame\Game\EnemyGolemState.h">
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyGolemState.h">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyAI_2.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

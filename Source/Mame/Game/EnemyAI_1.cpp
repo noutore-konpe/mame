@@ -78,7 +78,7 @@ void EnemyAI_1::Update(const float& elapsedTime)
 
 
 // •`‰æˆ—
-void EnemyAI_1::Render(const float& scale, ID3D11PixelShader* psShader)
+void EnemyAI_1::Render(const float& scale, ID3D11PixelShader* /*psShader*/)
 {
     Graphics& graphics = Graphics::Instance();
 

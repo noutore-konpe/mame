@@ -91,7 +91,7 @@ void EnemyAura::End()
 }
 
 // •`‰æˆ—
-void EnemyAura::Render(const float& scale, ID3D11PixelShader* psShader)
+void EnemyAura::Render(const float& /*scale*/, ID3D11PixelShader* /*psShader*/)
 {
     Graphics& graphics = Graphics::Instance();
 

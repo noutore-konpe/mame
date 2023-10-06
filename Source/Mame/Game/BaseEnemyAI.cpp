@@ -2,10 +2,6 @@
 
 #include "../../Taki174/Common.h"
 
-BaseEnemyAI::~BaseEnemyAI()
-{
-    SafeDeletePtr(activeNode_);
-}
 
 void BaseEnemyAI::Initialize()
 {

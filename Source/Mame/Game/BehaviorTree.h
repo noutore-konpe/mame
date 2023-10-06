@@ -3,11 +3,10 @@
 #include <string>
 #include <memory>
 
+class BehaviorData;
+class NodeBase;
 class ActionBase;
 class JudgmentBase;
-class NodeBase;
-class BehaviorData;
-//class EnemyBlueSlime;
 class BaseEnemyAI;
 
 // ビヘイビアツリー
