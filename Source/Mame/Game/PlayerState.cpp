@@ -160,6 +160,7 @@ namespace PlayerState
     {
         //owner->MoveUpdate(elapsedTime);
         owner->AvoidUpdate(elapsedTime);
+        owner->ModelRotZUpdate(elapsedTime);
         if (!owner->IsPlayAnimation())
         {
             owner->GetStateMachine()->ChangeState(Player::NORMAL);
@@ -169,6 +170,7 @@ namespace PlayerState
     void AvoidState::Finalize()
     {
         owner->SetAcceleration(Player::InitAcceleration);
+        owner->GetTransform()->SetRotationZ(0);
     }
 
     void DieState::Initialize()

@@ -33,6 +33,8 @@ void Character::Update(const float& elapsedTime)
     GetCollisionSqhereTransform()->SetScaleFactor(range);
     GetCollisionSqhereTransform()->SetRotation(GetTransform()->GetRotation());
 
+    rotValue = 0;//回転量リセット
+
     if (invincibleTime > 0.0f)invincibleTime -= elapsedTime;
 
 #ifdef _DEBUG
@@ -176,11 +178,14 @@ void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
     rot += 0.5f;
     float _rotSpeed = rotSpeed * rot;
 
+
     //左右判定のための外積
     float cross = (vx * front.z) - (vz * front.x);
 
     DirectX::XMFLOAT4 rotation{transform->GetRotation()};
     rotation.y += cross < 0.0f ? -_rotSpeed : _rotSpeed;
+
+    rotValue = cross < 0.0f ? -_rotSpeed : _rotSpeed;
 
     transform->SetRotation(rotation);
 }

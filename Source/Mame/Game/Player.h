@@ -51,6 +51,8 @@ public:
 
     void AvoidUpdate(float elapsedTime);
 
+    void ModelRotZUpdate(float elapsedTime);
+
     void CameraControllerUpdate(float elapsedTime);
     
     void Render(const float& scale, ID3D11PixelShader* psShader = nullptr) override; // 描画処理
@@ -82,6 +84,11 @@ public:
         return (Input::Instance().GetGamePad().GetButton() & GamePad::BTN_A);
     }
 
+    static bool InputDecide()
+    {
+        return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A);
+    }
+
     //getter,setter
     void AddMaxSpeed(const float spd) { maxSpeed += spd; }
 
@@ -107,6 +114,7 @@ public:
     void SelectSkillUpdate(float elapsedTime);
 
     BaseSkill* Lottery();//カードを抽選
+    void DrawCards();//３つのスキルカードを抽選　drawingSkillCardsに格納
 
 private:
     void LevelUpdate();
@@ -131,6 +139,8 @@ private:
 
     float deceleration;
     float acceleration;
+
+    float rotTimer = 0;
     //-----------------------------------------------------------------------
 
     //--------------------------レベル-----------------------------------------
@@ -153,6 +163,12 @@ private:
     std::unique_ptr<PlayerSkill::AttackPowerUp> attackPowerUpSkill;
     std::unique_ptr<PlayerSkill::AttackSpeedUp> attackSpeedUpSkill;
     std::unique_ptr<PlayerSkill::BookIncrease> bookIncreaseSkill;
+
+    BaseSkill* drawingSkillCards[3];
+    int drawDirectionState;//カードドロー演出ステート
+    float drawDirectionTime = 0.5f;//カードが画面上から落ちてきて止まるまでの時間
+    float drawDirectionTimer = 0;//演出に使う用のタイマー
+    int selectCard = 0;
 
     //---------------------------攻撃関係-------------------------------
     float baseAttackPower;//基礎攻撃力（これにモーション倍率を掛けて計算する）

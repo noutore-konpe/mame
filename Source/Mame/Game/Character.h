@@ -96,10 +96,11 @@ public: // ŠÖ”
 public:
     std::unique_ptr<Model> model = nullptr;
 
-
     float maxHealth;
     float health;//hp
     float invincibleTime = 1.0f;//–³“GŠÔ
+
+    float rotValue;//‰ñ“]—Ê
 
 #ifdef _DEBUG
     std::unique_ptr<Model> debugSqhere = nullptr;   // “–‚½‚è”»’è—pQ‹…

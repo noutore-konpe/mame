@@ -11,7 +11,7 @@ namespace PlayerSkill
             BaseSkill(player, 
                 L"./Resources/Image/Card/sampleCard.png",
                 L"./Resources/Image/Icon/sampleIcon.png",
-                "Drain") {}
+                "Drain",BaseSkill::SUPER_RARE) {}
         ~Drain() {}
 
         void Initialize()override;
@@ -34,7 +34,8 @@ namespace PlayerSkill
             BaseSkill(player,
                 L"./Resources/Image/Card/sampleCard.png",
                 L"./Resources/Image/Icon/sampleIcon.png",
-                "Blast Enchantment") {}
+                "Blast Enchantment",
+                BaseSkill::ULTRA_RARE) {}
         ~BlastEnchantment() {}
 
 

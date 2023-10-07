@@ -4,6 +4,8 @@
 
 class Player;
 
+using Probability = int;
+
 class BaseSkill
 {
 public:
@@ -12,10 +14,16 @@ public:
         COMMON,
         UNCOMMON,
         RARE,
-        SUPER_REAR,
-        ULTRA_REAR,
+        SUPER_RARE,
+        ULTRA_RARE,
         END
     };
+    //分母を100としたそぞれのレアリティの出現確率
+    static const Probability pCommon = 40;
+    static const Probability pUncommon = 25;
+    static const Probability pRare = 20;
+    static const Probability pSuperRare = 12;
+    static const Probability pUltraRare = 3;
 
     BaseSkill(
         Player* player,
@@ -28,6 +36,8 @@ public:
         icon = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), iconImageFilename);
 
         icon->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(60, 60));
+
+        card->GetSpriteDissolve()->SetMaskTextureValue(2);
     }
     ~BaseSkill() {}
 
@@ -50,6 +60,8 @@ public:
     std::unique_ptr<Sprite> card;//カード画像
     std::unique_ptr<Sprite> icon;//アイコン画像
     int rarity;//レアリティ
+
+    bool isSelect;//選択肢の候補に上がっているか（上がっているならcard->render()を呼ぶ）
 protected:
     //int probability;//このスキルが出にくさ　値が大きいほど出現する確率が低い
     int overlap;//重複回数（同じスキルを重複してとることで能力が強くなる）

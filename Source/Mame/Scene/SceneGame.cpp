@@ -249,8 +249,17 @@ void SceneGame::Update(const float& elapsedTime)
 
         SetCursorPos(posX, posY);
     }
-    else
 #endif // _DEBUG
+
+    //カード演出中はほかの処理を更新しない
+    auto* player = PlayerManager::Instance().GetPlayer().get();
+    if (player->isSelectingSkill)
+    {
+        player->SelectSkillUpdate(elapsedTime);
+
+        return;
+    }
+
     {
         Camera::Instance().Update();
     }
@@ -282,6 +291,8 @@ void SceneGame::Update(const float& elapsedTime)
 
     // effect
     EffectManager::Instance().Update(elapsedTime);
+
+    //カード演出中だけUpdate前にreturn呼んでるから注意！！
 
 }
 

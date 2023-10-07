@@ -116,6 +116,8 @@ void Player::Update(const float& elapsedTime)
 
     CameraControllerUpdate(elapsedTime);
 
+    LevelUpdate();
+
     for (auto& skill : skillArray)
     {
         skill->Update(elapsedTime);
@@ -322,6 +324,20 @@ void Player::AvoidUpdate(float elapsedTime)
     GetTransform()->AddPosition(velo);
 }
 
+void Player::ModelRotZUpdate(float elapsedTime)
+{
+    static float lastRotValue = 0;
+    if (rotTimer > 0.1f)
+    {
+        lastRotValue = GetTransform()->GetRotation().z;
+        rotTimer = 0;
+    }
+    float rotZ = Easing::InSine(rotTimer,0.1f,-rotValue * 5,lastRotValue);
+    GetTransform()->SetRotationZ(rotZ);
+
+    rotTimer += elapsedTime;
+}
+
 void Player::CameraControllerUpdate(float elapsedTime)
 {
     //カメラ挙動（今は回転のみ）
@@ -365,9 +381,9 @@ void Player::SkillImagesRender()
     float posX = 1220.0f;
     for (auto& skill : skillArray)
     {
+        skill->Render();
         if (skill->GetOverlapNum() == 0)continue;
         skill->SetIconPos(DirectX::XMFLOAT2(posX,0));
-        skill->Render();
         posX -= skill->icon->GetSpriteTransform()->GetSize().x;
         i++;
     }
@@ -398,6 +414,16 @@ void Player::DrawDebug()
         }
 
         ImGui::Begin("Skill");
+        ImGui::InputFloat("Exp", &curExp);
+        if (ImGui::Button("Exp + 100"))
+        {
+            curExp += 100;
+        }
+
+        if (ImGui::Button("Skip"))
+        {
+            isSelectingSkill = false;
+        }
 
         for (auto& skill : skillArray)
         {
@@ -442,7 +468,106 @@ void Player::AttackSteppingUpdate(float elapsedTime)
 
 void Player::SelectSkillUpdate(float elapsedTime)
 {
-    
+    static float _timer;
+    switch (drawDirectionState)
+    {
+    case 0:
+        DrawCards();
+        selectCard = 0;
+
+        for (int i = 0; i < 3; i++)
+        {
+            drawingSkillCards[i]->card->GetSpriteDissolve()->SetDissolveValue(-0.1f);
+        }
+
+        drawDirectionState++;
+        break;
+
+    case 1:
+        for (int i = 0; i < 3; i++)
+        {
+            auto* transform = drawingSkillCards[i]->card->GetSpriteTransform();
+            float timer = drawDirectionTimer - i * 0.1f;
+            if (timer < 0)timer = 0;
+            else if (timer > drawDirectionTime)timer = drawDirectionTime;
+            float posY = Easing::OutSine(timer, drawDirectionTime, 165.0f, -transform->GetTexSize().y);
+            transform->SetPos(DirectX::XMFLOAT2(65 + 400 * i, posY));
+            
+        }
+
+        if (drawDirectionTimer >= 1.0f)
+        {
+            drawDirectionState++;
+        }
+        break;
+    case 2:
+    {
+        //カード選択
+        static bool buttonDown = false;
+        auto ax = Input::Instance().GetGamePad().GetAxisLX();
+        if (ax >= 0.5f && !buttonDown)
+        {
+            selectCard++;
+            if (selectCard > 2)
+            {
+                selectCard = 2;
+            }
+            buttonDown = true;
+        }
+        else if (ax <= -0.5f && !buttonDown)
+        {
+            selectCard--;
+            if (selectCard < 0)
+            {
+                selectCard = 0;
+            }
+            buttonDown = true;
+        }
+        else if (ax)buttonDown = true;
+        else 
+        {
+            buttonDown = false;
+        }
+    }
+
+        //カードを選択
+        if (Player::InputDecide())
+        {
+            _timer = 0;
+            drawingSkillCards[selectCard]->Overlaping();
+            drawDirectionState++;
+        }
+        break;
+
+    case 3:
+        if (drawingSkillCards[selectCard]->card->GetSpriteDissolve()->GetDissolveValue() < 2.0f)
+        {
+            drawingSkillCards[selectCard]->card->GetSpriteDissolve()->AddDissolveValue(elapsedTime);
+        }
+
+        for (int i = 0; i < 3; i++)
+        {
+            if (selectCard == i)continue;
+            auto* transform = drawingSkillCards[i]->card->GetSpriteTransform();
+            float timer = _timer;
+            if (timer > 0.5)timer = 0.5;
+            float posY = Easing::OutSine(timer, 0.5f, -transform->GetTexSize().y,165.0f);
+            transform->SetPos(DirectX::XMFLOAT2(65 + 400 * i, posY));
+        }
+
+        if (_timer > 2.2f)isSelectingSkill = false;
+
+        _timer += elapsedTime;
+        break;
+    }
+
+    for (int i = 0; i < 3; i++)
+    {
+        drawingSkillCards[i]->card->GetSpriteTransform()->SetColor(DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
+    }
+    drawingSkillCards[selectCard]->card->GetSpriteTransform()->SetColor(DirectX::XMFLOAT4(1,1,1,1));
+
+    drawDirectionTimer += elapsedTime;
 }
 
 BaseSkill* Player::Lottery()
@@ -450,11 +575,27 @@ BaseSkill* Player::Lottery()
     std::vector<BaseSkill*> lotSkills;
     while (true)
     {
-        int rarity = rand() % BaseSkill::END;
+        //確率の分母を算出
+        int denominator = 
+            BaseSkill::pCommon + 
+            BaseSkill::pUncommon + 
+            BaseSkill::pRare + 
+            BaseSkill::pSuperRare + 
+            BaseSkill::pUltraRare;
+        int rarity = rand() % denominator;
+        int checker = BaseSkill::pCommon;
+        if (rarity < checker)rarity = BaseSkill::COMMON;
+        else if (rarity < (checker += BaseSkill::pUncommon))rarity = BaseSkill::UNCOMMON;
+        else if (rarity < (checker += BaseSkill::pRare))rarity = BaseSkill::RARE;
+        else if (rarity < (checker += BaseSkill::pSuperRare))rarity = BaseSkill::SUPER_RARE;
+        else if (rarity < (checker += BaseSkill::pUncommon))rarity = BaseSkill::ULTRA_RARE;
 
         //抽選対象のレア度のスキルを格納
         for (auto& skill : skillArray)
         {
+            //すでに引かれたスキルはスキップ
+            if (skill->isSelect)continue;
+
             if (skill->rarity == rarity)
             {
                 lotSkills.emplace_back(skill);
@@ -464,16 +605,40 @@ BaseSkill* Player::Lottery()
         else lotSkills.clear();
     }
 
-    return lotSkills.at(rand() % lotSkills.size());
+    auto* drawSkill = lotSkills.at(rand() % lotSkills.size());
+    drawSkill->isSelect = true;
+    return drawSkill;
     
+}
+
+void Player::DrawCards()
+{
+    for (auto& skill : skillArray)
+    {
+        skill->isSelect = false;
+    }
+
+    for (int i = 0; i < 3; i++)
+    {
+        drawingSkillCards[i] = Lottery();
+    }
+    drawDirectionTimer = 0;
 }
 
 void Player::LevelUpdate()
 {
     if(curExp > levelUpExp)
     {
+        for (auto& skill : skillArray)
+        {
+            //カードが映りこまないように適当な座標に飛ばしとく
+            skill->card->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(0, 1000));
+        }
+
         level++;
         curExp -= levelUpExp;
+
+        drawDirectionState = 0;
 
         //レベルが上がると能力を取得出来る
         isSelectingSkill = true;
