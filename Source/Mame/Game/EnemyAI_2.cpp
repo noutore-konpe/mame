@@ -93,6 +93,8 @@ void EnemyAI_2::Render(const float& scale, ID3D11PixelShader* /*psShader*/)
     // 定数バッファー更新
     UpdateConstants();
 
+    graphics.GetShader()->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
+
     // Aura enemy
     BaseEnemyAI::Render(scale, emissiveTextureUVScroll.Get());
 }
@@ -127,8 +129,9 @@ void EnemyAI_2::UpdateConstants()
         // emissiveTexture ScrollDirection
         SetEmissiveScrollDirection(DirectX::XMFLOAT2(0.25f, 0.5f));
 
-        // color 緑
-        SetEmissiveColor(DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
+        // midnightblue
+        SetEmissiveColor(DirectX::XMFLOAT4(0.00f, 0.80f, 0.81f, 1.0f));
+        //SetEmissiveColor(DirectX::XMFLOAT4(0.09f, 0.09f, 0.43f, 1.0f));
     }
 
 }

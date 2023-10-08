@@ -109,8 +109,33 @@ namespace EnemyGolemState
     private:
         bool isAttack1_tame = false;
         bool isAttack1 = false;
+        bool isShakeCamera = false;
+        bool isReturn = false;
 
         float animationTimer = 0.0f;
+        float returnTimer = 0.0f;
+        float returnTimer1 = 0.0f;
+    };
+
+    class ComboAttack1State : public State<EnemyGolem>
+    {
+    public:
+        ComboAttack1State(EnemyGolem* enemyGolem) : State(enemyGolem, "ComboAttack1State") {}
+        ~ComboAttack1State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+
+    private:
+        bool isComboAttack1 = false;
+        bool isMoveFront = false;
+
+        float moveTimer = 0.0f;
+        float maxMoveTime = 0.5f;
+
+        float moveFrontTimer = 0.0f;
+        float maxMoveFrontTime = 0.4f;
     };
 };
 

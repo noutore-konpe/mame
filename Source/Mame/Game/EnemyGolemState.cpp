@@ -6,6 +6,8 @@
 #include "../Graphics/Graphics.h"
 #include "../Resource/shader.h"
 
+#include "../Other/MathHelper.h"
+
 // IdleState
 namespace EnemyGolemState
 {
@@ -260,12 +262,16 @@ namespace EnemyGolemState
         owner->SetCurrentState(static_cast<UINT>(EnemyGolem::StateMachineState::Attack1State));
 
         // アニメーション更新
-        owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Attack1_tame), false);
+        owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Attack1Tame), false);
 
         isAttack1_tame = false;
         isAttack1 = false;
+        isShakeCamera = false;
+        isReturn = false;
 
         animationTimer = 0.0f;
+        returnTimer = 0.0f;
+        returnTimer1 = 0.0f;
     }
 
     // 更新
@@ -290,11 +296,12 @@ namespace EnemyGolemState
             {
                 // カメラ振動
                 Camera::Instance().ScreenVibrate(0.1f, 1.0f);
+                isShakeCamera = true;
             }
             else
             {
-                if(isAttack1_tame)
-                    animationTimer += elapsedTime;
+                // 振動とアニメーションのタイミングを合わせてる
+                if (isAttack1_tame) animationTimer += elapsedTime;
             }
 
             // アニメーションが終わったら
@@ -304,10 +311,99 @@ namespace EnemyGolemState
             }
         }
 
+        // 振動したら
+        if (isShakeCamera)
+        {
+            // 振動終わったら戻るアニメーションにつなげる用
+            returnTimer += elapsedTime;
+
+            if (returnTimer >= 1.0f)
+            {
+                owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Attack1Return), false);
+                isShakeCamera = false;
+                isReturn = true;
+            }
+        }
+
+
+        if (isReturn)
+        {
+            returnTimer1 += elapsedTime;
+
+            if (returnTimer1 >= 1.0f)
+            {
+                owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::IdleState));
+            }
+        }
     }
 
     // 終了化
     void Attack1State::Finalize()
+    {
+    }
+}
+
+// ComboAttack1State
+namespace EnemyGolemState
+{
+    // 初期化
+    void ComboAttack1State::Initialize()
+    {
+        owner->SetCurrentState(static_cast<UINT>(EnemyGolem::StateMachineState::ComboAttack1State));
+
+        // アニメーション設定
+        owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::ComboAttack1), false);
+
+        isComboAttack1 = false;
+        isMoveFront = false;
+        
+        moveTimer = 0.0f;
+        moveFrontTimer = 0.0f;
+    }
+
+    // 更新
+    void ComboAttack1State::Update(const float& elapsedTime)
+    {
+        // コンボ攻撃１が終わってない
+        if (!isComboAttack1)
+        {
+            moveTimer += elapsedTime;
+
+            if (moveTimer >= maxMoveTime)
+                isMoveFront = true;
+
+            // アニメーションが終わったら
+            if (!owner->IsPlayAnimation())
+            {
+                owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::ComboAttack2), false, 1.5f);
+
+                isComboAttack1 = true;
+            }
+        }
+
+        // 前進する
+        if (isMoveFront)
+        {
+            if (moveFrontTimer <= maxMoveFrontTime)
+            {
+                float addPos = Easing::InSine(moveFrontTimer, maxMoveFrontTime, 0.07f, 0.0f);
+
+                DirectX::XMFLOAT3 frontVec = owner->GetTransform()->CalcForward();
+                frontVec = frontVec * addPos;
+                owner->GetTransform()->AddPosition(frontVec);
+
+                moveFrontTimer += elapsedTime;
+            }
+            else
+            {
+                isMoveFront = false;
+                moveTimer = 0.0f;
+            }
+        }
+    }
+
+    // 終了
+    void ComboAttack1State::Finalize()
     {
     }
 }

@@ -139,7 +139,7 @@
     <FxCompile Include="Source\Shader\EmissiveTextureUVScrollPS.hlsl">
       <Filter>mamelib\Shader\Fbx</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shader\SageAura.hlsl">
+    <FxCompile Include="Source\Shader\SageAuraPS.hlsl">
       <Filter>mamelib\Shader\Fbx\Zelda</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\MagicCirclePS.hlsl">

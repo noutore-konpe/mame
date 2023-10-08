@@ -22,18 +22,22 @@ public: // ’è”
         RoarUp,         // ™ôšK€”õ
         RoarDown,       // ™ôšK
         RoarReturn,     // ™ôšK‚©‚ç‚Ì‚à‚Ç‚è
-        Attack1_tame,   // UŒ‚‚P‚Ì—­‚ß
+        Attack1Tame,    // UŒ‚‚P‚Ì—­‚ß
         Attack1,        // UŒ‚‚P
+        Attack1Return,  // UŒ‚‚©‚ç‚Ì–ß‚è
+        ComboAttack1,   // ƒRƒ“ƒ{UŒ‚‚ÌˆêŒ‚–Ú
+        ComboAttack2,   // ƒRƒ“ƒ{UŒ‚‚Ì“ñŒ‚–Ú
     };
 
     enum class StateMachineState
     {
-        IdleState,      // ‘Ò‹@
-        EntryState,     // “oê
-        RoarState,      // ™ôšK
-        SummonState,    // ¢Š«
-        GetUpState,     // ‹N‚«ã‚ª‚è
-        Attack1State,   // UŒ‚‚P
+        IdleState,          // ‘Ò‹@
+        EntryState,         // “oê
+        RoarState,          // ™ôšK
+        SummonState,        // ¢Š«
+        GetUpState,         // ‹N‚«ã‚ª‚è
+        Attack1State,       // UŒ‚‚P
+        ComboAttack1State,  // ƒRƒ“ƒ{UŒ‚‚P
     };
 
     const DirectX::XMFLOAT4 magicCircleColor[10] =
@@ -52,6 +56,7 @@ public: // ’è”
         "Summon",
         "Roar",
         "Attack1State",
+        "ComboAttack1State",
     };
 #endif // _DEBUG
 

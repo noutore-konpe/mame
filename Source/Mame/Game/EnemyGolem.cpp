@@ -31,6 +31,7 @@ EnemyGolem::EnemyGolem()
         GetStateMachine()->RegisterState(new EnemyGolemState::SummonState(this));
         GetStateMachine()->RegisterState(new EnemyGolemState::GetUpState(this));
         GetStateMachine()->RegisterState(new EnemyGolemState::Attack1State(this));
+        GetStateMachine()->RegisterState(new EnemyGolemState::ComboAttack1State(this));
 
         GetStateMachine()->SetState(static_cast<UINT>(StateMachineState::IdleState));
     }
@@ -131,7 +132,7 @@ void EnemyGolem::DrawDebug()
         magicCircleGolem->DrawDebug();
         magicCircleEnemySummon->DrawDebug();
 
-        ImGui::SliderInt("currentState", &currentStateDebug, 0, 3);
+        ImGui::SliderInt("currentState", &currentStateDebug, 0, 4);
 
         if (ImGui::Button(stateName[currentStateDebug]))
         {
@@ -148,6 +149,9 @@ void EnemyGolem::DrawDebug()
                 break;
             case 3:
                 GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::Attack1State));
+                break;
+            case 4:
+                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::ComboAttack1State));
                 break;
             }
         }

@@ -89,7 +89,6 @@ void SceneGame::CreateResource()
 
             enemyManager.Register(enemyAI_1);
         }
-#endif
         // EnemyAI_2
         for (int i = 0; i < 2; ++i)
         {
@@ -118,6 +117,7 @@ void SceneGame::CreateResource()
 
             enemyManager.Register(enemyAI_3);
         }
+#endif
     }
 
     // ps Shader
