@@ -36,12 +36,6 @@ void SceneGame::CreateResource()
 {
     Graphics& graphics = Graphics::Instance();
 
-#ifdef _DEBUG
-    //sprite = std::make_unique<Sprite>(graphics.GetDevice(),
-    //    L"./Resources/Image/mameoTitle.png",
-    //    "./Resources/Shader/SpriteColorDissolvePS.cso");
-#endif
-
     using DirectX::XMFLOAT3;
 
     // stage
@@ -78,7 +72,7 @@ void SceneGame::CreateResource()
     // enemy
     {
         // max 6~7
-        //enemyAura = std::make_unique<EnemyAura>();
+#if 0
         EnemyManager& enemyManager = EnemyManager::Instance();
         for (int i = 0; i < 3; ++i)
         {
@@ -87,6 +81,7 @@ void SceneGame::CreateResource()
             enemyAura->SetPosition(setPosition);
             enemyManager.Register(enemyAura);
         }
+#endif
     }
 
     // ps Shader
@@ -127,6 +122,9 @@ void SceneGame::CreateResource()
         framebuffers[1] = std::make_unique<FrameBuffer>(graphics.GetDevice(), 1280 / 1, 720 / 1, false);
         CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/FogPS.cso", fogPS.GetAddressOf());
     }
+
+    // bokeh
+    CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/FinalPassBokehPS.cso", bokehPS.GetAddressOf());
 
     // shadow
     {
@@ -544,8 +542,17 @@ void SceneGame::Render(const float& elapsedTime)
         framebuffers[0]->shaderResourceViews[0].Get(),
         bloomer->ShaderResourceView(),
         framebuffers[1]->shaderResourceViews[0].Get(),
+        framebuffers[0]->shaderResourceViews[1].Get(),
     };
-    bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceViews, 0, _countof(shaderResourceViews), bloomPS.Get());
+
+    if (enemyGolem->GetCurrentState() != static_cast<UINT>(EnemyGolem::StateMachineState::RoarState))
+    {
+        bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceViews, 0, _countof(shaderResourceViews), bloomPS.Get());
+    }
+    else
+    {
+        bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceViews, 0, _countof(shaderResourceViews), bokehPS.Get());
+    }
 
     //ブルーム無し
     {
@@ -561,7 +568,7 @@ void SceneGame::DrawDebug()
 #ifdef USE_IMGUI
     ImGui::Begin("sceneGame");
 
-
+    Graphics::Instance().GetShader()->DrawDebug();
 
     // デバッグプリミティブ描画
     if (ImGui::Button("drawDebug"))

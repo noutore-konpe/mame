@@ -378,6 +378,39 @@ Shader::Shader(ID3D11Device* device)
         desc.BorderColor[3] = 1;
         hr = device->CreateSamplerState(&desc, samplerState[static_cast<size_t>(SAMPLER_STATE::COMPARISON_LINEAR_BORDER_WHITE)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+        desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+        desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+        desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+        desc.MipLODBias = 0.0f;
+        desc.MaxAnisotropy = 0;
+        desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+        desc.BorderColor[0] = 0;
+        desc.BorderColor[0] = 0;
+        desc.BorderColor[0] = 0;
+        desc.BorderColor[0] = 1;
+        desc.MinLOD = 0.0f;
+        desc.MaxLOD = D3D11_FLOAT32_MAX;
+        hr = device->CreateSamplerState(&desc, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_OPAQUE_BLACK)].GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+
+        desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+        desc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+        desc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+        desc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+        desc.MipLODBias = 0.0f;
+        desc.MaxAnisotropy = 0;
+        desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+        desc.BorderColor[0] = 0;
+        desc.BorderColor[0] = 0;
+        desc.BorderColor[0] = 0;
+        desc.BorderColor[0] = 0;
+        desc.MinLOD = 0.0f;
+        desc.MaxLOD = D3D11_FLOAT32_MAX;
+        hr = device->CreateSamplerState(&desc, samplerState[static_cast<size_t>(SAMPLER_STATE::POINT_CLAMP)].GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
 
     // LightConstants
@@ -546,6 +579,12 @@ void Shader::DrawDebug()
         ImGui::DragFloat("noiseTimer", &postEffectConstants.noiseTimer);
         ImGui::DragFloat("scanTimer", &postEffectConstants.scanLineTimer);
 
+        //ImGui::DragFloat("boekhAperture", &postEffectConstants.bokehAperture);
+        //ImGui::DragFloat("bokehFocus", &postEffectConstants.bokehFocus);
+
+        ImGui::DragFloat("bokeh_aperture", &postEffectConstants.bokehAperture, 0.001f, 0.0f, 1.0f, "%.3f");
+        ImGui::DragFloat("bokeh_focus", &postEffectConstants.bokehFocus, 0.001f, 0.0f, 1.0f, "%.3f");
+
         ImGui::TreePop();
     }
 
@@ -577,22 +616,7 @@ void Shader::DrawDebug()
             ImGui::DragFloat("range", &lightConstant.pointLight[i].range);
             ImGui::End();
         }
-        //if (ImGui::TreeNode("PointLight"))
-        //{
-        //    for (int i = 0; i < pointLightMax; ++i)
-        //    {
-        //        //ImGui::BeginMenu(("pointLight" + std::to_string(i)).c_str());
-        //        ImGui::TreeNode(("pointLight" + std::to_string(i)).c_str());
 
-        //        ImGui::DragFloat4("position", &lightConstant.pointLight[i].position.x);
-        //        ImGui::ColorEdit4("color", &lightConstant.pointLight[i].color.x);
-        //        ImGui::DragFloat("range", &lightConstant.pointLight[i].range);
-
-        //        ImGui::TreePop();
-        //        //ImGui::EndMenu();
-        //    }
-        //    ImGui::TreePop();
-        //}
 #endif// POINT_LIGHT_ONE
 
         // SPOT_LIGHT
@@ -670,6 +694,9 @@ void Shader::SetSamplerState(ID3D11DeviceContext* deviceContext)
         deviceContext->PSSetSamplers(4, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_WHITE)].GetAddressOf());
         // SHADOW
         deviceContext->PSSetSamplers(5, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::COMPARISON_LINEAR_BORDER_WHITE)].GetAddressOf());
+        
+        deviceContext->PSSetSamplers(6, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_OPAQUE_BLACK)].GetAddressOf());
+        deviceContext->PSSetSamplers(7, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::POINT_CLAMP)].GetAddressOf());
     }
 }
 

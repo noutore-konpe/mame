@@ -13,7 +13,7 @@
 // SHADOW
 #include "../Graphics/ShadowMap.h"
 
-#define POINT_LIGHT_ONE 0
+#define POINT_LIGHT_ONE 1
 
 #if !POINT_LIGHT_ONE
 const int pointLightMax = 8;
@@ -22,7 +22,16 @@ const int pointLightMax = 8;
 class Shader
 {
 public: // enumŠÖ˜A
-    enum class SAMPLER_STATE { POINT, LINEAR, ANISOTROPIC, LINEAR_BORDER_BLACK, LINEAR_BORDER_WHITE, COMPARISON_LINEAR_BORDER_WHITE/*SHADOW*/ };
+    enum class SAMPLER_STATE {
+        POINT, LINEAR, ANISOTROPIC, LINEAR_BORDER_BLACK, LINEAR_BORDER_WHITE, COMPARISON_LINEAR_BORDER_WHITE/*SHADOW*/,
+        LINEAR_BORDER_OPAQUE_BLACK, POINT_CLAMP, COUNT,
+    };
+    //enum class SAMPLER_STATE {
+    //    POINT_WRAP, LINEAR_WRAP, ANISOTROPIC_WRAP, POINT_CLAMP, LINEAR_CLAMP, ANISOTROPIC_CLAMP,
+    //    POINT_BORDER_OPAQUE_BLACK, LINEAR_BORDER_OPAQUE_BLACK, POINT_BORDER_OPAQUE_WHITE, LINEAR_BORDER_OPAQUE_WHITE,
+    //    COMPARISON_DEPTH, COUNT
+    //};
+    
     enum class DEPTH_STATE { ZT_ON_ZW_ON, ZT_ON_ZW_OFF, ZT_OFF_ZW_ON, ZT_OFF_ZW_OFF };
     enum class BLEND_STATE { NONE, ALPHA, ADD, MULTIPLY };
     enum class RASTER_STATE { SOLID, WIREFRAME, CULL_NONE, WIREFRAME_CULL_NONE };
@@ -135,7 +144,10 @@ public:
         DirectX::XMFLOAT4 noiseColor{ 1.0f,1.0f,1.0f,1.0f };
         float noiseTimer = 0.0f;
         float scanLineTimer = 0.0f;
-        DirectX::XMFLOAT2 dummy{};
+        
+        float bokehAperture = 0.018f;
+        float bokehFocus = 0.824f;
+
     }postEffectConstants;
 
 public:
@@ -215,7 +227,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11RasterizerState>   rasterizerStates[4];
     Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilStates[4];
 
-    Microsoft::WRL::ComPtr<ID3D11SamplerState>  samplerState[6];
+    Microsoft::WRL::ComPtr<ID3D11SamplerState>  samplerState[static_cast<UINT>(SAMPLER_STATE::COUNT)];
 };
 
 

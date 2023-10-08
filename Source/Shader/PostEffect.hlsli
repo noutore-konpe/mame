@@ -6,8 +6,9 @@ cbuffer POST_EFFECT_CONSTANT : register(b13)
     float noiseTimer;
     float scanLineTimer;
     float shakeTimer;
-    float step3; // dummy
     
+    float bokehAperture;
+    float bokehFocus;    
 };
 
 

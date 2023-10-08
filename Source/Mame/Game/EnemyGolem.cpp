@@ -14,6 +14,10 @@ EnemyGolem::EnemyGolem()
     model = std::make_unique<Model>(graphics.GetDevice(),
         "./Resources/Model/Character/Enemy/golem.fbx");
 
+    CreatePsFromCso(graphics.GetDevice(),
+        "./Resources/Shader/playerPS.cso",
+        golemPS.GetAddressOf());
+
     magicCircleGolem = std::make_unique<MagicCircleGolem>();
     magicCircleEnemySummon = std::make_unique<MagicCircleEnemySummon>();
 
@@ -25,12 +29,14 @@ EnemyGolem::EnemyGolem()
         GetStateMachine()->RegisterState(new EnemyGolemState::EntryState(this));
         GetStateMachine()->RegisterState(new EnemyGolemState::RoarState(this));
         GetStateMachine()->RegisterState(new EnemyGolemState::SummonState(this));
+        GetStateMachine()->RegisterState(new EnemyGolemState::GetUpState(this));
+        GetStateMachine()->RegisterState(new EnemyGolemState::Attack1State(this));
 
         GetStateMachine()->SetState(static_cast<UINT>(StateMachineState::IdleState));
     }
 
-    // ImGui名前設定
-    SetName("EnemyGolem" + std::to_string(nameNum++));
+// ImGui名前設定
+SetName("EnemyGolem" + std::to_string(nameNum++));
 }
 
 // デストラクタ
@@ -46,8 +52,16 @@ void EnemyGolem::Initialize()
     magicCircleGolem->Initialize();
     magicCircleEnemySummon->Initialize();
 
+    GetTransform()->SetPositionY(10.0f);
+
     // アニメーション再生
-    Character::PlayAnimation(0, true);
+    Character::PlayAnimation(static_cast<UINT>(Animation::Idle), true);
+
+    currentState = static_cast<UINT>(StateMachineState::IdleState);
+
+#ifdef _DEBUG
+    currentStateDebug = 0;
+#endif // _DEBUG
 }
 
 // 終了化
@@ -74,7 +88,7 @@ void EnemyGolem::Update(const float& elapsedTime)
     GetStateMachine()->Update(elapsedTime);
 
     // アニメーション更新
-    //Character::UpdateAnimation(elapsedTime);
+    Character::UpdateAnimation(elapsedTime);
 }
 
 void EnemyGolem::End()
@@ -89,7 +103,8 @@ void EnemyGolem::Render(const float& scale, ID3D11PixelShader* psShader)
     // 定数バッファー更新
     UpdateConstants();
 
-    Enemy::Render(scale, psShader);
+    //Enemy::Render(scale, psShader);
+    Enemy::Render(scale, golemPS.Get());
 
     magicCircleGolem->Render();
     magicCircleEnemySummon->Render(DirectX::XMFLOAT4(magicCircleColor[2]));
@@ -115,6 +130,27 @@ void EnemyGolem::DrawDebug()
 
         magicCircleGolem->DrawDebug();
         magicCircleEnemySummon->DrawDebug();
+
+        ImGui::SliderInt("currentState", &currentStateDebug, 0, 3);
+
+        if (ImGui::Button(stateName[currentStateDebug]))
+        {
+            switch (currentStateDebug)
+            {
+            case 0:
+                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::EntryState));
+                break;
+            case 1:
+                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::SummonState));
+                break;
+            case 2:
+                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::RoarState));
+                break;
+            case 3:
+                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::Attack1State));
+                break;
+            }
+        }
 
         if (ImGui::Button("magicCircle"))
         {

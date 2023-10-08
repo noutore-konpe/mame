@@ -21,6 +21,10 @@ Player::Player()
             //"./Resources/Model/Character/Player/P_Chara.fbx");
             "./Resources/Model/Character/Player/P_Motion.fbx");
 
+        // pixelShader
+        CreatePsFromCso(graphics.GetDevice(),
+            "./Resources/Shader/playerPS.cso",
+            playerPS.GetAddressOf());
     }
 }
 
@@ -351,7 +355,7 @@ void Player::CameraControllerUpdate(float elapsedTime)
 // ï`âÊèàóù
 void Player::Render(const float& scale, ID3D11PixelShader* psShader)
 {
-    Character::Render(scale, psShader);
+    Character::Render(scale, playerPS.Get());
 
     /*for (auto& skill : skillArray)
     {

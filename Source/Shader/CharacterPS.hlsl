@@ -94,6 +94,7 @@ float4 main(PSIn psIn) : SV_TARGET
         shadowFactor += shadowMap.SampleCmpLevelZero(comparisonSamplerState, float2(lightViewTexcoord.x - shadowWidthOffset, lightViewTexcoord.y + shadowHightOffset), depth).xxx; // 左下
         
         shadowFactor /= 9;
+        //shadowFactor /= 2;
     }
     
     // 最終的なカラー

@@ -148,6 +148,15 @@
     <FxCompile Include="Source\Shader\SpriteColorDissolvePS.hlsl">
       <Filter>mamelib\Shader\Sprite</Filter>
     </FxCompile>
+    <FxCompile Include="Source\Shader\PlayerPS.hlsl">
+      <Filter>mamelib\Shader\Fbx</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\FinalPassBokehPS.hlsl">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\LoadingPS.hlsl">
+      <Filter>mamelib\Shader\Loading</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Mame\Scene\BaseScene.cpp">
@@ -922,6 +931,9 @@
     </Filter>
     <Filter Include="mamelib\Mame\Game\Character\Enemy\EnemyGolem">
       <UniqueIdentifier>{495b6c9a-0480-4c04-a33f-bcb966019633}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Shader\Loading">
+      <UniqueIdentifier>{526d907c-d74b-4d6f-868f-35fc7b8f1ae9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

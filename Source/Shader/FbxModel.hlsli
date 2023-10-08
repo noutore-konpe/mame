@@ -1,4 +1,4 @@
-#define POINT_LIGHT_ONE 0
+#define POINT_LIGHT_ONE 1
 
 struct VSIn
 {
@@ -179,7 +179,7 @@ float3 CalcLightFromDirectionLight(PSIn psIn)
 
 // ポイントライトによる反射光を計算
 #if POINT_LIGHT_ONE
-float3 CalcLightFromPointLight(VS_OUT psIn)
+float3 CalcLightFromPointLight(PSIn psIn)
 {   
     // このサーフェイスに入射しているポイントライトの光の向きを計算する
     float3 lightDirection = psIn.worldPosition.xyz - pointLig.position.xyz;
