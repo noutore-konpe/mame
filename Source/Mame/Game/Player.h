@@ -81,7 +81,7 @@ public:
 
     static bool InputAvoid()
     {
-        return (Input::Instance().GetGamePad().GetButton() & GamePad::BTN_A);
+        return (Input::Instance().GetGamePad().GetTriggerR() > 0.5f);
     }
 
     static bool InputDecide()
@@ -124,6 +124,7 @@ public:
 
     static constexpr float InitAcceleration = 10.0f;
 
+    float actualRotValue;//回避中、実際に回転させるZ値
 private:
     //----------------------------カメラ関係----------------------------------
     float cameraRotSpeed = 2.0f;//旋回速度
@@ -139,6 +140,7 @@ private:
 
     float deceleration;
     float acceleration;
+    float dodgeAcceleration = 30.0f;
 
     float rotTimer = 0;
     //-----------------------------------------------------------------------

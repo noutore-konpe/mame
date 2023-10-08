@@ -66,6 +66,8 @@ private:
 
     Transform* focusTarget;//注視点になるオブジェクト
 
+    DirectX::XMFLOAT3 lockOnTargetPos;
+
     bool enableDebugCamera = false;
 
     //画面振動

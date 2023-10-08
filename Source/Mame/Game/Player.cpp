@@ -291,13 +291,17 @@ void Player::AvoidUpdate(float elapsedTime)
 {
     auto front = GetTransform()->CalcForward();
 
-    float acceleration = this->acceleration * elapsedTime;
+    float acceleration = this->dodgeAcceleration * elapsedTime;
 
     //移動ベクトルによる加速処理
     velocity.x += front.x * acceleration;
     velocity.z += front.z * acceleration;
 
     //最大速度制限
+    float maxDodgeSpeed = this->maxDodgeSpeed + Easing::OutSine(
+        static_cast<float>(model->GetCurrentKeyframeIndex()), 
+        static_cast<float>(model->GetCurrentKeyframeMaxIndex()/2.0f),
+        2.0f, 0.0f);
     float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
     if (length > maxDodgeSpeed)
     {
@@ -314,7 +318,7 @@ void Player::AvoidUpdate(float elapsedTime)
     float ax = gamePad.GetAxisLX();
     float ay = gamePad.GetAxisLY();
     MoveVecUpdate(ax,ay);
-    Turn(elapsedTime, moveVec.x, moveVec.z, 360.0f);
+    Turn(elapsedTime, moveVec.x, moveVec.z, 240.0f);
 
     DirectX::XMFLOAT3 velo = {
         velocity.x * elapsedTime,
@@ -327,13 +331,32 @@ void Player::AvoidUpdate(float elapsedTime)
 void Player::ModelRotZUpdate(float elapsedTime)
 {
     static float lastRotValue = 0;
+
+    /*float rotSpeed = elapsedTime * 10.0f * actualRotValue - rotValue;
+    if (actualRotValue - rotValue < 0.01f && actualRotValue - rotValue > -0.01f)
+    {
+        actualRotValue = 0;
+    }
+    if (actualRotValue < rotValue)
+    {
+        actualRotValue += rotSpeed;
+    }
+    else if (actualRotValue > rotValue)
+    {
+        actualRotValue -= rotSpeed;
+    }*/
+
     if (rotTimer > 0.1f)
     {
         lastRotValue = GetTransform()->GetRotation().z;
         rotTimer = 0;
     }
-    float rotZ = Easing::InSine(rotTimer,0.1f,-rotValue * 5,lastRotValue);
+    //float rotZ = Easing::InSine(rotTimer,0.1f,-rotValue * 5,lastRotValue);
+    float rotZ = Easing::InSine(std::fabsf(rotValue), 0.1f, 0.5f, 0.0f);
+    rotZ = rotValue < 0 ? rotZ : -rotZ;
     GetTransform()->SetRotationZ(rotZ);
+     
+    //GetTransform()->SetRotationZ(actualRotValue);
 
     rotTimer += elapsedTime;
 }

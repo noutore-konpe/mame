@@ -5,6 +5,7 @@ namespace PlayerState
 {
     void NormalState::Initialize()
     {
+        enableInputButton = false;
         owner->PlayWalkAnimation();
     }
     void NormalState::Update(const float& elapsedTime)
@@ -15,7 +16,14 @@ namespace PlayerState
         float ay = gamePad.GetAxisLY();
 
         owner->MoveUpdate(elapsedTime,ax,ay);
-        if (owner->InputAvoid())
+
+        //ˆê“x‰ñ”ðƒ{ƒ^ƒ“‚ð—£‚³‚¹‚é
+        if (owner->InputAvoid() == 0)
+        {
+            enableInputButton = true;
+        }
+
+        if (owner->InputAvoid() && enableInputButton)
         {
             owner->ChangeState(Player::STATE::AVOID);
         }
@@ -159,12 +167,16 @@ namespace PlayerState
     void AvoidState::Update(const float& elapsedTime)
     {
         //owner->MoveUpdate(elapsedTime);
-        owner->AvoidUpdate(elapsedTime);
-        owner->ModelRotZUpdate(elapsedTime);
-        if (!owner->IsPlayAnimation())
+        
+        if (!owner->IsPlayAnimation()/* ||
+            Input::Instance().GetGamePad().GetTriggerR() == 0*/)
         {
             owner->GetStateMachine()->ChangeState(Player::NORMAL);
+            return;
         }
+
+        owner->AvoidUpdate(elapsedTime);
+        owner->ModelRotZUpdate(elapsedTime);
     }
 
     void AvoidState::Finalize()
