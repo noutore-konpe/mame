@@ -18,9 +18,11 @@
 
 #include "../Game/MagicCircle.h"
 
-
 #include "../Game/EnemyManager.h"
 #include "../Game/EnemyTestAI.h"
+#include "../Game/EnemyAI_1.h"
+#include "../Game/EnemyAI_2.h"
+#include "../Game/EnemyAI_3.h"
 
 #include "../Game/ProjectileManager.h"
 #include "../Graphics/EffectManager.h"
@@ -34,16 +36,15 @@ bool SceneGame::isDebugRender = false;
 // リソース生成
 void SceneGame::CreateResource()
 {
-    Graphics& graphics = Graphics::Instance();
-
     using DirectX::XMFLOAT3;
+
+    Graphics& graphics = Graphics::Instance();
 
     // stage
     {
         stageBase = std::make_unique<Stage>();
         stageWall = std::make_unique<Stage>("./Resources/Model/Stage/stageWall.fbx");
     }
-
 
     // enemy
     {
@@ -72,16 +73,51 @@ void SceneGame::CreateResource()
     // enemy
     {
         // max 6~7
-#if 0
         EnemyManager& enemyManager = EnemyManager::Instance();
-        for (int i = 0; i < 3; ++i)
+#if 0
+        // EnemyAI_1
+        for (int i = 0; i < 2; ++i)
         {
-            EnemyAura* enemyAura = new EnemyAura;
-            const XMFLOAT3 setPosition = { ::RandFloat(-5.0f, +5.0f), 0.0f, ::RandFloat(-5.0f, +5.0f) };
-            enemyAura->SetPosition(setPosition);
-            enemyManager.Register(enemyAura);
+            EnemyAI_1* enemyAI_1 = new EnemyAI_1;
+
+            const XMFLOAT3 setPosition = {
+                ::RandFloat(-10.0f, +10.0f),
+                0.0f,
+                ::RandFloat(-10.0f, +10.0f)
+            };
+            enemyAI_1->SetPosition(setPosition);
+
+            enemyManager.Register(enemyAI_1);
         }
 #endif
+        // EnemyAI_2
+        for (int i = 0; i < 2; ++i)
+        {
+            EnemyAI_2* enemyAI_2 = new EnemyAI_2;
+
+            const XMFLOAT3 setPosition = {
+                ::RandFloat(-10.0f, +10.0f),
+                0.0f,
+                ::RandFloat(-10.0f, +10.0f)
+            };
+            enemyAI_2->SetPosition(setPosition);
+
+            enemyManager.Register(enemyAI_2);
+        }
+        // EnemyAI_3
+        for (int i = 0; i < 2; ++i)
+        {
+            EnemyAI_3* enemyAI_3 = new EnemyAI_3;
+
+            const XMFLOAT3 setPosition = {
+                ::RandFloat(-10.0f, +10.0f),
+                0.0f,
+                ::RandFloat(-10.0f, +10.0f)
+            };
+            enemyAI_3->SetPosition(setPosition);
+
+            enemyManager.Register(enemyAI_3);
+        }
     }
 
     // ps Shader
@@ -242,7 +278,7 @@ void SceneGame::Update(const float& elapsedTime)
     {
         particles->Integrate(Graphics::Instance().GetDeviceContext(), elapsedTime);
     }
-        
+
     //if (gamePad.GetButtonDown() & GamePad::BTN_B)
     //    Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
 
@@ -317,7 +353,7 @@ void SceneGame::Render(const float& elapsedTime)
     Shader* shader = graphics.GetShader();
 
     Shader::SceneConstants sceneConstants{};
-    
+
     float playerScaleFactor = 0.01f;
     float enemyScaleFactor = 0.001f;
 
@@ -362,12 +398,12 @@ void SceneGame::Render(const float& elapsedTime)
 
             shadow.shadowMap->Clear(graphics.GetDeviceContext(), 1.0f);
             shadow.shadowMap->Activate(graphics.GetDeviceContext());
-            
+
             // ステートセット
             shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
             shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::NONE));
             shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::SOLID));
-            
+
             // SHADOW : 影つけたいモデルはここにRenderする
             {
                 PlayerManager::Instance().Render(playerScaleFactor);
@@ -404,12 +440,11 @@ void SceneGame::Render(const float& elapsedTime)
 
     {
         // カメラ関係
-        RenderContext rc;
+        RenderContext rc = {};
         rc.lightDirection = { 0.0f, -1.0f, 0.0f, 0.0f };
 
         shader->Begin(graphics.GetDeviceContext(), rc);
     }
-
 
 
     // EMISSIVE
@@ -417,7 +452,7 @@ void SceneGame::Render(const float& elapsedTime)
 
     // SHADOW : bind shadow map at slot 8
     graphics.GetDeviceContext()->PSSetShaderResources(8, 1, shadow.shadowMap->shaderResourceView.GetAddressOf());
-    
+
     framebuffers[0]->Clear(graphics.GetDeviceContext());
     framebuffers[0]->Activate(graphics.GetDeviceContext());
 
@@ -566,85 +601,89 @@ void SceneGame::Render(const float& elapsedTime)
 void SceneGame::DrawDebug()
 {
 #ifdef USE_IMGUI
-    ImGui::Begin("sceneGame");
 
     Graphics::Instance().GetShader()->DrawDebug();
 
-    // デバッグプリミティブ描画
-    if (ImGui::Button("drawDebug"))
+    if (ImGui::Begin("sceneGame"))
     {
-        isDebugRender = isDebugRender ? false : true;
-    }
 
-    // 本生成
-    if (ImGui::Button("createBook"))
-    {
-        ItemManager::Instance().Register(new Book());
-    }
-
-    if (ImGui::Button("isSeveral"))
-    {
-        isSeveralNum = isSeveralNum ? false : true;
-    }
-
-    // 魔法陣再生
-    if (ImGui::Button("magicCircle"))
-    {
-        if (isSeveralNum)
+        // デバッグプリミティブ描画
+        if (ImGui::Button("drawDebug"))
         {
-            for (int i = 0; i < 10; ++i)
+            isDebugRender = isDebugRender ? false : true;
+        }
+
+        // 本生成
+        if (ImGui::Button("createBook"))
+        {
+            ItemManager::Instance().Register(new Book());
+        }
+
+        if (ImGui::Button("isSeveral"))
+        {
+            isSeveralNum = isSeveralNum ? false : true;
+        }
+
+        // 魔法陣再生
+        if (ImGui::Button("magicCircle"))
+        {
+            if (isSeveralNum)
             {
-                for (int j = 0; j < 3; ++j)
+                for (int i = 0; i < 10; ++i)
                 {
-                    magicCircleSummon[i]->magicCircle[j]->GetTransform()->
-                        SetPosition(DirectX::XMFLOAT3(cosf(i) * 7.0f, 0.0f, sinf(i) * 7.0f));
+                    for (int j = 0; j < 3; ++j)
+                    {
+                        magicCircleSummon[i]->magicCircle[j]->GetTransform()->
+                            SetPosition(DirectX::XMFLOAT3(cosf(i) * 7.0f, 0.0f, sinf(i) * 7.0f));
+                    }
+
+                    magicCircleSummon[i]->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleSummon::StateMachineState::AppearState));
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 3; ++i)
+                {
+                    magicCircleSummon[0]->magicCircle[i]->GetTransform()->
+                        SetPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
                 }
 
-                magicCircleSummon[i]->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleSummon::StateMachineState::AppearState));
+                magicCircleSummon[0]->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleSummon::StateMachineState::AppearState));
             }
         }
-        else
-        {
-            for (int i = 0; i < 3; ++i)
-            {
-                magicCircleSummon[0]->magicCircle[i]->GetTransform()->
-                    SetPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
-            }
 
-            magicCircleSummon[0]->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleSummon::StateMachineState::AppearState));
-        }
+        ImGui::Separator();
+
+        PlayerManager::Instance().DrawDebug();
+
+        ItemManager::Instance().DrawDebug();
+
+        particles->DrawDebug();
+
+        enemyGolem->DrawDebug();
+
+        EnemyManager& enemyManager = EnemyManager::Instance();
+        enemyManager.DrawDebug();
+
+        // カメラ
+        Camera::Instance().DrawDebug();
+
+        ImGui::End();
     }
-
-    PlayerManager::Instance().DrawDebug();
-
-    ItemManager::Instance().DrawDebug();
-    
-    particles->DrawDebug();
-
-    enemyGolem->DrawDebug();
-
-    // カメラ
-    Camera::Instance().DrawDebug();
-
-
-    ImGui::End();
-
-    PlayerManager::Instance().DrawDebug();
-
-    EnemyManager& enemyManager = EnemyManager::Instance();
-    enemyManager.DrawDebug();
-    
 
     // SHADOW
     {
-        ImGui::Begin("shadow");
-        ImGui::DragFloat4("lightViewFocus", &shadow.lightViewFocus.x);
-        ImGui::SliderFloat("lightViewDistance", &shadow.lightViewDistance, 1.0f, 100.0f);
-        ImGui::SliderFloat("lightViewSize", &shadow.lightViewSize, 1.0f, 100.0f);
-        ImGui::SliderFloat("lightViewNearZ", &shadow.lightViewNearZ, 1.0f, shadow.lightViewFarZ - 1.0f);
-        ImGui::SliderFloat("lightViewFarZ", &shadow.lightViewFarZ, shadow.lightViewNearZ + 1.0f, 100.0f);
-        ImGui::Image(reinterpret_cast<void*>(shadow.shadowMap->shaderResourceView.Get()), ImVec2(shadow.shadowMapWidth / 5.0f, shadow.shadowMapHeight / 5.0f));
-        ImGui::End();
+        if (ImGui::Begin("shadow"))
+        {
+            ImGui::DragFloat4("lightViewFocus", &shadow.lightViewFocus.x);
+            ImGui::SliderFloat("lightViewDistance", &shadow.lightViewDistance, 1.0f, 100.0f);
+            ImGui::SliderFloat("lightViewSize", &shadow.lightViewSize, 1.0f, 100.0f);
+            ImGui::SliderFloat("lightViewNearZ", &shadow.lightViewNearZ, 1.0f, shadow.lightViewFarZ - 1.0f);
+            ImGui::SliderFloat("lightViewFarZ", &shadow.lightViewFarZ, shadow.lightViewNearZ + 1.0f, 100.0f);
+            ImGui::Image(reinterpret_cast<void*>(shadow.shadowMap->shaderResourceView.Get()), ImVec2(shadow.shadowMapWidth / 5.0f, shadow.shadowMapHeight / 5.0f));
+            ImGui::End();
+        }
     }
+
 #endif
 }

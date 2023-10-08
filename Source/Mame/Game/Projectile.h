@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Graphics/Model.h"
+#include "Character.h"
 
 // 前方宣言
 class ProjectileManager;
@@ -23,25 +24,30 @@ public:
     void Destroy(); // 破棄
 
 public: // 取得・設定　関連
-    Transform* GetTransform() { return model->GetTransform(); }
+    Transform* GetTransform() { return model_->GetTransform(); }
 
-    float GetRadius()const { return radius; }   // 半径取得
-    void SetRadius(float r) { radius = r; }     // 半径設定
+    const Character* GetParent() const { return parent_; }
+    void SetParent(Character* parent) { parent_ = parent; }
+
+    const float GetRadius() const { return radius_; }   // 半径取得
+    void SetRadius(float r) { radius_ = r; }            // 半径設定
+
+    // --- ImGui用 --- //
+    const char* GetName() const { return name_.c_str(); }
+    void SetName(std::string n) { name_ = n; }
 
 public:
-    std::unique_ptr<Model> model = nullptr;
+    std::unique_ptr<Model> model_ = nullptr;
 
 private:
-    ProjectileManager* manager = nullptr;
+    ProjectileManager* manager_ = nullptr;
 
-    float radius = 0.5f;
+    Character* parent_ = nullptr;  // 自分を生成したキャラクターのポインタ
 
-public: // --- ImGui用 --- //
-    const char* GetName() const { return name.c_str(); }
-    void SetName(std::string n) { name = n; }
-    static int nameNum;
+    float radius_ = 0.5f;
 
-private: // --- ImGui用 --- //
-    std::string name = {};
+    // --- ImGui用 --- //
+    std::string name_ = {};
+
 };
 

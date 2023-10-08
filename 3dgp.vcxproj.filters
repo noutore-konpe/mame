@@ -286,7 +286,7 @@
     <ClCompile Include="Source\Mame\Game\ProjectileManager.cpp">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Game\ProjectileStraite.cpp">
+    <ClCompile Include="Source\Mame\Game\ProjectileStraight.cpp">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\Enemy.cpp">
@@ -382,7 +382,6 @@
     <ClCompile Include="Source\Mame\Game\EnemyTestAI.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Game\BaseCharacterAI.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyAura.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClCompile>
@@ -422,8 +421,17 @@
     <ClCompile Include="Source\Mame\Game\EnemyManager.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyAI_1.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Mame\Game\EnemyGolemState.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyAI_2.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyAI_3.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -564,7 +572,7 @@
     <ClInclude Include="Source\Mame\Game\ProjectileManager.h">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\Game\ProjectileStraite.h">
+    <ClInclude Include="Source\Mame\Game\ProjectileStraight.h">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\Enemy.h">
@@ -696,7 +704,6 @@
     <ClInclude Include="Source\Mame\Game\MagicCircleState.h">
       <Filter>mamelib\Mame\Game\Item\StateMachine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\Game\BaseCharacterAI.h" />
     <ClInclude Include="Source\Mame\Game\EnemyAura.h">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClInclude>
@@ -733,8 +740,17 @@
     <ClInclude Include="Source\Mame\Game\EnemyManager.h">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyAI_1.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Mame\Game\EnemyGolemState.h">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyAI_2.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyAI_3.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

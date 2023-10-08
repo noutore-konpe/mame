@@ -159,6 +159,8 @@ void EnemyGolem::DrawDebug()
 
         ImGui::EndMenu();
     }
+    ImGui::Separator();
+
 #endif // USE_IMGUI
 }
 
@@ -192,7 +194,7 @@ void EnemyGolem::UpdateSummoningMagicCircle(const float& lengthX, const float& l
             // ˆÊ’u‚ðÝ’è
             magicCircleEnemySummon->magicCircle[0]->GetTransform()->SetPosition(DirectX::XMFLOAT3(setPosition));
         }
-        {   // “ñ‚Â–Ú  
+        {   // “ñ‚Â–Ú
              // •ûŒüŽæ“¾
             DirectX::XMFLOAT3 setPosition = {
                 ownerFrontVec.x * sinf(angle) - ownerRightVec.x * cosf(angle),

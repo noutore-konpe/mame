@@ -2,11 +2,11 @@
 
 #include "Projectile.h"
 
-class ProjectileStraite : public Projectile
+class ProjectileStraight : public Projectile
 {
 public:
-    ProjectileStraite(ProjectileManager* manager);
-    ~ProjectileStraite() {}
+    ProjectileStraight(ProjectileManager* manager);
+    ~ProjectileStraight();
 
     void Initialize()                                           override;   // ‰Šú‰»
     void Finalize()                                             override {} // I—¹‰»
@@ -18,10 +18,17 @@ public:
 
 public:
     // ”­Ë
-    void Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& position);
+    void Launch(
+        const DirectX::XMFLOAT3& direction,
+        const DirectX::XMFLOAT3& position
+    );
 
 private:
-    DirectX::XMFLOAT3 direction;    // •ûŒü
-    float speed = 1.0f;            // ‘¬“x
-    float lifeTimer = 3.0f;         // õ–½
+    static int nameNum_;
+
+private:
+    DirectX::XMFLOAT3 direction_    = {};   // •ûŒü
+    float speed_                    = 2.0f; // ‘¬“x
+    float lifeTimer_                = 3.0f; // õ–½
+
 };

@@ -5,10 +5,10 @@
 
 #include "../../Taki174/Common.h"
 
-#include "JudgmentBase.h"
-//#include "EnemyBlueSlime.h"
 #include "BehaviorData.h"
+#include "JudgmentBase.h"
 #include "ActionBase.h"
+
 #include "EnemyManager.h"
 
 NodeBase::NodeBase(
@@ -35,8 +35,10 @@ NodeBase::NodeBase(
 // デストラクタ
 NodeBase::~NodeBase()
 {
-	SafeDeletePtr(judgment_);
-	SafeDeletePtr(action_);
+	ClearChildren();
+
+	::SafeDeletePtr(action_);
+	::SafeDeletePtr(judgment_);
 }
 
 // 子ノードゲッター
@@ -264,4 +266,36 @@ const ActionBase::State NodeBase::Run(const float elapsedTime)
 	}
 
 	return ActionBase::State::Failed;
+}
+
+
+void NodeBase::ClearChildren()
+{
+	if (0 == children_.size()) return;
+
+	for (NodeBase*& child : children_)
+	{
+		ClearChild(child);
+	}
+	children_.clear();
+	children_.shrink_to_fit();
+}
+
+
+void NodeBase::ClearChild(NodeBase* node)
+{
+	// この子ノードがさらに子ノードを持っていたら
+	// またClearChild関数を呼び出して再帰処理を行う
+	if (node->children_.size() > 0)
+	{
+		for (NodeBase*& child : node->children_)
+		{
+			ClearChild(child);
+		}
+
+		children_.clear();
+		children_.shrink_to_fit();
+	}
+
+	::SafeDeletePtr(node);
 }
