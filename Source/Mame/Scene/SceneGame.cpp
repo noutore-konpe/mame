@@ -355,7 +355,7 @@ void SceneGame::Render(const float& elapsedTime)
     Shader::SceneConstants sceneConstants{};
 
     float playerScaleFactor = 0.01f;
-    float enemyScaleFactor = 0.001f;
+    float enemyScaleFactor = 0.01f;
 
     // •`‰æ‚Ì‰Šúİ’è
     {

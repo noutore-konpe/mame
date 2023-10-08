@@ -18,7 +18,7 @@ EnemyAI_3::EnemyAI_3()
     Graphics& graphics = Graphics::Instance();
 
     model = std::make_unique<Model>(graphics.GetDevice(),
-        "./Resources/Model/testModel/plantune.fbx");
+        "./Resources/Model/Character/Player/P_Motion.fbx");
 
     // emissiveTextureUVScroll
     {
