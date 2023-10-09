@@ -10,6 +10,8 @@ void Camera::Initialize()
     transform.SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 10.0f));
     transform.SetScale(DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
     transform.SetRotation(DirectX::XMFLOAT4(0.0f, DirectX::XMConvertToRadians(180), 0.0f, 0.0f));
+
+    activeLockOn = false;
 }
 
 void Camera::Update()
@@ -145,7 +147,26 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
     DirectX::XMVECTOR focus;
 
     //TANA変更
-    if (focusTarget && !enableDebugCamera)
+    if (activeLockOn)//ロックオン時
+    {
+        DirectX::XMFLOAT3 targetPos = focusTarget->GetPosition();
+        DirectX::XMFLOAT3 forward = transform.CalcForward();
+
+        eye = { DirectX::XMVectorSet(
+            targetPos.x - forward.x * focalLength,
+            targetPos.y - forward.y * focalLength + offsetY,
+            targetPos.z - forward.z * focalLength,
+            1.0f) };
+
+        focus = { DirectX::XMVectorSet(
+            targetPos.x,
+            targetPos.y + focusOffsetY,
+            targetPos.z,
+            1.0f) };
+
+        focus = DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&screenVibrationOffset), focus);
+    }
+    else if (focusTarget && !enableDebugCamera)
     {
         //DirectX::XMFLOAT3 pos = transform.GetPosition();
         DirectX::XMFLOAT3 targetPos = focusTarget->GetPosition();

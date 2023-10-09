@@ -28,4 +28,11 @@ namespace PlayerSkill
         overlap++;
         ItemManager::Instance().Register(new Book());
     }
+
+    void MaxHitPointUp::Overlaping()
+    {
+        overlap++;
+        player->AddMaxHealth(maxHealthIncreasing);
+        player->ApplyHeal(maxHealthIncreasing);
+    }
 }

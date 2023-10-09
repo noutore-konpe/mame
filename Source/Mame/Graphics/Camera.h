@@ -36,7 +36,7 @@ public:
         DirectX::XMFLOAT3 eye{ 0.0f,0.0f,-10.0f };
         DirectX::XMFLOAT3 focus{ 0.0f,0.0f,0.0f };
         DirectX::XMFLOAT3 up{ 0.0f,1.0f,0.0f };
-    }camera;    
+    }camera;
 
     // ImGui用関数
     void DrawDebug();
@@ -66,7 +66,8 @@ private:
 
     Transform* focusTarget;//注視点になるオブジェクト
 
-    DirectX::XMFLOAT3 lockOnTargetPos;
+    DirectX::XMFLOAT3 lockOnTargetPos;//ロックオン対象の座標
+    bool activeLockOn = false;//ロックオン起動
 
     bool enableDebugCamera = false;
 

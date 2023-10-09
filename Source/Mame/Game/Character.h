@@ -77,6 +77,7 @@ public: // 取得・設定　関連
     void SetEmissiveScrollDirection(DirectX::XMFLOAT2 scroll) { model->skinned_meshes->data.emissiveScrollDirection = scroll; }
     void SetEmissiveColor(DirectX::XMFLOAT4 color) { model->skinned_meshes->data.emissiveColor = color; }
 
+    void AddMaxHealth(const float hp) { maxHealth += hp; }
 
 public: // 関数
     void Turn(float elapsedTime, float vx, float vz, float rotSpeed);
@@ -107,7 +108,7 @@ public:
 #endif // _DEBUG
 
 private:
-    Transform collisionSqhereTransform{};
+    Transform collisionSqhereTransform{};   
     DirectX::XMFLOAT3 debugSqhereOffset{};  // 当たり判定用
     float range = 1.0f;                     // 球当たり判定半径
 

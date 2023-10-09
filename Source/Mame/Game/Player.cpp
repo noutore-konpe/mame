@@ -85,6 +85,9 @@ void Player::Initialize()
         //本の数増加
         bookIncreaseSkill = std::make_unique<PlayerSkill::BookIncrease>(this);
         skillArray.emplace_back(bookIncreaseSkill.get());
+        //体力上限アップ
+        maxHitPointUpSkill = std::make_unique<PlayerSkill::MaxHitPointUp>(this);
+        skillArray.emplace_back(maxHitPointUpSkill.get());
     }
     for (auto& skill : skillArray)
     {
