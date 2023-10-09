@@ -55,3 +55,10 @@ inline const float RandFloat(
     // min`max‚Ü‚Å‚Ìƒ‰ƒ“ƒ_ƒ€’l‚É•ÏŠ·
     return value * (max - min) + min;
 }
+
+inline const float RandInt(
+    const int min,
+    const int max)
+{
+    return ::rand() % ((max + 1) - min) + min;
+}

@@ -22,13 +22,13 @@ private:
 private:
     struct CircularMotion
     {
-        DirectX::XMFLOAT3 center_             = { 0.0f, 0.1f, 0.0f };
+        DirectX::XMFLOAT3 center_             = { 0.0f, 0.2f, 0.0f };
         DirectX::XMFLOAT3 angle_              = {};                          // Radian
-        float             radius_             = 0.25f;
-        float             addRotate_          = ::ToRadian(25.0f);
-        float             correct_            = 0.25f;                       // 補正値
-        float             groundPositionY_    = center_.y + radius_;         // 円運動の開始地点Y(経験値にとっての地面位置Y)
-        float             outGroundPositionY_ = groundPositionY_ + correct_; // 円運動の開始地点Y(+修正値)より上にいたら空中にいるものとする
+        float             radius_             = 0.08f;
+        float             addRotate_          = ::ToRadian(180.0f);
+        float             correct_            = 0.0f;                       // 補正値
+        float             groundPositionY_    = center_.y - radius_;       // 円運動の開始地点Y(経験値にとっての地面位置Y)
+        float             outGroundPositionY_ = center_.y + radius_;       // 円運動の中心+半径(+修正値)より上にいたら空中にいるものとする
     };
 
 public:
@@ -46,6 +46,8 @@ public:
 public:
     Transform* GetTransform() { return model_->GetTransform(); }
 
+    const STEP& GetStep() const { return step_; }
+
     const DirectX::XMFLOAT3 GetVelocity() const { return velocity_; }
     void SetVelocity(const DirectX::XMFLOAT3& velocity) { velocity_ = velocity; }
 
@@ -58,10 +60,10 @@ public:
 private:
     const bool SearchPlayer();
 
+    void UpdateVerticalVelocity(const float elapsedFrame);
     void UpdateHorizontalVelocity(const float elapsedFrame);
     void UpdateHorizontalMove(const float elapsedTime);
 
-    void UpdateGroundPosition(); // 円運動の地面位置更新(念のため)
 
 private:
     static int nameNum_;
@@ -75,11 +77,13 @@ private:
     std::string         name_           = "";
     DirectX::XMFLOAT3   targetPosition_ = {};
     DirectX::XMFLOAT3   velocity_       = {};
-    float               gravity_        = -1.0f;
-    float               friction_       = 0.5f;
-    float               airControl_     = 0.3f;
+    float               acceleration_   = 0.7f;
+    float               gravity_        = -0.1f;
+    float               friction_       = 0.1f;
+    float               airControl_     = 0.1f;
     float               radius_         = 0.25f;
     bool                isGround_       = false;
+    bool                isMoveToPlayer_ = false;
 
 };
 

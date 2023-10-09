@@ -38,7 +38,7 @@ void ExperiencePointManager::Update(const float elapsedTime)
     }
 
     // ”jŠüˆ—
-    for (ExperiencePoint* exp : exps_)
+    for (ExperiencePoint* exp : removes_)
     {
         auto it = std::find(exps_.begin(), exps_.end(), exp);
         if (it != exps_.end()) { exps_.erase(it); }
@@ -80,6 +80,8 @@ void ExperiencePointManager::DrawDebug()
         for (ExperiencePoint*& exp : exps_)
         {
             exp->DrawDebug();
+            int step = static_cast<int>(exp->GetStep());
+            ImGui::DragInt("Step", &step);
         }
         ImGui::Separator();
 
@@ -103,7 +105,8 @@ void ExperiencePointManager::CollisionExpVsPlayer(const float /*elapsedTime*/)
 
         const XMFLOAT3& expPos    = exp->GetTransform()->GetPosition();
         const float     expRadius = exp->GetRadius();
-        const XMFLOAT3& plPos     = plManager.GetPlayer()->GetTransform()->GetPosition();
+        XMFLOAT3        plPos     = plManager.GetPlayer()->GetTransform()->GetPosition();
+        plPos.y += 1.0f;
         //const float     plRadius  = plManager.GetPlayer()->GetRadius();
         const float     plRadius  = 0.5f;
 
@@ -144,9 +147,10 @@ void ExperiencePointManager::Clear()
 
 
 void ExperiencePointManager::CreateExp(
-    const DirectX::XMFLOAT3& position, const int expCount,
-    const float minForceXZ, const float maxForceXZ,
-    const float minForceY, const float maxForceY)
+    const DirectX::XMFLOAT3& position,
+    const int expCount,
+    const DirectX::XMFLOAT3& minForce,
+    const DirectX::XMFLOAT3& maxForce)
 {
     using DirectX::XMFLOAT3;
 
@@ -159,9 +163,9 @@ void ExperiencePointManager::CreateExp(
 
         // ŽU‚ç‚Î‚é‘¬“x‚ðÝ’è
         const XMFLOAT3 force = {
-            ::RandFloat(minForceXZ, maxForceXZ),
-            ::RandFloat(minForceY, maxForceY),
-            ::RandFloat(minForceXZ, maxForceXZ),
+            ::RandFloat(minForce.x, maxForce.x),
+            ::RandFloat(minForce.y, maxForce.y),
+            ::RandFloat(minForce.z, maxForce.z),
         };
         exp->SetVelocity(force);
 

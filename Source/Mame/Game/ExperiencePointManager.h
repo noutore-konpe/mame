@@ -36,18 +36,31 @@ public:
 
     /// <param name="position：生成する位置"></param>
     /// <param name="count：生成する数"></param>
-    /// <param name="minForceXZ：XZ速度に加える最小パワー(ランダム)"></param>
-    /// <param name="maxForceXZ：XZ速度に加える最大パワー(ランダム)"></param>
-    /// <param name="minForceY：Y速度に加える最小パワー(ランダム)"></param>
-    /// <param name="maxForceY：Y速度に加える最大パワー(ランダム)"></param>
+    /// <param name="minForce：速度に加える最小パワー(ランダム)"></param>
+    /// <param name="maxForce：速度に加える最大パワー(ランダム)"></param>
     void CreateExp(
         const DirectX::XMFLOAT3& position,
         const int count,
-        const float minForceXZ = -2.0f,
-        const float maxForceXZ = +2.0f,
-        const float minForceY  = 0.0f,
-        const float maxForceY  = +2.0f
+        const DirectX::XMFLOAT3& minForce,
+        const DirectX::XMFLOAT3& maxForce
     );
+    /// <param name="position：生成する位置"></param>
+    /// <param name="count：生成する数"></param>
+    /// <param name="minForceXZ：XZ速度に加えるパワー(ランダム)"></param>
+    /// <param name="maxForceY：Y速度に加えるパワー(ランダム)"></param>
+    void CreateExp(
+        const DirectX::XMFLOAT3& position,
+        const int count,
+        const float forceXZ = 2.5f,
+        const float forceY  = 6.0f
+    )
+    {
+        CreateExp(
+            position, count,
+            DirectX::XMFLOAT3(-forceXZ, 0.0f,    -forceXZ),
+            DirectX::XMFLOAT3(+forceXZ, +forceY, +forceXZ)
+        );
+    }
 
 public:
     const size_t GetExpCount() const { return exps_.size(); }

@@ -28,7 +28,7 @@ ExperiencePoint::~ExperiencePoint()
 
 void ExperiencePoint::Initialize()
 {
-    GetTransform()->SetScaleFactor(3.0f);
+    GetTransform()->SetScaleFactor(0.25f);
 
     step_ = STEP::FALL_INIT;
 }
@@ -42,14 +42,13 @@ void ExperiencePoint::Update(const float elapsedTime)
     Transform* t = GetTransform();
     const float elapsedFrame = elapsedTime * 60;
 
-    UpdateGroundPosition(); // 円運動の地面位置更新
-
     switch (step_)
     {
     case STEP::FALL_INIT:
 
-        velocity_.y = 0.0f;     // 落下速度リセット
-        isGround_   = false;    // 空中にいる
+        if (velocity_.y < 0.0f) velocity_.y = 0.0f;     // すでに落下していたら速度をリセット
+        isGround_       = false;    // 空中にいる
+        isMoveToPlayer_ = false;
 
         step_ = STEP::FALL;
         [[fallthrough]];
@@ -66,13 +65,13 @@ void ExperiencePoint::Update(const float elapsedTime)
         {
             // Y位置更新
             {
-                t->AddPositionY(gravity_ * elapsedFrame);
+                UpdateVerticalVelocity(elapsedFrame);
+                t->AddPositionY(velocity_.y * elapsedTime);
 
-                // 円運動の開始地点まで降下したら浮遊状態に移行する
-                if (t->GetPositionY() <= circularMotion_.groundPositionY_)
+                // 上昇中でなく円運動の開始地点まで降下していたら浮遊状態に移行する
+                if (velocity_.y <= 0.0f &&
+                    t->GetPositionY() <= circularMotion_.groundPositionY_)
                 {
-                    t->SetPositionY(circularMotion_.groundPositionY_);
-
                     step_ = STEP::FLOTING_INIT;
                     break;
                 }
@@ -89,14 +88,20 @@ void ExperiencePoint::Update(const float elapsedTime)
     case STEP::FLOTING_INIT:
 
         // 自分の位置から回転を始めるようにする
+        t->SetPositionY(circularMotion_.groundPositionY_); // 円運動の開始地点Yに位置設定
+#if 0
         {
-            t->SetPositionY(circularMotion_.groundPositionY_); // 円運動の開始地点Yに位置設定
             const float localPositionX = t->GetPositionX() - circularMotion_.center_.x;
             const float localPositionY = t->GetPositionY() - circularMotion_.center_.y;
             circularMotion_.angle_.z = ::atan2f(localPositionX, localPositionY); // return Radian Angle
         }
+#else
+        // 下の位置から開始するので180度回転した状態で始める
+        circularMotion_.angle_.z = ToRadian(180.0f);
+#endif
 
-        isGround_ = true;   // 地面にいる
+        isGround_       = true;   // 地面にいる
+        isMoveToPlayer_ = false;
 
         step_ = STEP::FLOTING;
         [[fallthrough]];
@@ -136,11 +141,14 @@ void ExperiencePoint::Update(const float elapsedTime)
         break;
     case STEP::MOVE_TO_PLAYER_INIT:
 
-        isGround_ = false; // 空中扱いにする
+        isGround_       = false;
+        isMoveToPlayer_ = true;
 
         step_ = STEP::MOVE_TO_PLAYER;
         [[fallthrough]];
     case STEP::MOVE_TO_PLAYER:
+
+        UpdateHorizontalVelocity(elapsedFrame); // 減速
 
         // プレイヤーから離れていたらほかの状態に移る
         if (false == SearchPlayer())
@@ -148,7 +156,6 @@ void ExperiencePoint::Update(const float elapsedTime)
             // 位置が地面以下なら浮遊状態に移行する
             if (t->GetPositionY() <= circularMotion_.groundPositionY_)
             {
-                t->SetPositionY(circularMotion_.groundPositionY_);
                 step_ = STEP::FLOTING_INIT;
                 break;
             }
@@ -163,11 +170,20 @@ void ExperiencePoint::Update(const float elapsedTime)
         else
         {
             // プレイヤーの方へ向かう
-            const XMFLOAT3& pos    = GetTransform()->GetPosition();
-            const XMFLOAT3& plPos  = plManager.GetPlayer()->GetTransform()->GetPosition();
+            const XMFLOAT3& pos = GetTransform()->GetPosition();
+            XMFLOAT3        plPos = plManager.GetPlayer()->GetTransform()->GetPosition();
+            plPos.y += 1.0f;
             const XMFLOAT3  vecN = ::XMFloat3Normalize(plPos - pos);
-            velocity_ += 1.0f * elapsedTime; // 仮(プレイヤーに依存にする予定)
-            t->AddPosition(vecN * velocity_ * elapsedTime);
+            velocity_ += vecN * acceleration_ * elapsedFrame; // 仮(プレイヤーに依存にする予定)
+
+            t->AddPosition(velocity_ * elapsedTime);
+
+            // 地面を貫通しないようにする
+            if (t->GetPositionY() < 0.0f)
+            {
+                t->SetPositionY(0.0f);
+                velocity_.y = velocity_.y * 0.5f; // Y速度を半減させる
+            }
         }
 
         break;
@@ -208,15 +224,24 @@ const bool ExperiencePoint::SearchPlayer()
     PlayerManager& plManager = PlayerManager::Instance();
 
     const XMFLOAT3& pos      = GetTransform()->GetPosition();
-    const XMFLOAT3& plPos    = plManager.GetPlayer()->GetTransform()->GetPosition();
+    XMFLOAT3        plPos    = plManager.GetPlayer()->GetTransform()->GetPosition();
+    plPos.y += 1.0f;
     const XMFLOAT3  vec      = plPos - pos;
     const float    lengthSq = ::XMFloat3LengthSq(vec);
 
-    constexpr float plCollectExpLengthSq = 2.0f * 2.0f; // 仮(プレイヤーに依存する予定)
+    constexpr float plCollectExpLengthSq = 6.0f * 6.0f; // 仮(プレイヤーに依存する予定)
     if (lengthSq > plCollectExpLengthSq) return false;
 
     return true;
 
+}
+
+
+void ExperiencePoint::UpdateVerticalVelocity(const float elapsedFrame)
+{
+    velocity_.y += gravity_ * elapsedFrame;
+    constexpr float velocityY_min = -1.0f;
+    if (velocity_.y < velocityY_min) velocity_.y = velocityY_min;
 }
 
 
@@ -234,6 +259,10 @@ void ExperiencePoint::UpdateHorizontalVelocity(const float elapsedFrame)
 
         // 空中にいるときは摩擦力を減らす
         if (!isGround_) friction *= airControl_;
+
+        // プレイヤーに向かっている場合は摩擦を強める
+        // (プレイヤーの周りをぐるぐるしすぎて遠心力でプレイヤーの収集距離外に出てしまって遠くに吹っ飛んでいかないようにするため)
+        if (true == isMoveToPlayer_) friction = 0.2f * elapsedFrame;
 
         // 摩擦による横方向の減速処理
         if (velocityXZLength > friction)
@@ -327,18 +356,4 @@ void ExperiencePoint::UpdateHorizontalMove(const float elapsedTime)
 #endif
     }
 
-}
-
-
-void ExperiencePoint::UpdateGroundPosition()
-{
-    circularMotion_.groundPositionY_ = {
-        circularMotion_.center_.y +
-        circularMotion_.radius_
-    };
-
-    circularMotion_.outGroundPositionY_ = {
-        circularMotion_.groundPositionY_ +
-        circularMotion_.correct_
-    };
 }
