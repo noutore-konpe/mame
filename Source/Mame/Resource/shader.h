@@ -13,7 +13,7 @@
 // SHADOW
 #include "../Graphics/ShadowMap.h"
 
-#define POINT_LIGHT_ONE 0
+#define POINT_LIGHT_ONE 1
 
 #if !POINT_LIGHT_ONE
 const int pointLightMax = 8;
@@ -22,18 +22,25 @@ const int pointLightMax = 8;
 class Shader
 {
 public: // enum関連
-    enum class SAMPLER_STATE { POINT, LINEAR, ANISOTROPIC, LINEAR_BORDER_BLACK, LINEAR_BORDER_WHITE, COMPARISON_LINEAR_BORDER_WHITE/*SHADOW*/ };
+    enum class SAMPLER_STATE {
+        POINT, LINEAR, ANISOTROPIC, LINEAR_BORDER_BLACK, LINEAR_BORDER_WHITE, COMPARISON_LINEAR_BORDER_WHITE/*SHADOW*/,
+        LINEAR_BORDER_OPAQUE_BLACK, POINT_CLAMP, COUNT,
+    };
+    //enum class SAMPLER_STATE {
+    //    POINT_WRAP, LINEAR_WRAP, ANISOTROPIC_WRAP, POINT_CLAMP, LINEAR_CLAMP, ANISOTROPIC_CLAMP,
+    //    POINT_BORDER_OPAQUE_BLACK, LINEAR_BORDER_OPAQUE_BLACK, POINT_BORDER_OPAQUE_WHITE, LINEAR_BORDER_OPAQUE_WHITE,
+    //    COMPARISON_DEPTH, COUNT
+    //};
+    
     enum class DEPTH_STATE { ZT_ON_ZW_ON, ZT_ON_ZW_OFF, ZT_OFF_ZW_ON, ZT_OFF_ZW_OFF };
     enum class BLEND_STATE { NONE, ALPHA, ADD, MULTIPLY };
     enum class RASTER_STATE { SOLID, WIREFRAME, CULL_NONE, WIREFRAME_CULL_NONE };
 
     enum class CONSTANT_BUFFER 
     {
-        SCENE_CONSTANT,
         CONSTANT_BUFFER_PARAMETRIC,
         LIGHT_CONSTANT,
         FOG_CONSTANT,
-        SHADOW_CONSTANT,
         POST_EFFECT_CONSTANT,
     };
 
@@ -55,22 +62,15 @@ public:
         DirectX::XMFLOAT4 lightDirection;
         DirectX::XMFLOAT4 cameraPosition;
 
+        // SHADOW
+        DirectX::XMFLOAT4X4 lightViewProjection;
+
         // FOG
         DirectX::XMFLOAT4X4 inverseProjection;
         DirectX::XMFLOAT4X4 inverseViewProjection;
         float time;
 
         float pads[3];
-    };
-
-    // SHADOW
-    struct ShadowConstants
-    {
-        DirectX::XMFLOAT4X4 viewProjection;
-        DirectX::XMFLOAT4 lightDirection;
-        DirectX::XMFLOAT4 cameraPosition;
-        // SHADOW
-        DirectX::XMFLOAT4X4 lightViewProjection;
     };
 
     // FOG
@@ -144,7 +144,10 @@ public:
         DirectX::XMFLOAT4 noiseColor{ 1.0f,1.0f,1.0f,1.0f };
         float noiseTimer = 0.0f;
         float scanLineTimer = 0.0f;
-        DirectX::XMFLOAT2 dummy{};
+        
+        float bokehAperture = 0.018f;
+        float bokehFocus = 0.824f;
+
     }postEffectConstants;
 
 public:
@@ -155,7 +158,6 @@ public:
 
     // 描画開始
     void Begin(ID3D11DeviceContext* dc, const RenderContext& rc);
-    void Begin(ID3D11DeviceContext* dc, const RenderContext& rc, const ShadowConstants& shadowConstant);
 
     // 描画
     void Draw(ID3D11DeviceContext* dc, Model* model);
@@ -173,6 +175,9 @@ public:// 各種ステート設定
     void SetSamplerState(ID3D11DeviceContext* deviceContext);
 
 public:
+    const DirectX::XMFLOAT4 GetViewPosition() { return view.position; }
+    const DirectX::XMFLOAT4 GetViewCamera() { return view.camera; }
+
     void EntryLight(); // 登場演出に使う
     void EntryLight2();
     bool isEntryLight = false;
@@ -222,7 +227,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11RasterizerState>   rasterizerStates[4];
     Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilStates[4];
 
-    Microsoft::WRL::ComPtr<ID3D11SamplerState>  samplerState[6];
+    Microsoft::WRL::ComPtr<ID3D11SamplerState>  samplerState[static_cast<UINT>(SAMPLER_STATE::COUNT)];
 };
 
 

@@ -1,10 +1,12 @@
 #include "BaseEnemyAI.h"
 
 #include "../../Taki174/Common.h"
+#include "EnemyManager.h"
 
-BaseEnemyAI::~BaseEnemyAI()
+BaseEnemyAI::BaseEnemyAI()
 {
-    SafeDeletePtr(activeNode_);
+    // EnemyManagerのProjectileManagerにアクセスできるようにポインタを持っておく
+    projectileManager_ = EnemyManager::Instance().GetProjectileManager();
 }
 
 void BaseEnemyAI::Initialize()
@@ -363,7 +365,8 @@ void BaseEnemyAI::UpdateHorizontalMove(const float elapsedTime)
 // 目的地点へ移動
 void BaseEnemyAI::MoveToTarget(
     const float elapsedTime,
-    const float speedRate)
+    const float speedRate,
+    const bool isLookAtTarget)
 {
     using DirectX::XMFLOAT3;
 
@@ -377,6 +380,8 @@ void BaseEnemyAI::MoveToTarget(
 
     // 移動処理
     Move(vx, vz, moveSpeed_ * speedRate);
-    Turn(elapsedTime, vx, vz, turnSpeed_ * speedRate);
-
+    if (true == isLookAtTarget)
+    {
+        Turn(elapsedTime, vx, vz, turnSpeed_ * speedRate);
+    }
 }

@@ -4,59 +4,116 @@
 #include "../../Taki174/FunctionXMFloat3.h"
 #include "../../Taki174/Common.h"
 
-//#include "EnemyBlueSlime.h"
 #include "BaseEnemyAI.h"
 #include "EnemyManager.h"
 #include "PlayerManager.h"
-//#include "Mathf.h"
 
+#include "ProjectileStraight.h"
 
 // 待機行動
 const ActionBase::State IdleAction::Run(const float elapsedTime)
 {
 	using DirectX::XMFLOAT3;
+	using DirectX::XMFLOAT4;
 
 	PlayerManager& playerManager = PlayerManager::Instance();
+	//EnemyManager& enemyManager = EnemyManager::Instance();
 
-	//float runTimer = owner_->GetRunTimer();
 	switch (step_)
 	{
 	case 0:
-	//	owner_->SetRunTimer(::RandFloat(1.0f, 2.0f));
-	//	owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::IdleNormal), true);
+		owner_->SetRunTimer(::RandFloat(0.5f, 1.0f));
+		//owner_->SetRunTimer(60.0f);
+		//owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::IdleNormal), true);
+
+		// 自分の位置から回転を始めるようにする
+		{
+			const XMFLOAT3	position		= owner_->GetPosition();
+			const XMFLOAT3	playerPosition	= playerManager.GetPlayer()->GetPosition();
+			const float		localPositionX	= position.x - playerPosition.x;
+			const float		localPositionZ	= position.z - playerPosition.z;
+
+			circleRotation_ = ::atan2f(localPositionX, localPositionZ); // return Radian Angle
+		}
 
 		++step_;
 		[[fallthrough]];
 	//	break;
 	case 1:
-	//	runTimer -= elapsedTime;
-	//	owner_->SetRunTimer(runTimer);
 		// タイマー更新
 		owner_->ElapseRunTimer(elapsedTime);
 
-		// 待機時間が過ぎた時
+		//// 誰も近接攻撃行動中でなく近接攻撃行動クールタイマーもなければ終了
+		//if (false == enemyManager.GetIsRunningCRAAction() &&
+		//	enemyManager.GetCRAActionCoolTimer() <= 0.0f)
+		//{
+		//	step_ = 0;
+		//	return ActionBase::State::Complete;
+		//}
+
+		// 待機時間が過ぎたら終了
 		if (owner_->GetRunTimer() <= 0.0f)
 		{
-			//owner_->SetRandomTargetPosition();
-			owner_->SetRunTimer(0.0f);
 			step_ = 0;
-
 			return ActionBase::State::Complete;
 		}
 
-		const XMFLOAT3 position			= owner_->GetPosition();
-		const XMFLOAT3 targetPosition	= playerManager.GetPlayer()->GetPosition();
-		const float vx	= targetPosition.x - position.x;
-		const float vz	= targetPosition.z - position.z;
+		const XMFLOAT3	position		= owner_->GetPosition();
+		const XMFLOAT3	playerPosition	= playerManager.GetPlayer()->GetPosition();
+		const float		vx				= playerPosition.x - position.x;
+		const float		vz				= playerPosition.z - position.z;
+		const float		lengthSq		= (vx * vx + vz * vz);
+		const float		attackLength	= owner_->GetAttackLength();
+		const float		attackLengthSq	= attackLength * attackLength;
+
+		// 攻撃距離外になったら終了(円運動の都合上甘めに設定)
+		if (lengthSq > (attackLengthSq + 5.0f))
+		{
+			step_ = 0;
+			return ActionBase::State::Complete;
+		}
+
+		// 円運動もどき
+		{
+			// 左右判定
+			const float playerRotationY = playerManager.GetPlayer()->GetTransform()->GetRotation().y;
+			const float frontX = ::sinf(playerRotationY);
+			const float frontZ = ::cosf(playerRotationY);
+			float cross = (frontZ * (-vx)) - (frontX * (-vz));
+
+#if 0
+#ifdef (USE_IMGUI && _DEBUG)
+			ImGui::Begin("Cross");
+			ImGui::DragFloat("Cross", &cross);
+			ImGui::End();
+#endif
+#endif
+
+			// 背後に回り切ったら終了
+			if (fabsf(cross) <= 0.01f)
+			{
+				step_ = 0;
+				return ActionBase::State::Complete;
+			}
+
+			const float addRotate = (cross < 0.0f) ? ToRadian(-25.0f) : ToRadian(25.0f);
+
+			// プレイヤーを中心に(+1.0~-1.0)＊半径(=攻撃距離)分を回転
+			circleRotation_ += addRotate * elapsedTime;
+
+			const XMFLOAT3 targetPosition = {
+				playerPosition.x + ::sinf(circleRotation_) * attackLength, // -1.0~+1.0
+				0.0f,
+				playerPosition.z + ::cosf(circleRotation_) * attackLength, // -1.0~+1.0
+			};
+
+			owner_->SetTargetPosition(targetPosition);
+			owner_->MoveToTarget(elapsedTime, 1.0f, false);
+		}
+
+		// 回転
 		owner_->Turn(elapsedTime, vx, vz, owner_->GetTurnSpeed());
 
-	//	// プレイヤーを見つけた時
-	//	if (owner_->SearchPlayer())
-	//	{
-	//		step_ = 0;
-	//		return ActionBase::State::Complete;
-	//	}
-	//	break;
 	}
 
 	return ActionBase::State::Run;
@@ -126,6 +183,7 @@ const ActionBase::State PursuitAction::Run(const float elapsedTime)
 }
 
 
+// 近接攻撃行動
 const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 {
 	using DirectX::XMFLOAT3;
@@ -180,8 +238,68 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 }
 
 
+// 遠距離攻撃行動
+const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
+{
+	using DirectX::XMFLOAT3;
+
+	PlayerManager&	playerManager	= PlayerManager::Instance();
+	//EnemyManager&	enemyManager	= EnemyManager::Instance();
+
+	switch (step_)
+	{
+	case 0:
+		// 目標地点をプレイヤー位置に設定
+		//owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
+		//owner_->SetRunTimer(::RandFloat(+1.0f, +1.0f));
+		owner_->SetRunTimer(3.0f);
+		//owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::RunFWD), true);
+
+		++step_;
+		[[fallthrough]];
+		//break;
+	case 1:
+		// タイマー更新
+		owner_->ElapseRunTimer(elapsedTime);
+
+		// 目標地点をプレイヤー位置に設定
+		owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
+
+		const XMFLOAT3	position		= owner_->GetPosition();
+		const XMFLOAT3	playerPosition	= playerManager.GetPlayer()->GetPosition();
+		const XMFLOAT3  vec				= playerPosition - position;
+		const XMFLOAT3	vecN			= ::XMFloat3Normalize(vec);
+
+		// 回転
+		owner_->Turn(elapsedTime, vec.x, vec.z, owner_->GetTurnSpeed());
+
+		// 行動時間が過ぎた時
+		if (owner_->GetRunTimer() <= 0.0f)
+		{
+			// 弾丸発射
+			{
+				const XMFLOAT3 launchPosition = {
+					position.x,
+					position.y + 0.4f,
+					position.z,
+				};
+				ProjectileStraight* projectile = new ProjectileStraight(owner_->GetProjectileManager());
+				projectile->Launch(vecN, launchPosition);
+			}
+
+			step_ = 0;
+			return ActionBase::State::Complete;
+		}
+
+		break;
+	}
+
+	return ActionBase::State::Run;
+}
+
+
 // 攻撃行動
-const ActionBase::State NormalAction::Run(const float elapsedTime)
+const ActionBase::State NormalAction::Run(const float /*elapsedTime*/)
 {
 	//switch (step_)
 	//{
@@ -208,7 +326,7 @@ const ActionBase::State NormalAction::Run(const float elapsedTime)
 }
 
 // スキル攻撃行動
-const ActionBase::State SkillAction::Run(const float elapsedTime)
+const ActionBase::State SkillAction::Run(const float /*elapsedTime*/)
 {
 	//switch (step_)
 	//{
@@ -233,7 +351,7 @@ const ActionBase::State SkillAction::Run(const float elapsedTime)
 }
 
 // 徘徊行動
-const ActionBase::State WanderAction::Run(const float elapsedTime)
+const ActionBase::State WanderAction::Run(const float /*elapsedTime*/)
 {
 	//switch (step_)
 	//{
@@ -277,7 +395,7 @@ const ActionBase::State WanderAction::Run(const float elapsedTime)
 
 
 // 逃走行動
-const ActionBase::State LeaveAction::Run(const float elapsedTime)
+const ActionBase::State LeaveAction::Run(const float /*elapsedTime*/)
 {
 	//DirectX::XMFLOAT3 targetPosition;
 	//switch (step_)
@@ -329,7 +447,7 @@ const ActionBase::State LeaveAction::Run(const float elapsedTime)
 }
 
 // 回復行動
-const ActionBase::State RecoverAction::Run(const float elapsedTime)
+const ActionBase::State RecoverAction::Run(const float /*elapsedTime*/)
 {
 	//switch (step_)
 	//{
@@ -349,5 +467,3 @@ const ActionBase::State RecoverAction::Run(const float elapsedTime)
 
 	return ActionBase::State::Run;
 }
-
-

@@ -1,7 +1,7 @@
 #include "MagicCircleEnemySummonState.h"
 
 #include "EnemyManager.h"
-#include "EnemyAura.h"
+#include "EnemyAI_1.h"
 
 // dummyState
 namespace MagicCircleEnemySummonState
@@ -140,10 +140,11 @@ namespace MagicCircleEnemySummonState
                         // エネミー生成
                         for (int i = 0; i < 2; ++i)
                         {
-                            EnemyAura* enemyAura = new EnemyAura;
+                            EnemyAI_1* enemyAura = new EnemyAI_1;
                             const DirectX::XMFLOAT3 setPosition = owner->magicCircle[i]->GetTransform()->GetPosition();
                             enemyAura->SetPosition(setPosition);
                             EnemyManager::Instance().Register(enemyAura);
+                            enemyAura->Initialize();
                         }
 
                         owner->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleEnemySummon::StateMachineState::CreateState));

@@ -4,7 +4,7 @@
 #include "../Graphics/Graphics.h"
 
 #include "PlayerManager.h"
-#include "ProjectileStraite.h"
+#include "ProjectileStraight.h"
 
 int Book::totalNum = 0;
 
@@ -13,7 +13,7 @@ Book::Book()
 {
     Graphics& graphics = Graphics::Instance();
 
-    model = std::make_unique<Model>(graphics.GetDevice(), 
+    model = std::make_unique<Model>(graphics.GetDevice(),
         "./Resources/Model/Item/Book.fbx");
 
     // ステートマシン
@@ -120,7 +120,7 @@ bool Book::LaunchProjectile(const float& elapsedTime)
 
         bookPosition = { bookPosition.x + bookForward.x * length, bookPosition.y + bookForward.y * length, bookPosition.z + bookForward.z * length };
 
-        ProjectileStraite* projectile = new ProjectileStraite(&projectileManager);
+        ProjectileStraight* projectile = new ProjectileStraight(&projectileManager);
         projectile->Launch(bookForward, bookPosition);
 
         // 発射までの時間を設定

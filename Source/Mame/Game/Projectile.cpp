@@ -1,11 +1,10 @@
 #include "Projectile.h"
 #include "ProjectileManager.h"
 
-int Projectile::nameNum = 0;
 
 // コンストラクタ
 Projectile::Projectile(ProjectileManager* manager)
-    :manager(manager)
+    : manager_(manager)
 {
     manager->Register(this);
 }
@@ -38,7 +37,7 @@ void Projectile::End()
 // 描画処理
 void Projectile::Render(const float& scale, ID3D11PixelShader* psShader)
 {
-    model->Render(scale, psShader);
+    model_->Render(scale, psShader);
 }
 
 // ImGui用
@@ -54,5 +53,5 @@ void Projectile::DrawDebug()
 // 破棄
 void Projectile::Destroy()
 {
-    manager->Remove(this);
+    manager_->Remove(this);
 }

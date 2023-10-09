@@ -8,11 +8,13 @@
 #include "BehaviorData.h"
 #include "NodeBase.h"
 
+class ProjectileManager;
+
 class BaseEnemyAI : public Character
 {
 public:
-    BaseEnemyAI() {}
-    ~BaseEnemyAI() override;
+    BaseEnemyAI();
+    ~BaseEnemyAI() override {}
 
     void Initialize() override;
     void Update(const float& elapsedTime) override;
@@ -27,11 +29,14 @@ public:
     // 目的地点へ移動
     void MoveToTarget(
         const float elapsedTime,
-        const float speedRate
+        const float speedRate,
+        const bool isLookAtTarget = true
     );
 
 public: // 取得・設定
     NodeBase* GetActiveNode() const { return activeNode_; }
+
+    ProjectileManager* GetProjectileManager() const { return projectileManager_; }
 
     const DirectX::XMFLOAT3& GetTargetPosition() const { return targetPosition_; }
     void SetTargetPosition(const DirectX::XMFLOAT3& position) { targetPosition_ = position; }
@@ -81,7 +86,9 @@ protected:
     std::unique_ptr<BehaviorTree>   behaviorTree_;
     std::unique_ptr<BehaviorData>   behaviorData_; // 主にシーケンスに使う
 
-    NodeBase* activeNode_ = nullptr;
+    NodeBase* activeNode_ = nullptr; // BehaviorTreeのノードを指すだけのポインタなのでdeleteしない
+
+    ProjectileManager* projectileManager_ = nullptr;
 
     DirectX::XMFLOAT3 targetPosition_ = {};
     DirectX::XMFLOAT3 moveVec_  = {};
@@ -95,11 +102,9 @@ protected:
     float airControl_   = 0.3f;
     float acceleration_ = 1.0f;
 
-    float attackLength_ = 2.0f; // 攻撃距離
+    float attackLength_ = 3.0f; // 攻撃距離
     float runTimer_     = 0.0f;
 
-    float hp_           = 1.0f;
-    float attackDamage_ = 1.0f;
     float radius_       = 0.5f;
 
     bool isGround_      = false;

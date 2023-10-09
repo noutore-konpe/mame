@@ -1,4 +1,4 @@
-#define POINT_LIGHT_ONE 0
+#define POINT_LIGHT_ONE 1
 
 struct VSIn
 {
@@ -52,16 +52,9 @@ cbuffer SCENE_CONSTANT_BUFFER : register(b1)
     row_major float4x4 viewProjection;
     float4 lightDirection;
     float4 cameraPosition;
+    row_major float4x4 lightViewProjection;
 };
 
-// SHADOW
-cbuffer SHADOW_CONSTANT_BUFFER : register(b10)
-{
-    row_major float4x4 shadowViewProjection;
-    float4 shadowLightDirection;
-    float4 shdowCameraPosition;
-    row_major float4x4 shadowLightViewProjection;
-};
 
 // ディレクションライト
 struct DirectionLight
@@ -186,7 +179,7 @@ float3 CalcLightFromDirectionLight(PSIn psIn)
 
 // ポイントライトによる反射光を計算
 #if POINT_LIGHT_ONE
-float3 CalcLightFromPointLight(VS_OUT psIn)
+float3 CalcLightFromPointLight(PSIn psIn)
 {   
     // このサーフェイスに入射しているポイントライトの光の向きを計算する
     float3 lightDirection = psIn.worldPosition.xyz - pointLig.position.xyz;

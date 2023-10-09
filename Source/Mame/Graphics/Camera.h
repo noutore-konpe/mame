@@ -53,6 +53,9 @@ public:
     DirectX::XMMATRIX GetViewMatrix() { return V; }         // views—ñæ“¾
     DirectX::XMMATRIX GetProjectionMatrix() { return P; }   // projections—ñæ“¾
 
+    void SetViewMatrix(DirectX::XMMATRIX v) { V = v; }
+    void SetProjectionMatrix(DirectX::XMMATRIX p) { P = p; }
+
 private:
     Transform transform{};
 

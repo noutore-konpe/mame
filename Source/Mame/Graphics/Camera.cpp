@@ -16,54 +16,6 @@ void Camera::Initialize()
 
 void Camera::Update()
 {
-#if 0
-    Transform* playerTransform = PlayerManager::Instance().GetPlayer()->GetTransform();
-    DirectX::XMFLOAT3 playerPos = playerTransform->GetPosition();
-    DirectX::XMFLOAT4 playerRot = playerTransform->GetRotation();
-
-    playerPos.y += 2;
-    playerPos.z -= 5;
-    playerRot.x += DirectX::XMConvertToRadians(15.0f);
-
-    GetTransform()->SetPosition(playerPos);
-    GetTransform()->SetRotation(DirectX::XMFLOAT4(DirectX::XMConvertToRadians(10),0,0,0));
-    //GetTransform()->SetRotation(playerRot);
-#else
-    //Transform* playerTransform = PlayerManager::Instance().GetPlayer()->GetTransform();
-    //const DirectX::XMFLOAT3 playerPos = playerTransform->GetPosition();
-    //const DirectX::XMFLOAT4 playerRot = playerTransform->GetRotation();
-    //const DirectX::XMFLOAT3 playerFrontVec = playerTransform->CalcForward();
-    //
-    //// カメラ位置をプレイヤーの後ろにしたい
-    //{
-    //    float length = 5.0f;
-
-    //    // プレイヤーの上に高さを合わせる
-    //    DirectX::XMFLOAT3 offset{ 0, 2, 0 };
-
-    //    // プレイヤーの後ろ向きベクトル
-    //    DirectX::XMFLOAT3 playerBack =
-    //    {
-    //        playerPos.x - playerFrontVec.x * length + offset.x,
-    //        playerPos.y - playerFrontVec.y * length + offset.y,
-    //        playerPos.z - playerFrontVec.z * length + offset.z
-    //    };
-
-    //    GetTransform()->SetPosition(playerBack);
-    //}
-
-    // カメラの角度調整
-    {
-        // 斜めで見えるようにする
-        /*DirectX::XMFLOAT4 cameraRot = playerRot;
-        cameraRot.x += DirectX::XMConvertToRadians(15.0f);
-
-        GetTransform()->SetRotation(cameraRot);*/
-    }
-
-#endif
-
-
 }
 
 void Camera::UpdateDebug(const float& elapsedTime, DirectX::XMFLOAT2 moveVector)
@@ -100,7 +52,7 @@ void Camera::UpdateDebug(const float& elapsedTime, DirectX::XMFLOAT2 moveVector)
 
     if (rotation.y >= DirectX::XMConvertToRadians(360))rotation.y -= DirectX::XMConvertToRadians(360);
     if (rotation.y <= DirectX::XMConvertToRadians(0))rotation.y += DirectX::XMConvertToRadians(360);
-    
+
     transform.SetPosition(position);
     transform.SetRotation(rotation);
 #else
@@ -119,7 +71,7 @@ void Camera::UpdateDebug(const float& elapsedTime, DirectX::XMFLOAT2 moveVector)
         speed *= (speed > 0) ? -1 : 1;
     else
         speed *= (speed < 0) ? -1 : 1;
-    
+
     if (aLx <= -0.3f)position.x -= speed;   // 左
     if (aLx >=  0.3f)position.x += speed;   // 右
     if (aLy <= -0.3f)position.z -= speed;   // 後
@@ -142,7 +94,7 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
 
     float aspect_ratio{ viewport.Width / viewport.Height };
     P = { DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(30),aspect_ratio,0.1f,1000.0f) };
-    
+
     DirectX::XMVECTOR eye;
     DirectX::XMVECTOR focus;
 
@@ -193,7 +145,7 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
         eye = { DirectX::XMVectorSet(pos.x, pos.y, pos.z, 1.0f) };
         focus = { DirectX::XMVectorSet(pos.x + forward.x, pos.y + forward.y, pos.z + forward.z, 1.0f) };
     }
-   
+
     //DirectX::XMVECTOR eye{ DirectX::XMVectorSet(camera.eye.x,camera.eye.y,camera.eye.z,1.0f) };
     //DirectX::XMVECTOR focus{ DirectX::XMVectorSet(camera.focus.x,camera.focus.y,camera.focus.z,1.0f) };
     DirectX::XMVECTOR up{ DirectX::XMVectorSet(camera.up.x,camera.up.y,camera.up.z,0.0f) };
@@ -228,9 +180,9 @@ void Camera::DrawDebug()
         }
         if (ImGui::TreeNode("player camera"))
         {
-            ImGui::SliderFloat("FocalLength", &focalLength, 0.1f, 20.0f); 
-            ImGui::SliderFloat("OffsetY", &offsetY, 0.1f, 10.0f); 
-            ImGui::SliderFloat("FocusOffsetY", &focusOffsetY, 0.1f, 10.0f); 
+            ImGui::SliderFloat("FocalLength", &focalLength, 0.1f, 20.0f);
+            ImGui::SliderFloat("OffsetY", &offsetY, 0.1f, 10.0f);
+            ImGui::SliderFloat("FocusOffsetY", &focusOffsetY, 0.1f, 10.0f);
             ImGui::TreePop();
         }
 
@@ -259,6 +211,8 @@ void Camera::DrawDebug()
 
         ImGui::EndMenu();
     }
+    ImGui::Separator();
+
 }
 
 void Camera::Reset()

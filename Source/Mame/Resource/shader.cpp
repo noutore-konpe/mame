@@ -148,16 +148,13 @@ Shader::Shader(ID3D11Device* device)
         HRESULT hr{ S_OK };
 
         D3D11_BUFFER_DESC bufferDesc{};
-        bufferDesc.ByteWidth = sizeof(SceneConstants);
+
         bufferDesc.Usage = D3D11_USAGE_DEFAULT;
         bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
         bufferDesc.CPUAccessFlags = 0;
         bufferDesc.MiscFlags = 0;
         bufferDesc.StructureByteStride = 0;
-        // SceneConstants
-        hr = device->CreateBuffer(&bufferDesc, nullptr,
-            ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].GetAddressOf());
-        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
 
 
         bufferDesc.ByteWidth = sizeof(CBParametric);
@@ -173,10 +170,7 @@ Shader::Shader(ID3D11Device* device)
         hr = device->CreateBuffer(&bufferDesc, nullptr,
             ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
 
-        // SHADOW
-        bufferDesc.ByteWidth = sizeof(ShadowConstants);
-        hr = device->CreateBuffer(&bufferDesc, nullptr,
-            ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].GetAddressOf());
+
 
         // FOG
         bufferDesc.ByteWidth = sizeof(FogConstants);
@@ -384,6 +378,39 @@ Shader::Shader(ID3D11Device* device)
         desc.BorderColor[3] = 1;
         hr = device->CreateSamplerState(&desc, samplerState[static_cast<size_t>(SAMPLER_STATE::COMPARISON_LINEAR_BORDER_WHITE)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+        desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+        desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+        desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+        desc.MipLODBias = 0.0f;
+        desc.MaxAnisotropy = 0;
+        desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+        desc.BorderColor[0] = 0;
+        desc.BorderColor[0] = 0;
+        desc.BorderColor[0] = 0;
+        desc.BorderColor[0] = 1;
+        desc.MinLOD = 0.0f;
+        desc.MaxLOD = D3D11_FLOAT32_MAX;
+        hr = device->CreateSamplerState(&desc, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_OPAQUE_BLACK)].GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+
+        desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+        desc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+        desc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+        desc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+        desc.MipLODBias = 0.0f;
+        desc.MaxAnisotropy = 0;
+        desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+        desc.BorderColor[0] = 0;
+        desc.BorderColor[0] = 0;
+        desc.BorderColor[0] = 0;
+        desc.BorderColor[0] = 0;
+        desc.MinLOD = 0.0f;
+        desc.MaxLOD = D3D11_FLOAT32_MAX;
+        hr = device->CreateSamplerState(&desc, samplerState[static_cast<size_t>(SAMPLER_STATE::POINT_CLAMP)].GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
 
     // LightConstants
@@ -461,24 +488,14 @@ void Shader::Initialize()
 
 void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc)
 {
-    Camera& camera = Camera::Instance();
-
-
     deviceContext->OMSetDepthStencilState(depthStencilStates[0].Get(), 1);
 
     deviceContext->OMSetBlendState(blendStates[0].Get(), nullptr, 0xFFFFFFFF);
 
     deviceContext->RSSetState(rasterizerStates[0].Get());
 
-    // ビュープロジェクション変換行列を計算し、それを定数バッファにセットする
-    camera.SetPerspectiveFov(deviceContext);
-
-
-    SceneConstants scene{};
-    DirectX::XMStoreFloat4x4(&scene.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
-
-    scene.lightDirection = { view.position.x,view.position.y,view.position.z,view.position.w };
-    scene.cameraPosition = { view.camera.x,view.camera.y,view.camera.z,view.camera.w };
+    
+    //scene.lightViewProjection = {}
 
     // POST_EFECT
     {
@@ -488,18 +505,9 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc)
 
     // FOG
     {
-        DirectX::XMStoreFloat4x4(&scene.inverseProjection, DirectX::XMMatrixInverse(NULL, camera.GetProjectionMatrix()));
-        DirectX::XMStoreFloat4x4(&scene.inverseViewProjection, DirectX::XMMatrixInverse(NULL, camera.GetViewMatrix() * camera.GetProjectionMatrix()));
-        scene.time = framework::tictoc.time_stamp();
-
         deviceContext->UpdateSubresource(ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].Get(), 0, 0, &fogConstants, 0, 0);
         deviceContext->PSSetConstantBuffers(2, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].GetAddressOf());
     }
-
-
-    deviceContext->UpdateSubresource(ConstantBuffer[0].Get(), 0, 0, &scene, 0, 0);
-    deviceContext->VSSetConstantBuffers(1, 1, ConstantBuffer[0].GetAddressOf());
-    deviceContext->PSSetConstantBuffers(1, 1, ConstantBuffer[0].GetAddressOf());
 
 
     // POINT_LIGHT
@@ -521,98 +529,12 @@ void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc)
 #ifdef USE_IMGUI
     //DrawDebug();
 #endif
+
+        // ZELDA
+    //deviceContext->GSSetConstantBuffers(1, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].GetAddressOf());
 }
 
-void Shader::Begin(ID3D11DeviceContext* deviceContext, const RenderContext& rc, const ShadowConstants& shadowConstant)
-{
-    Camera& camera = Camera::Instance();
 
-
-    deviceContext->OMSetDepthStencilState(depthStencilStates[0].Get(), 1);
-
-    deviceContext->OMSetBlendState(blendStates[0].Get(), nullptr, 0xFFFFFFFF);
-
-    deviceContext->RSSetState(rasterizerStates[0].Get());
-
-    // ビュープロジェクション変換行列を計算し、それを定数バッファにセットする
-    camera.SetPerspectiveFov(deviceContext);
-
-    // SHADOW
-    {
-        ShadowConstants shadow{};
-        DirectX::XMStoreFloat4x4(&shadow.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
-
-        shadow.lightDirection = { view.position.x,view.position.y,view.position.z,view.position.w };
-        shadow.cameraPosition = { view.camera.x,view.camera.y,view.camera.z,view.camera.w };
-        //shadow.lightDirection = shadowConstant.lightDirection;
-        //shadow.cameraPosition = shadowConstant.cameraPosition;
-        shadow.lightViewProjection = shadowConstant.lightViewProjection;
-
-        deviceContext->UpdateSubresource(ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].Get(), 0, 0, &shadow, 0, 0);
-        deviceContext->VSSetConstantBuffers(10, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].GetAddressOf());
-        deviceContext->PSSetConstantBuffers(10, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SHADOW_CONSTANT)].GetAddressOf());
-    }
-
-    SceneConstants scene{};
-    DirectX::XMStoreFloat4x4(&scene.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
-
-    scene.lightDirection = { view.position.x,view.position.y,view.position.z,view.position.w };
-    scene.cameraPosition = { view.camera.x,view.camera.y,view.camera.z,view.camera.w };
-
-    // POST_EFECT
-    {
-        deviceContext->UpdateSubresource(ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POST_EFFECT_CONSTANT)].Get(), 0, 0, &postEffectConstants, 0, 0);
-        deviceContext->PSSetConstantBuffers(13, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::POST_EFFECT_CONSTANT)].GetAddressOf());
-    }
-
-    // FOG
-    {
-        DirectX::XMStoreFloat4x4(&scene.inverseProjection, DirectX::XMMatrixInverse(NULL, camera.GetProjectionMatrix()));
-        DirectX::XMStoreFloat4x4(&scene.inverseViewProjection, DirectX::XMMatrixInverse(NULL, camera.GetViewMatrix() * camera.GetProjectionMatrix()));
-        scene.time = framework::tictoc.time_stamp();
-
-        deviceContext->UpdateSubresource(ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].Get(), 0, 0, &fogConstants, 0, 0);
-        deviceContext->PSSetConstantBuffers(2, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::FOG_CONSTANT)].GetAddressOf());
-    }
-
-    deviceContext->UpdateSubresource(ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].Get(), 0, 0, &scene, 0, 0);
-    deviceContext->VSSetConstantBuffers(1, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].GetAddressOf());
-    deviceContext->PSSetConstantBuffers(1, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].GetAddressOf());
-
-    // POINT_LIGHT
-    {
-        deviceContext->UpdateSubresource(ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].Get(), 0, 0, &lightConstant, 0, 0);
-        deviceContext->VSSetConstantBuffers(5, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
-        deviceContext->PSSetConstantBuffers(5, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::LIGHT_CONSTANT)].GetAddressOf());
-
-#ifdef _DEBUG
-#if POINT_LIGHT_ONE
-        DirectX::XMFLOAT3 ptPos = { lightConstant.pointLight.position.x, lightConstant.pointLight.position.y, lightConstant.pointLight.position.z };
-        pointLightModel->GetTransform()->SetPosition(ptPos);
-        pointLightModel->Render(0.1f);
-#endif// POINT_LIGHT_ONE
-#endif// _DEBUG
-    }
-
-    // ZELDA
-    deviceContext->GSSetConstantBuffers(1, 1, ConstantBuffer[static_cast<UINT>(CONSTANT_BUFFER::SCENE_CONSTANT)].GetAddressOf());
-
-    EntryLight();
-    //EntryLight2();
-}
-
-//void Shader::SetState(ID3D11DeviceContext* dc, int RasterizerState, int DepthStencilState)
-//{
-//    dc->RSSetState(rasterizerStates[RasterizerState].Get());
-//    dc->OMSetDepthStencilState(depthStencilStates[DepthStencilState].Get(), 1);
-//}
-//
-//void Shader::SetState(ID3D11DeviceContext* deviceContext, int DepthStencileState, int BlendState, int RasterizerState)
-//{
-//    deviceContext->OMSetDepthStencilState(depthStencilStates[DepthStencileState].Get(), 1);
-//    deviceContext->OMSetBlendState(blendStates[BlendState].Get(), nullptr, 0xFFFFFFFF);
-//    deviceContext->RSSetState(rasterizerStates[RasterizerState].Get());
-//}
 
 void Shader::Draw(ID3D11DeviceContext* dc, Model* model)
 {
@@ -657,6 +579,12 @@ void Shader::DrawDebug()
         ImGui::DragFloat("noiseTimer", &postEffectConstants.noiseTimer);
         ImGui::DragFloat("scanTimer", &postEffectConstants.scanLineTimer);
 
+        //ImGui::DragFloat("boekhAperture", &postEffectConstants.bokehAperture);
+        //ImGui::DragFloat("bokehFocus", &postEffectConstants.bokehFocus);
+
+        ImGui::DragFloat("bokeh_aperture", &postEffectConstants.bokehAperture, 0.001f, 0.0f, 1.0f, "%.3f");
+        ImGui::DragFloat("bokeh_focus", &postEffectConstants.bokehFocus, 0.001f, 0.0f, 1.0f, "%.3f");
+
         ImGui::TreePop();
     }
 
@@ -688,22 +616,7 @@ void Shader::DrawDebug()
             ImGui::DragFloat("range", &lightConstant.pointLight[i].range);
             ImGui::End();
         }
-        //if (ImGui::TreeNode("PointLight"))
-        //{
-        //    for (int i = 0; i < pointLightMax; ++i)
-        //    {
-        //        //ImGui::BeginMenu(("pointLight" + std::to_string(i)).c_str());
-        //        ImGui::TreeNode(("pointLight" + std::to_string(i)).c_str());
 
-        //        ImGui::DragFloat4("position", &lightConstant.pointLight[i].position.x);
-        //        ImGui::ColorEdit4("color", &lightConstant.pointLight[i].color.x);
-        //        ImGui::DragFloat("range", &lightConstant.pointLight[i].range);
-
-        //        ImGui::TreePop();
-        //        //ImGui::EndMenu();
-        //    }
-        //    ImGui::TreePop();
-        //}
 #endif// POINT_LIGHT_ONE
 
         // SPOT_LIGHT
@@ -781,6 +694,9 @@ void Shader::SetSamplerState(ID3D11DeviceContext* deviceContext)
         deviceContext->PSSetSamplers(4, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_WHITE)].GetAddressOf());
         // SHADOW
         deviceContext->PSSetSamplers(5, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::COMPARISON_LINEAR_BORDER_WHITE)].GetAddressOf());
+        
+        deviceContext->PSSetSamplers(6, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::LINEAR_BORDER_OPAQUE_BLACK)].GetAddressOf());
+        deviceContext->PSSetSamplers(7, 1, samplerState[static_cast<size_t>(SAMPLER_STATE::POINT_CLAMP)].GetAddressOf());
     }
 }
 

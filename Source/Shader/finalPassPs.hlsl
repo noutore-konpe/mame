@@ -7,8 +7,11 @@
 #define ANISOTROPIC 2
 #define LINEAR_BORDER_BLACK 3
 #define LINEAR_BORDER_WHITE 4
-SamplerState samplerStates[5] : register(s0);
-Texture2D textureMaps[4] : register(t0);
+#define COMPARISON_LINEAR_BORDER_WHITE 5
+#define LINEAR_BORDER_OPAQUE_BLACK 6
+#define POINT_CLAMP 7
+SamplerState samplerStates[8] : register(s0);
+Texture2D textureMaps[5] : register(t0);
 
 // Žg‚¤‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO
 #define RGB_SHIFT 1
@@ -24,6 +27,7 @@ float3 reinhardToneMapping(float3 color)
     color *= toneMappedLuma / luma;
     return color;
 }
+
 
 float4 main(VS_OUT psIn) : SV_TARGET
 {    
@@ -98,6 +102,7 @@ float4 main(VS_OUT psIn) : SV_TARGET
     const float GAMMA = 1.0 / 2.2;
     bloom = pow(bloom, GAMMA);
 #endif
+
     
     float3 fragmentColor = color.rgb + bloom.rgb + fog.rgb;
     float alpha = color.a;

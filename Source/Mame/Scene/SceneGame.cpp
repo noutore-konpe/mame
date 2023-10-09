@@ -18,12 +18,16 @@
 
 #include "../Game/MagicCircle.h"
 
-
 #include "../Game/EnemyManager.h"
 #include "../Game/EnemyTestAI.h"
+#include "../Game/EnemyAI_1.h"
+#include "../Game/EnemyAI_2.h"
+#include "../Game/EnemyAI_3.h"
 
 #include "../Game/ProjectileManager.h"
 #include "../Graphics/EffectManager.h"
+
+#include "../framework.h"
 
 #ifdef _DEBUG
 bool SceneGame::isDebugRender = false;
@@ -32,10 +36,9 @@ bool SceneGame::isDebugRender = false;
 // リソース生成
 void SceneGame::CreateResource()
 {
-    Graphics& graphics = Graphics::Instance();
-
-
     using DirectX::XMFLOAT3;
+
+    Graphics& graphics = Graphics::Instance();
 
     // stage
     {
@@ -43,10 +46,8 @@ void SceneGame::CreateResource()
         stageWall = std::make_unique<Stage>("./Resources/Model/Stage/stageWall.fbx");
     }
 
-
     // enemy
     {
-        enemyAura = std::make_unique<EnemyAura>();
         enemyGolem = std::make_unique<EnemyGolem>();
     }
 
@@ -72,15 +73,51 @@ void SceneGame::CreateResource()
     // enemy
     {
         // max 6~7
-        //enemyAura = std::make_unique<EnemyAura>();
         EnemyManager& enemyManager = EnemyManager::Instance();
-        for (int i = 0; i < 3; ++i)
+#if 0
+        // EnemyAI_1
+        for (int i = 0; i < 2; ++i)
         {
-            EnemyAura* enemyAura = new EnemyAura;
-            const XMFLOAT3 setPosition = { ::RandFloat(-5.0f, +5.0f), 0.0f, ::RandFloat(-5.0f, +5.0f) };
-            enemyAura->SetPosition(setPosition);
-            enemyManager.Register(enemyAura);
+            EnemyAI_1* enemyAI_1 = new EnemyAI_1;
+
+            const XMFLOAT3 setPosition = {
+                ::RandFloat(-10.0f, +10.0f),
+                0.0f,
+                ::RandFloat(-10.0f, +10.0f)
+            };
+            enemyAI_1->SetPosition(setPosition);
+
+            enemyManager.Register(enemyAI_1);
         }
+        // EnemyAI_2
+        for (int i = 0; i < 2; ++i)
+        {
+            EnemyAI_2* enemyAI_2 = new EnemyAI_2;
+
+            const XMFLOAT3 setPosition = {
+                ::RandFloat(-10.0f, +10.0f),
+                0.0f,
+                ::RandFloat(-10.0f, +10.0f)
+            };
+            enemyAI_2->SetPosition(setPosition);
+
+            enemyManager.Register(enemyAI_2);
+        }
+        // EnemyAI_3
+        for (int i = 0; i < 2; ++i)
+        {
+            EnemyAI_3* enemyAI_3 = new EnemyAI_3;
+
+            const XMFLOAT3 setPosition = {
+                ::RandFloat(-10.0f, +10.0f),
+                0.0f,
+                ::RandFloat(-10.0f, +10.0f)
+            };
+            enemyAI_3->SetPosition(setPosition);
+
+            enemyManager.Register(enemyAI_3);
+        }
+#endif
     }
 
     // ps Shader
@@ -122,6 +159,9 @@ void SceneGame::CreateResource()
         CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/FogPS.cso", fogPS.GetAddressOf());
     }
 
+    // bokeh
+    CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/FinalPassBokehPS.cso", bokehPS.GetAddressOf());
+
     // shadow
     {
         shadow.shadowMap = std::make_unique<ShadowMap>(graphics.GetDevice(),
@@ -144,6 +184,23 @@ void SceneGame::CreateResource()
         effect[0] = new Effect("./Resources/Effect/explosion4.efk");
         //effect[0] = std::make_unique<Effect>("./Resources/Effect/explosion4.efk");
     }
+
+    // 定数バッファー
+    {
+        HRESULT hr{ S_OK };
+
+        D3D11_BUFFER_DESC bufferDesc{};
+        bufferDesc.ByteWidth = sizeof(Shader::SceneConstants);
+        bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        bufferDesc.CPUAccessFlags = 0;
+        bufferDesc.MiscFlags = 0;
+        bufferDesc.StructureByteStride = 0;
+        // SceneConstants
+        hr = graphics.GetDevice()->CreateBuffer(&bufferDesc, nullptr,
+            ConstantBuffer.GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+    }
 }
 
 // 初期化
@@ -154,7 +211,6 @@ void SceneGame::Initialize()
 
 
     // enemy
-    enemyAura->Initialize();
     enemyGolem->Initialize();
 
     // player
@@ -222,7 +278,9 @@ void SceneGame::Update(const float& elapsedTime)
     {
         particles->Integrate(Graphics::Instance().GetDeviceContext(), elapsedTime);
     }
-        
+
+    gamePad.Vibration(1.0f,1.0f);
+
     //if (gamePad.GetButtonDown() & GamePad::BTN_B)
     //    Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
 
@@ -266,7 +324,6 @@ void SceneGame::Update(const float& elapsedTime)
 
     // enemy
     {
-        enemyAura->Update(elapsedTime);
         enemyGolem->Update(elapsedTime);
     }
 
@@ -294,6 +351,7 @@ void SceneGame::Update(const float& elapsedTime)
 
     //カード演出中だけUpdate前にreturn呼んでるから注意！！
 
+
 }
 
 // Updateの後に呼び出される
@@ -307,19 +365,16 @@ void SceneGame::Render(const float& elapsedTime)
     Graphics& graphics = Graphics::Instance();
     Shader* shader = graphics.GetShader();
 
-    Shader::ShadowConstants shadowConstants{};
+    Shader::SceneConstants sceneConstants{};
 
     float playerScaleFactor = 0.01f;
-    float enemyScaleFactor = 0.001f;
+    float enemyScaleFactor = 0.01f;
 
     // 描画の初期設定
     {
         // 描画の初期設定※必ず呼ぶこと！！！
         Mame::Scene::BaseScene::RenderInitialize();
 
-        // SHADOW
-        shadowConstants.lightDirection = graphics.GetShader()->view.position;
-        shadowConstants.cameraPosition = graphics.GetShader()->view.camera;
 
         // SHADOW : make shadow map
         {
@@ -349,13 +404,18 @@ void SceneGame::Render(const float& elapsedTime)
                 shadow.lightViewSize,shadow.lightViewNearZ,shadow.lightViewFarZ)
             };
 
-            DirectX::XMStoreFloat4x4(&shadowConstants.viewProjection, V * P);
-            shadowConstants.lightViewProjection = shadowConstants.viewProjection;
-            graphics.GetDeviceContext()->UpdateSubresource(shadowConstantBuffer.Get(), 0, 0, &shadowConstants, 0, 0);
+            DirectX::XMStoreFloat4x4(&sceneConstants.viewProjection, V * P);
+            sceneConstants.lightViewProjection = sceneConstants.viewProjection;
+            graphics.GetDeviceContext()->UpdateSubresource(shadowConstantBuffer.Get(), 0, 0, &sceneConstants, 0, 0);
             graphics.GetDeviceContext()->VSSetConstantBuffers(1, 1, shadowConstantBuffer.GetAddressOf());
 
             shadow.shadowMap->Clear(graphics.GetDeviceContext(), 1.0f);
             shadow.shadowMap->Activate(graphics.GetDeviceContext());
+
+            // ステートセット
+            shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
+            shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::NONE));
+            shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::SOLID));
 
             // SHADOW : 影つけたいモデルはここにRenderする
             {
@@ -363,35 +423,52 @@ void SceneGame::Render(const float& elapsedTime)
 
                 EnemyManager& enemyManager = EnemyManager::Instance();
                 enemyManager.Render(enemyScaleFactor);
-                //enemyAura->Render(enemyScaleFactor);
 
-                enemyAura->Render(enemyScaleFactor);
-                enemyGolem->Render(0.01f);
+
+                enemyGolem->Render(0.01f, true);
             }
 
             shadow.shadowMap->Deactivete(graphics.GetDeviceContext());
         }
     }
 
+    Camera& camera = Camera::Instance();
+
+    shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
+    shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::NONE));
+    shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::SOLID));
+
+    camera.SetPerspectiveFov(graphics.GetDeviceContext());
+    DirectX::XMStoreFloat4x4(&sceneConstants.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
+    sceneConstants.lightDirection = shader->GetViewPosition();
+    sceneConstants.cameraPosition = shader->GetViewCamera();
+
+    DirectX::XMStoreFloat4x4(&sceneConstants.inverseProjection, DirectX::XMMatrixInverse(NULL, camera.GetProjectionMatrix()));
+    DirectX::XMStoreFloat4x4(&sceneConstants.inverseViewProjection, DirectX::XMMatrixInverse(NULL, camera.GetViewMatrix() * camera.GetProjectionMatrix()));
+    sceneConstants.time = framework::tictoc.time_stamp();
+
+    graphics.GetDeviceContext()->UpdateSubresource(ConstantBuffer.Get(), 0, 0, &sceneConstants, 0, 0);
+    graphics.GetDeviceContext()->VSSetConstantBuffers(1, 1, ConstantBuffer.GetAddressOf());
+    graphics.GetDeviceContext()->PSSetConstantBuffers(1, 1, ConstantBuffer.GetAddressOf());
+
+    {
+        // カメラ関係
+        RenderContext rc = {};
+        rc.lightDirection = { 0.0f, -1.0f, 0.0f, 0.0f };
+
+        shader->Begin(graphics.GetDeviceContext(), rc);
+    }
+
 
     // EMISSIVE
     graphics.GetDeviceContext()->PSSetShaderResources(16, 1, emissiveTexture.GetAddressOf());
 
-    framebuffers[0]->Clear(graphics.GetDeviceContext());
-    framebuffers[0]->Activate(graphics.GetDeviceContext());
-
-
     // SHADOW : bind shadow map at slot 8
     graphics.GetDeviceContext()->PSSetShaderResources(8, 1, shadow.shadowMap->shaderResourceView.GetAddressOf());
 
-    // ※ skyBox の描画の後に書くこと
-    {
-        // カメラ関係
-        RenderContext rc;
-        rc.lightDirection = { 0.0f, -1.0f, 0.0f, 0.0f };
+    framebuffers[0]->Clear(graphics.GetDeviceContext());
+    framebuffers[0]->Activate(graphics.GetDeviceContext());
 
-        shader->Begin(graphics.GetDeviceContext(), rc, shadowConstants);
-    }
 
     // モデル描画
     {
@@ -415,13 +492,9 @@ void SceneGame::Render(const float& elapsedTime)
         {
             EnemyManager& enemyManager = EnemyManager::Instance();
             enemyManager.Render(enemyScaleFactor);
-            //enemyAura->Render(enemyScaleFactor);
 
-            enemyAura->Render(enemyScaleFactor);
+
             enemyGolem->Render(0.01f);
-            //shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
-            //enemySlime[0]->Render(enemyScaleFactor, sagePS.Get());
-            //enemySlime[1]->Render(enemyScaleFactor, emissiveTextureUVScrollPS.Get());
         }
         // 魔法陣
         if (isSeveralNum)
@@ -517,86 +590,113 @@ void SceneGame::Render(const float& elapsedTime)
         framebuffers[0]->shaderResourceViews[0].Get(),
         bloomer->ShaderResourceView(),
         framebuffers[1]->shaderResourceViews[0].Get(),
+        framebuffers[0]->shaderResourceViews[1].Get(),
     };
-    bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceViews, 0, _countof(shaderResourceViews), bloomPS.Get());
+
+    if (enemyGolem->GetCurrentState() != static_cast<UINT>(EnemyGolem::StateMachineState::RoarState))
+    {
+        bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceViews, 0, _countof(shaderResourceViews), bloomPS.Get());
+    }
+    else
+    {
+        bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceViews, 0, _countof(shaderResourceViews), bokehPS.Get());
+    }
 
     //ブルーム無し
-    PlayerManager::Instance().GetPlayer()->SkillImagesRender();
+    {
+        PlayerManager::Instance().GetPlayer()->SkillImagesRender();
+
+
+    }
 }
 
 // debug用
 void SceneGame::DrawDebug()
 {
 #ifdef USE_IMGUI
-    ImGui::Begin("sceneGame");
 
-    // デバッグプリミティブ描画
-    if (ImGui::Button("drawDebug"))
-    {
-        isDebugRender = isDebugRender ? false : true;
-    }
+    Graphics::Instance().GetShader()->DrawDebug();
 
-    // 本生成
-    if (ImGui::Button("createBook"))
+    if (ImGui::Begin("sceneGame"))
     {
-        ItemManager::Instance().Register(new Book());
-    }
 
-    if (ImGui::Button("isSeveral"))
-    {
-        isSeveralNum = isSeveralNum ? false : true;
-    }
-
-    // 魔法陣再生
-    if (ImGui::Button("magicCircle"))
-    {
-        if (isSeveralNum)
+        // デバッグプリミティブ描画
+        if (ImGui::Button("drawDebug"))
         {
-            for (int i = 0; i < 10; ++i)
+            isDebugRender = isDebugRender ? false : true;
+        }
+
+        // 本生成
+        if (ImGui::Button("createBook"))
+        {
+            ItemManager::Instance().Register(new Book());
+        }
+
+        if (ImGui::Button("isSeveral"))
+        {
+            isSeveralNum = isSeveralNum ? false : true;
+        }
+
+        // 魔法陣再生
+        if (ImGui::Button("magicCircle"))
+        {
+            if (isSeveralNum)
             {
-                for (int j = 0; j < 3; ++j)
+                for (int i = 0; i < 10; ++i)
                 {
-                    magicCircleSummon[i]->magicCircle[j]->GetTransform()->
-                        SetPosition(DirectX::XMFLOAT3(cosf(i) * 7.0f, 0.0f, sinf(i) * 7.0f));
+                    for (int j = 0; j < 3; ++j)
+                    {
+                        magicCircleSummon[i]->magicCircle[j]->GetTransform()->
+                            SetPosition(DirectX::XMFLOAT3(cosf(i) * 7.0f, 0.0f, sinf(i) * 7.0f));
+                    }
+
+                    magicCircleSummon[i]->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleSummon::StateMachineState::AppearState));
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 3; ++i)
+                {
+                    magicCircleSummon[0]->magicCircle[i]->GetTransform()->
+                        SetPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
                 }
 
-                magicCircleSummon[i]->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleSummon::StateMachineState::AppearState));
+                magicCircleSummon[0]->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleSummon::StateMachineState::AppearState));
             }
         }
-        else
-        {
-            for (int i = 0; i < 3; ++i)
-            {
-                magicCircleSummon[0]->magicCircle[i]->GetTransform()->
-                    SetPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
-            }
 
-            magicCircleSummon[0]->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleSummon::StateMachineState::AppearState));
+        ImGui::Separator();
+
+        PlayerManager::Instance().DrawDebug();
+
+        ItemManager::Instance().DrawDebug();
+
+        particles->DrawDebug();
+
+        enemyGolem->DrawDebug();
+
+        EnemyManager& enemyManager = EnemyManager::Instance();
+        enemyManager.DrawDebug();
+
+        // カメラ
+        Camera::Instance().DrawDebug();
+
+        ImGui::End();
+    }
+
+    // SHADOW
+    {
+        if (ImGui::Begin("shadow"))
+        {
+            ImGui::DragFloat4("lightViewFocus", &shadow.lightViewFocus.x);
+            ImGui::SliderFloat("lightViewDistance", &shadow.lightViewDistance, 1.0f, 100.0f);
+            ImGui::SliderFloat("lightViewSize", &shadow.lightViewSize, 1.0f, 100.0f);
+            ImGui::SliderFloat("lightViewNearZ", &shadow.lightViewNearZ, 1.0f, shadow.lightViewFarZ - 1.0f);
+            ImGui::SliderFloat("lightViewFarZ", &shadow.lightViewFarZ, shadow.lightViewNearZ + 1.0f, 100.0f);
+            ImGui::Image(reinterpret_cast<void*>(shadow.shadowMap->shaderResourceView.Get()), ImVec2(shadow.shadowMapWidth / 5.0f, shadow.shadowMapHeight / 5.0f));
+            ImGui::End();
         }
     }
 
-    PlayerManager::Instance().DrawDebug();
-
-    ItemManager::Instance().DrawDebug();
-    
-    particles->DrawDebug();
-
-    enemyAura->DrawDebug();
-    enemyGolem->DrawDebug();
-
-    // カメラ
-    Camera::Instance().DrawDebug();
-
-
-    ImGui::End();
-
-    PlayerManager::Instance().DrawDebug();
-
-    EnemyManager& enemyManager = EnemyManager::Instance();
-    enemyManager.DrawDebug();
-
 #endif
-
-    
-
 }

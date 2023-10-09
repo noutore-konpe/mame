@@ -77,7 +77,7 @@ float4 main(PSIn psIn) : SV_TARGET
     const float shadowDepthBias = max(0.01 * (1.0 - dot(N, L)), 0.001);
 #endif
 
-    float4 lightViewPosition = mul(psIn.worldPosition, shadowLightViewProjection);
+    float4 lightViewPosition = mul(psIn.worldPosition, lightViewProjection);
     lightViewPosition = lightViewPosition / lightViewPosition.w;
     float2 lightViewTexcoord = 0;
     lightViewTexcoord.x = lightViewPosition.x * 0.5 + 0.5;

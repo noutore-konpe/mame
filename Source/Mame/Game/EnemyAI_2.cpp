@@ -1,14 +1,15 @@
-#include "EnemyAura.h"
+#include "EnemyAI_2.h"
+
 #include "../Graphics/Graphics.h"
 #include "../Resource/texture.h"
 
 #include "../Game/ActionDerived.h"
 #include "../Game/JudgmentDerived.h"
 
-int EnemyAura::nameNum_ = 0;
+int EnemyAI_2::nameNum_ = 0;
 
 // コンストラクタ
-EnemyAura::EnemyAura()
+EnemyAI_2::EnemyAI_2()
 {
     using std::make_unique;
     using std::to_string;
@@ -41,57 +42,48 @@ EnemyAura::EnemyAura()
         behaviorTree_ = make_unique<BehaviorTree>(this);
 
         behaviorTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);
-        //behaviorTree_->AddNode("Root", "CloseRangeAttack", 1, SelectRule::Non, new CloseRangeAttackJudgment(this), new CloseRangeAttackAction(this));
-        //behaviorTree_->AddNode("Root", "Pursuit",          2, SelectRule::Non, new PursuitJudgment(this), new PursuitAction(this));
-        //behaviorTree_->AddNode("Root", "Idle",             3, SelectRule::Non, nullptr, new IdleAction(this));
+        behaviorTree_->AddNode("Root", "CloseRangeAttack", 1, SelectRule::Non, new CloseRangeAttackJudgment(this), new CloseRangeAttackAction(this));
+        behaviorTree_->AddNode("Root", "Pursuit",          2, SelectRule::Non, new PursuitJudgment(this), new PursuitAction(this));
+        behaviorTree_->AddNode("Root", "Idle",             3, SelectRule::Non, nullptr, new IdleAction(this));
     }
 
-
     // ImGui名前設定
-    SetName("AuraEnemy" + std::to_string(nameNum_++));
+    SetName("EnemyAI_2 : " + std::to_string(nameNum_++));
+
 }
 
 // デストラクタ
-EnemyAura::~EnemyAura()
+EnemyAI_2::~EnemyAI_2()
 {
     --nameNum_;
 }
 
 // 初期化
-void EnemyAura::Initialize()
+void EnemyAI_2::Initialize()
 {
+    using DirectX::XMFLOAT3;
+
     BaseEnemyAI::Initialize();
+
+    constexpr float scale = 1.5f;
+    GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
 
     // アニメーション再生
     Character::PlayAnimation(0, true);
+
 }
 
-// 終了化
-void EnemyAura::Finalize()
-{
-}
-
-// Updateの前に呼ばれる
-void EnemyAura::Begin()
-{
-}
 
 // 更新処理
-void EnemyAura::Update(const float& elapsedTime)
+void EnemyAI_2::Update(const float& elapsedTime)
 {
     BaseEnemyAI::Update(elapsedTime);
 
-    //// アニメーション更新
-    //Character::UpdateAnimation(elapsedTime);
 }
 
-// Updateの後に呼ばれる
-void EnemyAura::End()
-{
-}
 
 // 描画処理
-void EnemyAura::Render(const float& /*scale*/, ID3D11PixelShader* /*psShader*/)
+void EnemyAI_2::Render(const float& scale, ID3D11PixelShader* /*psShader*/)
 {
     Graphics& graphics = Graphics::Instance();
 
@@ -101,13 +93,17 @@ void EnemyAura::Render(const float& /*scale*/, ID3D11PixelShader* /*psShader*/)
     // 定数バッファー更新
     UpdateConstants();
 
+    graphics.GetShader()->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
+
     // Aura enemy
-    BaseEnemyAI::Render(0.01f, emissiveTextureUVScroll.Get());
+    BaseEnemyAI::Render(scale, emissiveTextureUVScroll.Get());
 }
 
-void EnemyAura::DrawDebug()
+
+void EnemyAI_2::DrawDebug()
 {
     BaseEnemyAI::DrawDebug();
+
 #ifdef USE_IMGUI
     if (ImGui::BeginMenu(GetName()))
     {
@@ -117,10 +113,13 @@ void EnemyAura::DrawDebug()
 
         ImGui::EndMenu();
     }
+
 #endif // USE_IMGUI
+
 }
 
-void EnemyAura::UpdateConstants()
+
+void EnemyAI_2::UpdateConstants()
 {
     // emissive
     {
@@ -130,9 +129,9 @@ void EnemyAura::UpdateConstants()
         // emissiveTexture ScrollDirection
         SetEmissiveScrollDirection(DirectX::XMFLOAT2(0.25f, 0.5f));
 
-        // color
-        SetEmissiveColor(DirectX::XMFLOAT4(0.2f, 0.7f, 1.0f, 1.0f));
-        // color とりあえず赤
-        //SetEmissiveColor(DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
+        // midnightblue
+        SetEmissiveColor(DirectX::XMFLOAT4(0.00f, 0.80f, 0.81f, 1.0f));
+        //SetEmissiveColor(DirectX::XMFLOAT4(0.09f, 0.09f, 0.43f, 1.0f));
     }
+
 }

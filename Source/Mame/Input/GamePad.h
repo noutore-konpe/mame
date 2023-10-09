@@ -1,5 +1,10 @@
 #pragma once
 
+// gamepadU“®
+#include <concrt.h>
+#include <winrt/Windows.Gaming.Input.h>
+
+
 using GamePadButton = unsigned int;
 
 class GamePad
@@ -61,6 +66,11 @@ public:
 	// ‰EƒgƒŠƒK[“ü—Íó‘Ô‚Ìæ“¾
 	float GetTriggerR() const { return triggerR; }
 
+	void Vibration(float time, float power/*power min:0,max:1*/);
+
+private:
+	void VibrationUpdate();
+
 private:
 	GamePadButton		buttonState[2] = { 0 };
 	GamePadButton		buttonDown = 0;
@@ -72,4 +82,9 @@ private:
 	float				triggerL = 0.0f;
 	float				triggerR = 0.0f;
 	int					slot = 0;
+
+	float vibrationTime;
+	float vibrationTimer;
+	float vibrationValue;
+
 };

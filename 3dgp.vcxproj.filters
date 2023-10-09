@@ -139,11 +139,23 @@
     <FxCompile Include="Source\Shader\EmissiveTextureUVScrollPS.hlsl">
       <Filter>mamelib\Shader\Fbx</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shader\SageAura.hlsl">
+    <FxCompile Include="Source\Shader\SageAuraPS.hlsl">
       <Filter>mamelib\Shader\Fbx\Zelda</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\MagicCirclePS.hlsl">
       <Filter>mamelib\Shader\Fbx</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SpriteColorDissolvePS.hlsl">
+      <Filter>mamelib\Shader\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\PlayerPS.hlsl">
+      <Filter>mamelib\Shader\Fbx</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\FinalPassBokehPS.hlsl">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\LoadingPS.hlsl">
+      <Filter>mamelib\Shader\Loading</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -274,7 +286,7 @@
     <ClCompile Include="Source\Mame\Game\ProjectileManager.cpp">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Game\ProjectileStraite.cpp">
+    <ClCompile Include="Source\Mame\Game\ProjectileStraight.cpp">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\Enemy.cpp">
@@ -370,7 +382,6 @@
     <ClCompile Include="Source\Mame\Game\EnemyTestAI.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Game\BaseCharacterAI.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyAura.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClCompile>
@@ -409,6 +420,18 @@
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\EnemyManager.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyAI_1.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyGolemState.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyAI_2.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyAI_3.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -549,7 +572,7 @@
     <ClInclude Include="Source\Mame\Game\ProjectileManager.h">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\Game\ProjectileStraite.h">
+    <ClInclude Include="Source\Mame\Game\ProjectileStraight.h">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\Enemy.h">
@@ -681,7 +704,6 @@
     <ClInclude Include="Source\Mame\Game\MagicCircleState.h">
       <Filter>mamelib\Mame\Game\Item\StateMachine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\Game\BaseCharacterAI.h" />
     <ClInclude Include="Source\Mame\Game\EnemyAura.h">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClInclude>
@@ -718,6 +740,18 @@
     <ClInclude Include="Source\Mame\Game\EnemyManager.h">
       <Filter>mamelib\Mame\Game\Character\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyAI_1.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyGolemState.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyAI_2.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyAI_3.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">
@@ -730,9 +764,6 @@
       <Filter>mamelib\Shader</Filter>
     </None>
     <None Include="Source\Shader\static_mesh.hlsli">
-      <Filter>mamelib\Shader</Filter>
-    </None>
-    <None Include="Source\Shader\sprite.hlsli">
       <Filter>mamelib\Shader</Filter>
     </None>
     <None Include="Source\Shader\Instancing.hlsli">
@@ -776,6 +807,9 @@
     </None>
     <None Include="Source\Shader\PostEffect.hlsli">
       <Filter>mamelib\Shader\PostEffect</Filter>
+    </None>
+    <None Include="Source\Shader\sprite.hlsli">
+      <Filter>mamelib\Shader\Sprite</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -913,6 +947,9 @@
     </Filter>
     <Filter Include="mamelib\Mame\Game\Character\Enemy\EnemyGolem">
       <UniqueIdentifier>{495b6c9a-0480-4c04-a33f-bcb966019633}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Shader\Loading">
+      <UniqueIdentifier>{526d907c-d74b-4d6f-868f-35fc7b8f1ae9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -3,10 +3,11 @@
 #include <vector>
 #include <stack>
 #include <map>
-#include "BehaviorTree.h"
+#include <string>
+
+//#include "BehaviorTree.h"
 
 class NodeBase;
-//class EnemyBlueSlime;
 
 // Behaviorï€ë∂ÉfÅ[É^
 class BehaviorData

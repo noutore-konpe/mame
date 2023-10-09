@@ -208,7 +208,6 @@
     <ClCompile Include="Source\Mame\Game\AbilityManager.cpp" />
     <ClCompile Include="Source\Mame\Game\ActionDerived.cpp" />
     <ClCompile Include="Source\Mame\Game\AttackSkill.cpp" />
-    <ClCompile Include="Source\Mame\Game\BaseCharacterAI.cpp" />
     <ClCompile Include="Source\Mame\Game\BaseEnemyAI.cpp" />
     <ClCompile Include="Source\Mame\Game\BaseSkill.cpp" />
     <ClCompile Include="Source\Mame\Game\BehaviorData.cpp" />
@@ -219,7 +218,11 @@
     <ClCompile Include="Source\Mame\Game\Collision.cpp" />
     <ClCompile Include="Source\Mame\Game\DemoStateDerived.cpp" />
     <ClCompile Include="Source\Mame\Game\Enemy.cpp" />
+    <ClCompile Include="Source\Mame\Game\EnemyAI_1.cpp" />
+    <ClCompile Include="Source\Mame\Game\EnemyAI_2.cpp" />
+    <ClCompile Include="Source\Mame\Game\EnemyAI_3.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyAura.cpp" />
+    <ClCompile Include="Source\Mame\Game\EnemyGolemState.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyManager.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemySlime.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyTestAI.cpp" />
@@ -241,7 +244,7 @@
     <ClCompile Include="Source\Mame\Game\PlayerState.cpp" />
     <ClCompile Include="Source\Mame\Game\Projectile.cpp" />
     <ClCompile Include="Source\Mame\Game\ProjectileManager.cpp" />
-    <ClCompile Include="Source\Mame\Game\ProjectileStraite.cpp" />
+    <ClCompile Include="Source\Mame\Game\ProjectileStraight.cpp" />
     <ClCompile Include="Source\Mame\Game\Stage.cpp" />
     <ClCompile Include="Source\Mame\Graphics\AuraEffect.cpp" />
     <ClCompile Include="Source\Mame\Graphics\Bloom.cpp" />
@@ -298,7 +301,6 @@
     <ClInclude Include="Source\Mame\Game\ActionBase.h" />
     <ClInclude Include="Source\Mame\Game\ActionDerived.h" />
     <ClInclude Include="Source\Mame\Game\AttackSkill.h" />
-    <ClInclude Include="Source\Mame\Game\BaseCharacterAI.h" />
     <ClInclude Include="Source\Mame\Game\BaseEnemyAI.h" />
     <ClInclude Include="Source\Mame\Game\BaseSkill.h" />
     <ClInclude Include="Source\Mame\Game\BehaviorData.h" />
@@ -309,7 +311,11 @@
     <ClInclude Include="Source\Mame\Game\Collision.h" />
     <ClInclude Include="Source\Mame\Game\DemoStateDerived.h" />
     <ClInclude Include="Source\Mame\Game\Enemy.h" />
+    <ClInclude Include="Source\Mame\Game\EnemyAI_1.h" />
+    <ClInclude Include="Source\Mame\Game\EnemyAI_2.h" />
+    <ClInclude Include="Source\Mame\Game\EnemyAI_3.h" />
     <ClInclude Include="Source\Mame\Game\EnemyAura.h" />
+    <ClInclude Include="Source\Mame\Game\EnemyGolemState.h" />
     <ClInclude Include="Source\Mame\Game\EnemyManager.h" />
     <ClInclude Include="Source\Mame\Game\EnemySlime.h" />
     <ClInclude Include="Source\Mame\Game\EnemyTestAI.h" />
@@ -332,7 +338,7 @@
     <ClInclude Include="Source\Mame\Game\PlayerState.h" />
     <ClInclude Include="Source\Mame\Game\Projectile.h" />
     <ClInclude Include="Source\Mame\Game\ProjectileManager.h" />
-    <ClInclude Include="Source\Mame\Game\ProjectileStraite.h" />
+    <ClInclude Include="Source\Mame\Game\ProjectileStraight.h" />
     <ClInclude Include="Source\Mame\Game\Stage.h" />
     <ClInclude Include="Source\Mame\Game\State.h" />
     <ClInclude Include="Source\Mame\Game\StateMachine.h" />
@@ -440,6 +446,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="Source\Shader\FinalPassBokehPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="Source\Shader\FinalPassPs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -527,6 +539,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="Source\Shader\LoadingPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="Source\Shader\luminance_extraction_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -587,7 +605,13 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
-    <FxCompile Include="Source\Shader\SageAura.hlsl">
+    <FxCompile Include="Source\Shader\PlayerPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SageAuraPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -610,6 +634,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SpriteColorDissolvePS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Source\Shader\sprite_change_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>

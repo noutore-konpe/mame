@@ -19,6 +19,16 @@ public:
 	const bool Judgment() override;
 };
 
+
+class LongRangeAttackJudgment : public JudgmentBase
+{
+public:
+	template <class TemplateAI>
+	LongRangeAttackJudgment(TemplateAI* enemy) : JudgmentBase(enemy) {}
+	const bool Judgment() override;
+};
+
+
 // BattleNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
 class BattleJudgment : public JudgmentBase
 {
