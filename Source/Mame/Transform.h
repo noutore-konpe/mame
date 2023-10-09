@@ -32,14 +32,18 @@ public:
 
 	void DrawDebug();
 	void Reset();
-    
+
     DirectX::XMMATRIX CalcWorld();
 	DirectX::XMMATRIX CalcWorldMatrix(float scale_factor);
 	DirectX::XMFLOAT3 CalcForward()const;
 	DirectX::XMFLOAT3 CalcUp()const;
 	DirectX::XMFLOAT3 CalcRight()const;
 
-	DirectX::XMFLOAT3 GetPosition()const { return position; }
+	const DirectX::XMFLOAT3& GetPosition() const { return position; }
+	const float GetPositionX() const { return position.x; }
+	const float GetPositionY() const { return position.y; }
+	const float GetPositionZ() const { return position.z; }
+
 	DirectX::XMFLOAT3 GetScale()const { return scale; }
 	DirectX::XMFLOAT4 GetRotation()const { return rotation; }
 
