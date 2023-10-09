@@ -31,7 +31,6 @@ void ExperiencePoint::Initialize()
     GetTransform()->SetScaleFactor(3.0f);
 
     step_ = STEP::FALL_INIT;
-
 }
 
 
@@ -49,7 +48,8 @@ void ExperiencePoint::Update(const float elapsedTime)
     {
     case STEP::FALL_INIT:
 
-        velocity_.y = 0.0f; // 落下速度リセット
+        velocity_.y = 0.0f;     // 落下速度リセット
+        isGround_   = false;    // 空中にいる
 
         step_ = STEP::FALL;
         [[fallthrough]];
@@ -96,6 +96,8 @@ void ExperiencePoint::Update(const float elapsedTime)
             circularMotion_.angle_.z = ::atan2f(localPositionX, localPositionY); // return Radian Angle
         }
 
+        isGround_ = true;   // 地面にいる
+
         step_ = STEP::FLOTING;
         [[fallthrough]];
     case STEP::FLOTING:
@@ -134,6 +136,8 @@ void ExperiencePoint::Update(const float elapsedTime)
         break;
     case STEP::MOVE_TO_PLAYER_INIT:
 
+        isGround_ = false; // 空中扱いにする
+
         step_ = STEP::MOVE_TO_PLAYER;
         [[fallthrough]];
     case STEP::MOVE_TO_PLAYER:
@@ -145,7 +149,6 @@ void ExperiencePoint::Update(const float elapsedTime)
             if (t->GetPositionY() <= circularMotion_.groundPositionY_)
             {
                 t->SetPositionY(circularMotion_.groundPositionY_);
-
                 step_ = STEP::FLOTING_INIT;
                 break;
             }
@@ -160,9 +163,9 @@ void ExperiencePoint::Update(const float elapsedTime)
         else
         {
             // プレイヤーの方へ向かう
-            const XMFLOAT3 pos    = GetTransform()->GetPosition();
-            const XMFLOAT3 plPos  = plManager.GetPlayer()->GetTransform()->GetPosition();
-            const XMFLOAT3 vecN = ::XMFloat3Normalize(plPos - pos);
+            const XMFLOAT3& pos    = GetTransform()->GetPosition();
+            const XMFLOAT3& plPos  = plManager.GetPlayer()->GetTransform()->GetPosition();
+            const XMFLOAT3  vecN = ::XMFloat3Normalize(plPos - pos);
             velocity_ += 1.0f * elapsedTime; // 仮(プレイヤーに依存にする予定)
             t->AddPosition(vecN * velocity_ * elapsedTime);
         }
@@ -204,9 +207,9 @@ const bool ExperiencePoint::SearchPlayer()
 
     PlayerManager& plManager = PlayerManager::Instance();
 
-    const XMFLOAT3 pos      = GetTransform()->GetPosition();
-    const XMFLOAT3 plPos    = plManager.GetPlayer()->GetTransform()->GetPosition();
-    const XMFLOAT3 vec      = plPos - pos;
+    const XMFLOAT3& pos      = GetTransform()->GetPosition();
+    const XMFLOAT3& plPos    = plManager.GetPlayer()->GetTransform()->GetPosition();
+    const XMFLOAT3  vec      = plPos - pos;
     const float    lengthSq = ::XMFloat3LengthSq(vec);
 
     constexpr float plCollectExpLengthSq = 2.0f * 2.0f; // 仮(プレイヤーに依存する予定)

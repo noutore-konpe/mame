@@ -436,6 +436,9 @@
     <ClCompile Include="Source\Mame\Game\ExperiencePoint.cpp">
       <Filter>mamelib\Mame\Game\ExperiencePoint</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\ExperiencePointManager.cpp">
+      <Filter>mamelib\Mame\Game\ExperiencePoint</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -756,6 +759,9 @@
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\ExperiencePoint.h">
+      <Filter>mamelib\Mame\Game\ExperiencePoint</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\ExperiencePointManager.h">
       <Filter>mamelib\Mame\Game\ExperiencePoint</Filter>
     </ClInclude>
   </ItemGroup>

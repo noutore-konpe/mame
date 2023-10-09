@@ -46,8 +46,14 @@ public:
 public:
     Transform* GetTransform() { return model_->GetTransform(); }
 
+    const DirectX::XMFLOAT3 GetVelocity() const { return velocity_; }
+    void SetVelocity(const DirectX::XMFLOAT3& velocity) { velocity_ = velocity; }
+
     const char* const GetName() const { return name_.c_str(); }
     void SetName(const std::string& name) { name_ = name; }
+
+    const float GetRadius() const { return radius_; }
+    void SetRadius(const float radius) { radius_ = radius; }
 
 private:
     const bool SearchPlayer();
@@ -56,7 +62,6 @@ private:
     void UpdateHorizontalMove(const float elapsedTime);
 
     void UpdateGroundPosition(); // â~â^ìÆÇÃínñ à íuçXêV(îOÇÃÇΩÇﬂ)
-
 
 private:
     static int nameNum_;
@@ -73,6 +78,7 @@ private:
     float               gravity_        = -1.0f;
     float               friction_       = 0.5f;
     float               airControl_     = 0.3f;
+    float               radius_         = 0.25f;
     bool                isGround_       = false;
 
 };
