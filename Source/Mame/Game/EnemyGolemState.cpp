@@ -259,6 +259,8 @@ namespace EnemyGolemState
     // 初期化
     void Attack1State::Initialize()
     {
+        
+
         owner->SetCurrentState(static_cast<UINT>(EnemyGolem::StateMachineState::Attack1State));
 
         // アニメーション更新
@@ -354,8 +356,14 @@ namespace EnemyGolemState
         // アニメーション設定
         owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::ComboAttack1), false);
 
-        isComboAttack1 = false;
-        isMoveFront = false;
+        isComboAttack1          = false;
+        isMoveFrontAttack1      = false;
+        isMoveFrontAttack2      = false;
+        isComboAttack2          = false;
+        isComboAttack2Return    = false;
+        isComboAttack3Up        = false;
+        isComboAttack3Down      = false;
+        isComboAttack3Return    = false;
         
         moveTimer = 0.0f;
         moveFrontTimer = 0.0f;
@@ -364,13 +372,32 @@ namespace EnemyGolemState
     // 更新
     void ComboAttack1State::Update(const float& elapsedTime)
     {
+        ComboAttack1(elapsedTime);  // コンボ１撃目
+        ComboAttack2(elapsedTime);  // コンボ２撃目
+        ComboAttack3(elapsedTime);  // コンボ３撃目
+    }
+
+    // 終了
+    void ComboAttack1State::Finalize()
+    {
+    }
+
+    // コンボ１撃目
+    void ComboAttack1State::ComboAttack1(const float& elapsedTime)
+    {
         // コンボ攻撃１が終わってない
         if (!isComboAttack1)
         {
             moveTimer += elapsedTime;
 
-            if (moveTimer >= maxMoveTime)
-                isMoveFront = true;
+            if (moveTimer >= maxMoveTime1)
+            {   // 前進する
+                isMoveFrontAttack1 = true;
+            }
+            if (moveTimer >= maxMoveTime1 + 0.2f)
+            {   // カメラ振動
+                Camera::Instance().ScreenVibrate(0.04f, 0.5f);
+            }
 
             // アニメーションが終わったら
             if (!owner->IsPlayAnimation())
@@ -382,29 +409,125 @@ namespace EnemyGolemState
         }
 
         // 前進する
-        if (isMoveFront)
+        if (isMoveFrontAttack1)
         {
-            if (moveFrontTimer <= maxMoveFrontTime)
+            if (MoveFront(elapsedTime, 0.07f, 0.4f))
             {
-                float addPos = Easing::InSine(moveFrontTimer, maxMoveFrontTime, 0.07f, 0.0f);
-
-                DirectX::XMFLOAT3 frontVec = owner->GetTransform()->CalcForward();
-                frontVec = frontVec * addPos;
-                owner->GetTransform()->AddPosition(frontVec);
-
-                moveFrontTimer += elapsedTime;
+                // 動いてるときは何もしない
             }
             else
-            {
-                isMoveFront = false;
+            {   // 止まったら
+                isMoveFrontAttack1 = false;
                 moveTimer = 0.0f;
+                moveFrontTimer = 0.0f;
             }
         }
     }
 
-    // 終了
-    void ComboAttack1State::Finalize()
+    // コンボ２撃目
+    void ComboAttack1State::ComboAttack2(const float& elapsedTime)
     {
+        // コンボ２撃目が終わったか
+        if (!isComboAttack2 && isComboAttack1)
+        {
+            moveTimer += elapsedTime;
+
+            if (moveTimer >= maxMoveTime2)
+            {
+                isMoveFrontAttack2 = true;
+            }
+            if (moveTimer >= maxMoveTime2 + 0.3f)
+            {   // カメラ振動
+                Camera::Instance().ScreenVibrate(0.05f, 0.8f);
+            }
+
+            // アニメーションが終わったら
+            if (!owner->IsPlayAnimation())
+            {   // 起き上がりアニメーション
+                owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::ComboAttack2Return), false);
+                isComboAttack2 = true;
+            }
+        }
+
+        // 全身する
+        if (isMoveFrontAttack2)
+        {
+            if (MoveFront(elapsedTime, 0.05f, 0.3f))
+            {
+                // 動いてるときは何もしない
+            }
+            else
+            {   // 止まったら
+                isMoveFrontAttack2 = false;
+                moveTimer = 0.0f;
+                moveFrontTimer = 0.0f;
+            }
+        }
+
+        // コンボ２撃目起き上がりが終わったか
+        if (!isComboAttack2Return && isComboAttack2)
+        {
+            // アニメーションが終わったら
+            if (!owner->IsPlayAnimation())
+            {   // ３撃目振り上げ
+                owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::ComboAttack3Up), false);
+                isComboAttack2Return = true;
+            }
+        }
+    }
+
+    // コンボ３撃目
+    void ComboAttack1State::ComboAttack3(const float& elapsedTime)
+    {
+        // コンボ3撃目振り上げ終わったか
+        if (!isComboAttack3Up && isComboAttack2Return)
+        {
+            // アニメーションが終わったら
+            if (!owner->IsPlayAnimation())
+            {   // ３撃目振り下げ
+                owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::ComboAttack3Down), false);
+                isComboAttack3Up = true;
+            }
+        }
+
+        // コンボ３撃目振り下げ終わったか
+        if (!isComboAttack3Down && isComboAttack3Up)
+        {
+            // アニメーションが終わったら
+            if (!owner->IsPlayAnimation())
+            {   // ３撃目戻り
+                owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::ComboAttack3Return), false);
+                isComboAttack3Down = true;
+            }
+        }
+
+        // コンボ３撃目戻り終わったか
+        if (!isComboAttack3Return && isComboAttack3Down)
+        {
+            // アニメーションが終わったら
+            if (!owner->IsPlayAnimation())
+            {   // 待機ステートへ
+                owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::IdleState));
+            }
+        }
+    }
+
+    // 前方向に進む
+    bool ComboAttack1State::MoveFront(const float& elapsedTime, const float& addLength, const float& maxMoveFrontTime)
+    {
+        if (moveFrontTimer <= maxMoveFrontTime)
+        {
+            float addPos = Easing::InSine(moveFrontTimer, maxMoveFrontTime, addLength, 0.0f);
+
+            DirectX::XMFLOAT3 frontVec = owner->GetTransform()->CalcForward();
+            frontVec = frontVec * addPos;
+            owner->GetTransform()->AddPosition(frontVec);
+
+            moveFrontTimer += elapsedTime;
+            return true;
+        }
+
+        return false;
     }
 }
 

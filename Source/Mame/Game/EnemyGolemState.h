@@ -127,15 +127,27 @@ namespace EnemyGolemState
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
 
+        void ComboAttack1(const float& elapsedTime);
+        void ComboAttack2(const float& elapsedTime);
+        void ComboAttack3(const float& elapsedTime);
+
+        bool MoveFront(const float& elapsedTime, const float& addLength, const float& maxMoveFrontTime);
+
     private:
-        bool isComboAttack1 = false;
-        bool isMoveFront = false;
+        bool isComboAttack1         = false;
+        bool isMoveFrontAttack1     = false;
+        bool isMoveFrontAttack2     = false;
+        bool isComboAttack2         = false;
+        bool isComboAttack2Return   = false;
+        bool isComboAttack3Up       = false;
+        bool isComboAttack3Down     = false;
+        bool isComboAttack3Return   = false;
 
-        float moveTimer = 0.0f;
-        float maxMoveTime = 0.5f;
+        float moveTimer         = 0.0f;
+        float maxMoveTime1      = 0.5f;
+        float maxMoveTime2      = 0.2f;
 
-        float moveFrontTimer = 0.0f;
-        float maxMoveFrontTime = 0.4f;
+        float moveFrontTimer    = 0.0f;
     };
 };
 

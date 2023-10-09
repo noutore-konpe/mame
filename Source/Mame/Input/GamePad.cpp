@@ -3,6 +3,9 @@
 #include <Xinput.h>
 #include "GamePad.h"
 
+#include "../Other/Easing.h"
+#include "../framework.h"
+
 #pragma comment (lib,"Xinput.lib")
 
 int GamePad::GAMEPAD_OR_KEYBOARD = 0;
@@ -236,4 +239,50 @@ void GamePad::Update()
 		buttonDown = ~buttonState[1] & newButtonState;	// âüÇµÇΩèuä‘
 		buttonUp = ~newButtonState & buttonState[1];	// ó£ÇµÇΩèuä‘
 	}
+
+	VibrationUpdate();
+}
+
+void GamePad::Vibration(float time, float power)
+{
+	if (vibrationTimer <= 0)
+	{
+		vibrationTime = time;
+		vibrationValue = power;
+		vibrationTimer = vibrationTime;
+	}
+	else
+	{
+		//êUìÆíÜÇÃèÍçáÇÕÇÊÇËã≠Ç¢êUìÆÇ™óDêÊÇ≥ÇÍÇÈ
+		if (vibrationValue <= power)
+		{
+			vibrationTime = time;
+			vibrationValue = power;
+			vibrationTimer = vibrationTime;
+		}
+	}
+}
+
+void GamePad::VibrationUpdate()
+{
+	if (vibrationTimer <= 0)
+	{
+		XINPUT_VIBRATION vibration;
+		ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
+		vibration.wLeftMotorSpeed = 0;
+		vibration.wRightMotorSpeed = 0;
+		XInputSetState(0, &vibration);
+		return;
+	}
+
+	XINPUT_VIBRATION vibration;
+	ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
+
+	vibration.wLeftMotorSpeed = static_cast<WORD>(Easing::InSine(vibrationTime, vibrationTimer, 65535.0f * vibrationValue, 0.0f));
+	vibration.wRightMotorSpeed = vibration.wLeftMotorSpeed;// use any value between 0-65535 here
+	XInputSetState(0, &vibration);
+
+	vibrationTimer -= 0.001f;
+	//vibrationTimer -= framework::tictoc.time_interval();
+	//vibrationTimer -= Argent::Timer::ArTimer::Instance().DeltaTime();
 }
