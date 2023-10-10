@@ -229,6 +229,8 @@
     <ClCompile Include="Source\Mame\Game\EnemySlime.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyTestAI.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyGolem.cpp" />
+    <ClCompile Include="Source\Mame\Game\ExperiencePoint.cpp" />
+    <ClCompile Include="Source\Mame\Game\ExperiencePointManager.cpp" />
     <ClCompile Include="Source\Mame\Game\Item.cpp" />
     <ClCompile Include="Source\Mame\Game\ItemManager.cpp" />
     <ClCompile Include="Source\Mame\Game\JudgmentDerived.cpp" />
@@ -326,6 +328,8 @@
     <ClInclude Include="Source\Mame\Game\EnemySlime.h" />
     <ClInclude Include="Source\Mame\Game\EnemyTestAI.h" />
     <ClInclude Include="Source\Mame\Game\EnemyGolem.h" />
+    <ClInclude Include="Source\Mame\Game\ExperiencePoint.h" />
+    <ClInclude Include="Source\Mame\Game\ExperiencePointManager.h" />
     <ClInclude Include="Source\Mame\Game\Item.h" />
     <ClInclude Include="Source\Mame\Game\ItemManager.h" />
     <ClInclude Include="Source\Mame\Game\JudgmentBase.h" />

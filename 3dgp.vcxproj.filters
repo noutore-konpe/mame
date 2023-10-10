@@ -445,6 +445,12 @@
     <ClCompile Include="Source\Mame\Game\StoneBall.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\ExperiencePoint.cpp">
+      <Filter>mamelib\Mame\Game\ExperiencePoint</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\ExperiencePointManager.cpp">
+      <Filter>mamelib\Mame\Game\ExperiencePoint</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -776,6 +782,12 @@
     <ClInclude Include="Source\Mame\Game\StoneBall.h">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Game\ExperiencePoint.h">
+      <Filter>mamelib\Mame\Game\ExperiencePoint</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\ExperiencePointManager.h">
+      <Filter>mamelib\Mame\Game\ExperiencePoint</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">
@@ -977,6 +989,9 @@
     </Filter>
     <Filter Include="mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings">
       <UniqueIdentifier>{789ed27a-b8fb-4459-8b4c-670b61ef614f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\ExperiencePoint">
+      <UniqueIdentifier>{5b118d4e-b983-46f2-8622-784391a271c7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
