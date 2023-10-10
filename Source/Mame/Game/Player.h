@@ -89,6 +89,11 @@ public:
         return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A);
     }
 
+    static bool InputLockOn()
+    {
+        return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_RIGHT_THUMB);
+    }
+
     //getter,setter
     void AddMaxSpeed(const float spd) { maxSpeed += spd; }
 

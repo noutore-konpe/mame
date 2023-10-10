@@ -21,7 +21,7 @@ public:
 
     void Initialize();
 
-    void Update();
+    void Update(float elapsedTime);
 
     void UpdateDebug(const float& elapsedTime, DirectX::XMFLOAT2 moveVector);
 
@@ -44,6 +44,8 @@ public:
 
     void SetTraget(Transform* t) { focusTarget = t; }
 
+    void MoveDelayUpdate(float elapsedTime);
+
 private: // Debug用
     float moveSpeed = 0.01f;
     float rotationSpeed = 60.0f;
@@ -56,6 +58,28 @@ public:
     void SetViewMatrix(DirectX::XMMATRIX v) { V = v; }
     void SetProjectionMatrix(DirectX::XMMATRIX p) { P = p; }
 
+    void SetLockOnTargetPos(Transform* transform) { lockOnTargetTransform = transform; }
+    const DirectX::XMFLOAT3 GetForward()
+    {
+        if (activeLockOn)return lockOnForward;
+        return transform.CalcForward();
+    }
+    const DirectX::XMFLOAT3 GetRight()
+    {
+        if (activeLockOn)
+        {
+            DirectX::XMVECTOR Right = DirectX::XMVector3Cross(
+                DirectX::XMLoadFloat3(&lockOnForward),
+                DirectX::XMVECTOR(DirectX::XMVectorSet(0,-1,0,0)));
+            DirectX::XMFLOAT3 right;
+            DirectX::XMStoreFloat3(&right,Right);
+            return right;
+        }
+        return transform.CalcRight();
+    }
+
+public:
+    bool activeLockOn = false;//ロックオン起動
 private:
     Transform transform{};
 
@@ -67,10 +91,16 @@ private:
     float offsetY = 2.7f;
     float focusOffsetY = 1.0f;
 
+    float maxSpeed = 1.0f;
+
     Transform* focusTarget;//注視点になるオブジェクト
 
-    DirectX::XMFLOAT3 lockOnTargetPos;//ロックオン対象の座標
-    bool activeLockOn = false;//ロックオン起動
+    Transform* lockOnTargetTransform;//ロックオン対象の座標
+    DirectX::XMFLOAT3 lockOnForward;//ロックオン時の前方向ベクトル
+
+    DirectX::XMFLOAT3 eyePos;
+    float acceleration = 3.0f;
+    DirectX::XMFLOAT3 velocity;
 
     bool enableDebugCamera = false;
 

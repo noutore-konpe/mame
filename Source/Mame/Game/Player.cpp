@@ -113,6 +113,12 @@ void Player::Begin()
 // 更新処理
 void Player::Update(const float& elapsedTime)
 {
+    //ロックオン解除、発動
+    if (InputLockOn())
+    {
+        Camera::Instance().activeLockOn = !Camera::Instance().activeLockOn;
+    }
+
     Character::Update(elapsedTime);
 
     stateMachine->Update(elapsedTime);
@@ -162,20 +168,7 @@ void Player::MoveUpdate(float elapsedTime,float ax,float ay)
         pos.z += speed * moveVec.z;
     }
 #else
-    if (ax || ay)
-    {
-        auto forward = cTransform->CalcForward();
-        auto right = cTransform->CalcRight();
-        forward.x *= ay;
-        forward.z *= ay;
-        right.x *= ax;
-        right.z *= ax;
-
-        moveVec = { right.x + forward.x,0,right.z + forward.z };
-        float length = sqrtf(moveVec.x * moveVec.x + moveVec.y * moveVec.y);
-        moveVec.x /= length;
-        moveVec.z /= length;
-    }
+    MoveVecUpdate(ax, ay);
 
     UpdateVelocity(elapsedTime,ax,ay);
 #endif // 0
@@ -195,17 +188,17 @@ void Player::MoveVecUpdate(float ax,float ay)
 {
     if (ax || ay)
     {
-        auto cTransform = Camera::Instance().GetTransform();
+        //auto cTransform = Camera::Instance().GetTransform();
 
-        auto forward = cTransform->CalcForward();
-        auto right = cTransform->CalcRight();
+        auto forward = Camera::Instance().GetForward();
+        auto right = Camera::Instance().GetRight();
         forward.x *= ay;
         forward.z *= ay;
         right.x *= ax;
         right.z *= ax;
 
         moveVec = { right.x + forward.x,0,right.z + forward.z };
-        float length = sqrtf(moveVec.x * moveVec.x + moveVec.y * moveVec.y);
+        float length = sqrtf(moveVec.x * moveVec.x + moveVec.z * moveVec.z);
         moveVec.x /= length;
         moveVec.z /= length;
     }

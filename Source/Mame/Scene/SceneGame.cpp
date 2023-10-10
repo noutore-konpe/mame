@@ -233,6 +233,9 @@ void SceneGame::Initialize()
     {
         magicCircleSummon[i]->Initialize();
     }
+
+    //今だけロックオン処理いれとく
+    Camera::Instance().SetLockOnTargetPos(enemyGolem->GetTransform());
 }
 
 // 終了化
@@ -319,7 +322,7 @@ void SceneGame::Update(const float& elapsedTime)
     }
 
     {
-        Camera::Instance().Update();
+        Camera::Instance().Update(elapsedTime);
     }
 
     // enemy
