@@ -11,12 +11,11 @@ namespace PlayerSkill
             BaseSkill(player, 
                 L"./Resources/Image/Card/sampleCard.png",
                 L"./Resources/Image/Icon/sampleIcon.png",
-                "Drain") {}
+                "Drain",BaseSkill::SUPER_RARE) {}
         ~Drain() {}
 
         void Initialize()override;
         void Update(float elapsedTime)override;
-        void Render()override;
         void DrawDebug()override;
 
         void Overlaping()override;
@@ -26,6 +25,20 @@ namespace PlayerSkill
 
     private:
         float drainCoefficient;//UŒ‚—Í‚©‚ç‹zûHP‚ÌZo‚Ég‚¤ŒW”(d•¡‚·‚é‚½‚Ñ‚É‚±‚ê‚ª‘‚¦‚Ä‚¢‚­)
+    };
+
+    class BlastEnchantment : public BaseSkill
+    {
+    public:
+        BlastEnchantment(Player* player) :
+            BaseSkill(player,
+                L"./Resources/Image/Card/sampleCard.png",
+                L"./Resources/Image/Icon/sampleIcon.png",
+                "Blast Enchantment",
+                BaseSkill::ULTRA_RARE) {}
+        ~BlastEnchantment() {}
+
+
     };
 }
 

@@ -77,6 +77,7 @@ public: // æ“¾Eİ’è@ŠÖ˜A
     void SetEmissiveScrollDirection(DirectX::XMFLOAT2 scroll) { model->skinned_meshes->data.emissiveScrollDirection = scroll; }
     void SetEmissiveColor(DirectX::XMFLOAT4 color) { model->skinned_meshes->data.emissiveColor = color; }
 
+    void AddMaxHealth(const float hp) { maxHealth += hp; }
 
 public: // ŠÖ”
     void Turn(float elapsedTime, float vx, float vz, float rotSpeed);
@@ -96,17 +97,18 @@ public: // ŠÖ”
 public:
     std::unique_ptr<Model> model = nullptr;
 
-
     float maxHealth;
     float health;//hp
     float invincibleTime = 1.0f;//–³“GŠÔ
+
+    float rotValue;//‰ñ“]—Ê
 
 #ifdef _DEBUG
     std::unique_ptr<Model> debugSqhere = nullptr;   // “–‚½‚è”»’è—pQ‹…
 #endif // _DEBUG
 
 private:
-    Transform collisionSqhereTransform{};
+    Transform collisionSqhereTransform{};   
     DirectX::XMFLOAT3 debugSqhereOffset{};  // “–‚½‚è”»’è—p
     float range = 1.0f;                     // ‹…“–‚½‚è”»’è”¼Œa
 

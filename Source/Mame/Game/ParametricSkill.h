@@ -12,7 +12,7 @@ namespace PlayerSkill
             BaseSkill(player,
                 L"./Resources/Image/Card/sampleCard.png",
                 L"./Resources/Image/Icon/sampleIcon.png",
-                "MoveSpeedUp") {}
+                "MoveSpeedUp",BaseSkill::COMMON) {}
         ~MoveSpeedUp() {}
 
         void Overlaping()override;
@@ -29,7 +29,7 @@ namespace PlayerSkill
             BaseSkill(player,
                 L"./Resources/Image/Card/sampleCard.png",
                 L"./Resources/Image/Icon/sampleIcon.png",
-                "AttackPowerUp") {}
+                "AttackPowerUp", BaseSkill::COMMON) {}
         ~AttackPowerUp() {}
 
         void Overlaping()override;
@@ -46,7 +46,7 @@ namespace PlayerSkill
             BaseSkill(player,
                 L"./Resources/Image/Card/sampleCard.png",
                 L"./Resources/Image/Icon/sampleIcon.png",
-                "AttackSpeedUp") {}
+                "AttackSpeedUp", BaseSkill::UNCOMMON) {}
         ~AttackSpeedUp() {}
 
         void Overlaping()override;
@@ -63,10 +63,27 @@ namespace PlayerSkill
             BaseSkill(player,
                 L"./Resources/Image/Card/sampleCard.png",
                 L"./Resources/Image/Icon/sampleIcon.png",
-                "BookIncrease") {}
+                "BookIncrease", BaseSkill::RARE) {}
         ~BookIncrease() {}
 
         void Overlaping()override;
+    };
+
+    //体力上限アップ
+    class MaxHitPointUp : public BaseSkill
+    {
+    public:
+        MaxHitPointUp(Player* player) :
+            BaseSkill(player,
+                L"./Resources/Image/Card/sampleCard.png",
+                L"./Resources/Image/Icon/sampleIcon.png",
+                "BookIncrease", BaseSkill::COMMON) {}
+        ~MaxHitPointUp() {}
+
+        void Overlaping()override;
+
+    private:
+        float maxHealthIncreasing = 1.0f;//上昇値
     };
 }
 

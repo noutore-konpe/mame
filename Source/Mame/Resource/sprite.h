@@ -73,6 +73,7 @@ public:
 
         void SetMaskTextureValue(int value) { maskTextureValue = value; }
         void SetDissolveValue(float value) { dissolveValue = value; }
+        void AddDissolveValue(float value) { dissolveValue += value; }
         void SetDissolveBlackValue(float value) { dissolveBlackValue = value; }
         void SetEdgeThreshold(float threshold) { edgeThreshold = threshold; }
         void SetEdgeColor(DirectX::XMFLOAT4 color) { edgeColor = color; }

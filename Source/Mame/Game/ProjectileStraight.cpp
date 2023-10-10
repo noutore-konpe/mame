@@ -32,8 +32,8 @@ void ProjectileStraight::Initialize()
     using DirectX::XMFLOAT3;
 
     //lifeTimer_ = 10.0f;
-    constexpr float scale = 100.0f;
-    GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
+    //constexpr float scale = 100.0f;
+    //GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
 }
 
 // XVˆ—

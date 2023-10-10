@@ -38,6 +38,11 @@ public: // 取得・設定関数関連
 
     //現在のアニメーションが何フレーム目かの取得
     const int GetCurrentKeyframeIndex() const { return currentKeyframeIndex; }
+    const int GetCurrentKeyframeMaxIndex() 
+    { 
+        if (currentAnimationIndex < 0)return 1;
+        return GetAnimation()->at(currentAnimationIndex).sequence.size(); 
+    }
 
 public: // アニメーション関数関連
     // アニメーション再生設定
