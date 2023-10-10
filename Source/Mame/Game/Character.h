@@ -70,20 +70,20 @@ public: // æ“¾Eİ’èŠÖ”
     DirectX::XMFLOAT3 GetJointPosition(size_t meshIndex, size_t boneIndex, const float& scale);
 
     Transform* GetTransform() { return model->GetTransform(); }
-    Transform* GetCollisionSphereTransform() { return &collisionSphereTransform; }
+    //Transform* GetCollisionSphereTransform() { return &collisionSphereTransform; }
 
     const DirectX::XMFLOAT3& GetPosition() { return GetTransform()->GetPosition(); }
     void SetPosition(const DirectX::XMFLOAT3& pos) { GetTransform()->SetPosition(pos); }
 
-    void SetDebugSphereOffset(DirectX::XMFLOAT3 offset) { debugSphereOffset = offset; }
-    DirectX::XMFLOAT3 GetDebugSphereOffset() { return debugSphereOffset; }
+    //void SetDebugSphereOffset(DirectX::XMFLOAT3 offset) { debugSphereOffset = offset; }
+    //DirectX::XMFLOAT3 GetDebugSphereOffset() { return debugSphereOffset; }
 
     const char* const GetName() const { return name_.c_str(); }
     void SetName(const std::string& n) { name_ = n; }
 
-    // ¦radius‚Éæ‚èŠ·‚¦—\’è
-    void SetRange(const float r) { range = r; }
-    float GetRange() { return range; }
+    //// ¦radius‚Éæ‚èŠ·‚¦—\’è
+    //void SetRange(const float r) { range = r; }
+    //float GetRange() { return range; }
 
     void SetRadius(const float radius) { radius_ = radius; }
     const float GetRadius() const { return radius_; }
@@ -117,18 +117,18 @@ public: // ‚»‚Ì‘¼‚ÌŠÖ”
 public:
     std::unique_ptr<Model> model;
 
-#ifdef _DEBUG
-    std::unique_ptr<Model> debugSqhere;   // “–‚½‚è”»’è—pQ‹…
-#endif // _DEBUG
+//#ifdef _DEBUG
+//    std::unique_ptr<Model> debugSqhere;   // “–‚½‚è”»’è—pQ‹…
+//#endif // _DEBUG
 
     float maxHealth;
     float health;                   // hp
     float invincibleTime = 1.0f;    // –³“GŠÔ
 
 private:
-    Transform collisionSphereTransform{};
-    DirectX::XMFLOAT3 debugSphereOffset{};  // “–‚½‚è”»’è—p
-    float       range = 1.0f;               // ‹…“–‚½‚è”»’è”¼Œa(¦radius‚Éæ‚èŠ·‚¦—\’è)
+    //Transform collisionSphereTransform{};
+    //DirectX::XMFLOAT3 debugSphereOffset{};  // “–‚½‚è”»’è—p
+    //float       range = 1.0f;               // ‹…“–‚½‚è”»’è”¼Œa(¦radius‚Éæ‚èŠ·‚¦—\’è)
 
     std::string name_    = "";
     float       radius_ = 0.25f;

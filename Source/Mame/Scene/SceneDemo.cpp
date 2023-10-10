@@ -309,19 +309,19 @@ void SceneDemo::Update(const float& elapsedTime)
         //enemySlime0position = { enemySlime0position.x + enemySlime0offset.x, enemySlime0position.y + enemySlime0offset.y, enemySlime0position.z + enemySlime0offset.z };
         //enemySlime1position = { enemySlime1position.x + enemySlime1offset.x, enemySlime1position.y + enemySlime1offset.y, enemySlime1position.z + enemySlime1offset.z };
 
-        DirectX::XMFLOAT3 outPosition;
-        if (Collision::IntersectSphereVsSphere(
-            enemySlime[0]->GetTransform()->GetPosition(),
-            //enemySlime0position,
-            enemySlime[0]->GetRange(),
-            enemySlime[1]->GetTransform()->GetPosition(),
-            //enemySlime1position,
-            enemySlime[1]->GetRange(),
-            &outPosition
-        ))
-        {
-            enemySlime[1]->GetTransform()->SetPosition(outPosition);
-        }
+        //DirectX::XMFLOAT3 outPosition;
+        //if (Collision::IntersectSphereVsSphere(
+        //    enemySlime[0]->GetTransform()->GetPosition(),
+        //    //enemySlime0position,
+        //    enemySlime[0]->GetRange(),
+        //    enemySlime[1]->GetTransform()->GetPosition(),
+        //    //enemySlime1position,
+        //    enemySlime[1]->GetRange(),
+        //    &outPosition
+        //))
+        //{
+        //    enemySlime[1]->GetTransform()->SetPosition(outPosition);
+        //}
 
         EnemyManager::Instance().Update(elapsedTime);
     }

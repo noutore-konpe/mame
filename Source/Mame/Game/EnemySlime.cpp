@@ -74,9 +74,9 @@ void EnemySlime::DrawDebug()
     {
         Character::DrawDebug();
 
-        float range = GetRange();
-        ImGui::DragFloat("range", &range);
-        SetRange(range);
+        //float range = GetRange();
+        //ImGui::DragFloat("range", &range);
+        //SetRange(range);
 
         model->skinned_meshes->Drawdebug();
 
