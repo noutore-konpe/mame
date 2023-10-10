@@ -8,6 +8,8 @@
 
 #include "../Other/MathHelper.h"
 
+#include "../Game/PlayerManager.h"
+
 // IdleState
 namespace EnemyGolemState
 {
@@ -367,6 +369,10 @@ namespace EnemyGolemState
         
         moveTimer = 0.0f;
         moveFrontTimer = 0.0f;
+
+        isStoneCreate = false;
+        isStoneCreated = false;
+        stoneTimer = 0.0f;
     }
 
     // 更新
@@ -375,6 +381,20 @@ namespace EnemyGolemState
         ComboAttack1(elapsedTime);  // コンボ１撃目
         ComboAttack2(elapsedTime);  // コンボ２撃目
         ComboAttack3(elapsedTime);  // コンボ３撃目
+
+#if 0 // プレイヤーの方向に向けたい
+        DirectX::XMFLOAT3 playerPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 ownerPos = owner->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 ownerFront = owner->GetTransform()->CalcForward();
+        DirectX::XMVECTOR Vec = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerPos), DirectX::XMLoadFloat3(&ownerPos)));
+        DirectX::XMVECTOR frontVec = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&ownerFront));
+        DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(Vec, frontVec);
+        float dot;
+        DirectX::XMStoreFloat(&dot, Dot);
+
+        owner->GetTransform()->SetRotationY(dot);
+#endif
+
     }
 
     // 終了
@@ -467,12 +487,25 @@ namespace EnemyGolemState
         // コンボ２撃目起き上がりが終わったか
         if (!isComboAttack2Return && isComboAttack2)
         {
+            stoneTimer += elapsedTime;
+            if (stoneTimer >= 0.4f)
+            {
+                isStoneCreate = true;
+            }
+
             // アニメーションが終わったら
             if (!owner->IsPlayAnimation())
             {   // ３撃目振り上げ
                 owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::ComboAttack3Up), false);
                 isComboAttack2Return = true;
             }
+        }
+
+        if (isStoneCreate && !isStoneCreated)
+        {
+            // 石のステート設定
+            owner->comboAttackStone->GetStateMachine()->ChangeState(static_cast<UINT>(ComboAttackStone::StateMachineState::AppearState));
+            isStoneCreated = true;
         }
     }
 

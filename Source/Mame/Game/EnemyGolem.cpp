@@ -20,6 +20,8 @@ EnemyGolem::EnemyGolem()
 
     magicCircleGolem = std::make_unique<MagicCircleGolem>();
     magicCircleEnemySummon = std::make_unique<MagicCircleEnemySummon>();
+    comboAttackStone = std::make_unique<ComboAttackStone>();
+
 
     // ステートマシン
     {
@@ -36,8 +38,8 @@ EnemyGolem::EnemyGolem()
         GetStateMachine()->SetState(static_cast<UINT>(StateMachineState::IdleState));
     }
 
-// ImGui名前設定
-SetName("EnemyGolem" + std::to_string(nameNum++));
+    // ImGui名前設定
+    SetName("EnemyGolem" + std::to_string(nameNum++));
 }
 
 // デストラクタ
@@ -52,6 +54,8 @@ void EnemyGolem::Initialize()
 
     magicCircleGolem->Initialize();
     magicCircleEnemySummon->Initialize();
+
+    comboAttackStone->Initialize();
 
     GetTransform()->SetPositionY(10.0f);
 
@@ -81,7 +85,8 @@ void EnemyGolem::Update(const float& elapsedTime)
 
     magicCircleGolem->Update(elapsedTime);
     magicCircleEnemySummon->Update(elapsedTime);
-
+    comboAttackStone->SetOwnerTransform(GetTransform());
+    comboAttackStone->Update(elapsedTime);
 
     UpdateSummoningMagicCircle(4.0f, 3.0f, DirectX::XMConvertToRadians(45));
 
@@ -109,6 +114,11 @@ void EnemyGolem::Render(const float& scale, ID3D11PixelShader* psShader)
 
     magicCircleGolem->Render();
     magicCircleEnemySummon->Render(DirectX::XMFLOAT4(magicCircleColor[2]));
+    comboAttackStone->Render();
+
+    if (currentState == static_cast<UINT>(StateMachineState::ComboAttack1State))
+    {
+    }
 }
 
 // 影描画用
@@ -131,6 +141,8 @@ void EnemyGolem::DrawDebug()
 
         magicCircleGolem->DrawDebug();
         magicCircleEnemySummon->DrawDebug();
+
+        comboAttackStone->DrawDebug();
 
         ImGui::SliderInt("currentState", &currentStateDebug, 0, 4);
 

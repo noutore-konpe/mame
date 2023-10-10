@@ -143,6 +143,10 @@ namespace EnemyGolemState
         bool isComboAttack3Down     = false;
         bool isComboAttack3Return   = false;
 
+        bool isStoneCreate = false;
+        bool isStoneCreated = false;
+        float stoneTimer = 0.0f;
+
         float moveTimer         = 0.0f;
         float maxMoveTime1      = 0.5f;
         float maxMoveTime2      = 0.2f;

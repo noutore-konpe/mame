@@ -391,18 +391,6 @@
     <ClCompile Include="Source\Mame\Game\EnemyGolem.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Game\MagicCircleGolem.cpp">
-      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Mame\Game\MagicCircleGolemState.cpp">
-      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Mame\Game\MagicCircleEnemySummon.cpp">
-      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Mame\Game\MagicCircleEnemySummonState.cpp">
-      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Mame\Game\BaseEnemyAI.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClCompile>
@@ -432,6 +420,30 @@
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\EnemyAI_3.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\ComboAttackStone.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\ComboAttackStoneState.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\MagicCircleEnemySummon.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\MagicCircleEnemySummonState.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\MagicCircleGolem.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\MagicCircleGolemState.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\Stone.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\StoneBall.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -719,18 +731,6 @@
     <ClInclude Include="Source\Mame\Game\EnemyGolem.h">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\Game\MagicCircleGolem.h">
-      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Mame\Game\MagicCircleGolemState.h">
-      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Mame\Game\MagicCircleEnemySummon.h">
-      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Mame\Game\MagicCircleEnemySummonState.h">
-      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Mame\Game\BaseEnemyAI.h">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClInclude>
@@ -751,6 +751,30 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\EnemyAI_3.h">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\ComboAttackStone.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\ComboAttackStoneState.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\MagicCircleGolemState.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\MagicCircleEnemySummon.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\MagicCircleEnemySummonState.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\MagicCircleGolem.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\Stone.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\StoneBall.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -950,6 +974,9 @@
     </Filter>
     <Filter Include="mamelib\Shader\Loading">
       <UniqueIdentifier>{526d907c-d74b-4d6f-868f-35fc7b8f1ae9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings">
+      <UniqueIdentifier>{789ed27a-b8fb-4459-8b4c-670b61ef614f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

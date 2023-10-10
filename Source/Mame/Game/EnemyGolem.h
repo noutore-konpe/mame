@@ -5,6 +5,8 @@
 #include "MagicCircleGolem.h"
 #include "MagicCircleEnemySummon.h"
 
+#include "ComboAttackStone.h"
+
 #include "StateMachine.h"
 
 class EnemyGolem : public Enemy
@@ -93,6 +95,7 @@ public:
 public:
     std::unique_ptr<MagicCircleGolem> magicCircleGolem;
     std::unique_ptr<MagicCircleEnemySummon> magicCircleEnemySummon;
+    std::unique_ptr<ComboAttackStone> comboAttackStone;
 
 private:
     // ステートマシン
