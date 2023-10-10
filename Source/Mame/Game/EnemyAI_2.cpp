@@ -129,9 +129,8 @@ void EnemyAI_2::UpdateConstants()
         // emissiveTexture ScrollDirection
         SetEmissiveScrollDirection(DirectX::XMFLOAT2(0.25f, 0.5f));
 
-        // midnightblue
-        SetEmissiveColor(DirectX::XMFLOAT4(0.00f, 0.80f, 0.81f, 1.0f));
-        //SetEmissiveColor(DirectX::XMFLOAT4(0.09f, 0.09f, 0.43f, 1.0f));
+        // color
+        SetEmissiveColor(DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
     }
 
 }

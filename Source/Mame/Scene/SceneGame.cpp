@@ -74,7 +74,7 @@ void SceneGame::CreateResource()
 
     // enemy
     {
-#if 0
+#if 1
         // max 6~7
         EnemyManager& enemyManager = EnemyManager::Instance();
         // EnemyAI_1

@@ -123,7 +123,7 @@ void EnemyAI_1::UpdateConstants()
         // emissiveTexture ScrollDirection
         SetEmissiveScrollDirection(DirectX::XMFLOAT2(0.25f, 0.5f));
 
-        // dodferblue
+        // color
         SetEmissiveColor(DirectX::XMFLOAT4(0.11f, 0.56f, 1.00f, 1.0f));
     }
 }
