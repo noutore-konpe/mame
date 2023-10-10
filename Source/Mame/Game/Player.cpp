@@ -6,6 +6,7 @@
 
 #include "AbilityManager.h"
 #include "PlayerState.h"
+#include "EnemyManager.h"
 
 #include <algorithm>
 
@@ -648,6 +649,19 @@ void Player::DrawCards()
         drawingSkillCards[i] = Lottery();
     }
     drawDirectionTimer = 0;
+}
+
+void Player::ChangeLockOnTarget()
+{
+    auto& camera = Camera::Instance();
+    Transform* curLockOnTarget = camera.GetLockOnTarget();
+    auto& enemyManager = EnemyManager::Instance();
+    for (size_t i = 0; i < enemyManager.GetEnemyCount(); i++)
+    {
+        auto* enemy = EnemyManager::Instance().GetEnemy(0);
+        if (curLockOnTarget == enemy->GetTransform());
+    }
+
 }
 
 void Player::LevelUpdate()
