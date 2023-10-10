@@ -10,10 +10,16 @@ void Camera::Initialize()
     transform.SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 10.0f));
     transform.SetScale(DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
     transform.SetRotation(DirectX::XMFLOAT4(0.0f, DirectX::XMConvertToRadians(180), 0.0f, 0.0f));
+
+    activeLockOn = false;
 }
 
-void Camera::Update()
+void Camera::Update(float elapsedTime)
 {
+    if (activeLockOn)
+    {
+        MoveDelayUpdate(elapsedTime);
+    }
 }
 
 void Camera::UpdateDebug(const float& elapsedTime, DirectX::XMFLOAT2 moveVector)
@@ -97,7 +103,29 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
     DirectX::XMVECTOR focus;
 
     //TANA変更
-    if (focusTarget && !enableDebugCamera)
+    if (activeLockOn)//ロックオン時
+    {
+        DirectX::XMFLOAT3 targetPos = focusTarget->GetPosition();
+        DirectX::XMFLOAT3 lockOnTargetPos = lockOnTargetTransform->GetPosition();
+        DirectX::XMFLOAT3 forward = lockOnTargetPos - targetPos;
+        forward = Normalize(forward);
+        lockOnForward = forward;
+
+        eye = { DirectX::XMVectorSet(
+            eyePos.x - forward.x * focalLength,
+            eyePos.y - forward.y * focalLength + 1.0f,
+            eyePos.z - forward.z * focalLength,
+            1.0f) };
+        
+        focus = { DirectX::XMVectorSet(
+            lockOnTargetPos.x,
+            lockOnTargetPos.y + focusOffsetY,
+            lockOnTargetPos.z,
+            1.0f) };
+
+        focus = DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&screenVibrationOffset), focus);
+    }
+    else if (focusTarget && !enableDebugCamera)
     {
         //DirectX::XMFLOAT3 pos = transform.GetPosition();
         DirectX::XMFLOAT3 targetPos = focusTarget->GetPosition();
@@ -159,6 +187,13 @@ void Camera::DrawDebug()
         }
         if (ImGui::TreeNode("player camera"))
         {
+            ImGui::Checkbox("Lock On", &activeLockOn);
+
+            ImGui::DragFloat3("Velocity", &velocity.x);
+            ImGui::DragFloat3("Eye Pos", &eyePos.x);
+            ImGui::SliderFloat("Max Speed", &maxSpeed,0.1f,20.0f);
+            ImGui::SliderFloat("Acceleration", &acceleration,0.1f,10.0f);
+
             ImGui::SliderFloat("FocalLength", &focalLength, 0.1f, 20.0f);
             ImGui::SliderFloat("OffsetY", &offsetY, 0.1f, 10.0f);
             ImGui::SliderFloat("FocusOffsetY", &focusOffsetY, 0.1f, 10.0f);
@@ -197,6 +232,31 @@ void Camera::DrawDebug()
 void Camera::Reset()
 {
     camera.eye = { 0.0f,0.0f,-10.0f };
+}
+
+void Camera::MoveDelayUpdate(float elapsedTime)
+{
+    DirectX::XMFLOAT3 playerPos = focusTarget->GetPosition();
+    DirectX::XMFLOAT3 moveVec = playerPos - eyePos;
+    float length = Length(moveVec);
+    moveVec = Normalize(moveVec);
+
+    //float acceleration = this->acceleration * elapsedTime;
+    //カメラ位置と目標位置までの距離が近いなら処理しない
+    if (length < 0.1f && length > -0.1f)return;
+
+    velocity = moveVec * length * acceleration;
+
+    //最大速度制限
+    length = Length(velocity);
+    if (length > maxSpeed)
+    {
+        velocity = moveVec * maxSpeed;
+
+        length = maxSpeed;
+    }
+
+    eyePos = eyePos + velocity * elapsedTime;
 }
 
 void Camera::ScreenVibrate(float volume, float effectTime)

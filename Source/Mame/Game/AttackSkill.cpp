@@ -5,16 +5,11 @@ namespace PlayerSkill
 {
     void Drain::Initialize()
     {
-        probability = 5;//出現確率
+        //probability = 5;//出現確率
         drainCoefficient = 0.1f;
     }
 
     void Drain::Update(float elapsedTime)
-    {
-
-    }
-
-    void Drain::Render()
     {
 
     }

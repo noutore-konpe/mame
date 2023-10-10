@@ -14,6 +14,9 @@ namespace PlayerState
         void Initialize() override;
         void Update(const float& elapsedTime) override;
         void Finalize() override;
+
+    private:
+        bool enableInputButton = false;//入力受付可能（回避が連続ででないようにするため）  
     };
 
     //攻撃

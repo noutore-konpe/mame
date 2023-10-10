@@ -294,7 +294,7 @@ void SceneDemo::Update(const float& elapsedTime)
     else
 #endif // _DEBUG
     {
-        Camera::Instance().Update();
+        Camera::Instance().Update(elapsedTime);
     }
 
     // slime

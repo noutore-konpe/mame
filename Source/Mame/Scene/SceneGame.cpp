@@ -240,6 +240,9 @@ void SceneGame::Initialize()
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
     expManager.Initialize();
 
+    //今だけロックオン処理いれとく
+    Camera::Instance().SetLockOnTargetPos(enemyGolem->GetTransform());
+
 }
 
 // 終了化
@@ -318,10 +321,19 @@ void SceneGame::Update(const float& elapsedTime)
 
         SetCursorPos(posX, posY);
     }
-    else
 #endif // _DEBUG
+
+    //カード演出中はほかの処理を更新しない
+    auto* player = PlayerManager::Instance().GetPlayer().get();
+    if (player->isSelectingSkill)
     {
-        Camera::Instance().Update();
+        player->SelectSkillUpdate(elapsedTime);
+
+        return;
+    }
+
+    {
+        Camera::Instance().Update(elapsedTime);
     }
 
     // enemy
@@ -348,11 +360,16 @@ void SceneGame::Update(const float& elapsedTime)
         magicCircleSummon[i]->Update(elapsedTime);
     }
 
+    // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
     expManager.Update(elapsedTime);
 
     // effect
     EffectManager::Instance().Update(elapsedTime);
+
+
+    //カード演出中だけUpdate前にreturn呼んでるから注意！！
+
 
 }
 

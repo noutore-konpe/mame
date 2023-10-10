@@ -3,9 +3,9 @@
 
 void BaseSkill::Render()
 {
-    if (player->isSelectingSkill)
+    if (player->isSelectingSkill && isSelect)
     {
-        card->Render();
+        card->Render();//‰¼
     }
     if (overlap > 0)icon->Render();
 }

@@ -98,6 +98,8 @@ public: // 取得・設定関数
 public: // その他の関数
 #pragma region OtherFunction
 
+    void AddMaxHealth(const float hp) { maxHealth += hp; }
+
     void Turn(float elapsedTime, float vx, float vz, float rotSpeed);
 
     //ダメージを受けたときに呼ばれる
@@ -124,6 +126,7 @@ public:
     float maxHealth;
     float health;                   // hp
     float invincibleTime = 1.0f;    // 無敵時間
+    float rotValue;                 // 回転量
 
 private:
     //Transform collisionSphereTransform{};
@@ -132,7 +135,6 @@ private:
 
     std::string name_    = "";
     float       radius_ = 0.25f;
-
 
 };
 

@@ -51,6 +51,8 @@ public:
 
     void AvoidUpdate(float elapsedTime);
 
+    void ModelRotZUpdate(float elapsedTime);
+
     void CameraControllerUpdate(float elapsedTime);
     
     void Render(const float scale, ID3D11PixelShader* psShader = nullptr) override; // 描画処理
@@ -79,7 +81,17 @@ public:
 
     static bool InputAvoid()
     {
-        return (Input::Instance().GetGamePad().GetButton() & GamePad::BTN_A);
+        return (Input::Instance().GetGamePad().GetTriggerR() > 0.5f);
+    }
+
+    static bool InputDecide()
+    {
+        return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_A);
+    }
+
+    static bool InputLockOn()
+    {
+        return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_RIGHT_THUMB);
     }
 
     //getter,setter
@@ -102,6 +114,13 @@ public:
     void SetVelocity(const DirectX::XMFLOAT3 velo) { velocity = velo; }
 
     void ResetSteppingTimer() { steppingTimer = 0; }
+
+    //レベルアップ時すべての更新処理を止めてスキル選択演出をする
+    void SelectSkillUpdate(float elapsedTime);
+
+    BaseSkill* Lottery();//カードを抽選
+    void DrawCards();//３つのスキルカードを抽選　drawingSkillCardsに格納
+
 private:
     void LevelUpdate();
 
@@ -110,6 +129,7 @@ public:
 
     static constexpr float InitAcceleration = 10.0f;
 
+    float actualRotValue;//回避中、実際に回転させるZ値
 private:
     //----------------------------シェーダー----------------------------------
     Microsoft::WRL::ComPtr<ID3D11PixelShader> playerPS;
@@ -129,6 +149,9 @@ private:
 
     float deceleration;
     float acceleration;
+    float dodgeAcceleration = 30.0f;
+
+    float rotTimer = 0;
     //-----------------------------------------------------------------------
 
     //--------------------------レベル-----------------------------------------
@@ -151,6 +174,13 @@ private:
     std::unique_ptr<PlayerSkill::AttackPowerUp> attackPowerUpSkill;
     std::unique_ptr<PlayerSkill::AttackSpeedUp> attackSpeedUpSkill;
     std::unique_ptr<PlayerSkill::BookIncrease> bookIncreaseSkill;
+    std::unique_ptr<PlayerSkill::MaxHitPointUp> maxHitPointUpSkill;
+
+    BaseSkill* drawingSkillCards[3];
+    int drawDirectionState;//カードドロー演出ステート
+    float drawDirectionTime = 0.5f;//カードが画面上から落ちてきて止まるまでの時間
+    float drawDirectionTimer = 0;//演出に使う用のタイマー
+    int selectCard = 0;
 
     //---------------------------攻撃関係-------------------------------
     float baseAttackPower;//基礎攻撃力（これにモーション倍率を掛けて計算する）
