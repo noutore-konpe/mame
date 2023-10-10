@@ -6,13 +6,13 @@
 #define USE_RESOURCE_MANAGER
 
 Model::Model(ID3D11Device* device, const char* fbx_filename, const char* psFilename, bool triangulate, float sampling_rate)
-{   
+{
 #ifdef USE_RESOURCE_MANAGER // リソースマネージャーあり
     skinned_meshes = ResourceManager::Instance().LoadModelResource(
-        device, 
-        fbx_filename, 
+        device,
+        fbx_filename,
         psFilename,
-        triangulate, 
+        triangulate,
         sampling_rate
     );
 #else // リソースマネージャーなし
@@ -24,9 +24,9 @@ Model::Model(ID3D11Device* device, const char* fbx_filename, const char* psFilen
 Model::Model(ID3D11Device* device, const char* fbx_filename, std::vector<std::string>& animation_filenames, bool triangulate, float sampling_rate)
 {
     skinned_meshes = ResourceManager::Instance().LoadModelResource(
-        device, fbx_filename, 
-        animation_filenames, 
-        triangulate, 
+        device, fbx_filename,
+        animation_filenames,
+        triangulate,
         sampling_rate
     );
 }
@@ -86,14 +86,13 @@ void Model::PlayAnimation(
     const float& speed, const float& blendSeconds)
 {
     // 設定用のアニメーション番号が現在のアニメーション番号と同じ場合はreturn
-    if (currentAnimationIndex == index) return;
+    if (index == currentAnimationIndex) return;
 
     currentAnimationIndex   = index;    // 再生するアニメーション番号を設定
     currentAnimationSeconds = 0.0f;     // アニメーション再生時間リセット
 
     blendAnimationIndex1 = -1;    // 再生するアニメーション番号を設定
     blendAnimationIndex2 = -1;    // 再生するアニメーション番号を設定
-
 
     animationLoopFlag       = loop;     // ループさせるか
     animationEndFlag        = false;    // 再生終了フラグをリセット
@@ -104,7 +103,9 @@ void Model::PlayAnimation(
     animationBlendSeconds   = blendSeconds;
 }
 
-void Model::PlayBlendAnimation(const int& index1, const int& index2, const bool& loop, const float& speed)
+void Model::PlayBlendAnimation(
+    const int& index1, const int& index2,
+    const bool& loop, const float& speed)
 {
     // 設定用のアニメーション番号が現在のアニメーション番号と同じ場合はreturn
     if (blendAnimationIndex1 == index1 && blendAnimationIndex2 == index2) return;
@@ -147,13 +148,13 @@ void Model::UpdateAnimation(const float& elapsedTime)
     // 最終フレーム処理(再生終了フラグが立っていれば再生終了)
     if (animationEndFlag)
     {
-        animationEndFlag = false; // 終了フラグをリセット
+        animationEndFlag      = false; // 終了フラグをリセット
         currentAnimationIndex = -1;    // アニメーション番号リセット
         return;
     }
 
     //ブレンドアニメーションの再生（再生中の場合これ以降の通常再生の処理はしない）
-    if (UpdateBlendAnimation(elapsedTime))return;
+    if (UpdateBlendAnimation(elapsedTime)) return;
 
     // アニメーション再生時間経過
     currentAnimationSeconds += elapsedTime;
@@ -163,7 +164,7 @@ void Model::UpdateAnimation(const float& elapsedTime)
 
     // 現在のフレームを取得
     const float  frameIndex_float = (currentAnimationSeconds * animation.sampling_rate) * animationSpeed; // 警告がじゃまなので一時的にfloat変数に格納
-    const size_t frameIndex = static_cast<const size_t>(frameIndex_float);
+    const size_t frameIndex = static_cast<size_t>(frameIndex_float);
 
     //外部から現在のフレームを取ってこれるようにする
     currentKeyframeIndex = frameIndex;

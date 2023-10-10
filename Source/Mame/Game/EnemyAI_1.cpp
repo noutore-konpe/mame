@@ -64,7 +64,7 @@ void EnemyAI_1::Initialize()
     BaseEnemyAI::Initialize();
 
     // アニメーション再生
-    Character::PlayAnimation(0, true);
+    Character::PlayBlendAnimation(0, true);
 
 }
 

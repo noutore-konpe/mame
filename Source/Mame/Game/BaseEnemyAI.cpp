@@ -16,8 +16,6 @@ void BaseEnemyAI::Initialize()
 
 void BaseEnemyAI::Update(const float& elapsedTime)
 {
-    using std::make_unique;
-
     Character::Update(elapsedTime);
 
     // ノード更新

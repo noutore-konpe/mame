@@ -27,8 +27,8 @@ private:
         float             radius_             = 0.08f;
         float             addRotate_          = ::ToRadian(180.0f);
         float             correct_            = 0.0f;                       // 補正値
-        float             groundPositionY_    = center_.y - radius_;       // 円運動の開始地点Y(経験値にとっての地面位置Y)
-        float             outGroundPositionY_ = center_.y + radius_;       // 円運動の中心+半径(+修正値)より上にいたら空中にいるものとする
+        //float             groundPositionY_    = center_.y - radius_;       // 円運動の開始地点Y(経験値にとっての地面位置Y)
+        //float             outGroundPositionY_ = center_.y + radius_;       // 円運動の中心+半径(+修正値)より上にいたら空中にいるものとする
     };
 
 public:
