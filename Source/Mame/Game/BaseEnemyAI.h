@@ -48,6 +48,9 @@ public: // 取得・設定
     void SetRunTimer(const float runTimer) { runTimer_ = runTimer; }
     void ElapseRunTimer(const float elapsedTime) { runTimer_ = (std::max)(0.0f, runTimer_ - elapsedTime); }
 
+    const float GetAnimationSpeed() const { return animationSpeed_; }
+    void SetAnimationSpeed(const float animationSpeed) { animationSpeed_ = animationSpeed; }
+
 public:
     void Move(
         const float vx,
@@ -91,16 +94,18 @@ protected:
     DirectX::XMFLOAT3 moveVec_  = {};
     DirectX::XMFLOAT3 velocity_ = {};
 
-    float moveSpeed_    = 1.0f;
+    float moveSpeed_    = 3.5f;
     float maxMoveSpeed_ = 0.0f;
     float turnSpeed_    = 360.0f;
     float gravity_      = -1.0f;
-    float friction_     = 0.5f;
+    float friction_     = 0.2f;
     float airControl_   = 0.3f;
-    float acceleration_ = 1.0f;
+    float acceleration_ = 0.3f;
 
     float attackLength_ = 3.0f; // 攻撃距離
     float runTimer_     = 0.0f;
+
+    float animationSpeed_ = 1.0f; // アニメーション速度
 
     bool isGround_      = false;
 

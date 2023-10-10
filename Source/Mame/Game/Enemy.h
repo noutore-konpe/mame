@@ -19,5 +19,8 @@ public:
 
     //virtual void UpdateConstants() = 0;
 
+protected:
+    int dropExpCount_ = 5;
+
 };
 

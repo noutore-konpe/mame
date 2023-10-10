@@ -17,14 +17,14 @@ public:
 
 
     void Render(const float& scale, ID3D11PixelShader* psShader = nullptr);
-     
+
     void DrawDebug();
 
     Transform* GetTransform() { return &transform; }
-    
+
     void SetModelColor(DirectX::XMFLOAT4 c) { color = c; }
     DirectX::XMFLOAT4 GetModelColor() { return color; }
-    
+
 public: // 取得・設定関数関連
     // アニメーションデータ取得
     std::vector<animation>* GetAnimation() { return &skinned_meshes->animation_clips; };
@@ -38,10 +38,10 @@ public: // 取得・設定関数関連
 
     //現在のアニメーションが何フレーム目かの取得
     const int GetCurrentKeyframeIndex() const { return currentKeyframeIndex; }
-    const int GetCurrentKeyframeMaxIndex() 
-    { 
-        if (currentAnimationIndex < 0)return 1;
-        return GetAnimation()->at(currentAnimationIndex).sequence.size(); 
+    const size_t GetCurrentKeyframeMaxIndex()
+    {
+        if (currentAnimationIndex < 0) return 1;
+        return GetAnimation()->at(currentAnimationIndex).sequence.size();
     }
 
 public: // アニメーション関数関連

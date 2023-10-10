@@ -65,9 +65,6 @@ void EnemyAI_3::Initialize()
 
     attackLength_ = 6.0f; // 攻撃が可能な距離をのばす
 
-    // アニメーション再生
-    Character::PlayAnimation(0, true);
-
 }
 
 

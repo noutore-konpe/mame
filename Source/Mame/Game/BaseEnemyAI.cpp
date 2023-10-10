@@ -206,6 +206,9 @@ void BaseEnemyAI::UpdateHorizontalVelocity(const float elapsedFrame)
         (velocity_.z * velocity_.z)
     );
 
+    //アニメーションの重みの変更
+    model->weight = oldLength / maxMoveSpeed_;
+
     // XZ平面の速力を減速する
     if (oldLength > 0.0f)
     {
