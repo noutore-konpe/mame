@@ -6,6 +6,8 @@
 
 #include "EnemyGolemState.h"
 
+int EnemyGolem::nameNum_;
+
 // コンストラクタ
 EnemyGolem::EnemyGolem()
 {
@@ -39,7 +41,7 @@ EnemyGolem::EnemyGolem()
     }
 
     // ImGui名前設定
-    SetName("EnemyGolem" + std::to_string(nameNum++));
+    SetName("EnemyGolem" + std::to_string(nameNum_++));
 }
 
 // デストラクタ

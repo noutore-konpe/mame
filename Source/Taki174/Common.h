@@ -43,7 +43,7 @@ inline void rotate(
     y += cy;
 };
 
-// float版rand関数(※事前にsrand処理が必要)
+// ランダムfloat関数(※事前にsrand処理が必要)
 inline const float RandFloat(
     const float min,
     const float max)
@@ -56,7 +56,8 @@ inline const float RandFloat(
     return value * (max - min) + min;
 }
 
-inline const float RandInt(
+// ランダムint関数(※事前にsrand処理が必要)
+inline const int RandInt(
     const int min,
     const int max)
 {

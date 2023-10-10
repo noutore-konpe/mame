@@ -73,8 +73,6 @@ void Book::Update(const float& elapsedTime)
     // 弾丸更新処理
     projectileManager.Update(elapsedTime);
 
-
-
     // アニメーション更新
     UpdateAnimation(elapsedTime);
 }

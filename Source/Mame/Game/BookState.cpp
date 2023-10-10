@@ -22,7 +22,7 @@ namespace BookState
         // ‰ñ“]’l
         {
             DirectX::XMFLOAT4 bookRot = PlayerManager::Instance().GetPlayer()->GetTransform()->GetRotation();
-            bookRot.x += DirectX::XMConvertToRadians(320.0f);
+            bookRot.x += DirectX::XMConvertToRadians(320.0f) * elapsedTime;
 
             // ‰ñ“]’l‚ðÝ’è
             owner->GetTransform()->SetRotation(bookRot);
@@ -248,7 +248,7 @@ namespace BookState
         // ‰ñ“]’l
         {
             DirectX::XMFLOAT4 bookRot = PlayerManager::Instance().GetPlayer()->GetTransform()->GetRotation();
-            bookRot.x += DirectX::XMConvertToRadians(320.0f);
+            bookRot.x += DirectX::XMConvertToRadians(320.0f) * elapsedTime;
 
             // ‰ñ“]’l‚ðÝ’è
             owner->GetTransform()->SetRotation(bookRot);

@@ -108,7 +108,7 @@ void Player::Begin()
 }
 
 // XVˆ—
-void Player::Update(const float& elapsedTime)
+void Player::Update(const float elapsedTime)
 {
     Character::Update(elapsedTime);
 
@@ -353,7 +353,7 @@ void Player::CameraControllerUpdate(float elapsedTime)
 }
 
 // •`‰æˆ—
-void Player::Render(const float& scale, ID3D11PixelShader* psShader)
+void Player::Render(const float scale, ID3D11PixelShader* psShader)
 {
     Character::Render(scale, playerPS.Get());
 

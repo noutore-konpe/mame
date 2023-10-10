@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "Character.h"
+#include "Enemy.h"
 
 #include "BehaviorTree.h"
 #include "BehaviorData.h"
@@ -10,20 +10,19 @@
 
 class ProjectileManager;
 
-class BaseEnemyAI : public Character
+class BaseEnemyAI : public Enemy
 {
 public:
     BaseEnemyAI();
     ~BaseEnemyAI() override {}
 
     void Initialize() override;
+    void Finalize()   override {}
+    void Begin()      override {}
     void Update(const float& elapsedTime) override;
+    void End()        override {}
     void Render(const float& scale, ID3D11PixelShader* psShader = nullptr) override;
-    void DrawDebug() override;
-
-    virtual void Finalize() {}
-    virtual void Begin() {}
-    virtual void End() {}
+    void DrawDebug()  override;
 
 public:
     // 目的地点へ移動
@@ -48,8 +47,6 @@ public: // 取得・設定
     const float GetRunTimer() const { return runTimer_; }
     void SetRunTimer(const float runTimer) { runTimer_ = runTimer; }
     void ElapseRunTimer(const float elapsedTime) { runTimer_ = (std::max)(0.0f, runTimer_ - elapsedTime); }
-
-    const float GetRadius() const { return radius_; }
 
 public:
     void Move(
@@ -104,8 +101,6 @@ protected:
 
     float attackLength_ = 3.0f; // 攻撃距離
     float runTimer_     = 0.0f;
-
-    float radius_       = 0.5f;
 
     bool isGround_      = false;
 

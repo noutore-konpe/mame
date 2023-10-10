@@ -5,8 +5,6 @@
 #include "../Scene/SceneGame.h"
 #endif
 
-int Character::nameNum = 0;
-
 // コンストラクタ
 Character::Character()
 {
@@ -25,24 +23,25 @@ void Character::Initialize()
 }
 
 // 更新処理
-void Character::Update(const float& elapsedTime)
+void Character::Update(const float elapsedTime)
 {
     DirectX::XMFLOAT3 position = GetTransform()->GetPosition();
-    position = { position.x + debugSqhereOffset.x, position.y + debugSqhereOffset.y , position.z + debugSqhereOffset.z };
-    GetCollisionSqhereTransform()->SetPosition(position);
-    GetCollisionSqhereTransform()->SetScaleFactor(range);
-    GetCollisionSqhereTransform()->SetRotation(GetTransform()->GetRotation());
+    position = { position.x + debugSphereOffset.x, position.y + debugSphereOffset.y , position.z + debugSphereOffset.z };
+    GetCollisionSphereTransform()->SetPosition(position);
+    GetCollisionSphereTransform()->SetScaleFactor(range);
+    GetCollisionSphereTransform()->SetRotation(GetTransform()->GetRotation());
 
 #ifdef _DEBUG
-    debugSqhere->GetTransform()->SetPosition(GetCollisionSqhereTransform()->GetPosition());
+    debugSqhere->GetTransform()->SetPosition(GetCollisionSphereTransform()->GetPosition());
     debugSqhere->GetTransform()->SetScaleFactor(range);
     //debugSqhere->GetTransform()->SetScale(GetCollisionSqhereTransform()->GetScale());
-    debugSqhere->GetTransform()->SetRotation(GetCollisionSqhereTransform()->GetRotation());
+    debugSqhere->GetTransform()->SetRotation(GetCollisionSphereTransform()->GetRotation());
 #endif // _DEBUG
 }
 
 // 描画処理
-void Character::Render(const float& scale, ID3D11PixelShader* psShader)
+void Character::Render(
+    const float scale, ID3D11PixelShader* psShader)
 {
     Graphics::Instance().GetShader()->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::SOLID));
     model->Render(scale, psShader);
@@ -68,7 +67,7 @@ void Character::DrawDebug()
     if (ImGui::TreeNode("debugSqhere"))
     {
         debugSqhere->GetTransform()->DrawDebug();
-        ImGui::DragFloat3("offset", &debugSqhereOffset.x);
+        ImGui::DragFloat3("offset", &debugSphereOffset.x);
         DirectX::XMFLOAT4 debugSqhereColor = debugSqhere->GetModelColor();
         ImGui::ColorEdit4("debugSqhereColor", &debugSqhereColor.x);
         debugSqhere->SetModelColor(debugSqhereColor);

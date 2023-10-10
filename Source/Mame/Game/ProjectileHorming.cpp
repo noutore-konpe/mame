@@ -1,11 +1,13 @@
-#include "ProjectileStraight.h"
+#include "ProjectileHorming.h"
 
 #include "../../Taki174/OperatorXMFloat3.h"
 #include "../Graphics/Graphics.h"
+#include "PlayerManager.h"
+#include "EnemyManager.h"
 
-int ProjectileStraight::nameNum_ = 0;
+int ProjectileHorming::nameNum_ = 0;
 
-ProjectileStraight::ProjectileStraight(ProjectileManager* manager)
+ProjectileHorming::ProjectileHorming(ProjectileManager* manager)
     : Projectile(manager)
 {
     Graphics& graphics = Graphics::Instance();
@@ -16,17 +18,17 @@ ProjectileStraight::ProjectileStraight(ProjectileManager* manager)
     );
 
     // ImGuiñºëOê›íË
-    SetName("ProjectileStraite : " + std::to_string(nameNum_++));
+    SetName("ProjectileHorming : " + std::to_string(nameNum_++));
 }
 
 
-ProjectileStraight::~ProjectileStraight()
+ProjectileHorming::~ProjectileHorming()
 {
     --nameNum_;
 }
 
 
-void ProjectileStraight::Initialize()
+void ProjectileHorming::Initialize()
 {
     using DirectX::XMFLOAT3;
 
@@ -35,9 +37,12 @@ void ProjectileStraight::Initialize()
 }
 
 
-void ProjectileStraight::Update(const float elapsedTime)
+void ProjectileHorming::Update(const float elapsedTime)
 {
     using DirectX::XMFLOAT3;
+
+    PlayerManager& plManager = PlayerManager::Instance();
+    EnemyManager& enmManager = EnemyManager::Instance();
 
     // éıñΩèàóù
     {
@@ -47,6 +52,13 @@ void ProjectileStraight::Update(const float elapsedTime)
 
     // à⁄ìÆ
     {
+        const size_t enemyCount = enmManager.GetEnemyCount();
+        for (size_t i = 0; i < enemyCount; ++i)
+        {
+            Enemy
+        }
+
+
         const XMFLOAT3 force = direction_ * speed_;
         GetTransform()->AddPosition(force * elapsedTime);
     }
@@ -54,14 +66,14 @@ void ProjectileStraight::Update(const float elapsedTime)
 }
 
 
-void ProjectileStraight::Render(
+void ProjectileHorming::Render(
     const float scale, ID3D11PixelShader* psShader)
 {
     Projectile::Render(scale, psShader);
 }
 
 
-void ProjectileStraight::DrawDebug()
+void ProjectileHorming::DrawDebug()
 {
 #ifdef USE_IMGUI
 
@@ -77,12 +89,8 @@ void ProjectileStraight::DrawDebug()
 
 
 // î≠éÀ
-void ProjectileStraight::Launch(
-    const DirectX::XMFLOAT3& direction,
-    const DirectX::XMFLOAT3& position)
+void ProjectileHorming::Launch(const DirectX::XMFLOAT3& position)
 {
     Initialize();
-
-    direction_ = direction;
     GetTransform()->SetPosition(position);
 }

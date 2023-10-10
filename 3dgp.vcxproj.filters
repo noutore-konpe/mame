@@ -451,6 +451,9 @@
     <ClCompile Include="Source\Mame\Game\ExperiencePointManager.cpp">
       <Filter>mamelib\Mame\Game\ExperiencePoint</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\ProjectileHorming.cpp">
+      <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -787,6 +790,9 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\ExperiencePointManager.h">
       <Filter>mamelib\Mame\Game\ExperiencePoint</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\ProjectileHorming.h">
+      <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
