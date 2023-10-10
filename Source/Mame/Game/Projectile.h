@@ -7,15 +7,11 @@ class ProjectileManager;
 
 class Projectile
 {
-//public:
-//    enum class TYPE
-//    {
-//        STRAIGHT,
-//
-//    };
-
 public:
-    Projectile(ProjectileManager* manager);
+    Projectile(
+        ProjectileManager* manager,
+        const bool isPoison = false
+    );
     virtual ~Projectile() {}
 
     virtual void Initialize();
@@ -52,6 +48,8 @@ protected:
     Character*          parent_     = nullptr;  // 自分を生成したキャラクターのポインタ
     std::string         name_       = "";
     float               radius_     = 0.5f;
+
+    bool                isPoison_;
 
 };
 

@@ -5,7 +5,10 @@
 class ProjectileStraight : public Projectile
 {
 public:
-    ProjectileStraight(ProjectileManager* manager);
+    ProjectileStraight(
+        ProjectileManager* manager,
+        const bool isPoison = false
+    );
     ~ProjectileStraight() override;
 
     void Initialize()                    override;

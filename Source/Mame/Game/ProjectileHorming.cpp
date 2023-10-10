@@ -8,8 +8,9 @@
 
 int ProjectileHorming::nameNum_ = 0;
 
-ProjectileHorming::ProjectileHorming(ProjectileManager* manager)
-    : Projectile(manager)
+ProjectileHorming::ProjectileHorming(
+    ProjectileManager* manager, const bool isPoison)
+    : Projectile(manager, isPoison)
 {
     Graphics& graphics = Graphics::Instance();
 

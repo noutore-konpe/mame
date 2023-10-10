@@ -1,8 +1,11 @@
 #include "Projectile.h"
 #include "ProjectileManager.h"
 
-Projectile::Projectile(ProjectileManager* manager)
+Projectile::Projectile(
+    ProjectileManager* manager,
+    const bool isPoison)
     : manager_(manager)
+    , isPoison_(isPoison)
 {
     manager->Register(this);
 }

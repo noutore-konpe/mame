@@ -102,7 +102,7 @@ void Book::DrawDebug()
         using DirectX::XMFLOAT3;
         const XMFLOAT3& position = this->GetTransform()->GetPosition();
         const XMFLOAT3  forward  = this->GetTransform()->CalcForward();
-        ProjectileHorming* projHorming = new ProjectileHorming(&projectileManager);
+        ProjectileHorming* projHorming = new ProjectileHorming(&projectileManager, false); // “Å‚È‚µ
         projHorming->Launch(position, forward);
     }
 

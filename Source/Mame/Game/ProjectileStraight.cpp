@@ -5,8 +5,10 @@
 
 int ProjectileStraight::nameNum_ = 0;
 
-ProjectileStraight::ProjectileStraight(ProjectileManager* manager)
-    : Projectile(manager)
+ProjectileStraight::ProjectileStraight(
+    ProjectileManager* manager, const bool isPoison
+)
+    : Projectile(manager, isPoison)
 {
     Graphics& graphics = Graphics::Instance();
 

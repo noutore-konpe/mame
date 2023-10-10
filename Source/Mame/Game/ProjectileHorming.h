@@ -5,7 +5,10 @@
 class ProjectileHorming : public Projectile
 {
 public:
-    ProjectileHorming(ProjectileManager* manager);
+    ProjectileHorming(
+        ProjectileManager* manager,
+        const bool isPoison = false
+    );
     ~ProjectileHorming() override;
 
     void Initialize()                    override;
