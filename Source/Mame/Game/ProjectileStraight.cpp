@@ -30,7 +30,7 @@ void ProjectileStraight::Initialize()
 {
     using DirectX::XMFLOAT3;
 
-    constexpr float scale = 100.0f;
+    constexpr float scale = 10.0f;
     GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
 }
 

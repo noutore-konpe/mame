@@ -22,6 +22,7 @@
 #include "../Game/EnemyAI_3.h"
 
 #include "../Game/ProjectileManager.h"
+#include "../Game/ProjectileHorming.h"
 
 #include "../Game/ExperiencePointManager.h"
 
@@ -74,7 +75,7 @@ void SceneGame::CreateResource()
 
     // enemy
     {
-#if 0
+#if 1
         // max 6~7
         EnemyManager& enemyManager = EnemyManager::Instance();
         // EnemyAI_1
@@ -620,6 +621,7 @@ void SceneGame::Render(const float& elapsedTime)
 void SceneGame::DrawDebug()
 {
 #ifdef USE_IMGUI
+    using DirectX::XMFLOAT3;
 
     Graphics::Instance().GetShader()->DrawDebug();
 

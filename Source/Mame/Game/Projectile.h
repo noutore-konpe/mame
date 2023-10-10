@@ -32,6 +32,9 @@ public:
 public:
     Transform* GetTransform() { return model_->GetTransform(); }
 
+    const DirectX::XMFLOAT3& GetPosition() { return GetTransform()->GetPosition(); }
+    void SetPosition(const DirectX::XMFLOAT3& pos) { GetTransform()->SetPosition(pos); }
+
     const Character* GetParent() const { return parent_; }
     void SetParent(Character* parent) { parent_ = parent; }
 

@@ -5,6 +5,7 @@
 
 #include "PlayerManager.h"
 #include "ProjectileStraight.h"
+#include "ProjectileHorming.h"
 
 int Book::totalNum = 0;
 
@@ -95,14 +96,26 @@ void Book::Render(const float& scale, ID3D11PixelShader* psShader)
 void Book::DrawDebug()
 {
 #ifdef USE_IMGUI
+    // ホーミング弾生成
+    if (ImGui::Button("Projectile Horming"))
+    {
+        using DirectX::XMFLOAT3;
+        const XMFLOAT3& position = this->GetTransform()->GetPosition();
+        const XMFLOAT3  forward  = this->GetTransform()->CalcForward();
+        ProjectileHorming* projHorming = new ProjectileHorming(&projectileManager);
+        projHorming->Launch(position, forward);
+    }
+
     if (ImGui::BeginMenu(GetName()))
     {
         Item::DrawDebug();
 
-        //projectileManager.DrawDebug();
+        projectileManager.DrawDebug();
 
         ImGui::EndMenu();
     }
+    ImGui::Separator();
+
 #endif // USE_IMGUI
 }
 

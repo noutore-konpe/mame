@@ -72,7 +72,7 @@ public: // Žæ“¾EÝ’èŠÖ”
     Transform* GetTransform() { return model->GetTransform(); }
     Transform* GetCollisionSphereTransform() { return &collisionSphereTransform; }
 
-    const DirectX::XMFLOAT3 GetPosition() { return GetTransform()->GetPosition(); }
+    const DirectX::XMFLOAT3& GetPosition() { return GetTransform()->GetPosition(); }
     void SetPosition(const DirectX::XMFLOAT3& pos) { GetTransform()->SetPosition(pos); }
 
     void SetDebugSphereOffset(DirectX::XMFLOAT3 offset) { debugSphereOffset = offset; }
