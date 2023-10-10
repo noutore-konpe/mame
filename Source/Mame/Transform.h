@@ -39,6 +39,8 @@ public:
 	DirectX::XMFLOAT3 CalcUp()const;
 	DirectX::XMFLOAT3 CalcRight()const;
 
+	void SetWorld(DirectX::XMMATRIX world);
+
 	const DirectX::XMFLOAT3& GetPosition() const { return position; }
 	const float GetPositionX() const { return position.x; }
 	const float GetPositionY() const { return position.y; }

@@ -18,6 +18,7 @@ ComboAttackStone::ComboAttackStone()
 
         GetStateMachine()->RegisterState(new ComboAttackStoneState::DummyState(this));
         GetStateMachine()->RegisterState(new ComboAttackStoneState::AppearState(this));
+        GetStateMachine()->RegisterState(new ComboAttackStoneState::ThrowState(this));
 
         GetStateMachine()->SetState(static_cast<UINT>(StateMachineState::DummyState));
     }
@@ -27,6 +28,8 @@ ComboAttackStone::ComboAttackStone()
 void ComboAttackStone::Initialize()
 {
     stoneBall->Initialize();
+
+    isChangeState = false;
 }
 
 // I—¹‰»

@@ -34,6 +34,7 @@ EnemyGolem::EnemyGolem()
         GetStateMachine()->RegisterState(new EnemyGolemState::GetUpState(this));
         GetStateMachine()->RegisterState(new EnemyGolemState::Attack1State(this));
         GetStateMachine()->RegisterState(new EnemyGolemState::ComboAttack1State(this));
+        GetStateMachine()->RegisterState(new EnemyGolemState::DownState(this));
 
         GetStateMachine()->SetState(static_cast<UINT>(StateMachineState::IdleState));
     }
@@ -114,10 +115,10 @@ void EnemyGolem::Render(const float& scale, ID3D11PixelShader* psShader)
 
     magicCircleGolem->Render();
     magicCircleEnemySummon->Render(DirectX::XMFLOAT4(magicCircleColor[2]));
-    comboAttackStone->Render();
 
     if (currentState == static_cast<UINT>(StateMachineState::ComboAttack1State))
-    {
+    {   // •K—v‚ÈŽž‚¾‚¯•`‰æ‚·‚é
+        comboAttackStone->Render();
     }
 }
 
@@ -144,7 +145,7 @@ void EnemyGolem::DrawDebug()
 
         comboAttackStone->DrawDebug();
 
-        ImGui::SliderInt("currentState", &currentStateDebug, 0, 4);
+        ImGui::SliderInt("currentState", &currentStateDebug, 0, 5);
 
         if (ImGui::Button(stateName[currentStateDebug]))
         {
@@ -164,6 +165,9 @@ void EnemyGolem::DrawDebug()
                 break;
             case 4:
                 GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::ComboAttack1State));
+                break;
+            case 5:
+                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::DownState));
                 break;
             }
         }

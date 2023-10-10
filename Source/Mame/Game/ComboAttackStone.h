@@ -13,6 +13,7 @@ public:// 定数
     {
         DummyState,
         AppearState,
+        ThrowState,
     };
 
 public:
@@ -35,6 +36,8 @@ public:// 取得・設定
 public:
     std::unique_ptr<StoneBall> stoneBall = nullptr;
     std::unique_ptr<MagicCircle> magicCircle = nullptr;
+
+    bool isChangeState = false;
 
 private:
     // ステートマシン

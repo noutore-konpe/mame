@@ -82,3 +82,13 @@ DirectX::XMFLOAT3 Transform::CalcRight() const
     DirectX::XMStoreFloat3(&right, DirectX::XMVector3Normalize(rotationMatrix.r[0]));
     return right;
 }
+
+void Transform::SetWorld(DirectX::XMMATRIX world)
+{
+    DirectX::XMFLOAT4X4 w;
+    DirectX::XMStoreFloat4x4(&w, world);
+
+    position = { w._11,w._12,w._13 };
+    scale = { w._21,w._22,w._23 };
+    rotation = { w._31,w._32,w._33,w._34 };
+}

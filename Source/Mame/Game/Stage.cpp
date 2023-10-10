@@ -7,21 +7,17 @@ Stage::Stage()
     Graphics& graphics = Graphics::Instance();
 
     model = std::make_unique<Model>(graphics.GetDevice(), 
-        //"./Resources/Model/Stage/stageWall.fbx", 
         "./Resources/Model/Stage/stageBase.fbx", 
-        //"./Resources/Model/Stage/plane.fbx", 
-        //"./Resources/Model/Stage/plane.fbx", 
-        //"./Resources/Model/testModel/death_valley_-_terrain.fbx", 
         "./Resources/Shader/StagePS.cso");
 }
 
-Stage::Stage(const char* fbxFilename)
+Stage::Stage(const char* fbxFilename, const char* psFilename)
 {
     Graphics& graphics = Graphics::Instance();
 
     model = std::make_unique<Model>(graphics.GetDevice(),
         fbxFilename,
-        "./Resources/Shader/StagePS.cso");
+        psFilename);
 }
 
 Stage::~Stage()

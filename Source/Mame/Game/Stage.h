@@ -6,7 +6,7 @@ class Stage
 {
 public:
     Stage();
-    Stage(const char* fbxFilename);
+    Stage(const char* fbxFilename, const char* psFilename);
     ~Stage();
 
     void Initialize();                                          // ‰Šú‰»

@@ -45,7 +45,9 @@ void SceneGame::CreateResource()
     // stage
     {
         stageBase = std::make_unique<Stage>();
-        stageWall = std::make_unique<Stage>("./Resources/Model/Stage/stageWall.fbx");
+        stageWall = std::make_unique<Stage>
+            ("./Resources/Model/Stage/stageWall.fbx",
+                "./Resources/Shader/StageWallPS.cso");
     }
 
     // enemy
