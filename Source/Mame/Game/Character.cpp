@@ -5,17 +5,15 @@
 #include "../Scene/SceneGame.h"
 #endif
 
-int Character::nameNum = 0;
-
 // コンストラクタ
 Character::Character()
 {
     Graphics& graphics = Graphics::Instance();
 
-#ifdef _DEBUG
-    debugSqhere = std::make_unique<Model>(graphics.GetDevice(),
-        "./Resources/Model/Collision/sqhere.fbx");
-#endif // _DEBUG
+//#ifdef _DEBUG
+//    debugSqhere = std::make_unique<Model>(graphics.GetDevice(),
+//        "./Resources/Model/Collision/sqhere.fbx");
+//#endif // _DEBUG
 }
 
 // 初期化
@@ -25,38 +23,39 @@ void Character::Initialize()
 }
 
 // 更新処理
-void Character::Update(const float& elapsedTime)
+void Character::Update(const float elapsedTime)
 {
-    DirectX::XMFLOAT3 position = GetTransform()->GetPosition();
-    position = { position.x + debugSqhereOffset.x, position.y + debugSqhereOffset.y , position.z + debugSqhereOffset.z };
-    GetCollisionSqhereTransform()->SetPosition(position);
-    GetCollisionSqhereTransform()->SetScaleFactor(range);
-    GetCollisionSqhereTransform()->SetRotation(GetTransform()->GetRotation());
+//    DirectX::XMFLOAT3 position = GetTransform()->GetPosition();
+//    position = { position.x + debugSphereOffset.x, position.y + debugSphereOffset.y , position.z + debugSphereOffset.z };
+//    GetCollisionSphereTransform()->SetPosition(position);
+//    GetCollisionSphereTransform()->SetScaleFactor(range);
+//    GetCollisionSphereTransform()->SetRotation(GetTransform()->GetRotation());
+//
+//#ifdef _DEBUG
+//    debugSqhere->GetTransform()->SetPosition(GetCollisionSphereTransform()->GetPosition());
+//    debugSqhere->GetTransform()->SetScaleFactor(range);
+//    //debugSqhere->GetTransform()->SetScale(GetCollisionSqhereTransform()->GetScale());
+//    debugSqhere->GetTransform()->SetRotation(GetCollisionSphereTransform()->GetRotation());
+//#endif // _DEBUG
 
-    rotValue = 0;//回転量リセット
+    rotValue = 0.0f; //回転量リセット
+    if (invincibleTime > 0.0f) invincibleTime -= elapsedTime;
 
-    if (invincibleTime > 0.0f)invincibleTime -= elapsedTime;
-
-#ifdef _DEBUG
-    debugSqhere->GetTransform()->SetPosition(GetCollisionSqhereTransform()->GetPosition());
-    debugSqhere->GetTransform()->SetScaleFactor(range);
-    //debugSqhere->GetTransform()->SetScale(GetCollisionSqhereTransform()->GetScale());
-    debugSqhere->GetTransform()->SetRotation(GetCollisionSqhereTransform()->GetRotation());
-#endif // _DEBUG
 }
 
 // 描画処理
-void Character::Render(const float& scale, ID3D11PixelShader* psShader)
+void Character::Render(
+    const float scale, ID3D11PixelShader* psShader)
 {
     Graphics::Instance().GetShader()->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::SOLID));
     model->Render(scale, psShader);
 
-#ifdef _DEBUG
-    // if(SceneDemo::isDebugRender)debugSqhere->Render(1.0f, 1);
-
-    Graphics::Instance().GetShader()->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::WIREFRAME));
-    if(SceneGame::isDebugRender)debugSqhere->Render(1.0f);
-#endif // _DEBUG
+//#ifdef _DEBUG
+//    // if(SceneDemo::isDebugRender)debugSqhere->Render(1.0f, 1);
+//
+//    Graphics::Instance().GetShader()->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::WIREFRAME));
+//    if(SceneGame::isDebugRender)debugSqhere->Render(1.0f);
+//#endif // _DEBUG
 }
 
 // ImGui用
@@ -68,17 +67,17 @@ void Character::DrawDebug()
 
     model->DrawDebug();
 
-#ifdef _DEBUG
-    if (ImGui::TreeNode("debugSqhere"))
-    {
-        debugSqhere->GetTransform()->DrawDebug();
-        ImGui::DragFloat3("offset", &debugSqhereOffset.x);
-        DirectX::XMFLOAT4 debugSqhereColor = debugSqhere->GetModelColor();
-        ImGui::ColorEdit4("debugSqhereColor", &debugSqhereColor.x);
-        debugSqhere->SetModelColor(debugSqhereColor);
-        ImGui::TreePop();
-    }
-#endif // _DEBUG
+//#ifdef _DEBUG
+//    if (ImGui::TreeNode("debugSqhere"))
+//    {
+//        debugSqhere->GetTransform()->DrawDebug();
+//        ImGui::DragFloat3("offset", &debugSphereOffset.x);
+//        DirectX::XMFLOAT4 debugSqhereColor = debugSqhere->GetModelColor();
+//        ImGui::ColorEdit4("debugSqhereColor", &debugSqhereColor.x);
+//        debugSqhere->SetModelColor(debugSqhereColor);
+//        ImGui::TreePop();
+//    }
+//#endif // _DEBUG
 
 
 #endif // USE_IMGUI

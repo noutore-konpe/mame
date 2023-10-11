@@ -3,7 +3,7 @@
 #include <vector>
 #include <set>
 
-#include "BaseEnemyAI.h"
+#include "Enemy.h"
 #include "ProjectileManager.h"
 
 class EnemyManager
@@ -32,10 +32,10 @@ public:
 
 public:
     // エネミー登録
-    void Register(BaseEnemyAI* enemy);
+    void Register(Enemy* enemy);
 
     // エネミー削除
-    void Remove(BaseEnemyAI* enemy);
+    void Remove(Enemy* enemy);
 
     // エネミー全削除
     void Clear();
@@ -45,7 +45,7 @@ public:
     const size_t GetEnemyCount() const { return enemies_.size(); }
 
     // エネミー取得
-    BaseEnemyAI* GetEnemy(const size_t index) { return enemies_.at(index); }
+    Enemy* GetEnemy(const size_t index) { return enemies_.at(index); }
     ProjectileManager* GetProjectileManager() { return &projectileManager_; }
 
     const bool GetIsRunningCRAAction() const { return isRunningCRAAction_; }
@@ -55,8 +55,8 @@ public:
     void SetCRAActionCoolTimer(const float craActionCoolTime) { craActionCoolTimer_ = craActionCoolTime; }
 
 private:
-    std::vector<BaseEnemyAI*> enemies_ = {};
-    std::set<BaseEnemyAI*>    removes_ = {};
+    std::vector<Enemy*> enemies_ = {};
+    std::set<Enemy*>    removes_ = {};
 
     ProjectileManager projectileManager_ = {};
 

@@ -16,5 +16,9 @@ public:
     void DrawDebug()                                            override; // デバッグ描画
 
     void UpdateConstants() override;
+
+private:
+    static int nameNum_;
+
 };
 

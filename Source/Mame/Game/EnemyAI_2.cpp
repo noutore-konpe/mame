@@ -68,9 +68,8 @@ void EnemyAI_2::Initialize()
     constexpr float scale = 1.5f;
     GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
 
-    // アニメーション再生
-    Character::PlayAnimation(0, true);
-
+    moveSpeed_      = 2.0f;
+    animationSpeed_ = 0.5f;
 }
 
 

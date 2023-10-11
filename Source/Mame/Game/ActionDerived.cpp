@@ -16,6 +16,8 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 	using DirectX::XMFLOAT3;
 	using DirectX::XMFLOAT4;
 
+	using Animation = Player::Animation;
+
 	PlayerManager& playerManager = PlayerManager::Instance();
 	//EnemyManager& enemyManager = EnemyManager::Instance();
 
@@ -28,13 +30,18 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 
 		// 自分の位置から回転を始めるようにする
 		{
-			const XMFLOAT3	position		= owner_->GetPosition();
-			const XMFLOAT3	playerPosition	= playerManager.GetPlayer()->GetPosition();
+			const XMFLOAT3&	position		= owner_->GetPosition();
+			const XMFLOAT3&	playerPosition	= playerManager.GetPlayer()->GetPosition();
 			const float		localPositionX	= position.x - playerPosition.x;
 			const float		localPositionZ	= position.z - playerPosition.z;
 
 			circleRotation_ = ::atan2f(localPositionX, localPositionZ); // return Radian Angle
 		}
+
+		owner_->PlayBlendAnimation(
+			Animation::Idle, Animation::Dash, false,
+			owner_->GetAnimationSpeed()
+		);
 
 		++step_;
 		[[fallthrough]];
@@ -74,6 +81,7 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 		}
 
 		// 円運動もどき
+#if 0
 		{
 			// 左右判定
 			const float playerRotationY = playerManager.GetPlayer()->GetTransform()->GetRotation().y;
@@ -110,10 +118,21 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 			owner_->SetTargetPosition(targetPosition);
 			owner_->MoveToTarget(elapsedTime, 1.0f, false);
 		}
+#endif
 
 		// 回転
 		owner_->Turn(elapsedTime, vx, vz, owner_->GetTurnSpeed());
 
+
+		// 待機と歩きのブレンドアニメーションが終わったら
+		// 待機アニメーションにしておく
+		if (false == owner_->IsPlayAnimation())
+		{
+			owner_->PlayAnimation(
+				Animation::Idle, true,
+				owner_->GetAnimationSpeed()
+			);
+		}
 	}
 
 	return ActionBase::State::Run;
@@ -125,6 +144,8 @@ const ActionBase::State PursuitAction::Run(const float elapsedTime)
 {
 	using DirectX::XMFLOAT3;
 
+	using Animation = Player::Animation;
+
 	PlayerManager& playerManager = PlayerManager::Instance();
 
 	//float runTimer = owner_->GetRunTimer();
@@ -135,6 +156,11 @@ const ActionBase::State PursuitAction::Run(const float elapsedTime)
 		owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
 		//owner_->SetRunTimer(Mathf::RandomRange(3.0f, 5.0f));
 		//owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::RunFWD), true);
+
+		owner_->PlayBlendAnimation(
+			Animation::Idle, Animation::Dash, true,
+			owner_->GetAnimationSpeed()
+		);
 
 		++step_;
 		[[fallthrough]];
@@ -198,7 +224,11 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 		// 目標地点をプレイヤー位置に設定
 		owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
 		owner_->SetRunTimer(::RandFloat(+1.0f, +1.0f));
-		//owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::RunFWD), true);
+
+		owner_->PlayAnimation(
+			Player::Animation::Jab_1, false,
+			owner_->GetAnimationSpeed()
+		);
 
 		++step_;
 		[[fallthrough]];
@@ -213,7 +243,7 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 		owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
 
 		// 行動しているのがわかりやすいように仮で回転させる
-		owner_->GetTransform()->AddRotationY(ToRadian(1080.0f) * elapsedTime);
+		//owner_->GetTransform()->AddRotationY(ToRadian(1080.0f) * elapsedTime);
 
 		// 行動時間が過ぎた時
 		if (owner_->GetRunTimer() <= 0.0f)
@@ -253,7 +283,11 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 		//owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
 		//owner_->SetRunTimer(::RandFloat(+1.0f, +1.0f));
 		owner_->SetRunTimer(3.0f);
-		//owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::RunFWD), true);
+
+		owner_->PlayAnimation(
+			Player::Animation::Jab_1, false,
+			owner_->GetAnimationSpeed()
+		);
 
 		++step_;
 		[[fallthrough]];

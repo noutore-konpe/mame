@@ -3,8 +3,8 @@
 #include "../Graphics/Graphics.h"
 #include "../Resource/texture.h"
 
-#include "../Game/ActionDerived.h"
-#include "../Game/JudgmentDerived.h"
+#include "ActionDerived.h"
+#include "JudgmentDerived.h"
 
 int EnemyAI_1::nameNum_ = 0;
 
@@ -62,9 +62,6 @@ EnemyAI_1::~EnemyAI_1()
 void EnemyAI_1::Initialize()
 {
     BaseEnemyAI::Initialize();
-
-    // アニメーション再生
-    Character::PlayAnimation(0, true);
 
 }
 

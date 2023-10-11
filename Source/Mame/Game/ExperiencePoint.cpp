@@ -70,7 +70,7 @@ void ExperiencePoint::Update(const float elapsedTime)
 
                 // 上昇中でなく円運動の開始地点まで降下していたら浮遊状態に移行する
                 if (velocity_.y <= 0.0f &&
-                    t->GetPositionY() <= circularMotion_.groundPositionY_)
+                    t->GetPositionY() <= circularMotion_.center_.y)
                 {
                     step_ = STEP::FLOTING_INIT;
                     break;
@@ -88,7 +88,7 @@ void ExperiencePoint::Update(const float elapsedTime)
     case STEP::FLOTING_INIT:
 
         // 自分の位置から回転を始めるようにする
-        t->SetPositionY(circularMotion_.groundPositionY_); // 円運動の開始地点Yに位置設定
+        t->SetPositionY(circularMotion_.center_.y); // 円運動の開始地点Yに位置設定
 #if 0
         {
             const float localPositionX = t->GetPositionX() - circularMotion_.center_.x;
@@ -96,8 +96,8 @@ void ExperiencePoint::Update(const float elapsedTime)
             circularMotion_.angle_.z = ::atan2f(localPositionX, localPositionY); // return Radian Angle
         }
 #else
-        // 下の位置から開始するので180度回転した状態で始める
-        circularMotion_.angle_.z = ToRadian(180.0f);
+        // 中心の位置から開始するので90度回転した状態で始める
+        circularMotion_.angle_.z = ToRadian(90.0f);
 #endif
 
         isGround_       = true;   // 地面にいる
@@ -115,7 +115,7 @@ void ExperiencePoint::Update(const float elapsedTime)
         }
 
         // 空中にいたら落下状態に移行する
-        if (t->GetPositionY() >= circularMotion_.outGroundPositionY_)
+        if (t->GetPositionY() > circularMotion_.center_.y)
         {
             step_ = STEP::FALL_INIT;
             break;
@@ -154,14 +154,14 @@ void ExperiencePoint::Update(const float elapsedTime)
         if (false == SearchPlayer())
         {
             // 位置が地面以下なら浮遊状態に移行する
-            if (t->GetPositionY() <= circularMotion_.groundPositionY_)
+            if (t->GetPositionY() <= circularMotion_.center_.y)
             {
                 step_ = STEP::FLOTING_INIT;
                 break;
             }
 
             // 空中にいたら落下状態に移行する
-            if (t->GetPositionY() >= circularMotion_.outGroundPositionY_)
+            if (t->GetPositionY() > circularMotion_.center_.y)
             {
                 step_ = STEP::FALL_INIT;
                 break;
