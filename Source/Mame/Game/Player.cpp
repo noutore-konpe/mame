@@ -429,6 +429,16 @@ void Player::DrawDebug()
         {
             ImGui::SliderFloat("RotSpeed", &cameraRotSpeed, 0.01f, 5.0f);
 
+            if (ImGui::Button("R Change LockOn Target"))
+            {
+                ChangeLockOnTarget(1.0f);
+            }
+
+            if (ImGui::Button("L Change LockOn Target"))
+            {
+                ChangeLockOnTarget(-1.0f);
+            }
+
             ImGui::TreePop();
         }
 
@@ -653,17 +663,62 @@ void Player::DrawCards()
     drawDirectionTimer = 0;
 }
 
-void Player::ChangeLockOnTarget()
+void Player::ChangeLockOnTarget(float ax)
 {
+    if (ax != 1 && ax != -1)return;
     auto& camera = Camera::Instance();
-    Transform* curLockOnTarget = camera.GetLockOnTarget();
+    DirectX::XMFLOAT3 curLockOnTargetPos = camera.GetLockOnTarget()->GetPosition();
+
+    //外積にプレイヤーから片側にいる敵のみ取得
+    std::vector<Enemy*> sideEnemys;
     auto& enemyManager = EnemyManager::Instance();
+
+    DirectX::XMFLOAT3 playerPos = GetTransform()->GetPosition();
+    DirectX::XMFLOAT3 plVec = curLockOnTargetPos - playerPos;//プレイヤーからロックオン先のターゲットまでのベクトル
+
     for (size_t i = 0; i < enemyManager.GetEnemyCount(); i++)
     {
-        auto* enemy = EnemyManager::Instance().GetEnemy(0);
-        if (curLockOnTarget == enemy->GetTransform());
+        auto* enemy = enemyManager.GetEnemy(i);
+        DirectX::XMFLOAT3 enemyPos = enemy->GetTransform()->GetPosition();
+
+        DirectX::XMFLOAT3 peVec = enemyPos - playerPos;//プレイヤーから敵までのベクトル
+
+        //外積値からプレイヤーから見て敵がどちら側にいているか調べる(負の値なら右側に敵がいる)
+        //引数のスティック入力方向に合わせてどちら側の敵を取得するか判断する
+        float crossY = (plVec.x * peVec.z) - (plVec.z * peVec.x);
+        if (ax == 1) //右側
+        {
+            if (crossY < 0)sideEnemys.emplace_back(enemy);
+        }
+        else if (ax == -1)//左側
+        {
+            if (crossY > 0)sideEnemys.emplace_back(enemy);
+        }
     }
 
+    //任意の方向に敵がいないならロックオンを切り替えない
+    if (sideEnemys.size() == 0)return;
+    if (sideEnemys.size() == 1)
+    {
+        camera.SetLockOnTarget(sideEnemys.at(0)->GetTransform());
+        return;
+    }
+
+    //複数の敵が任意の方向にいた場合、もっとも内積値の低い敵にロックオン
+    Transform* nextLockOnTarget = sideEnemys.at(0)->GetTransform();
+    float dot0 = -1;
+    for (int i = 1; i < sideEnemys.size(); i++)
+    {
+        DirectX::XMFLOAT3 peVec = sideEnemys.at(i)->GetPosition() - playerPos;
+        float dot1 = (plVec.x * peVec.x) + (plVec.z * peVec.z);
+        if (dot0 < dot1)
+        {
+            dot0 = dot1;
+            nextLockOnTarget = sideEnemys.at(i)->GetTransform();
+        }
+    }
+
+    camera.SetLockOnTarget(nextLockOnTarget);
 }
 
 void Player::LevelUpdate()

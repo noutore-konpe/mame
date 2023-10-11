@@ -121,7 +121,7 @@ public:
     BaseSkill* Lottery();//カードを抽選
     void DrawCards();//３つのスキルカードを抽選　drawingSkillCardsに格納
 
-    void ChangeLockOnTarget();
+    void ChangeLockOnTarget(float ax);
 
 private:
     void LevelUpdate();
