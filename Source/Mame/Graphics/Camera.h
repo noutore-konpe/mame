@@ -94,7 +94,7 @@ private:
     float offsetY = 2.7f;
     float focusOffsetY = 1.0f;
 
-    float maxSpeed = 1.0f;
+    float maxSpeed = 8.0f;
 
     Transform* focusTarget;//注視点になるオブジェクト
 
