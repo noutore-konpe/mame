@@ -64,7 +64,7 @@ void Player::Initialize()
     levelUpExp = 100;//レベルアップに必要な経験値
     isSelectingSkill = false;//スキルの選択演出中かどうかのフラグ
 
-    maxSpeed = 4.2f;
+    maxEyeSpeed = 4.2f;
     maxDodgeSpeed = 6.0f;
     baseAttackPower = 10.0f;
     attackSpeed = 1.0f;
@@ -176,9 +176,9 @@ void Player::MoveUpdate(float elapsedTime,float ax,float ay)
 
     //GetTransform()->SetPosition(pos);
     DirectX::XMFLOAT3 move = {
-        velocity.x * elapsedTime,
-        velocity.y * elapsedTime,
-        velocity.z * elapsedTime
+        eyeVelocity.x * elapsedTime,
+        eyeVelocity.y * elapsedTime,
+        eyeVelocity.z * elapsedTime
     };
     GetTransform()->AddPosition(move);
 
@@ -212,11 +212,11 @@ void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
     /*float ax = gamePad.GetAxisLX();
     float ay = gamePad.GetAxisLY();*/
 
-    float length{ sqrtf(velocity.x * velocity.x + velocity.z * velocity.z) };
+    float length{ sqrtf(eyeVelocity.x * eyeVelocity.x + eyeVelocity.z * eyeVelocity.z) };
 
     //アニメーションの重みの変更
     //model->weight = length / maxSpeed;
-    model->weight = (std::min)(1.0f, length / maxSpeed);
+    model->weight = (std::min)(1.0f, length / maxEyeSpeed);
 
 
     if (length > 0.0f)
@@ -229,20 +229,20 @@ void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
 
             if ((length -= deceleration) > 0.0f)
             {
-                DirectX::XMVECTOR Velocity{velocity.x, velocity.z};
+                DirectX::XMVECTOR Velocity{eyeVelocity.x, eyeVelocity.z};
                 DirectX::XMVECTOR vecNormal{DirectX::XMVector2Normalize(Velocity)};
                 Velocity = DirectX::XMVectorScale(vecNormal, length);
 
-                velocity.x = DirectX::XMVectorGetX(Velocity);
-                velocity.z = DirectX::XMVectorGetY(Velocity);
+                eyeVelocity.x = DirectX::XMVectorGetX(Velocity);
+                eyeVelocity.z = DirectX::XMVectorGetY(Velocity);
 
                 //減速処理をした場合加速処理は飛ばす
                 return;
             }
             else
             {
-                velocity.x = 0.0f;
-                velocity.z = 0.0f;
+                eyeVelocity.x = 0.0f;
+                eyeVelocity.z = 0.0f;
 
                 return;
             }
@@ -272,20 +272,20 @@ void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
         acceleration = this->acceleration * elapsedTime;
 
         //移動ベクトルによる加速処理
-        velocity.x += moveVec.x * acceleration;
-        velocity.z += moveVec.z * acceleration;
+        eyeVelocity.x += moveVec.x * acceleration;
+        eyeVelocity.z += moveVec.z * acceleration;
 
         //最大速度制限
-        float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
-        if (length > maxSpeed)
+        float length = sqrtf(eyeVelocity.x * eyeVelocity.x + eyeVelocity.z * eyeVelocity.z);
+        if (length > maxEyeSpeed)
         {
             DirectX::XMVECTOR vec = { moveVec.x,moveVec.z };
             vec = DirectX::XMVector2Normalize(vec);
-            DirectX::XMVECTOR velo = DirectX::XMVectorScale(vec, maxSpeed);
-            velocity.x = DirectX::XMVectorGetX(velo);
-            velocity.z = DirectX::XMVectorGetY(velo);
+            DirectX::XMVECTOR velo = DirectX::XMVectorScale(vec, maxEyeSpeed);
+            eyeVelocity.x = DirectX::XMVectorGetX(velo);
+            eyeVelocity.z = DirectX::XMVectorGetY(velo);
 
-            length = maxSpeed;
+            length = maxEyeSpeed;
         }
     }
 }
@@ -297,22 +297,22 @@ void Player::AvoidUpdate(float elapsedTime)
     float acceleration = this->dodgeAcceleration * elapsedTime;
 
     //移動ベクトルによる加速処理
-    velocity.x += front.x * acceleration;
-    velocity.z += front.z * acceleration;
+    eyeVelocity.x += front.x * acceleration;
+    eyeVelocity.z += front.z * acceleration;
 
     //最大速度制限
     float maxDodgeSpeed = this->maxDodgeSpeed + Easing::OutSine(
         static_cast<float>(model->GetCurrentKeyframeIndex()),
         static_cast<float>(model->GetCurrentKeyframeMaxIndex()/2.0f),
         2.0f, 0.0f);
-    float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+    float length = sqrtf(eyeVelocity.x * eyeVelocity.x + eyeVelocity.z * eyeVelocity.z);
     if (length > maxDodgeSpeed)
     {
         DirectX::XMVECTOR vec = { moveVec.x,moveVec.z };
         vec = DirectX::XMVector2Normalize(vec);
         DirectX::XMVECTOR velo = DirectX::XMVectorScale(vec, maxDodgeSpeed);
-        velocity.x = DirectX::XMVectorGetX(velo);
-        velocity.z = DirectX::XMVectorGetY(velo);
+        eyeVelocity.x = DirectX::XMVectorGetX(velo);
+        eyeVelocity.z = DirectX::XMVectorGetY(velo);
 
         length = maxDodgeSpeed;
     }
@@ -324,9 +324,9 @@ void Player::AvoidUpdate(float elapsedTime)
     Turn(elapsedTime, moveVec.x, moveVec.z, 240.0f);
 
     DirectX::XMFLOAT3 velo = {
-        velocity.x * elapsedTime,
-        velocity.y * elapsedTime,
-        velocity.z * elapsedTime
+        eyeVelocity.x * elapsedTime,
+        eyeVelocity.y * elapsedTime,
+        eyeVelocity.z * elapsedTime
     };
     GetTransform()->AddPosition(velo);
 }
@@ -444,7 +444,7 @@ void Player::DrawDebug()
 
         if(ImGui::TreeNode("Movement"))
         {
-            ImGui::SliderFloat("MaxMoveSpeed", &maxSpeed, 0.1f, 10.0f);
+            ImGui::SliderFloat("MaxMoveSpeed", &maxEyeSpeed, 0.1f, 10.0f);
 
             ImGui::TreePop();
         }
@@ -486,12 +486,12 @@ void Player::AttackSteppingUpdate(float elapsedTime)
     if (steppingTimer > steppingTime)return;
 
     //速度算出
-    float maxSpeed = Easing::OutQuart(steppingTimer,steppingTime,steppingSpeed,0.0f);
+    float maxEyeSpeed = Easing::OutQuart(steppingTimer,steppingTime,steppingSpeed,0.0f);
     auto front = GetTransform()->CalcForward();
-    velocity = front * maxSpeed;
+    eyeVelocity = front * maxEyeSpeed;
 
     //移動処理
-    DirectX::XMFLOAT3 move = velocity * elapsedTime;
+    DirectX::XMFLOAT3 move = eyeVelocity * elapsedTime;
     GetTransform()->AddPosition(move);
 
     //回転処理
@@ -675,6 +675,10 @@ void Player::ChangeLockOnTarget(float ax)
 
     DirectX::XMFLOAT3 playerPos = GetTransform()->GetPosition();
     DirectX::XMFLOAT3 plVec = curLockOnTargetPos - playerPos;//プレイヤーからロックオン先のターゲットまでのベクトル
+    //正規化
+    const float length = sqrtf(plVec.x * plVec.x + plVec.z * plVec.z);
+    plVec.x /= length;
+    plVec.z /= length;
 
     for (size_t i = 0; i < enemyManager.GetEnemyCount(); i++)
     {
@@ -682,6 +686,10 @@ void Player::ChangeLockOnTarget(float ax)
         DirectX::XMFLOAT3 enemyPos = enemy->GetTransform()->GetPosition();
 
         DirectX::XMFLOAT3 peVec = enemyPos - playerPos;//プレイヤーから敵までのベクトル
+        //正規化
+        const float length = sqrtf(peVec.x * peVec.x + peVec.z * peVec.z);
+        peVec.x /= length;
+        peVec.z /= length;
 
         //外積値からプレイヤーから見て敵がどちら側にいているか調べる(負の値なら右側に敵がいる)
         //引数のスティック入力方向に合わせてどちら側の敵を取得するか判断する
@@ -710,7 +718,12 @@ void Player::ChangeLockOnTarget(float ax)
     for (int i = 1; i < sideEnemys.size(); i++)
     {
         DirectX::XMFLOAT3 peVec = sideEnemys.at(i)->GetPosition() - playerPos;
+        //正規化
+        const float length = sqrtf(peVec.x * peVec.x + peVec.z * peVec.z);
+        peVec.x /= length;
+        peVec.z /= length;
         float dot1 = (plVec.x * peVec.x) + (plVec.z * peVec.z);
+        
         if (dot0 < dot1)
         {
             dot0 = dot1;

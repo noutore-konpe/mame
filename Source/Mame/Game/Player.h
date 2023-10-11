@@ -95,7 +95,7 @@ public:
     }
 
     //getter,setter
-    void AddMaxSpeed(const float spd) { maxSpeed += spd; }
+    void AddMaxSpeed(const float spd) { maxEyeSpeed += spd; }
 
     void AddBaseAttackPower(const float power) { baseAttackPower += power; }
 
@@ -111,7 +111,7 @@ public:
 
     void ChangeState(int newState) { stateMachine->ChangeState(newState); }
 
-    void SetVelocity(const DirectX::XMFLOAT3 velo) { velocity = velo; }
+    void SetVelocity(const DirectX::XMFLOAT3 velo) { eyeVelocity = velo; }
 
     void ResetSteppingTimer() { steppingTimer = 0; }
 
@@ -142,9 +142,9 @@ private:
     //-----------------------------------------------------------------------
 
     //--------------------------移動-----------------------------------------
-    float maxSpeed;
+    float maxEyeSpeed;
     //float maxDashSpeed = 4.0f;
-    DirectX::XMFLOAT3 velocity{};
+    DirectX::XMFLOAT3 eyeVelocity{};
 
     //カメラの向いている方向を前とした移動方向ベクトル
     DirectX::XMFLOAT3 moveVec;
