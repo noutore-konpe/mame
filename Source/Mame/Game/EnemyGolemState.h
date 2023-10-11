@@ -175,5 +175,53 @@ namespace EnemyGolemState
         float getUpTimer = 0.0f;
         float maxGetUpTimer = 2.5f; // ãNÇ´è„Ç™ÇÈÇ‹Ç≈ÇÃéûä‘
     };
+
+    class ComboAttack2State : public State<EnemyGolem>
+    {
+    public:
+        ComboAttack2State(EnemyGolem* enemyGolem) : State(enemyGolem, "ComboAttack2State") {}
+        ~ComboAttack2State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+
+        void AttackInitialize();
+        void AttackUpdate(const float& elapsedTime);
+        void Turn(const float& elapsedTime);
+
+    private:
+        bool isComboAttackUp = false;
+        bool isComboAttackDown = false;
+        bool isComboAttackReturn = false;
+
+        int num = 0;
+        int maxNum = 3;
+
+        float delayTimer = 0.0f;
+        float maxDelayTime = 1.0f;
+    };
+
+    class ChoseState : public State<EnemyGolem>
+    {
+    public:
+        ChoseState(EnemyGolem* enemyGolem) : State(enemyGolem, "ChoseState") {}
+        ~ChoseState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+    };
+
+    class DeathState : public State<EnemyGolem>
+    {
+    public:
+        DeathState(EnemyGolem* enemyGolem) : State(enemyGolem, "DeathState") {}
+        ~DeathState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+    };
 };
 

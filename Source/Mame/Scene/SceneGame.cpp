@@ -76,7 +76,7 @@ void SceneGame::CreateResource()
 
     // enemy
     {
-#if 1
+#if 0
         // max 6~7
         EnemyManager& enemyManager = EnemyManager::Instance();
         // EnemyAI_1
@@ -301,7 +301,7 @@ void SceneGame::Update(const float& elapsedTime)
 
 #ifdef _DEBUG
     // DebugópÉJÉÅÉâ
-    if (/*gamePad.GetButtonDown() & GamePad::BTN_X*/GetAsyncKeyState('U') & 0x8000)isDebugCamera = isDebugCamera ? false : true;
+    if (/*gamePad.GetButtonDown() & GamePad::BTN_X*/GetAsyncKeyState('U') & 0x01)isDebugCamera = isDebugCamera ? false : true;
     if (isDebugCamera)
     {
         int posX = 1980 / 2;

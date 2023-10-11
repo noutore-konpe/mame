@@ -538,7 +538,7 @@ namespace EnemyGolemState
         {
             // アニメーションが終わったら
             if (!owner->IsPlayAnimation())
-            {
+            {                
             }
         }
     }
@@ -621,12 +621,18 @@ namespace EnemyGolemState
             
             // 怯み終わり
             if (getUpTimer >= maxGetUpTimer)
+            {
+                owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::DownReturn), false, 0.5f);
                 isReturn = true;
+            }
         }
-
-        if (isReturn)
+        else
         {
-            //owner->PlayAnimation(owner)
+            // アニメーションが終わったら
+            if (!owner->IsPlayAnimation())
+            {
+                owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::IdleState));
+            }
         }
 
     }
@@ -637,7 +643,140 @@ namespace EnemyGolemState
     }
 }
 
+// ComboAttack2State
 namespace EnemyGolemState
 {
+    // 初期化
+    void ComboAttack2State::Initialize()
+    {
+        owner->SetCurrentState(static_cast<UINT>(EnemyGolem::StateMachineState::ComboAttack2State));
 
+        // アニメーション設定
+        owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::ComboAttack3Up), false);
+
+        // 石生成
+        owner->comboAttackStones[0]->GetStateMachine()->ChangeState(static_cast<UINT>(ComboAttackStone::StateMachineState::AppearState));
+
+        // 変数初期化
+        isComboAttackUp = false;
+        isComboAttackDown = false;
+        isComboAttackReturn = false;
+
+        num = 0;
+        delayTimer = 0.0f;
+    }
+
+    // 更新
+    void ComboAttack2State::Update(const float& elapsedTime)
+    {
+        if (num < maxNum)
+        {   // 三回攻撃する
+            if (isComboAttackReturn)
+            {
+                AttackInitialize();
+            }
+            AttackUpdate(elapsedTime);
+        }
+        else
+        {   
+            if (delayTimer >= maxDelayTime)
+            {
+                // 待機ステート
+                owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::IdleState));
+            }
+            delayTimer += elapsedTime;
+        }
+
+        Turn(elapsedTime);
+    }
+
+    // 終了化
+    void ComboAttack2State::Finalize()
+    {
+    }
+
+    // 攻撃初期化
+    void ComboAttack2State::AttackInitialize()
+    {
+        owner->comboAttackStones[num]->GetStateMachine()->ChangeState(static_cast<UINT>(ComboAttackStone::StateMachineState::AppearState));
+        owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::ComboAttack3Up), false);
+        isComboAttackUp = false;
+        isComboAttackDown = false;
+        isComboAttackReturn = false;
+    }
+
+    // 攻撃
+    void ComboAttack2State::AttackUpdate(const float& elapsedTime)
+    {
+        if (!isComboAttackUp)
+        {
+            if (!owner->IsPlayAnimation())
+            {
+                owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::ComboAttack3Down), false);
+                isComboAttackUp = true;
+            }
+        }
+
+        if (!isComboAttackDown && isComboAttackUp)
+        {
+            if (!owner->IsPlayAnimation())
+            {
+                owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::ComboAttack3Return), false);
+                isComboAttackDown = true;
+            }
+        }
+
+        if (!isComboAttackReturn && isComboAttackDown)
+        {
+            if (!owner->IsPlayAnimation())
+            {
+                ++num;
+                isComboAttackReturn = true;
+            }
+        }
+    }
+
+    // 回転処理
+    void ComboAttack2State::Turn(const float& elapsedTime)
+    {
+        DirectX::XMFLOAT3 playerPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 ownerPos = owner->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 vec = Normalize(playerPos - ownerPos);
+        owner->Turn(elapsedTime, vec.x, vec.z, 50.0f);
+    }
+}
+
+// ChoseState
+namespace EnemyGolemState
+{
+    void ChoseState::Initialize()
+    {
+    }
+    void ChoseState::Update(const float& elapsedTime)
+    {
+    }
+    void ChoseState::Finalize()
+    {
+    }
+}
+
+// DeathState
+namespace EnemyGolemState
+{
+    // 初期化
+    void DeathState::Initialize()
+    {
+        // アニメーション設定
+        owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Death), false);
+    }
+
+    // 更新
+    void DeathState::Update(const float& elapsedTime)
+    {
+    }
+
+    // 終了化
+    void DeathState::Finalize()
+    {
+    }
 }

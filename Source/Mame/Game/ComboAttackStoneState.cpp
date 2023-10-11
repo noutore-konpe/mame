@@ -98,6 +98,8 @@ namespace ComboAttackStoneState
         DirectX::XMFLOAT3 setPosition = ownerFront * 2.5f;
         setPosition = ownerPos + setPosition;
 
+        setPosition.y = 0.05f;
+
         // –‚–@w‚ÌˆÊ’uÝ’è
         owner->magicCircle->GetTransform()->SetPosition(setPosition);
 
@@ -192,14 +194,4 @@ namespace ComboAttackStoneState
     void ThrowState::Finalize()
     {
     }
-}
-
-namespace ComboAttackStoneState
-{
-
-}
-
-namespace ComboAttackStoneState
-{
-
 }

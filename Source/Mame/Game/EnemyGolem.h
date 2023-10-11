@@ -35,6 +35,8 @@ public: // ’θ”
         ComboAttack3Return, // ƒRƒ“ƒ{‚R‚–Ϊ–ί‚θ
         Down0,              // ‹―‚έ“|‚κ‚O
         Down1,              // ‹―‚έ“|‚κ‚P
+        DownReturn,         // ‹―‚έ‚©‚η–ί‚θ
+        Death,              // €–S
     };
 
     enum class StateMachineState
@@ -47,10 +49,14 @@ public: // ’θ”
         Attack1State,       // U‚‚P
         ComboAttack1State,  // ƒRƒ“ƒ{U‚‚P
         DownState,          // ‹―‚έ
+        ComboAttack2State,  // ƒRƒ“ƒ{U‚‚Q
+        ChoseState,         // ‘I‘πƒXƒe[ƒg
+        DeathState,         // €–S
     };
 
     const DirectX::XMFLOAT4 magicCircleColor[10] =
     {
+        { 0.0f, 0.0f, 1.0f , 1.0f },    // Β
         { 0.80f, 0.44f, 0.24f, 1.0f },
         { 0.54f, 0.27f, 0.07f, 1.0f },   // saddleBrown
         { 0.44f, 0.36f, 0.12f, 1.0f },   // ις’ƒ
@@ -59,7 +65,7 @@ public: // ’θ”
     };
 
 #ifdef _DEBUG
-    const char* stateName[6] =
+    const char* stateName[8] =
     {
         "Entry",
         "Summon",
@@ -67,6 +73,8 @@ public: // ’θ”
         "Attack1State",
         "ComboAttack1State",
         "DownState",
+        "ComboAttack2State",
+        "DeathState"
     };
 #endif // _DEBUG
 
@@ -100,6 +108,7 @@ public:
     std::unique_ptr<MagicCircleGolem> magicCircleGolem;
     std::unique_ptr<MagicCircleEnemySummon> magicCircleEnemySummon;
     std::unique_ptr<ComboAttackStone> comboAttackStone;
+    std::unique_ptr<ComboAttackStone> comboAttackStones[3];
 
 private:
     // ƒXƒe[ƒgƒ}ƒVƒ“
