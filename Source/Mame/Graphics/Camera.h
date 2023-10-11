@@ -80,6 +80,9 @@ public:
         return transform.CalcRight();
     }
 
+    Transform* GetLockOnTarget() const { return lockOnTargetTransform; }
+    void SetLockOnTarget(Transform* transform) { lockOnTargetTransform = transform; }
+
 public:
     bool activeLockOn = false;//ロックオン起動
 private:
