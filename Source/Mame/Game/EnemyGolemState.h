@@ -132,6 +132,7 @@ namespace EnemyGolemState
         void ComboAttack3(const float& elapsedTime);
 
         bool MoveFront(const float& elapsedTime, const float& addLength, const float& maxMoveFrontTime);
+        void Turn(const float& elapsedTime);
 
     private:
         bool isComboAttack1         = false;
@@ -143,11 +144,36 @@ namespace EnemyGolemState
         bool isComboAttack3Down     = false;
         bool isComboAttack3Return   = false;
 
+        bool isStoneCreate = false;
+        bool isStoneCreated = false;
+        float stoneTimer = 0.0f;
+
         float moveTimer         = 0.0f;
         float maxMoveTime1      = 0.5f;
         float maxMoveTime2      = 0.2f;
 
         float moveFrontTimer    = 0.0f;
+
+        float myTrunSpeed = DirectX::XMConvertToRadians(180);
+    };
+
+    class DownState : public State<EnemyGolem>
+    {
+    public:
+        DownState(EnemyGolem* enemyGolem) : State(enemyGolem, "DownState") {}
+        ~DownState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+
+    private:
+        bool isDown0 = false;
+        bool isDown1 = false;
+        bool isReturn = false;
+        
+        float getUpTimer = 0.0f;
+        float maxGetUpTimer = 2.5f; // ãNÇ´è„Ç™ÇÈÇ‹Ç≈ÇÃéûä‘
     };
 };
 

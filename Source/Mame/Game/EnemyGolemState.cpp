@@ -8,6 +8,8 @@
 
 #include "../Other/MathHelper.h"
 
+#include "../Game/PlayerManager.h"
+
 // IdleState
 namespace EnemyGolemState
 {
@@ -367,6 +369,10 @@ namespace EnemyGolemState
         
         moveTimer = 0.0f;
         moveFrontTimer = 0.0f;
+
+        isStoneCreate = false;
+        isStoneCreated = false;
+        stoneTimer = 0.0f;
     }
 
     // 更新
@@ -375,11 +381,24 @@ namespace EnemyGolemState
         ComboAttack1(elapsedTime);  // コンボ１撃目
         ComboAttack2(elapsedTime);  // コンボ２撃目
         ComboAttack3(elapsedTime);  // コンボ３撃目
+
+        Turn(elapsedTime); // 回転処理
+
+        // 待機ステートへ
+        if (owner->comboAttackStone->isChangeState)
+        {   
+            owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::IdleState));
+            owner->comboAttackStone->isChangeState = false;
+        }
     }
 
     // 終了
     void ComboAttack1State::Finalize()
     {
+        // 石のスケールを０にする
+        owner->comboAttackStone->stoneBall->GetTransform()->SetScale(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
+        // 魔法陣のスケールを０にする
+        owner->comboAttackStone->magicCircle->GetTransform()->SetScale(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
     }
 
     // コンボ１撃目
@@ -467,12 +486,25 @@ namespace EnemyGolemState
         // コンボ２撃目起き上がりが終わったか
         if (!isComboAttack2Return && isComboAttack2)
         {
+            stoneTimer += elapsedTime;
+            if (stoneTimer >= 0.4f)
+            {
+                isStoneCreate = true;
+            }
+
             // アニメーションが終わったら
             if (!owner->IsPlayAnimation())
             {   // ３撃目振り上げ
                 owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::ComboAttack3Up), false);
                 isComboAttack2Return = true;
             }
+        }
+
+        if (isStoneCreate && !isStoneCreated)
+        {
+            // 石のステート設定
+            owner->comboAttackStone->GetStateMachine()->ChangeState(static_cast<UINT>(ComboAttackStone::StateMachineState::AppearState));
+            isStoneCreated = true;
         }
     }
 
@@ -506,8 +538,7 @@ namespace EnemyGolemState
         {
             // アニメーションが終わったら
             if (!owner->IsPlayAnimation())
-            {   // 待機ステートへ
-                owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::IdleState));
+            {
             }
         }
     }
@@ -528,6 +559,81 @@ namespace EnemyGolemState
         }
 
         return false;
+    }
+    
+    // 回転処理
+    void ComboAttack1State::Turn(const float& elapsedTime)
+    {
+        DirectX::XMFLOAT3 playerPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 ownerPos = owner->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 vec = Normalize(playerPos - ownerPos);
+        owner->Turn(elapsedTime, vec.x, vec.z, 50.0f);
+    }
+}
+
+// DownState
+namespace EnemyGolemState
+{
+    // 初期化
+    void DownState::Initialize()
+    {
+        owner->SetCurrentState(static_cast<UINT>(EnemyGolem::StateMachineState::DownState));
+
+        // アニメーションセット
+        owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Down0), false, 0.7f);
+
+        // 変数初期化
+        isDown0 = false;
+        isDown1 = false;
+        isReturn = false;
+
+        getUpTimer = 0.0f;
+    }
+
+    // 更新
+    void DownState::Update(const float& elapsedTime)
+    {
+        // down0アニメーションが終わってない
+        if (!isDown0)
+        {
+            // アニメーションが終わったら
+            if (!owner->IsPlayAnimation())
+            {
+                owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Down1), false, 0.6f);
+                isDown0 = true;
+            }
+        }
+
+        // down1アニメーションが終わっていない
+        if (!isDown1 && isDown0)
+        {
+            // アニメーションが終わったら
+            if (!owner->IsPlayAnimation())
+            {
+                isDown1 = true;
+            }
+        }
+
+        // 倒れきったら
+        if (isDown1&& !isReturn)
+        {
+            getUpTimer += elapsedTime;
+            
+            // 怯み終わり
+            if (getUpTimer >= maxGetUpTimer)
+                isReturn = true;
+        }
+
+        if (isReturn)
+        {
+            //owner->PlayAnimation(owner)
+        }
+
+    }
+
+    // 終了化
+    void DownState::Finalize()
+    {
     }
 }
 

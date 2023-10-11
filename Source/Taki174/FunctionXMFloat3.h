@@ -15,23 +15,35 @@ inline const float XMFloat3Dot(
 // XMFLOAT3同士の距離を計算
 inline const float XMFloat3Length(const DirectX::XMFLOAT3& v)
 {
-	return sqrtf(XMFloat3Dot(v, v));
+	return ::sqrtf(XMFloat3Dot(v, v));
 }
 
 // XMFLOAT3同士の距離の二乗を計算
 inline const float XMFloat3LengthSq(const DirectX::XMFLOAT3& v)
 {
-	return XMFloat3Dot(v, v);
+	return ::XMFloat3Dot(v, v);
 }
 
 // XMFLOAT3の正規化（単位ベクトル化・標準化）
 inline const DirectX::XMFLOAT3 XMFloat3Normalize(const DirectX::XMFLOAT3& v)
 {
-	const float length = XMFloat3Length(v);
+	const float length = ::XMFloat3Length(v);
 
 	if (length <= 0.0f) return DirectX::XMFLOAT3(0, 0, 0);
 
 	return (v / length);
+}
+
+// XMFLOAT3の正規化（単位ベクトル化・標準化）
+// ※おまけでlengthも取得できるバージョン
+inline const DirectX::XMFLOAT3 XMFloat3Normalize(
+	const DirectX::XMFLOAT3& v, float* length)
+{
+	(*length) = ::XMFloat3Length(v);
+
+	if ((*length) <= 0.0f) return DirectX::XMFLOAT3(0, 0, 0);
+
+	return (v / (*length));
 }
 
 // XMFLOAT3同士の外積を計算(順番に注意)
@@ -50,5 +62,5 @@ inline const DirectX::XMFLOAT3 XMFloat3Cross(
 // XMFLOAT3の絶対値を求める
 inline const DirectX::XMFLOAT3 XMFloat3Abs(const DirectX::XMFLOAT3& v)
 {
-	return DirectX::XMFLOAT3(fabsf(v.x), fabsf(v.y), fabsf(v.z));
+	return DirectX::XMFLOAT3(::fabsf(v.x), ::fabsf(v.y), ::fabsf(v.z));
 }

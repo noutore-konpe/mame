@@ -1,16 +1,13 @@
 #include "SceneGame.h"
 
-#include "../Other/misc.h"
-#include "../Resource/texture.h"
+#include "../../Taki174/Common.h"
 
 #include "../Graphics/Graphics.h"
+#include "../Graphics/EffectManager.h"
+
 #include "../Input/Input.h"
-
-#include "SceneManager.h"
-#include "SceneLoading.h"
-#include "SceneTitle.h"
-
-#include "../../Taki174/Common.h"
+#include "../Other/misc.h"
+#include "../Resource/texture.h"
 
 #include "../Game/PlayerManager.h"
 #include "../Game/ItemManager.h"
@@ -25,9 +22,14 @@
 #include "../Game/EnemyAI_3.h"
 
 #include "../Game/ProjectileManager.h"
-#include "../Graphics/EffectManager.h"
+
+#include "../Game/ExperiencePointManager.h"
 
 #include "../framework.h"
+
+#include "SceneManager.h"
+#include "SceneLoading.h"
+#include "SceneTitle.h"
 
 #ifdef _DEBUG
 bool SceneGame::isDebugRender = false;
@@ -43,7 +45,9 @@ void SceneGame::CreateResource()
     // stage
     {
         stageBase = std::make_unique<Stage>();
-        stageWall = std::make_unique<Stage>("./Resources/Model/Stage/stageWall.fbx");
+        stageWall = std::make_unique<Stage>
+            ("./Resources/Model/Stage/stageWall.fbx",
+                "./Resources/Shader/StageWallPS.cso");
     }
 
     // enemy
@@ -72,9 +76,9 @@ void SceneGame::CreateResource()
 
     // enemy
     {
+#if 1
         // max 6~7
         EnemyManager& enemyManager = EnemyManager::Instance();
-#if 0
         // EnemyAI_1
         for (int i = 0; i < 2; ++i)
         {
@@ -209,7 +213,6 @@ void SceneGame::Initialize()
     // カメラ
     Camera::Instance().Initialize();
 
-
     // enemy
     enemyGolem->Initialize();
 
@@ -236,11 +239,20 @@ void SceneGame::Initialize()
 
     //今だけロックオン処理いれとく
     Camera::Instance().SetLockOnTargetPos(enemyGolem->GetTransform());
+
+    // Exp
+    ExperiencePointManager& expManager = ExperiencePointManager::Instance();
+    expManager.Initialize();
+
 }
 
 // 終了化
 void SceneGame::Finalize()
 {
+    // Exp
+    ExperiencePointManager& expManager = ExperiencePointManager::Instance();
+    expManager.Finalize();
+
     EnemyManager& enemyManager = EnemyManager::Instance();
     enemyManager.Finalize();
 
@@ -349,11 +361,14 @@ void SceneGame::Update(const float& elapsedTime)
         magicCircleSummon[i]->Update(elapsedTime);
     }
 
+    ExperiencePointManager& expManager = ExperiencePointManager::Instance();
+    expManager.Update(elapsedTime);
+
     // effect
     EffectManager::Instance().Update(elapsedTime);
 
-    //カード演出中だけUpdate前にreturn呼んでるから注意！！
 
+    //カード演出中だけUpdate前にreturn呼んでるから注意！！
 
 }
 
@@ -511,6 +526,11 @@ void SceneGame::Render(const float& elapsedTime)
         {
             magicCircleSummon[0]->Render();
         }
+
+        // Exp
+        ExperiencePointManager& expManager = ExperiencePointManager::Instance();
+        expManager.Render(1.0f);
+
     }
 
     shader->SetDepthStencileState(static_cast<size_t>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
@@ -668,6 +688,14 @@ void SceneGame::DrawDebug()
             }
         }
 
+        // 経験値生成
+        if (ImGui::Button("Create Exp"))
+        {
+            constexpr DirectX::XMFLOAT3 position = { 0,0,0 };
+            const int count = ::RandInt(5, 20);
+            ExperiencePointManager::Instance().CreateExp(position, count);
+        }
+
         ImGui::Separator();
 
         PlayerManager::Instance().DrawDebug();
@@ -680,6 +708,10 @@ void SceneGame::DrawDebug()
 
         EnemyManager& enemyManager = EnemyManager::Instance();
         enemyManager.DrawDebug();
+
+        // Exp
+        ExperiencePointManager& expManager = ExperiencePointManager::Instance();
+        expManager.DrawDebug();
 
         // カメラ
         Camera::Instance().DrawDebug();
