@@ -10,6 +10,16 @@
 
 #include "../Game/PlayerManager.h"
 
+// DummyState
+namespace EnemyGolemState
+{
+    void DummyState::Initialize()
+    {
+        // アニメーション設定
+        owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Idle), true);
+    }
+}
+
 // IdleState
 namespace EnemyGolemState
 {
@@ -23,7 +33,8 @@ namespace EnemyGolemState
 
     void IdleState::Update(const float& elapsedTime)
     {
-
+        // 歩き
+        owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::WalkState));
     }
 
     void IdleState::Finalize()
@@ -193,6 +204,8 @@ namespace EnemyGolemState
 
         isSwingUp = false;
         isSwingDown = false;
+
+        delayTimer = 0.0f;
     }
 
     void SummonState::Update(const float& elapsedTime)
@@ -225,6 +238,14 @@ namespace EnemyGolemState
                 isSwingDown = true;
             }
         }
+        else
+        {
+            delayTimer += elapsedTime;
+            if (delayTimer >= maxDelayTime)
+            {   // 待機ステートへ
+                owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::IdleState));
+            }
+        }
 
         // 召喚魔法陣更新処理
         owner->UpdateSummoningMagicCircle(4.0f, 3.0f, DirectX::XMConvertToRadians(45));
@@ -248,6 +269,11 @@ namespace EnemyGolemState
 
     void GetUpState::Update(const float& elapsedTime)
     {
+        // アニメーションが終わったら
+        if(!owner->IsPlayAnimation())
+        {   // 待機ステートへ
+            owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::IdleState));
+        }
     }
 
     void GetUpState::Finalize()
@@ -751,6 +777,8 @@ namespace EnemyGolemState
 {
     void ChoseState::Initialize()
     {
+        // アニメーション設定
+        owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Idle), true);
     }
     void ChoseState::Update(const float& elapsedTime)
     {
@@ -778,5 +806,101 @@ namespace EnemyGolemState
     // 終了化
     void DeathState::Finalize()
     {
+    }
+}
+
+// WalkState
+namespace EnemyGolemState
+{
+    // 初期化
+    void WalkState::Initialize()
+    {
+        owner->SetCurrentState(static_cast<UINT>(EnemyGolem::StateMachineState::WalkState));
+
+        // アニメーション設定
+        owner->PlayBlendAnimation(
+            static_cast<UINT>(EnemyGolem::Animation::Idle),
+            static_cast<UINT>(EnemyGolem::Animation::Walk),
+            true);
+
+        owner->model->weight = 0.0f;
+        
+        // 変数初期化
+        isChangeState = false;
+        moveSpeed = 0.0f;
+    }
+
+    // 更新
+    void WalkState::Update(const float& elapsedTime)
+    {
+        // モーションブレンド
+        {
+            if (!isChangeState)
+            {// 徐々に速度上げていく
+                owner->model->weight += elapsedTime;
+                owner->model->weight = min(1.0f, owner->model->weight);
+            }
+            else
+            {// 範囲に入ったら、徐々に速度を下げる
+                owner->model->weight -= elapsedTime * 2.0f;
+                if (owner->model->weight <= 0.0f)
+                {// 選択ステートに行く
+                    owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::ChoseState));
+                }
+            }
+        }
+
+        // 判定
+        JudgeChangeState();
+
+        // 移動
+        Move(elapsedTime);
+
+        // 回転
+        Turn(elapsedTime);
+    }
+
+    // 終了化
+    void WalkState::Finalize()
+    {
+
+    }
+
+    // 範囲に入ればステート変更
+    void WalkState::JudgeChangeState()
+    {
+        DirectX::XMFLOAT3 playerPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 ownerPos = owner->GetTransform()->GetPosition();
+        DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerPos), DirectX::XMLoadFloat3(&ownerPos));
+        float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(Vec));
+
+        if (length < changeStateLength)
+        {
+            isChangeState = true;
+        }
+    }
+
+    // 移動
+    void WalkState::Move(const float& elapsedTime)
+    {
+        moveSpeed = owner->model->weight * maxMoveSpeed;
+
+        DirectX::XMFLOAT3 playerPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 ownerPos = owner->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 vec = playerPos - ownerPos;
+        vec = Normalize(vec);
+        vec = vec * moveSpeed * elapsedTime;
+        vec.y = 0.0f;   // Yは移動なし。
+        
+        owner->GetTransform()->AddPosition(vec);
+    }
+
+    // 回転処理
+    void WalkState::Turn(const float& elapsedTime)
+    {
+        DirectX::XMFLOAT3 playerPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 ownerPos = owner->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 vec = Normalize(playerPos - ownerPos);
+        owner->Turn(elapsedTime, vec.x, vec.z, 100.0f);
     }
 }

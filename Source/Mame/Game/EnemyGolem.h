@@ -52,6 +52,7 @@ public: // 定数
         ComboAttack2State,  // コンボ攻撃２
         ChoseState,         // 選択ステート
         DeathState,         // 死亡
+        WalkState,          // 歩き
     };
 
     const DirectX::XMFLOAT4 magicCircleColor[10] =
@@ -65,7 +66,7 @@ public: // 定数
     };
 
 #ifdef _DEBUG
-    const char* stateName[8] =
+    const char* stateName[9] =
     {
         "Entry",
         "Summon",
@@ -74,7 +75,8 @@ public: // 定数
         "ComboAttack1State",
         "DownState",
         "ComboAttack2State",
-        "DeathState"
+        "DeathState",
+        "WalkState"
     };
 #endif // _DEBUG
 

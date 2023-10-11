@@ -44,6 +44,7 @@ EnemyGolem::EnemyGolem()
         GetStateMachine()->RegisterState(new EnemyGolemState::ComboAttack2State(this));
         GetStateMachine()->RegisterState(new EnemyGolemState::ChoseState(this));
         GetStateMachine()->RegisterState(new EnemyGolemState::DeathState(this));
+        GetStateMachine()->RegisterState(new EnemyGolemState::WalkState(this));
 
         GetStateMachine()->SetState(static_cast<UINT>(StateMachineState::IdleState));
     }
@@ -172,7 +173,7 @@ void EnemyGolem::DrawDebug()
 
         comboAttackStone->DrawDebug();
 
-        ImGui::SliderInt("currentState", &currentStateDebug, 0, 7);
+        ImGui::SliderInt("currentState", &currentStateDebug, 0, 8);
 
         if (ImGui::Button(stateName[currentStateDebug]))
         {
@@ -201,6 +202,9 @@ void EnemyGolem::DrawDebug()
                 break;
             case 7:
                 GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::DeathState));
+                break;
+            case 8:
+                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::WalkState));
                 break;
             }
         }

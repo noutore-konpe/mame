@@ -4,6 +4,18 @@
 
 namespace EnemyGolemState
 {
+    // ダミー
+    class DummyState : public State<EnemyGolem>
+    {
+    public:
+        DummyState(EnemyGolem* enemyGolem) : State(enemyGolem, "DummyState") {}
+        ~DummyState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override {};
+        void Finalize()                         override {};
+    };
+
     // 待機
     class IdleState : public State<EnemyGolem>
     {
@@ -82,6 +94,8 @@ namespace EnemyGolemState
         bool isSwingUp = false;     // 腕の振り上げ完了したか
         bool isSwingDown = false;   // 腕の振り下げ完了したか
 
+        float delayTimer = 0.0f;
+        float maxDelayTime = 2.0f;
     };
 
     // 起き上がり
@@ -211,6 +225,20 @@ namespace EnemyGolemState
         void Initialize()                       override;
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
+
+    private:// 定数
+        enum class STATE
+        {
+            Summon,         // 召喚
+            Attack,         // 攻撃
+            ComboAttack1,   // コンボ攻撃１
+            ComboAttack2,   // コンボ攻撃２
+            
+            Max,
+        };
+
+    private:
+        bool isState[static_cast<UINT>(STATE::Max)];
     };
 
     class DeathState : public State<EnemyGolem>
@@ -222,6 +250,29 @@ namespace EnemyGolemState
         void Initialize()                       override;
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
+    };
+
+    class WalkState : public State<EnemyGolem>
+    {
+    public:
+        WalkState(EnemyGolem* enemyGolem) : State(enemyGolem, "WalkState") {}
+        ~WalkState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+
+        void JudgeChangeState();                // ステート判定
+        void Move(const float& elapsedTime);    // 移動
+        void Turn(const float& elapsedTime);    // 回転
+
+    private:
+        bool isChangeState = false;
+
+        float changeStateLength = 7.0f; // ステート切り替えのためのプレイヤーとの距離
+
+        float moveSpeed = 0.0f;
+        float maxMoveSpeed = 3.0f;
     };
 };
 
