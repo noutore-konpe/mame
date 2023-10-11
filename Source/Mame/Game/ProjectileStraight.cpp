@@ -5,16 +5,20 @@
 
 int ProjectileStraight::nameNum_ = 0;
 
-// コンストラクタ
-ProjectileStraight::ProjectileStraight(ProjectileManager* manager)
-    : Projectile(manager)
+ProjectileStraight::ProjectileStraight(
+    ProjectileManager* manager, const bool isPoison
+)
+    : Projectile(manager, isPoison)
 {
     Graphics& graphics = Graphics::Instance();
 
-    model_ = std::make_unique<Model>(graphics.GetDevice(), "./Resources/Model/Projectile/sqhere.fbx");
+    model_ = std::make_unique<Model>(
+        graphics.GetDevice(),
+        "./Resources/Model/Projectile/sqhere.fbx"
+    );
 
     // ImGui名前設定
-    SetName("ProjectileStraite_" + std::to_string(nameNum_++));
+    SetName("ProjectileStraite : " + std::to_string(nameNum_++));
 }
 
 
@@ -24,21 +28,18 @@ ProjectileStraight::~ProjectileStraight()
 }
 
 
-// 初期化
 void ProjectileStraight::Initialize()
 {
-    // とりあえずLaunch関数で呼び出している
-
     using DirectX::XMFLOAT3;
 
-    //lifeTimer_ = 10.0f;
-    //constexpr float scale = 100.0f;
-    //GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
+    GetTransform()->SetScaleFactor(10.0f);
 }
 
-// 更新処理
-void ProjectileStraight::Update(const float& elapsedTime)
+
+void ProjectileStraight::Update(const float elapsedTime)
 {
+    using DirectX::XMFLOAT3;
+
     // 寿命処理
     {
         lifeTimer_ = (std::max)(0.0f, lifeTimer_ - elapsedTime);
@@ -47,19 +48,20 @@ void ProjectileStraight::Update(const float& elapsedTime)
 
     // 移動
     {
-        const float speed = speed_ * elapsedTime;
-        GetTransform()->AddPosition(direction_ * speed);
+        const XMFLOAT3 force = direction_ * speed_;
+        GetTransform()->AddPosition(force * elapsedTime);
     }
 
 }
 
-// 描画処理
-void ProjectileStraight::Render(const float& scale, ID3D11PixelShader* psShader)
+
+void ProjectileStraight::Render(
+    const float scale, ID3D11PixelShader* psShader)
 {
     Projectile::Render(scale, psShader);
 }
 
-// ImGui用
+
 void ProjectileStraight::DrawDebug()
 {
 #ifdef USE_IMGUI
@@ -73,6 +75,7 @@ void ProjectileStraight::DrawDebug()
 
 #endif // USE_IMGUI
 }
+
 
 // 発射
 void ProjectileStraight::Launch(

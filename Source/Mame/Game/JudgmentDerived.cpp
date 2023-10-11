@@ -2,8 +2,6 @@
 #include "BaseEnemyAI.h"
 #include "EnemyManager.h"
 #include "PlayerManager.h"
-//#include "Mathf.h"
-
 
 const bool PursuitJudgment::Judgment()
 {
@@ -12,8 +10,8 @@ const bool PursuitJudgment::Judgment()
 	PlayerManager& playerManager = PlayerManager::Instance();
 
 	// プレイヤーとのXZ平面での距離判定
-	const XMFLOAT3	position = owner_->GetPosition();
-	const XMFLOAT3	targetPosition = playerManager.GetPlayer()->GetPosition();
+	const XMFLOAT3&	position = owner_->GetPosition();
+	const XMFLOAT3&	targetPosition = playerManager.GetPlayer()->GetPosition();
 	const float		vx = targetPosition.x - position.x;
 	const float		vz = targetPosition.z - position.z;
 	const float		lengthSq = (vx * vx + vz * vz);
@@ -49,8 +47,8 @@ const bool CloseRangeAttackJudgment::Judgment()
 	}
 
 	// プレイヤーとのXZ平面での距離判定
-	const XMFLOAT3	position		= owner_->GetPosition();
-	const XMFLOAT3	targetPosition	= playerManager.GetPlayer()->GetPosition();
+	const XMFLOAT3&	position		= owner_->GetPosition();
+	const XMFLOAT3&	targetPosition	= playerManager.GetPlayer()->GetPosition();
 	const float		vx				= targetPosition.x - position.x;
 	const float		vz				= targetPosition.z - position.z;
 	const float		lengthSq		= (vx * vx + vz * vz);
@@ -66,11 +64,11 @@ const bool CloseRangeAttackJudgment::Judgment()
 	const size_t enemyCount = enemyManager.GetEnemyCount();
 	for (size_t i = 0; i < enemyCount; ++i)
 	{
-		BaseEnemyAI* enemy = enemyManager.GetEnemy(i);
+		Enemy* enemy = enemyManager.GetEnemy(i);
 
 		if (enemy != owner_)
 		{
-			const XMFLOAT3	otherPosition	= enemy->GetPosition();
+			const XMFLOAT3&	otherPosition	= enemy->GetPosition();
 			const float		otherVx			= targetPosition.x - otherPosition.x;
 			const float		otherVz			= targetPosition.z - otherPosition.z;
 			const float		otherLengthSq	= (otherVx * otherVx + otherVz * otherVz);
@@ -103,8 +101,8 @@ const bool LongRangeAttackJudgment::Judgment()
 	//}
 
 	// プレイヤーとのXZ平面での距離判定
-	const XMFLOAT3	position = owner_->GetPosition();
-	const XMFLOAT3	targetPosition = playerManager.GetPlayer()->GetPosition();
+	const XMFLOAT3&	position = owner_->GetPosition();
+	const XMFLOAT3&	targetPosition = playerManager.GetPlayer()->GetPosition();
 	const float		vx = targetPosition.x - position.x;
 	const float		vz = targetPosition.z - position.z;
 	const float		lengthSq = (vx * vx + vz * vz);

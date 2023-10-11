@@ -61,7 +61,9 @@ public:
     void SetLockOnTargetPos(Transform* transform) { lockOnTargetTransform = transform; }
     const DirectX::XMFLOAT3 GetForward()
     {
-        if (activeLockOn)return lockOnForward;
+        if (activeLockOn && 
+            lockOnForward.x + lockOnForward.y +lockOnForward.z != 0
+            )return lockOnForward;
         return transform.CalcForward();
     }
     const DirectX::XMFLOAT3 GetRight()
@@ -94,7 +96,7 @@ private:
     float offsetY = 2.7f;
     float focusOffsetY = 1.0f;
 
-    float maxSpeed = 1.0f;
+    float maxSpeed = 8.0f;
 
     Transform* focusTarget;//注視点になるオブジェクト
 

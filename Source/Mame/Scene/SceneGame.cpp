@@ -22,6 +22,7 @@
 #include "../Game/EnemyAI_3.h"
 
 #include "../Game/ProjectileManager.h"
+#include "../Game/ProjectileHorming.h"
 
 #include "../Game/ExperiencePointManager.h"
 
@@ -237,7 +238,6 @@ void SceneGame::Initialize()
         magicCircleSummon[i]->Initialize();
     }
 
-
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
     expManager.Initialize();
@@ -361,6 +361,7 @@ void SceneGame::Update(const float& elapsedTime)
         magicCircleSummon[i]->Update(elapsedTime);
     }
 
+    // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
     expManager.Update(elapsedTime);
 
@@ -369,8 +370,6 @@ void SceneGame::Update(const float& elapsedTime)
 
 
     //カード演出中だけUpdate前にreturn呼んでるから注意！！
-
-
 }
 
 // Updateの後に呼び出される
@@ -638,6 +637,7 @@ void SceneGame::Render(const float& elapsedTime)
 void SceneGame::DrawDebug()
 {
 #ifdef USE_IMGUI
+    using DirectX::XMFLOAT3;
 
     Graphics::Instance().GetShader()->DrawDebug();
 

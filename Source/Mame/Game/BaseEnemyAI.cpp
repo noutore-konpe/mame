@@ -16,8 +16,6 @@ void BaseEnemyAI::Initialize()
 
 void BaseEnemyAI::Update(const float& elapsedTime)
 {
-    using std::make_unique;
-
     Character::Update(elapsedTime);
 
     // ノード更新
@@ -207,6 +205,9 @@ void BaseEnemyAI::UpdateHorizontalVelocity(const float elapsedFrame)
         (velocity_.x * velocity_.x) +
         (velocity_.z * velocity_.z)
     );
+
+    //アニメーションの重みの変更(0~1)
+    model->weight = (std::min)(1.0f, oldLength / maxMoveSpeed_);
 
     // XZ平面の速力を減速する
     if (oldLength > 0.0f)

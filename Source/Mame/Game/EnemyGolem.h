@@ -104,6 +104,9 @@ public:
     // ¢Š«–‚–@wXVˆ—
     void UpdateSummoningMagicCircle(const float& lengthX, const float& lengthZ, const float& angle);
 
+private:
+    static int nameNum_;
+
 public:
     std::unique_ptr<MagicCircleGolem> magicCircleGolem;
     std::unique_ptr<MagicCircleEnemySummon> magicCircleEnemySummon;

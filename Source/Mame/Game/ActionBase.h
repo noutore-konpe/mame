@@ -1,6 +1,5 @@
 #pragma once
 
-//class EnemyBlueSlime;
 class BaseEnemyAI;
 
 // s“®ˆ—Šî’êƒNƒ‰ƒX

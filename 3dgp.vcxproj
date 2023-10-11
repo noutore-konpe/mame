@@ -247,6 +247,7 @@
     <ClCompile Include="Source\Mame\Game\PlayerManager.cpp" />
     <ClCompile Include="Source\Mame\Game\PlayerState.cpp" />
     <ClCompile Include="Source\Mame\Game\Projectile.cpp" />
+    <ClCompile Include="Source\Mame\Game\ProjectileHorming.cpp" />
     <ClCompile Include="Source\Mame\Game\ProjectileManager.cpp" />
     <ClCompile Include="Source\Mame\Game\ProjectileStraight.cpp" />
     <ClCompile Include="Source\Mame\Game\Stage.cpp" />
@@ -347,6 +348,7 @@
     <ClInclude Include="Source\Mame\Game\PlayerManager.h" />
     <ClInclude Include="Source\Mame\Game\PlayerState.h" />
     <ClInclude Include="Source\Mame\Game\Projectile.h" />
+    <ClInclude Include="Source\Mame\Game\ProjectileHorming.h" />
     <ClInclude Include="Source\Mame\Game\ProjectileManager.h" />
     <ClInclude Include="Source\Mame\Game\ProjectileStraight.h" />
     <ClInclude Include="Source\Mame\Game\Stage.h" />

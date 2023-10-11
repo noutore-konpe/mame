@@ -40,7 +40,7 @@ public:
     void Finalize();                                // 終了化
 
     void Begin();                                   // 毎フレーム一番最初に呼ばれる
-    void Update(const float& elapsedTime) override; // 更新処理
+    void Update(const float elapsedTime) override; // 更新処理
     void End();                                     // 毎フレーム一番最後に呼ばれる
 
     void MoveUpdate(float elapsedTime,float ax,float ay);
@@ -55,7 +55,7 @@ public:
 
     void CameraControllerUpdate(float elapsedTime);
     
-    void Render(const float& scale, ID3D11PixelShader* psShader = nullptr) override; // 描画処理
+    void Render(const float scale, ID3D11PixelShader* psShader = nullptr) override; // 描画処理
     
     void SkillImagesRender();
 
@@ -121,7 +121,7 @@ public:
     BaseSkill* Lottery();//カードを抽選
     void DrawCards();//３つのスキルカードを抽選　drawingSkillCardsに格納
 
-    void ChangeLockOnTarget();
+    void ChangeLockOnTarget(float ax);
 
 private:
     void LevelUpdate();

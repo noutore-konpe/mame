@@ -1,6 +1,8 @@
 #include "EnemySlime.h"
 #include "../Graphics/Graphics.h"
 
+int EnemySlime::nameNum_;
+
 // コンストラクタ
 EnemySlime::EnemySlime()
 {
@@ -16,7 +18,7 @@ EnemySlime::EnemySlime()
         //"./Resources/Model/Collision/sqhere.fbx");
 
     // ImGui名前設定
-    SetName("EnemySlime" + std::to_string(nameNum++));
+    SetName("EnemySlime" + std::to_string(nameNum_++));
 }
 
 // デストラクタ
@@ -72,9 +74,9 @@ void EnemySlime::DrawDebug()
     {
         Character::DrawDebug();
 
-        float range = GetRange();
-        ImGui::DragFloat("range", &range);
-        SetRange(range);
+        //float range = GetRange();
+        //ImGui::DragFloat("range", &range);
+        //SetRange(range);
 
         model->skinned_meshes->Drawdebug();
 

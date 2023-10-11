@@ -112,7 +112,7 @@ void Player::Begin()
 }
 
 // 更新処理
-void Player::Update(const float& elapsedTime)
+void Player::Update(const float elapsedTime)
 {
     //ロックオン解除、発動
     if (InputLockOn())
@@ -215,7 +215,9 @@ void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
     float length{ sqrtf(velocity.x * velocity.x + velocity.z * velocity.z) };
 
     //アニメーションの重みの変更
-    model->weight = length / maxSpeed;
+    //model->weight = length / maxSpeed;
+    model->weight = (std::min)(1.0f, length / maxSpeed);
+
 
     if (length > 0.0f)
     {
@@ -300,7 +302,7 @@ void Player::AvoidUpdate(float elapsedTime)
 
     //最大速度制限
     float maxDodgeSpeed = this->maxDodgeSpeed + Easing::OutSine(
-        static_cast<float>(model->GetCurrentKeyframeIndex()), 
+        static_cast<float>(model->GetCurrentKeyframeIndex()),
         static_cast<float>(model->GetCurrentKeyframeMaxIndex()/2.0f),
         2.0f, 0.0f);
     float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
@@ -356,7 +358,7 @@ void Player::ModelRotZUpdate(float elapsedTime)
     float rotZ = Easing::InSine(std::fabsf(rotValue), 0.1f, 0.5f, 0.0f);
     rotZ = rotValue < 0 ? rotZ : -rotZ;
     GetTransform()->SetRotationZ(rotZ);
-     
+
     //GetTransform()->SetRotationZ(actualRotValue);
 
     rotTimer += elapsedTime;
@@ -389,7 +391,7 @@ void Player::CameraControllerUpdate(float elapsedTime)
 }
 
 // 描画処理
-void Player::Render(const float& scale, ID3D11PixelShader* psShader)
+void Player::Render(const float scale, ID3D11PixelShader* psShader)
 {
     Character::Render(scale, playerPS.Get());
 
@@ -426,6 +428,16 @@ void Player::DrawDebug()
         if (ImGui::TreeNode("Camera"))
         {
             ImGui::SliderFloat("RotSpeed", &cameraRotSpeed, 0.01f, 5.0f);
+
+            if (ImGui::Button("R Change LockOn Target"))
+            {
+                ChangeLockOnTarget(1.0f);
+            }
+
+            if (ImGui::Button("L Change LockOn Target"))
+            {
+                ChangeLockOnTarget(-1.0f);
+            }
 
             ImGui::TreePop();
         }
@@ -518,7 +530,7 @@ void Player::SelectSkillUpdate(float elapsedTime)
             else if (timer > drawDirectionTime)timer = drawDirectionTime;
             float posY = Easing::OutSine(timer, drawDirectionTime, 165.0f, -transform->GetTexSize().y);
             transform->SetPos(DirectX::XMFLOAT2(65 + 400 * i, posY));
-            
+
         }
 
         if (drawDirectionTimer >= 1.0f)
@@ -550,7 +562,7 @@ void Player::SelectSkillUpdate(float elapsedTime)
             buttonDown = true;
         }
         else if (ax)buttonDown = true;
-        else 
+        else
         {
             buttonDown = false;
         }
@@ -602,11 +614,11 @@ BaseSkill* Player::Lottery()
     while (true)
     {
         //確率の分母を算出
-        int denominator = 
-            BaseSkill::pCommon + 
-            BaseSkill::pUncommon + 
-            BaseSkill::pRare + 
-            BaseSkill::pSuperRare + 
+        int denominator =
+            BaseSkill::pCommon +
+            BaseSkill::pUncommon +
+            BaseSkill::pRare +
+            BaseSkill::pSuperRare +
             BaseSkill::pUltraRare;
         int rarity = rand() % denominator;
         int checker = BaseSkill::pCommon;
@@ -634,7 +646,7 @@ BaseSkill* Player::Lottery()
     auto* drawSkill = lotSkills.at(rand() % lotSkills.size());
     drawSkill->isSelect = true;
     return drawSkill;
-    
+
 }
 
 void Player::DrawCards()
@@ -651,17 +663,62 @@ void Player::DrawCards()
     drawDirectionTimer = 0;
 }
 
-void Player::ChangeLockOnTarget()
+void Player::ChangeLockOnTarget(float ax)
 {
+    if (ax != 1 && ax != -1)return;
     auto& camera = Camera::Instance();
-    Transform* curLockOnTarget = camera.GetLockOnTarget();
+    DirectX::XMFLOAT3 curLockOnTargetPos = camera.GetLockOnTarget()->GetPosition();
+
+    //外積にプレイヤーから片側にいる敵のみ取得
+    std::vector<Enemy*> sideEnemys;
     auto& enemyManager = EnemyManager::Instance();
+
+    DirectX::XMFLOAT3 playerPos = GetTransform()->GetPosition();
+    DirectX::XMFLOAT3 plVec = curLockOnTargetPos - playerPos;//プレイヤーからロックオン先のターゲットまでのベクトル
+
     for (size_t i = 0; i < enemyManager.GetEnemyCount(); i++)
     {
-        auto* enemy = EnemyManager::Instance().GetEnemy(0);
-        if (curLockOnTarget == enemy->GetTransform());
+        auto* enemy = enemyManager.GetEnemy(i);
+        DirectX::XMFLOAT3 enemyPos = enemy->GetTransform()->GetPosition();
+
+        DirectX::XMFLOAT3 peVec = enemyPos - playerPos;//プレイヤーから敵までのベクトル
+
+        //外積値からプレイヤーから見て敵がどちら側にいているか調べる(負の値なら右側に敵がいる)
+        //引数のスティック入力方向に合わせてどちら側の敵を取得するか判断する
+        float crossY = (plVec.x * peVec.z) - (plVec.z * peVec.x);
+        if (ax == 1) //右側
+        {
+            if (crossY < 0)sideEnemys.emplace_back(enemy);
+        }
+        else if (ax == -1)//左側
+        {
+            if (crossY > 0)sideEnemys.emplace_back(enemy);
+        }
     }
 
+    //任意の方向に敵がいないならロックオンを切り替えない
+    if (sideEnemys.size() == 0)return;
+    if (sideEnemys.size() == 1)
+    {
+        camera.SetLockOnTarget(sideEnemys.at(0)->GetTransform());
+        return;
+    }
+
+    //複数の敵が任意の方向にいた場合、もっとも内積値の低い敵にロックオン
+    Transform* nextLockOnTarget = sideEnemys.at(0)->GetTransform();
+    float dot0 = -1;
+    for (int i = 1; i < sideEnemys.size(); i++)
+    {
+        DirectX::XMFLOAT3 peVec = sideEnemys.at(i)->GetPosition() - playerPos;
+        float dot1 = (plVec.x * peVec.x) + (plVec.z * peVec.z);
+        if (dot0 < dot1)
+        {
+            dot0 = dot1;
+            nextLockOnTarget = sideEnemys.at(i)->GetTransform();
+        }
+    }
+
+    camera.SetLockOnTarget(nextLockOnTarget);
 }
 
 void Player::LevelUpdate()

@@ -10,7 +10,7 @@ void EnemyManager::Initialize()
     craActionCoolTimer_ = 0.0f;
     isRunningCRAAction_ = false;
 
-    for (BaseEnemyAI*& enemy : enemies_)
+    for (Enemy*& enemy : enemies_)
     {
         enemy->Initialize();
     }
@@ -23,7 +23,7 @@ void EnemyManager::Finalize()
     projectileManager_.Finalize();
     projectileManager_.Clear();
 
-    for (BaseEnemyAI*& enemy : enemies_)
+    for (Enemy*& enemy : enemies_)
     {
         enemy->Finalize();
     }
@@ -33,7 +33,7 @@ void EnemyManager::Finalize()
 
 void EnemyManager::Begin()
 {
-    for (BaseEnemyAI*& enemy : enemies_)
+    for (Enemy*& enemy : enemies_)
     {
         enemy->Begin();
     }
@@ -48,17 +48,17 @@ void EnemyManager::Update(const float elapsedTime)
     craActionCoolTimer_ = (std::max)(0.0f, craActionCoolTimer_ - elapsedTime);
 
     // 更新
-    for (BaseEnemyAI*& enemy : enemies_)
+    for (Enemy*& enemy : enemies_)
     {
         enemy->Update(elapsedTime);
     }
 
     // 破棄処理
     {
-        for (BaseEnemyAI* enemy : removes_)
+        for (Enemy* enemy : removes_)
         {
             // vectorから要素を削除する場合はイテレーターで削除
-            std::vector<BaseEnemyAI*>::iterator it = std::find(enemies_.begin(), enemies_.end(), enemy);
+            auto it = std::find(enemies_.begin(), enemies_.end(), enemy);
 
             // std::vectorで管理されている要素を削除するにはerase()関数を使用する
             // (破棄リストのポインタからイテレーターを検索し、erase関数に渡す)
@@ -95,7 +95,7 @@ void EnemyManager::Update(const float elapsedTime)
 
 void EnemyManager::End()
 {
-    for (BaseEnemyAI*& enemy : enemies_)
+    for (Enemy*& enemy : enemies_)
     {
         enemy->End();
     }
@@ -107,7 +107,7 @@ void EnemyManager::End()
 // 描画処理
 void EnemyManager::Render(const float scale, ID3D11PixelShader* psShader)
 {
-    for (BaseEnemyAI*& enemy : enemies_)
+    for (Enemy*& enemy : enemies_)
     {
         enemy->Render(scale, psShader);
     }
@@ -118,14 +118,14 @@ void EnemyManager::Render(const float scale, ID3D11PixelShader* psShader)
 
 
 // エネミー登録
-void EnemyManager::Register(BaseEnemyAI* enemy)
+void EnemyManager::Register(Enemy* enemy)
 {
     enemies_.emplace_back(enemy);
 }
 
 
 // エネミー削除
-void EnemyManager::Remove(BaseEnemyAI* enemy)
+void EnemyManager::Remove(Enemy* enemy)
 {
     // 破棄リストに追加
     removes_.insert(enemy);
@@ -135,7 +135,7 @@ void EnemyManager::Remove(BaseEnemyAI* enemy)
 // エネミー全削除
 void EnemyManager::Clear()
 {
-    for (BaseEnemyAI*& enemy : enemies_)
+    for (Enemy*& enemy : enemies_)
     {
         SafeDeletePtr(enemy);
     }
@@ -150,20 +150,20 @@ void EnemyManager::DrawDebug()
 #ifdef USE_IMGUI
     if (ImGui::BeginMenu("Enemies"))
     {
-        for (BaseEnemyAI*& enemy : enemies_)
+        for (Enemy*& enemy : enemies_)
         {
             enemy->DrawDebug();
         }
         ImGui::Separator();
 
         // Behaviorを簡易に見る用
-        for (BaseEnemyAI*& enemy : enemies_)
-        {
-            std::string str = (enemy->GetActiveNode() != nullptr)
-                ? enemy->GetActiveNode()->GetName()
-                : u8"なし";
-            ImGui::Text(u8"Behavior：%s", str.c_str());
-        }
+        //for (Enemy*& enemy : enemies_)
+        //{
+        //    std::string str = (enemy->GetActiveNode() != nullptr)
+        //        ? enemy->GetActiveNode()->GetName()
+        //        : u8"なし";
+        //    ImGui::Text(u8"Behavior：%s", str.c_str());
+        //}
 
         ImGui::EndMenu();
     }
@@ -191,12 +191,12 @@ void EnemyManager::CollisionEnemyVsEnemy(const float /*elapsedTime*/)
     const size_t enemyCount = enemyManager.GetEnemyCount();
     for (size_t a = 0; a < enemyCount; ++a)
     {
-        BaseEnemyAI* enemyA = enemyManager.GetEnemy(a);
+        Enemy* enemyA = enemyManager.GetEnemy(a);
 
         // a以降の敵と判定を行う（a以前はすでに判定済みのため）
         for (size_t b = a + 1; b < enemyCount; ++b)
         {
-            BaseEnemyAI* enemyB = enemyManager.GetEnemy(b);
+            Enemy* enemyB = enemyManager.GetEnemy(b);
 
             const XMFLOAT3  positionA   = enemyA->GetPosition();
             const XMFLOAT3  positionB   = enemyB->GetPosition();
@@ -214,6 +214,7 @@ void EnemyManager::CollisionEnemyVsEnemy(const float /*elapsedTime*/)
             const XMFLOAT3 vecAtoB_N = ::XMFloat3Normalize(vecAtoB);
 
             // CRA : 7.Collisition : 近接攻撃中じゃない方の敵を押し出す
+#if 0
             if (enemyB->GetActiveNode() != nullptr &&
                 "CloseRangeAttack" == enemyB->GetActiveNode()->GetName())
             {
@@ -224,6 +225,9 @@ void EnemyManager::CollisionEnemyVsEnemy(const float /*elapsedTime*/)
             {
                 enemyB->SetPosition(positionA + vecAtoB_N * range);
             }
+#else
+            enemyB->SetPosition(positionA + vecAtoB_N * range);
+#endif
 
         }
 
