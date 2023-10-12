@@ -284,7 +284,7 @@ void GamePad::VibrationUpdate()
 	vibration.wRightMotorSpeed = vibration.wLeftMotorSpeed;// use any value between 0-65535 here
 	XInputSetState(0, &vibration);
 
-	vibrationTimer -= 0.001f;
-	//vibrationTimer -= framework::tictoc.time_interval();
+	//vibrationTimer -= 0.001f;
+	vibrationTimer -= framework::tictoc.time_interval();
 	//vibrationTimer -= Argent::Timer::ArTimer::Instance().DeltaTime();
 }

@@ -294,7 +294,7 @@ void SceneGame::Update(const float& elapsedTime)
         particles->Integrate(Graphics::Instance().GetDeviceContext(), elapsedTime);
     }
 
-    gamePad.Vibration(1.0f,1.0f);
+    
 
     //if (gamePad.GetButtonDown() & GamePad::BTN_B)
     //    Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));

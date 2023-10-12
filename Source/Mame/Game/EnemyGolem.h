@@ -33,10 +33,10 @@ public: // ’è”
         ComboAttack3Up,     // ƒRƒ“ƒ{‚RŒ‚–ÚU‚èã‚°
         ComboAttack3Down,   // ƒRƒ“ƒ{‚RŒ‚–ÚU‚è‰º‚°
         ComboAttack3Return, // ƒRƒ“ƒ{‚RŒ‚–Ú–ß‚è
-        Down0,              // ‹¯‚İ“|‚ê‚O
-        Down1,              // ‹¯‚İ“|‚ê‚P
-        DownReturn,         // ‹¯‚İ‚©‚ç–ß‚è
-        Death,              // €–S
+        Death0,             // €–S0
+        Death1,             // €–S1
+        Down,               // ‹¯‚İ“|‚ê
+        DownReturn,         // ‹¯‚İ‹N‚«ã‚ª‚è
     };
 
     enum class StateMachineState

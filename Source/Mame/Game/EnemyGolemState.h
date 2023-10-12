@@ -49,6 +49,9 @@ namespace EnemyGolemState
         float timer = 0.0f;
         float shakeTime = 2.0f;
         bool isCameraShake = false;
+
+        // ƒQ[ƒ€ƒpƒbƒhU“®‹­‚³
+        float gamePadVibPower = 1.0f;
     };
 
     // ™ôšK
@@ -77,6 +80,9 @@ namespace EnemyGolemState
 
         float maxBokehTime0 = 0.5f;
         float maxBokehTime1 = 0.5f;
+
+        // ƒQ[ƒ€ƒpƒbƒhU“®‹­‚³
+        float gamePadVibPower = 0.5f;
     };
 
     // ¢Š«
@@ -96,6 +102,9 @@ namespace EnemyGolemState
 
         float delayTimer = 0.0f;
         float maxDelayTime = 2.0f;
+
+        // ƒQ[ƒ€ƒpƒbƒhU“®‹­‚³
+        float gamePadVibPower = 0.5f;
     };
 
     // ‹N‚«ã‚ª‚è
@@ -129,6 +138,9 @@ namespace EnemyGolemState
         float animationTimer = 0.0f;
         float returnTimer = 0.0f;
         float returnTimer1 = 0.0f;
+
+        // ƒQ[ƒ€ƒpƒbƒhU“®‹­‚³
+        float gamePadVibPower = 0.3f;
     };
 
     class ComboAttack1State : public State<EnemyGolem>
@@ -169,6 +181,9 @@ namespace EnemyGolemState
         float moveFrontTimer    = 0.0f;
 
         float myTrunSpeed = DirectX::XMConvertToRadians(180);
+
+        // ƒQ[ƒ€ƒpƒbƒhU“®‹­‚³
+        float gamePadVibPower = 0.3f;
     };
 
     class DownState : public State<EnemyGolem>
@@ -182,8 +197,7 @@ namespace EnemyGolemState
         void Finalize()                         override;
 
     private:
-        bool isDown0 = false;
-        bool isDown1 = false;
+        bool isDown = false;
         bool isReturn = false;
         
         float getUpTimer = 0.0f;
@@ -233,12 +247,18 @@ namespace EnemyGolemState
             Attack,         // UŒ‚
             ComboAttack1,   // ƒRƒ“ƒ{UŒ‚‚P
             ComboAttack2,   // ƒRƒ“ƒ{UŒ‚‚Q
+            Roar,           // ™ôšK
             
             Max,
         };
 
     private:
-        bool isState[static_cast<UINT>(STATE::Max)];
+        bool isState[static_cast<UINT>(STATE::Max)] = {};
+
+        int currentNum = 0;
+        int resetNum = 3; // ãŒÀ‰ñ”
+
+        int setState = 0;
     };
 
     class DeathState : public State<EnemyGolem>
@@ -250,6 +270,18 @@ namespace EnemyGolemState
         void Initialize()                       override;
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
+
+    private:
+        bool isDeath0 = false;
+        bool isDeath1 = false;
+
+        float delayTimer = 0.0f;
+        float maxDelay = 0.2f;
+        bool isDelay = false;
+
+        float cameraShakeTimer = 0;
+        bool isCameraShake = false;
+        float maxTimer = 0.2f;
     };
 
     class WalkState : public State<EnemyGolem>

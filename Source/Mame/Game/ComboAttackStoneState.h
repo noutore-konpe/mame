@@ -59,6 +59,9 @@ namespace ComboAttackStoneState
 
         float delayTimer = 0.0f;
         float maxDelayTime = 1.5f;
+
+        // ゲームパッド振動強さ
+        float gamePadVibPower = 0.3f;
     };
 }
 

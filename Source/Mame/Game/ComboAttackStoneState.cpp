@@ -4,6 +4,8 @@
 
 #include "PlayerManager.h"
 
+#include "../Input/Input.h"
+
 // DummyState
 namespace ComboAttackStoneState
 {
@@ -164,6 +166,9 @@ namespace ComboAttackStoneState
             {   // カメラ振動
                 Camera::Instance().ScreenVibrate(0.05f, 0.8f);
                 cameraShake = true;
+
+                // ゲームパッド振動
+                Input::Instance().GetGamePad().Vibration(0.2f, gamePadVibPower);
             }
 
             // ディレイ
