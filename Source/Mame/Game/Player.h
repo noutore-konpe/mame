@@ -68,6 +68,25 @@ public:
 
     void AttackSteppingUpdate(float elapsedTime);//攻撃間際の踏み込み処理
 
+
+    void ChangeState(int newState) { stateMachine->ChangeState(newState); }
+
+
+    void ResetSteppingTimer() { steppingTimer = 0; }
+
+    //レベルアップ時すべての更新処理を止めてスキル選択演出をする
+    void SelectSkillUpdate(float elapsedTime);
+
+    BaseSkill* Lottery();//カードを抽選
+    void DrawCards();//３つのスキルカードを抽選　drawingSkillCardsに格納
+
+    //ロックオンしているターゲット切り替え 1なら右側の敵へロック -1なら左側ロック
+    bool ChangeLockOnTarget(float ax);
+
+    void LockOnUpdate();
+
+    void LockOnInitialize();
+
     //入力関数
     static bool InputJabAttack()
     {
@@ -95,7 +114,7 @@ public:
     }
 
     //getter,setter
-    void AddMaxSpeed(const float spd) { maxSpeed += spd; }
+    void AddMaxSpeed(const float spd) { maxEyeSpeed += spd; }
 
     void AddBaseAttackPower(const float power) { baseAttackPower += power; }
 
@@ -105,23 +124,13 @@ public:
 
     std::vector<BaseSkill*>& GetSkillArray() { return skillArray; }
 
-    void SetAcceleration(const float accel) { acceleration = accel; }
+    void SetAcceleration(const float accel) { eyeAcceleration = accel; }
 
     StateMachine<State<Player>>* GetStateMachine() { return stateMachine.get(); }
 
-    void ChangeState(int newState) { stateMachine->ChangeState(newState); }
+    void SetVelocity(const DirectX::XMFLOAT3 velo) { eyeVelocity = velo; }
 
-    void SetVelocity(const DirectX::XMFLOAT3 velo) { velocity = velo; }
-
-    void ResetSteppingTimer() { steppingTimer = 0; }
-
-    //レベルアップ時すべての更新処理を止めてスキル選択演出をする
-    void SelectSkillUpdate(float elapsedTime);
-
-    BaseSkill* Lottery();//カードを抽選
-    void DrawCards();//３つのスキルカードを抽選　drawingSkillCardsに格納
-
-    void ChangeLockOnTarget(float ax);
+    
 
 private:
     void LevelUpdate();
@@ -142,15 +151,15 @@ private:
     //-----------------------------------------------------------------------
 
     //--------------------------移動-----------------------------------------
-    float maxSpeed;
+    float maxEyeSpeed;
     //float maxDashSpeed = 4.0f;
-    DirectX::XMFLOAT3 velocity{};
+    DirectX::XMFLOAT3 eyeVelocity{};
 
     //カメラの向いている方向を前とした移動方向ベクトル
     DirectX::XMFLOAT3 moveVec;
 
     float deceleration;
-    float acceleration;
+    float eyeAcceleration;
     float dodgeAcceleration = 30.0f;
 
     float rotTimer = 0;

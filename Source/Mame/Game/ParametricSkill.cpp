@@ -35,4 +35,10 @@ namespace PlayerSkill
         player->AddMaxHealth(maxHealthIncreasing);
         player->ApplyHeal(maxHealthIncreasing);
     }
+
+    void DefenseUp::Overlaping()
+    {
+        overlap++;
+        player->AddDefense(defenseIncreasing);
+    }
 }

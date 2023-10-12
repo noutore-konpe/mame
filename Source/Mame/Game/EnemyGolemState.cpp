@@ -812,7 +812,10 @@ namespace EnemyGolemState
             // “G‚ª‰½‘Ì‚©o‚Ä‚é‚Æ‚«‚ÍsummonState‚Í’Ê‚ç‚È‚¢
             if (setState == static_cast<UINT>(STATE::Summon))
             {
-                if (EnemyManager::Instance().GetEnemyCount() > 0)
+                std::vector<Enemy*> enemy;
+                EnemyManager::Instance().GetSpecifyEnemy(static_cast<UINT>(Enemy::TYPE::Normal), enemy);
+
+                if (enemy.size() > 0)
                 {
                     continue;
                 }

@@ -49,7 +49,7 @@ public:
     const STEP& GetStep() const { return step_; }
 
     const DirectX::XMFLOAT3 GetVelocity() const { return velocity_; }
-    void SetVelocity(const DirectX::XMFLOAT3& velocity) { velocity_ = velocity; }
+    void SetVelocity(const DirectX::XMFLOAT3& eyeVelocity) { velocity_ = eyeVelocity; }
 
     const char* const GetName() const { return name_.c_str(); }
     void SetName(const std::string& name) { name_ = name; }

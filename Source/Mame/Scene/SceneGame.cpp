@@ -51,10 +51,6 @@ void SceneGame::CreateResource()
                 "./Resources/Shader/StageWallPS.cso");
     }
 
-    // enemy
-    {
-        enemyGolem = std::make_unique<EnemyGolem>();
-    }
 
     // player
     {
@@ -77,6 +73,9 @@ void SceneGame::CreateResource()
 
     // enemy
     {
+        EnemyGolem* enemyGolem = new EnemyGolem;
+        EnemyManager::Instance().Register(enemyGolem);
+
 #if 0
         // max 6~7
         EnemyManager& enemyManager = EnemyManager::Instance();
@@ -214,9 +213,6 @@ void SceneGame::Initialize()
     // カメラ
     Camera::Instance().Initialize();
 
-    // enemy
-    enemyGolem->Initialize();
-
     // player
     PlayerManager::Instance().Initialize();
 
@@ -238,12 +234,10 @@ void SceneGame::Initialize()
         magicCircleSummon[i]->Initialize();
     }
 
+
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
     expManager.Initialize();
-
-    //今だけロックオン処理いれとく
-    Camera::Instance().SetLockOnTargetPos(enemyGolem->GetTransform());
 }
 
 // 終了化
@@ -335,11 +329,6 @@ void SceneGame::Update(const float& elapsedTime)
 
     {
         Camera::Instance().Update(elapsedTime);
-    }
-
-    // enemy
-    {
-        enemyGolem->Update(elapsedTime);
     }
 
     // player
@@ -440,10 +429,9 @@ void SceneGame::Render(const float& elapsedTime)
                 PlayerManager::Instance().Render(playerScaleFactor);
 
                 EnemyManager& enemyManager = EnemyManager::Instance();
-                enemyManager.Render(enemyScaleFactor);
+                enemyManager.RenderShadow(enemyScaleFactor);
 
 
-                enemyGolem->Render(0.01f, true);
             }
 
             shadow.shadowMap->Deactivete(graphics.GetDeviceContext());
@@ -511,8 +499,6 @@ void SceneGame::Render(const float& elapsedTime)
             EnemyManager& enemyManager = EnemyManager::Instance();
             enemyManager.Render(enemyScaleFactor);
 
-
-            enemyGolem->Render(0.01f);
         }
         // 魔法陣
         if (isSeveralNum)
@@ -616,13 +602,28 @@ void SceneGame::Render(const float& elapsedTime)
         framebuffers[0]->shaderResourceViews[1].Get(),
     };
 
-    if (enemyGolem->GetCurrentState() != static_cast<UINT>(EnemyGolem::StateMachineState::RoarState))
+    // Golemによるボケ処理
     {
-        bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceViews, 0, _countof(shaderResourceViews), bloomPS.Get());
-    }
-    else
-    {
-        bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceViews, 0, _countof(shaderResourceViews), bokehPS.Get());
+        Enemy* enemyGolem = nullptr;
+        bool isBokeh = false;
+        for (Enemy* enemy : EnemyManager::Instance().GetEnemies())
+        {
+            if (enemy->GetType() == static_cast<UINT>(Enemy::TYPE::Golem))
+            {
+                enemyGolem = enemy;
+                if (enemyGolem->GetCurrentState() == static_cast<UINT>(EnemyGolem::StateMachineState::RoarState))
+                    isBokeh = true;
+            }
+        }
+
+        if (isBokeh)
+        {
+            bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceViews, 0, _countof(shaderResourceViews), bokehPS.Get());
+        }
+        else
+        {
+            bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceViews, 0, _countof(shaderResourceViews), bloomPS.Get());
+        }
     }
 
     //ブルーム無し
@@ -704,8 +705,6 @@ void SceneGame::DrawDebug()
         ItemManager::Instance().DrawDebug();
 
         particles->DrawDebug();
-
-        enemyGolem->DrawDebug();
 
         EnemyManager& enemyManager = EnemyManager::Instance();
         enemyManager.DrawDebug();

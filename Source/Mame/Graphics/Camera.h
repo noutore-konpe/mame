@@ -5,6 +5,8 @@
 
 #include "../Transform.h"
 
+class Enemy;
+
 class Camera
 {
 private: // シングルトン化
@@ -44,7 +46,11 @@ public:
 
     void SetTraget(Transform* t) { focusTarget = t; }
 
-    void MoveDelayUpdate(float elapsedTime);
+    //引数の目標座標に向かってゆっくりカメラを移動させる処理
+    void EyeMoveDelayUpdate(float elapsedTime,
+        const DirectX::XMFLOAT3 eyeTargetPos);
+    void FocusMoveDelayUpdate(float elapsedTime,
+        const DirectX::XMFLOAT3 focusTargetPos);
 
 private: // Debug用
     float moveSpeed = 0.01f;
@@ -58,7 +64,6 @@ public:
     void SetViewMatrix(DirectX::XMMATRIX v) { V = v; }
     void SetProjectionMatrix(DirectX::XMMATRIX p) { P = p; }
 
-    void SetLockOnTargetPos(Transform* transform) { lockOnTargetTransform = transform; }
     const DirectX::XMFLOAT3 GetForward()
     {
         if (activeLockOn && 
@@ -72,6 +77,7 @@ public:
         {
             DirectX::XMVECTOR Right = DirectX::XMVector3Cross(
                 DirectX::XMLoadFloat3(&lockOnForward),
+                //仮の上ベクトル　右ベクトルを取るためにマイナスにしている
                 DirectX::XMVECTOR(DirectX::XMVectorSet(0,-1,0,0)));
             DirectX::XMFLOAT3 right;
             DirectX::XMStoreFloat3(&right,Right);
@@ -80,8 +86,8 @@ public:
         return transform.CalcRight();
     }
 
-    Transform* GetLockOnTarget() const { return lockOnTargetTransform; }
-    void SetLockOnTarget(Transform* transform) { lockOnTargetTransform = transform; }
+    Enemy* GetLockOnTarget() const { return lockOnTarget; }
+    void SetLockOnTarget(Enemy* enemy) { lockOnTarget = enemy; }
 
 public:
     bool activeLockOn = false;//ロックオン起動
@@ -96,16 +102,22 @@ private:
     float offsetY = 2.7f;
     float focusOffsetY = 1.0f;
 
-    float maxSpeed = 8.0f;
+    float maxEyeSpeed = 8.0f;
+    float maxFocusSpeed = 20.0f;
 
     Transform* focusTarget;//注視点になるオブジェクト
 
-    Transform* lockOnTargetTransform;//ロックオン対象の座標
+    Enemy* lockOnTarget;
+    //Transform* lockOnTargetTransform;//ロックオン対象の座標
     DirectX::XMFLOAT3 lockOnForward;//ロックオン時の前方向ベクトル
 
     DirectX::XMFLOAT3 eyePos;
-    float acceleration = 3.0f;
-    DirectX::XMFLOAT3 velocity;
+    DirectX::XMFLOAT3 focusPos = {0,0,1};
+
+    float eyeAcceleration = 3.0f;
+    float focusAcceleration = 9.0f;
+    DirectX::XMFLOAT3 eyeVelocity;
+    DirectX::XMFLOAT3 focusVelocity;
 
     bool enableDebugCamera = false;
 

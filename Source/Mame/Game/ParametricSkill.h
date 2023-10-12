@@ -85,5 +85,21 @@ namespace PlayerSkill
     private:
         float maxHealthIncreasing = 1.0f;//è„è∏íl
     };
+
+    class DefenseUp : public BaseSkill
+    {
+    public:
+        DefenseUp(Player* player) :
+            BaseSkill(player,
+                L"./Resources/Image/Card/sampleCard.png",
+                L"./Resources/Image/Icon/sampleIcon.png",
+                "DefenseUp", BaseSkill::COMMON) {}
+        ~DefenseUp() {}
+
+        void Overlaping()override;
+
+    private:
+        float defenseIncreasing = 2.0f;//è„è∏íl
+    };
 }
 
