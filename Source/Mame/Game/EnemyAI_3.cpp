@@ -47,6 +47,7 @@ EnemyAI_3::EnemyAI_3()
         behaviorTree_->AddNode("Root", "Idle", 3, SelectRule::Non, nullptr, new IdleAction(this));
     }
 
+    SetType(static_cast<UINT>(Enemy::TYPE::Normal));
 
     // ImGuiñºëOê›íË
     SetName("EnemyAI_3 : " + std::to_string(nameNum_++));

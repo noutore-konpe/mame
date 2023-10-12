@@ -44,10 +44,6 @@ private: // •Ï”“™X
     std::unique_ptr<Stage> stageBase;
     std::unique_ptr<Stage> stageWall;
 
-
-
-    std::unique_ptr<EnemyGolem> enemyGolem;
-
     // –‚–@w
     std::unique_ptr<MagicCircleSummon> magicCircleSummon[10];
     bool isSeveralNum = false;

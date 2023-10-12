@@ -28,6 +28,8 @@ public:
     void Render(const float scale, ID3D11PixelShader* psShader = nullptr);
     void DrawDebug();
 
+    void RenderShadow(const float scale, ID3D11PixelShader* psShader = nullptr);
+
     void CollisionEnemyVsEnemy(const float elapsedTime);
 
 public:
@@ -43,6 +45,16 @@ public:
 public:
     // エネミー数取得
     const size_t GetEnemyCount() const { return enemies_.size(); }
+    void GetSpecifyEnemy(int type, std::vector<Enemy*>& e) const
+    {
+        for (Enemy* enemy : enemies_)
+        {
+            if (enemy->GetType() == type)
+            {
+                e.emplace_back(enemy);
+            }
+        }
+    }
 
     std::vector<Enemy*>& GetEnemies() { return enemies_; }
 

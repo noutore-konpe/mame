@@ -5,6 +5,13 @@
 class Enemy : public Character
 {
 public:
+    enum class TYPE
+    {
+        Normal,
+        Golem,
+    };
+
+public:
     Enemy() {}
     virtual ~Enemy() {}
 
@@ -17,10 +24,20 @@ public:
     virtual void Render(const float& scale, ID3D11PixelShader* psShader);  // 描画処理
     virtual void DrawDebug() = 0;                                       // デバッグ描画
 
+    virtual void Render(const float& scale, bool shadow, ID3D11PixelShader* psShader = nullptr) {}
+
+    virtual int GetCurrentState() { return 0; }
+
     //virtual void UpdateConstants() = 0;
+
+public:
+    int GetType() { return type; }
+    void SetType(int t) { type = t; }
 
 protected:
     int dropExpCount_ = 5;
 
+private:
+    int type = 0;
 };
 

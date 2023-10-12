@@ -90,7 +90,8 @@ public:
     void Update(const float& elapsedTime)                       override; // 更新処理
     void End()                                                  override; // 毎フレーム一番最後に呼ばれる
     void Render(const float& scale, ID3D11PixelShader* psShader = nullptr)   override; // 描画処理
-    void Render(const float& scale, bool shadow, ID3D11PixelShader* psShader = nullptr);
+    
+    void Render(const float& scale, bool shadow, ID3D11PixelShader* psShader = nullptr) override;
     void DrawDebug()                                            override; // デバッグ描画
 
     void UpdateConstants() override;

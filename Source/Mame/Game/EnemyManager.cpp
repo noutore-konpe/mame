@@ -181,6 +181,25 @@ void EnemyManager::DrawDebug()
 #endif
 }
 
+void EnemyManager::RenderShadow(const float scale, ID3D11PixelShader* psShader)
+{
+    for (Enemy*& enemy : enemies_)
+    {
+        // ƒS[ƒŒƒ€‚¶‚á‚È‚©‚Á‚½‚ç•`‰æ
+        if (enemy->GetType() != static_cast<UINT>(Enemy::TYPE::Golem))
+        {
+            enemy->Render(scale, psShader);
+        }
+        else
+        {   // ƒS[ƒŒƒ€‚Ì‰e
+            enemy->Render(scale, false);
+        }
+    }
+
+
+    projectileManager_.Render(scale, psShader);
+}
+
 
 void EnemyManager::CollisionEnemyVsEnemy(const float /*elapsedTime*/)
 {
