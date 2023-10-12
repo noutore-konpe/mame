@@ -4,6 +4,7 @@
 #include "../Other/MathHelper.h"
 #include "../Other/Easing.h"
 #include "../Game/PlayerManager.h"
+#include "../Game/Enemy.h"
 
 void Camera::Initialize()
 {
@@ -19,7 +20,7 @@ void Camera::Update(float elapsedTime)
     if (activeLockOn)
     {
         EyeMoveDelayUpdate(elapsedTime, PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition());
-        FocusMoveDelayUpdate(elapsedTime, lockOnTargetTransform->GetPosition());
+        FocusMoveDelayUpdate(elapsedTime, lockOnTarget->GetTransform()->GetPosition());
     }
     else
     {
@@ -112,8 +113,8 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
     if (activeLockOn)//ロックオン時
     {
         DirectX::XMFLOAT3 targetPos = focusTarget->GetPosition();
-        DirectX::XMFLOAT3 lockOnTargetPos = lockOnTargetTransform->GetPosition();
-        DirectX::XMFLOAT3 forward = lockOnTargetPos - targetPos;
+        DirectX::XMFLOAT3 lockOnTargetPos = lockOnTarget->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 forward = focusPos - eyePos;
         forward = Normalize(forward);
         lockOnForward = forward;
 
@@ -129,7 +130,7 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
            focusPos.z,
            1.0f) };
 
-        focus = DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&screenVibrationOffset), focus);
+        focus = DirectX::XMVectorAdd(DirectX::XMVectorScale(DirectX::XMLoadFloat3(&screenVibrationOffset),7.0f), focus);
     }
     if (focusTarget && !enableDebugCamera)
     {
@@ -142,7 +143,7 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
             eyePos.y - forward.y * focalLength + 1.0f,
             eyePos.z - forward.z * focalLength,
             1.0f) };
-
+        
         focus = { DirectX::XMVectorSet(
             targetPos.x,
             targetPos.y + focusOffsetY,
@@ -198,7 +199,7 @@ void Camera::DrawDebug()
             ImGui::DragFloat3("Velocity", &eyeVelocity.x);
             ImGui::DragFloat3("Eye Pos", &eyePos.x);
             ImGui::SliderFloat("Max Speed", &maxEyeSpeed,0.1f,20.0f);
-            ImGui::SliderFloat("Acceleration", &acceleration,0.1f,10.0f);
+            ImGui::SliderFloat("Acceleration", &eyeAcceleration,0.1f,10.0f);
 
             ImGui::SliderFloat("FocalLength", &focalLength, 0.1f, 20.0f);
             ImGui::SliderFloat("OffsetY", &offsetY, 0.1f, 10.0f);
@@ -251,7 +252,7 @@ void Camera::EyeMoveDelayUpdate(float elapsedTime,
     //カメラ位置と目標位置までの距離が近いなら処理しない
     if (length < 0.1f && length > -0.1f)return;
 
-    eyeVelocity = moveVec * length * acceleration;
+    eyeVelocity = moveVec * length * eyeAcceleration;
 
     //最大速度制限
     length = Length(eyeVelocity);
@@ -268,7 +269,6 @@ void Camera::EyeMoveDelayUpdate(float elapsedTime,
 void Camera::FocusMoveDelayUpdate(float elapsedTime,
     const DirectX::XMFLOAT3 focusTargetPos)
 {
-
     DirectX::XMFLOAT3 moveVec = focusTargetPos - focusPos;
     float length = Length(moveVec);
     moveVec = Normalize(moveVec);
@@ -276,7 +276,7 @@ void Camera::FocusMoveDelayUpdate(float elapsedTime,
     //カメラ位置と目標位置までの距離が近いなら処理しない
     if (length < 0.1f && length > -0.1f)return;
 
-    focusVelocity = moveVec * length * acceleration;
+    focusVelocity = moveVec * length * focusAcceleration;
 
     //最大速度制限
     length = Length(focusVelocity);

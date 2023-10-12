@@ -17,7 +17,7 @@ inline DirectX::XMFLOAT2  operator-(const DirectX::XMFLOAT2& f1, const DirectX::
 	DirectX::XMFLOAT2 ret{};
 	DirectX::XMVECTOR F1{DirectX::XMLoadFloat2(&f1)};
 	DirectX::XMVECTOR F2{DirectX::XMLoadFloat2(&f2)};
-	DirectX::XMStoreFloat2(&ret,DirectX::XMVectorSubtract(F1, F2));
+	DirectX::XMStoreFloat2(&ret, DirectX::XMVectorSubtract(F1, F2));
 	return ret;
 }
 
@@ -39,7 +39,7 @@ inline DirectX::XMFLOAT3 operator+(const DirectX::XMFLOAT3& f1, const DirectX::X
 	return ret;
 }
 
-inline DirectX::XMFLOAT3  operator-(const DirectX::XMFLOAT3& f1, const DirectX::XMFLOAT3& f2)
+inline DirectX::XMFLOAT3 operator-(const DirectX::XMFLOAT3& f1, const DirectX::XMFLOAT3& f2)
 {
 	DirectX::XMFLOAT3 ret{};
 	DirectX::XMVECTOR F1{DirectX::XMLoadFloat3(&f1)};
@@ -62,7 +62,7 @@ inline DirectX::XMFLOAT3 operator*(const DirectX::XMFLOAT3& f1, float f)
 {
 	DirectX::XMFLOAT3 ret{};
 	DirectX::XMVECTOR F1{DirectX::XMLoadFloat3(&f1)};
-	DirectX::XMStoreFloat3(&ret, DirectX::XMVectorScale(F1,f));
+	DirectX::XMStoreFloat3(&ret, DirectX::XMVectorScale(F1, f));
 	return ret;
 }
 

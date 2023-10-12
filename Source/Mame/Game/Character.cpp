@@ -186,19 +186,41 @@ void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
 
     rotValue = cross < 0.0f ? -_rotSpeed : _rotSpeed;
 
-    transform->SetRotation(rotation);
+    if (rotation.y < FLT_MAX || rotation.y > -FLT_MAX)
+    {
+        transform->SetRotationY(rotation.y);
+    }
 }
 
-bool Character::ApplyDamage(float damage, float invincibleTime)
+Character::DamageResult Character::ApplyDamage(float damage, float invincibleTime)
 {
+    DamageResult result;
+
     //–³“GŠÔ‚©
-    if (this->invincibleTime > 0.0f)return false;
+    if (this->invincibleTime > 0.0f)
+    {
+        result.hit = false;
+        return result;
+    }
+
+    //–hŒä—Í‚Ì‰e‹¿
+    damage -= defense;
+    result.damage = damage;
 
     //ƒ_ƒ[ƒW‚ª‚O‚Ìê‡‚ÍŒ’Nó‘Ô‚ğ•ÏX‚·‚é•K—v‚ª‚È‚¢
-    if (damage == 0)return false;
+    if (damage <= 0)
+    {
+        result.hit = true;
+        result.damage = 0;
+        return result;
+    }
 
     //€–S‚µ‚Ä‚¢‚éê‡‚ÍŒ’Nó‘Ô‚ğ•ÏX‚µ‚È‚¢
-    if (health <= 0)return false;
+    if (health <= 0)
+    {
+        result.hit = true;
+        return result;
+    }
 
     //ƒ_ƒ[ƒWˆ—
     health -= damage;
@@ -218,7 +240,8 @@ bool Character::ApplyDamage(float damage, float invincibleTime)
     }
 
     //Œ’Nó‘Ô‚ª•ÏX‚µ‚½ê‡‚Ítrue‚ğ•Ô‚·
-    return true;
+    result.hit = true;
+    return result;
 }
 
 bool Character::ApplyHeal(float heal)

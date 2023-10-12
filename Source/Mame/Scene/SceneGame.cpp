@@ -239,14 +239,11 @@ void SceneGame::Initialize()
     }
 
     //今だけロックオン処理いれとく
-    Camera::Instance().SetLockOnTargetPos(enemyGolem->GetTransform());
+    Camera::Instance().SetLockOnTarget(enemyGolem.get());
 
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
     expManager.Initialize();
-
-    //今だけロックオン処理いれとく
-    Camera::Instance().SetLockOnTargetPos(enemyGolem->GetTransform());
 }
 
 // 終了化

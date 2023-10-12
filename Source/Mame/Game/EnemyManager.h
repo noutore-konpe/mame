@@ -44,6 +44,8 @@ public:
     // エネミー数取得
     const size_t GetEnemyCount() const { return enemies_.size(); }
 
+    std::vector<Enemy*>& GetEnemies() { return enemies_; }
+
     // エネミー取得
     Enemy* GetEnemy(const size_t index) { return enemies_.at(index); }
     ProjectileManager* GetProjectileManager() { return &projectileManager_; }

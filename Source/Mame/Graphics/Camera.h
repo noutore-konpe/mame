@@ -5,6 +5,8 @@
 
 #include "../Transform.h"
 
+class Enemy;
+
 class Camera
 {
 private: // シングルトン化
@@ -62,7 +64,6 @@ public:
     void SetViewMatrix(DirectX::XMMATRIX v) { V = v; }
     void SetProjectionMatrix(DirectX::XMMATRIX p) { P = p; }
 
-    void SetLockOnTargetPos(Transform* transform) { lockOnTargetTransform = transform; }
     const DirectX::XMFLOAT3 GetForward()
     {
         if (activeLockOn && 
@@ -85,8 +86,8 @@ public:
         return transform.CalcRight();
     }
 
-    Transform* GetLockOnTarget() const { return lockOnTargetTransform; }
-    void SetLockOnTarget(Transform* transform) { lockOnTargetTransform = transform; }
+    Enemy* GetLockOnTarget() const { return lockOnTarget; }
+    void SetLockOnTarget(Enemy* enemy) { lockOnTarget = enemy; }
 
 public:
     bool activeLockOn = false;//ロックオン起動
@@ -102,17 +103,19 @@ private:
     float focusOffsetY = 1.0f;
 
     float maxEyeSpeed = 8.0f;
-    float maxFocusSpeed = 8.0f;
+    float maxFocusSpeed = 20.0f;
 
     Transform* focusTarget;//注視点になるオブジェクト
 
-    Transform* lockOnTargetTransform;//ロックオン対象の座標
+    Enemy* lockOnTarget;
+    //Transform* lockOnTargetTransform;//ロックオン対象の座標
     DirectX::XMFLOAT3 lockOnForward;//ロックオン時の前方向ベクトル
 
     DirectX::XMFLOAT3 eyePos;
     DirectX::XMFLOAT3 focusPos = {0,0,1};
 
-    float acceleration = 3.0f;
+    float eyeAcceleration = 3.0f;
+    float focusAcceleration = 9.0f;
     DirectX::XMFLOAT3 eyeVelocity;
     DirectX::XMFLOAT3 focusVelocity;
 

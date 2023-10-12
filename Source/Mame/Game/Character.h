@@ -93,6 +93,9 @@ public: // æ“¾Eİ’èŠÖ”
     void SetEmissiveScrollDirection(DirectX::XMFLOAT2 scroll) { model->skinned_meshes->data.emissiveScrollDirection = scroll; }
     void SetEmissiveColor(DirectX::XMFLOAT4 color) { model->skinned_meshes->data.emissiveColor = color; }
 
+    const float GetDefense() const { return defense; }
+    void AddDefense(const float defe) { defense += defe; }
+
 #pragma endregion
 
 public: // ‚»‚Ì‘¼‚ÌŠÖ”
@@ -110,7 +113,13 @@ public: // ‚»‚Ì‘¼‚ÌŠÖ”
 
     virtual void OnHealed() {}
 
-    bool ApplyDamage(float damage, float invincibleTime);
+    struct DamageResult
+    {
+        bool hit;
+        float damage = 0;
+    };
+    //–ß‚è’l‚Í—^‚¦‚ç‚ê‚½ƒ_ƒ[ƒW”
+    DamageResult ApplyDamage(float damage, float invincibleTime);
 
     bool ApplyHeal(float heal);
 
@@ -123,12 +132,18 @@ public:
 //    std::unique_ptr<Model> debugSqhere;   // “–‚½‚è”»’è—pQ‹…
 //#endif // _DEBUG
 
+    
+    float rotValue;                 // ‰ñ“]—Ê
+
+    bool isDead = false; //€–Sƒtƒ‰ƒO
+
+
+protected:
+    float defense = 0.0f;//–hŒä—Í
+
     float maxHealth;
     float health;                   // hp
     float invincibleTime = 1.0f;    // –³“GŠÔ
-    float rotValue;                 // ‰ñ“]—Ê
-
-private:
     //Transform collisionSphereTransform{};
     //DirectX::XMFLOAT3 debugSphereOffset{};  // “–‚½‚è”»’è—p
     //float       range = 1.0f;               // ‹…“–‚½‚è”»’è”¼Œa(¦radius‚Éæ‚èŠ·‚¦—\’è)
