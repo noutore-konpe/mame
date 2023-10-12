@@ -92,7 +92,6 @@ protected:
 
     DirectX::XMFLOAT3 targetPosition_ = {};
     DirectX::XMFLOAT3 moveVec_  = {};
-    DirectX::XMFLOAT3 velocity_ = {};
 
     float moveSpeed_    = 3.5f;
     float maxMoveSpeed_ = 0.0f;

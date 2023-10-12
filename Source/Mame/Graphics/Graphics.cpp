@@ -166,7 +166,7 @@ Graphics::Graphics(HWND hWnd, BOOL fullscreen)
 			swapchainDesc.Windowed = TRUE;		// ウインドウモードか、フルスクリーンにするか。
 			swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 			swapchainDesc.Flags = 0; // DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH
-#else 
+#else
 			swapchainDesc.SampleDesc.Count = 1;
 			swapchainDesc.SampleDesc.Quality = 0;
 			swapchainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -298,6 +298,10 @@ Graphics::Graphics(HWND hWnd, BOOL fullscreen)
 		shader = std::make_unique<Shader>(device.Get());
 	}
 
+	// デバッグレンダラ生成
+	{
+		debugRenderer_ = std::make_unique<DebugRenderer>(device.Get());
+	}
 }
 
 Graphics::~Graphics()
@@ -348,7 +352,7 @@ void Graphics::CreateDirext2dObjects()
 
 	hr=dwriteFactory->CreateTextFormat(L"Meiryo", NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 11, L"", dwriteTextFormats[0].ReleaseAndGetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-	
+
 	hr = dwriteTextFormats[0]->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 	_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 

@@ -1,11 +1,15 @@
 #include "Ability.h"
+#include "AbilityManager.h"
 
-int Ability::nameNum = 0;
+Ability::Ability(AbilityManager* abilityManager)
+    : abilityManager_(abilityManager)
+{
+}
 
 // •`‰æˆ—
-void Ability::Render(const float& scale, ID3D11PixelShader* psShader)
+void Ability::Render(const float scale, ID3D11PixelShader* psShader)
 {
-    model->Render(scale, psShader);
+    model_->Render(scale, psShader);
 }
 
 // ImGui—p
@@ -16,4 +20,9 @@ void Ability::DrawDebug()
     GetTransform()->DrawDebug();
 
 #endif// USE_IMGUI
+}
+
+void Ability::Destroy()
+{
+    abilityManager_->Remove(this);
 }

@@ -157,6 +157,12 @@
     <FxCompile Include="Source\Shader\LoadingPS.hlsl">
       <Filter>mamelib\Shader\Loading</Filter>
     </FxCompile>
+    <FxCompile Include="Source\Shader\DebugPS.hlsl">
+      <Filter>mamelib\Shader\DebugRenderer</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\DebugVS.hlsl">
+      <Filter>mamelib\Shader\DebugRenderer</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Mame\Scene\BaseScene.cpp">
@@ -453,6 +459,12 @@
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\ProjectileHorming.cpp">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Taki174\DebugRenderer.cpp">
+      <Filter>mamelib\Taki174</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\BlackHole.cpp">
+      <Filter>mamelib\Mame\Game\Ability</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -794,6 +806,12 @@
     <ClInclude Include="Source\Mame\Game\ProjectileHorming.h">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Taki174\DebugRenderer.h">
+      <Filter>mamelib\Taki174</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\BlackHole.h">
+      <Filter>mamelib\Mame\Game\Ability</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">
@@ -852,6 +870,9 @@
     </None>
     <None Include="Source\Shader\sprite.hlsli">
       <Filter>mamelib\Shader\Sprite</Filter>
+    </None>
+    <None Include="Source\Shader\Debug.hlsli">
+      <Filter>mamelib\Shader\DebugRenderer</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -998,6 +1019,9 @@
     </Filter>
     <Filter Include="mamelib\Mame\Game\ExperiencePoint">
       <UniqueIdentifier>{5b118d4e-b983-46f2-8622-784391a271c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Shader\DebugRenderer">
+      <UniqueIdentifier>{dc2c7905-1f06-4f58-b18f-9c307dfa1ec6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

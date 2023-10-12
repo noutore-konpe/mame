@@ -5,6 +5,7 @@
 #include <wrl.h>
 #include <mutex>
 #include "../Resource/shader.h"
+#include "../../Taki174/DebugRenderer.h"
 
 #define ENABLE_DIRECT2D
 #ifdef ENABLE_DIRECT2D
@@ -48,7 +49,8 @@ public:
     // ミューテックス取得
     std::mutex& GetMutex() { return mutex; }
 
-
+    // デバッグレンダラ取得
+    DebugRenderer* GetDebugRenderer() const { return debugRenderer_.get(); }
 
 private:
     static Graphics* instance;
@@ -67,6 +69,8 @@ private:
     std::unique_ptr<Shader> shader;
 
     std::mutex mutex;
+
+    std::unique_ptr<DebugRenderer> debugRenderer_;
 
     float screenWidth;
     float screenHeight;

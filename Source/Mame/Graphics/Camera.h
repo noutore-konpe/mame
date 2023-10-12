@@ -30,7 +30,7 @@ public:
     //‰æ–ÊU“®
     void ScreenVibrate(float volume/*U“®—Ê*/, float effectTime/*U“®ŠÔ*/);
     void ScreenVibrationUpdate(float elapsedTime);
-    
+
     struct view_camera
     {
         DirectX::XMFLOAT3 eye{ 0.0f,0.0f,-10.0f };

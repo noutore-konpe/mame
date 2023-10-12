@@ -50,6 +50,16 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 		// タイマー更新
 		owner_->ElapseRunTimer(elapsedTime);
 
+		// 待機と歩きのブレンドアニメーションが終わったら
+		// 待機アニメーションにしておく
+		if (false == owner_->IsPlayAnimation())
+		{
+			owner_->PlayAnimation(
+				Animation::Idle, true,
+				owner_->GetAnimationSpeed()
+			);
+		}
+
 		//// 誰も近接攻撃行動中でなく近接攻撃行動クールタイマーもなければ終了
 		//if (false == enemyManager.GetIsRunningCRAAction() &&
 		//	enemyManager.GetCRAActionCoolTimer() <= 0.0f)
@@ -122,17 +132,6 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 
 		// 回転
 		owner_->Turn(elapsedTime, vx, vz, owner_->GetTurnSpeed());
-
-
-		// 待機と歩きのブレンドアニメーションが終わったら
-		// 待機アニメーションにしておく
-		if (false == owner_->IsPlayAnimation())
-		{
-			owner_->PlayAnimation(
-				Animation::Idle, true,
-				owner_->GetAnimationSpeed()
-			);
-		}
 	}
 
 	return ActionBase::State::Run;
