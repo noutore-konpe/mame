@@ -66,14 +66,14 @@ public:
 
     const DirectX::XMFLOAT3 GetForward()
     {
-        if (activeLockOn && 
+        if (activeLockOn && lockOnTarget &&
             lockOnForward.x + lockOnForward.y +lockOnForward.z != 0
             )return lockOnForward;
         return transform.CalcForward();
     }
     const DirectX::XMFLOAT3 GetRight()
     {
-        if (activeLockOn)
+        if (activeLockOn && lockOnTarget)
         {
             DirectX::XMVECTOR Right = DirectX::XMVector3Cross(
                 DirectX::XMLoadFloat3(&lockOnForward),

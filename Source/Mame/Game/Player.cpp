@@ -104,6 +104,8 @@ void Player::Initialize()
         skill->Initialize();
     }
     //------------------------------------------------------------------------------------------
+
+    LockOnInitialize();
 }
 
 // 終了化
@@ -751,6 +753,12 @@ bool Player::ChangeLockOnTarget(float ax)
 
 void Player::LockOnUpdate()
 {
+    if (Camera::Instance().GetLockOnTarget() == nullptr)
+    {
+        LockOnInitialize();
+        return;
+    }
+
     //ロックオン先のエネミーが死んだとき左右の敵にロックオン切り替えし
     // 敵がいなかった場合、ロックオンを解除する
     if (Camera::Instance().GetLockOnTarget()->isDead)

@@ -17,7 +17,7 @@ void Camera::Initialize()
 
 void Camera::Update(float elapsedTime)
 {
-    if (activeLockOn)
+    if (activeLockOn && lockOnTarget)
     {
         EyeMoveDelayUpdate(elapsedTime, PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition());
         FocusMoveDelayUpdate(elapsedTime, lockOnTarget->GetTransform()->GetPosition());
@@ -110,7 +110,7 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
     DirectX::XMVECTOR focus;
 
     //TANA変更
-    if (activeLockOn)//ロックオン時
+    if (activeLockOn && lockOnTarget)//ロックオン時
     {
         DirectX::XMFLOAT3 targetPos = focusTarget->GetPosition();
         DirectX::XMFLOAT3 lockOnTargetPos = lockOnTarget->GetTransform()->GetPosition();
