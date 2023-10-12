@@ -76,7 +76,7 @@ void SceneGame::CreateResource()
         EnemyGolem* enemyGolem = new EnemyGolem;
         EnemyManager::Instance().Register(enemyGolem);
 
-#if 0
+#if 1
         // max 6~7
         EnemyManager& enemyManager = EnemyManager::Instance();
         // EnemyAI_1
@@ -345,10 +345,10 @@ void SceneGame::Update(const float& elapsedTime)
     }
 
     // ñÇñ@êw
-    for (int i = 0; i < 10; ++i)
+    /*for (int i = 0; i < 10; ++i)
     {
         magicCircleSummon[i]->Update(elapsedTime);
-    }
+    }*/
 
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();

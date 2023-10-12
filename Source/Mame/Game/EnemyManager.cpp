@@ -28,7 +28,6 @@ void EnemyManager::Finalize()
         enemy->Finalize();
     }
     Clear();
-
 }
 
 void EnemyManager::Begin()
@@ -46,6 +45,13 @@ void EnemyManager::Update(const float elapsedTime)
 {
     // CRA : 1.Update : 近接攻撃行動クールタイマー減少
     craActionCoolTimer_ = (std::max)(0.0f, craActionCoolTimer_ - elapsedTime);
+
+    //生成
+    for (Enemy* enemy : generates_)
+    {
+        enemies_.emplace_back(enemy);
+    }
+    generates_.clear();
 
     // 更新
     for (Enemy*& enemy : enemies_)
@@ -120,7 +126,8 @@ void EnemyManager::Render(const float scale, ID3D11PixelShader* psShader)
 // エネミー登録
 void EnemyManager::Register(Enemy* enemy)
 {
-    enemies_.emplace_back(enemy);
+    //enemies_.emplace_back(enemy);
+    generates_.insert(enemy);
 }
 
 

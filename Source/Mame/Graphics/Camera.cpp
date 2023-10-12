@@ -13,6 +13,9 @@ void Camera::Initialize()
     transform.SetRotation(DirectX::XMFLOAT4(0.0f, DirectX::XMConvertToRadians(180), 0.0f, 0.0f));
 
     activeLockOn = false;
+
+    eyePos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
+    focusPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
 }
 
 void Camera::Update(float elapsedTime)
