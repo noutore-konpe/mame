@@ -95,6 +95,9 @@ void Player::Initialize()
         //体力上限アップ
         maxHitPointUpSkill = std::make_unique<PlayerSkill::MaxHitPointUp>(this);
         skillArray.emplace_back(maxHitPointUpSkill.get());
+        //防御力アップ
+        defenseUpSkill = std::make_unique<PlayerSkill::DefenseUp>(this);
+        skillArray.emplace_back(defenseUpSkill.get());
     }
     for (auto& skill : skillArray)
     {
@@ -673,7 +676,7 @@ void Player::DrawCards()
 
 bool Player::ChangeLockOnTarget(float ax)
 {
-    if (ax != 1 && ax != -1)return false;
+    if (!(ax > 0.5f || ax < -0.5))return false;
     auto& camera = Camera::Instance();
     DirectX::XMFLOAT3 curLockOnTargetPos = camera.GetLockOnTarget()->GetPosition();
 
@@ -702,11 +705,11 @@ bool Player::ChangeLockOnTarget(float ax)
         //外積値からプレイヤーから見て敵がどちら側にいているか調べる(負の値なら右側に敵がいる)
         //引数のスティック入力方向に合わせてどちら側の敵を取得するか判断する
         float crossY = (plVec.x * peVec.z) - (plVec.z * peVec.x);
-        if (ax == 1) //右側
+        if (ax > 0) //右側
         {
             if (crossY < 0)sideEnemys.emplace_back(enemy);
         }
-        else if (ax == -1)//左側
+        else if (ax < 0)//左側
         {
             if (crossY > 0)sideEnemys.emplace_back(enemy);
         }
@@ -764,8 +767,7 @@ void Player::LockOnUpdate()
     static bool buttonDown = false;
     if (!buttonDown)
     {   
-        ChangeLockOnTarget(ax);
-        buttonDown = true;
+        if(ChangeLockOnTarget(ax))buttonDown = true;
     }
     if (ax <= 0.1f && ax >= -0.1f)
     {

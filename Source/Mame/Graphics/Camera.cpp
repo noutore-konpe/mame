@@ -25,7 +25,7 @@ void Camera::Update(float elapsedTime)
     else
     {
         EyeMoveDelayUpdate(elapsedTime, PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition());
-        FocusMoveDelayUpdate(elapsedTime,GetTransform()->CalcForward());
+        FocusMoveDelayUpdate(elapsedTime, PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition() + GetTransform()->CalcForward());
     }
 }
 
@@ -144,10 +144,16 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
             eyePos.z - forward.z * focalLength,
             1.0f) };
         
-        focus = { DirectX::XMVectorSet(
+       /* focus = { DirectX::XMVectorSet(
             targetPos.x,
             targetPos.y + focusOffsetY,
             targetPos.z,
+            1.0f) };*/
+
+        focus = { DirectX::XMVectorSet(
+            focusPos.x,
+            focusPos.y + focusOffsetY,
+            focusPos.z,
             1.0f) };
 
         focus = DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&screenVibrationOffset), focus);
@@ -159,6 +165,9 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
         eye = { DirectX::XMVectorSet(pos.x, pos.y, pos.z, 1.0f) };
         focus = { DirectX::XMVectorSet(pos.x + forward.x, pos.y + forward.y, pos.z + forward.z, 1.0f) };
     }
+
+    //ínñ Ç…ÉJÉÅÉâÇ™ñÑÇ‹ÇÁÇ»Ç¢ÇÊÇ§Ç…í≤êÆ
+    if (DirectX::XMVectorGetY(eye) < 0.1f)DirectX::XMVectorSetY(eye,0.1f);
 
     //DirectX::XMVECTOR eye{ DirectX::XMVectorSet(camera.eye.x,camera.eye.y,camera.eye.z,1.0f) };
     //DirectX::XMVECTOR focus{ DirectX::XMVectorSet(camera.focus.x,camera.focus.y,camera.focus.z,1.0f) };
