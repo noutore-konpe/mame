@@ -159,7 +159,7 @@ DirectX::XMFLOAT3 Character::GetJointPosition(size_t meshIndex, size_t boneIndex
 
 void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
 {
-    if (vx == 0 && vz == 0)return;
+    if (vx < 0.01f && vx > -0.01f && vz < 0.01f && vz > -0.01f)return;
 
     Transform* transform = GetTransform();
     rotSpeed = DirectX::XMConvertToRadians(rotSpeed * elapsedTime);
