@@ -77,7 +77,7 @@ void SceneGame::CreateResource()
 
     // enemy
     {
-#if 1
+#if 0
         // max 6~7
         EnemyManager& enemyManager = EnemyManager::Instance();
         // EnemyAI_1
@@ -238,8 +238,6 @@ void SceneGame::Initialize()
         magicCircleSummon[i]->Initialize();
     }
 
-    //今だけロックオン処理いれとく
-    Camera::Instance().SetLockOnTarget(enemyGolem.get());
 
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
@@ -294,14 +292,14 @@ void SceneGame::Update(const float& elapsedTime)
         particles->Integrate(Graphics::Instance().GetDeviceContext(), elapsedTime);
     }
 
-    gamePad.Vibration(1.0f,1.0f);
+    
 
     //if (gamePad.GetButtonDown() & GamePad::BTN_B)
     //    Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
 
 #ifdef _DEBUG
     // Debug用カメラ
-    if (/*gamePad.GetButtonDown() & GamePad::BTN_X*/GetAsyncKeyState('U') & 0x8000)isDebugCamera = isDebugCamera ? false : true;
+    if (/*gamePad.GetButtonDown() & GamePad::BTN_X*/GetAsyncKeyState('U') & 0x01)isDebugCamera = isDebugCamera ? false : true;
     if (isDebugCamera)
     {
         int posX = 1980 / 2;

@@ -9,6 +9,19 @@
 #include "../Other/MathHelper.h"
 
 #include "../Game/PlayerManager.h"
+#include "../Game/EnemyManager.h"
+
+#include "../Input/Input.h"
+
+// DummyState
+namespace EnemyGolemState
+{
+    void DummyState::Initialize()
+    {
+        // アニメーション設定
+        owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Idle), true);
+    }
+}
 
 // IdleState
 namespace EnemyGolemState
@@ -23,7 +36,8 @@ namespace EnemyGolemState
 
     void IdleState::Update(const float& elapsedTime)
     {
-
+        // 歩き
+        owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::WalkState));
     }
 
     void IdleState::Finalize()
@@ -64,6 +78,8 @@ namespace EnemyGolemState
             {   // カメラ振動
                 Camera::Instance().ScreenVibrate(0.1f, shakeTime);
                 isCameraShake = true;
+                // ゲームパッド振動
+                Input::Instance().GetGamePad().Vibration(shakeTime - 0.5f, gamePadVibPower);
             }
 
             if (timer >= shakeTime - 1.0f)
@@ -129,8 +145,12 @@ namespace EnemyGolemState
             {
                 if (animationTimer >= 1.1f)
                 {
+                    // カメラ振動
                     Camera::Instance().ScreenVibrate(0.05f, 1.5f);
                     isBokeh = true;
+
+                    // ゲームパッド振動
+                    Input::Instance().GetGamePad().Vibration(1.0f, gamePadVibPower);
                 }
 
                 animationTimer += elapsedTime;
@@ -193,6 +213,8 @@ namespace EnemyGolemState
 
         isSwingUp = false;
         isSwingDown = false;
+
+        delayTimer = 0.0f;
     }
 
     void SummonState::Update(const float& elapsedTime)
@@ -222,7 +244,18 @@ namespace EnemyGolemState
                 // 画面振動
                 Camera::Instance().ScreenVibrate(0.1f, 1.5f);
 
+                // ゲームパッド振動
+                Input::Instance().GetGamePad().Vibration(1.0f, gamePadVibPower);
+
                 isSwingDown = true;
+            }
+        }
+        else
+        {
+            delayTimer += elapsedTime;
+            if (delayTimer >= maxDelayTime)
+            {   // 待機ステートへ
+                owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::IdleState));
             }
         }
 
@@ -248,6 +281,11 @@ namespace EnemyGolemState
 
     void GetUpState::Update(const float& elapsedTime)
     {
+        // アニメーションが終わったら
+        if(!owner->IsPlayAnimation())
+        {   // 待機ステートへ
+            owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::IdleState));
+        }
     }
 
     void GetUpState::Finalize()
@@ -301,6 +339,9 @@ namespace EnemyGolemState
                 // カメラ振動
                 Camera::Instance().ScreenVibrate(0.1f, 1.0f);
                 isShakeCamera = true;
+
+                // ゲームパッド振動
+                Input::Instance().GetGamePad().Vibration(0.5f, gamePadVibPower);
             }
             else
             {
@@ -416,6 +457,8 @@ namespace EnemyGolemState
             if (moveTimer >= maxMoveTime1 + 0.2f)
             {   // カメラ振動
                 Camera::Instance().ScreenVibrate(0.04f, 0.5f);
+                // ゲームパッド振動
+                Input::Instance().GetGamePad().Vibration(0.15f, gamePadVibPower);
             }
 
             // アニメーションが終わったら
@@ -458,6 +501,8 @@ namespace EnemyGolemState
             if (moveTimer >= maxMoveTime2 + 0.3f)
             {   // カメラ振動
                 Camera::Instance().ScreenVibrate(0.05f, 0.8f);
+                // ゲームパッド振動
+                Input::Instance().GetGamePad().Vibration(0.3f, gamePadVibPower);
             }
 
             // アニメーションが終わったら
@@ -538,7 +583,7 @@ namespace EnemyGolemState
         {
             // アニメーションが終わったら
             if (!owner->IsPlayAnimation())
-            {
+            {                
             }
         }
     }
@@ -580,11 +625,10 @@ namespace EnemyGolemState
         owner->SetCurrentState(static_cast<UINT>(EnemyGolem::StateMachineState::DownState));
 
         // アニメーションセット
-        owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Down0), false, 0.7f);
+        owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Down), false);
 
         // 変数初期化
-        isDown0 = false;
-        isDown1 = false;
+        isDown = false;
         isReturn = false;
 
         getUpTimer = 0.0f;
@@ -594,39 +638,32 @@ namespace EnemyGolemState
     void DownState::Update(const float& elapsedTime)
     {
         // down0アニメーションが終わってない
-        if (!isDown0)
+        if (!isDown)
         {
             // アニメーションが終わったら
             if (!owner->IsPlayAnimation())
             {
-                owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Down1), false, 0.6f);
-                isDown0 = true;
+                isDown = true;
             }
         }
-
-        // down1アニメーションが終わっていない
-        if (!isDown1 && isDown0)
-        {
-            // アニメーションが終わったら
-            if (!owner->IsPlayAnimation())
-            {
-                isDown1 = true;
-            }
-        }
-
-        // 倒れきったら
-        if (isDown1&& !isReturn)
+        
+        if (!isReturn && isDown)
         {
             getUpTimer += elapsedTime;
-            
             // 怯み終わり
             if (getUpTimer >= maxGetUpTimer)
+            {
+                owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::DownReturn), false);
                 isReturn = true;
+            }
         }
-
-        if (isReturn)
+        else
         {
-            //owner->PlayAnimation(owner)
+            // アニメーションが終わったら
+            if (!owner->IsPlayAnimation())
+            {
+                owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::IdleState));
+            }
         }
 
     }
@@ -637,7 +674,342 @@ namespace EnemyGolemState
     }
 }
 
+// ComboAttack2State
 namespace EnemyGolemState
 {
+    // 初期化
+    void ComboAttack2State::Initialize()
+    {
+        owner->SetCurrentState(static_cast<UINT>(EnemyGolem::StateMachineState::ComboAttack2State));
 
+        // アニメーション設定
+        owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::ComboAttack3Up), false);
+
+        // 石生成
+        owner->comboAttackStones[0]->GetStateMachine()->ChangeState(static_cast<UINT>(ComboAttackStone::StateMachineState::AppearState));
+
+        // 変数初期化
+        isComboAttackUp = false;
+        isComboAttackDown = false;
+        isComboAttackReturn = false;
+
+        num = 0;
+        delayTimer = 0.0f;
+    }
+
+    // 更新
+    void ComboAttack2State::Update(const float& elapsedTime)
+    {
+        if (num < maxNum)
+        {   // 三回攻撃する
+            if (isComboAttackReturn)
+            {
+                AttackInitialize();
+            }
+            AttackUpdate(elapsedTime);
+        }
+        else
+        {   
+            if (delayTimer >= maxDelayTime)
+            {
+                // 待機ステート
+                owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::IdleState));
+            }
+            delayTimer += elapsedTime;
+        }
+
+        Turn(elapsedTime);
+    }
+
+    // 終了化
+    void ComboAttack2State::Finalize()
+    {
+    }
+
+    // 攻撃初期化
+    void ComboAttack2State::AttackInitialize()
+    {
+        owner->comboAttackStones[num]->GetStateMachine()->ChangeState(static_cast<UINT>(ComboAttackStone::StateMachineState::AppearState));
+        owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::ComboAttack3Up), false);
+        isComboAttackUp = false;
+        isComboAttackDown = false;
+        isComboAttackReturn = false;
+    }
+
+    // 攻撃
+    void ComboAttack2State::AttackUpdate(const float& elapsedTime)
+    {
+        if (!isComboAttackUp)
+        {
+            if (!owner->IsPlayAnimation())
+            {
+                owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::ComboAttack3Down), false);
+                isComboAttackUp = true;
+            }
+        }
+
+        if (!isComboAttackDown && isComboAttackUp)
+        {
+            if (!owner->IsPlayAnimation())
+            {
+                owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::ComboAttack3Return), false);
+                isComboAttackDown = true;
+            }
+        }
+
+        if (!isComboAttackReturn && isComboAttackDown)
+        {
+            if (!owner->IsPlayAnimation())
+            {
+                ++num;
+                isComboAttackReturn = true;
+            }
+        }
+    }
+
+    // 回転処理
+    void ComboAttack2State::Turn(const float& elapsedTime)
+    {
+        DirectX::XMFLOAT3 playerPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 ownerPos = owner->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 vec = Normalize(playerPos - ownerPos);
+        owner->Turn(elapsedTime, vec.x, vec.z, 50.0f);
+    }
+}
+
+// ChoseState
+namespace EnemyGolemState
+{
+    // 初期化
+    void ChoseState::Initialize()
+    {
+        // アニメーション設定
+        owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Idle), true);
+
+        // 連続して同じステートが出ないように制御
+        currentNum = 0;
+        for (int i = 0; i < static_cast<UINT>(STATE::Max); ++i)
+        {
+            if (isState[i])currentNum++;
+        }
+        if (currentNum >= resetNum)
+        {
+            for (int i = 0; i < static_cast<UINT>(STATE::Max); ++i)
+            {
+                isState[i] = false;
+            }
+        }
+    }
+
+    // 更新
+    void ChoseState::Update(const float& elapsedTime)
+    {
+        while (1)
+        {
+            // ランダムでステートを決定する
+            setState = rand() % static_cast<UINT>(STATE::Max);
+
+            // 敵が何体か出てるときはsummonStateは通らない
+            if (setState == static_cast<UINT>(STATE::Summon))
+            {
+                if (EnemyManager::Instance().GetEnemyCount() > 0)
+                {
+                    continue;
+                }
+            }
+
+            // そのステートが使われていなかったら無限ループを抜ける
+            if (!isState[setState])
+            {
+                break;
+            }
+        }
+
+        switch (setState)
+        {
+        case static_cast<UINT>(STATE::Summon):
+            owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::SummonState));
+            break;
+        case static_cast<UINT>(STATE::Attack):
+            owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::Attack1State));
+            break;
+        case static_cast<UINT>(STATE::ComboAttack1):
+            owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::ComboAttack1State));
+            break;
+        case static_cast<UINT>(STATE::ComboAttack2):
+            owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::ComboAttack2State));
+            break;
+        case static_cast<UINT>(STATE::Roar):
+            owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::RoarState));
+            break;
+        }
+        
+        isState[setState] = true;
+    }
+
+    // 終了化
+    void ChoseState::Finalize()
+    {
+    }
+}
+
+// DeathState
+namespace EnemyGolemState
+{
+    // 初期化
+    void DeathState::Initialize()
+    {
+        // アニメーション設定
+        owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Death0), false ,0.7f);
+
+        // 変数初期化
+        isDeath0 = false;
+        isDeath1 = false;
+
+        delayTimer = 0.0f;
+        isDelay = false;
+
+        cameraShakeTimer = 0.0f;
+        isCameraShake = false;
+    }
+
+    // 更新
+    void DeathState::Update(const float& elapsedTime)
+    {
+
+        if (!isDeath0)
+        {
+            if (!owner->IsPlayAnimation())
+            {
+                // アニメーション設定
+                owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Death1), false, 0.6f);
+                isDeath0 = true;
+            }
+        }
+        else
+        {
+            if (!isDelay)
+            {
+                delayTimer += elapsedTime;
+                if (delayTimer >= maxDelay)
+                {
+                    // カメラ振動
+                    //Camera::Instance().ScreenVibrate(0.04f, 0.3f);
+                    isDelay = true;
+                }
+            }
+        }
+
+        if (!isCameraShake && isDelay)
+        {
+            cameraShakeTimer += elapsedTime;
+            if (cameraShakeTimer >= maxTimer)
+            {
+                isCameraShake = true;
+                Camera::Instance().ScreenVibrate(0.10f, 1.5f);
+            }
+        }
+
+    }
+
+    // 終了化
+    void DeathState::Finalize()
+    {
+    }
+}
+
+// WalkState
+namespace EnemyGolemState
+{
+    // 初期化
+    void WalkState::Initialize()
+    {
+        owner->SetCurrentState(static_cast<UINT>(EnemyGolem::StateMachineState::WalkState));
+
+        // アニメーション設定
+        owner->PlayBlendAnimation(
+            static_cast<UINT>(EnemyGolem::Animation::Idle),
+            static_cast<UINT>(EnemyGolem::Animation::Walk),
+            true);
+
+        owner->model->weight = 0.0f;
+        
+        // 変数初期化
+        isChangeState = false;
+        moveSpeed = 0.0f;
+    }
+
+    // 更新
+    void WalkState::Update(const float& elapsedTime)
+    {
+        // モーションブレンド
+        {
+            if (!isChangeState)
+            {// 徐々に速度上げていく
+                owner->model->weight += elapsedTime;
+                owner->model->weight = min(1.0f, owner->model->weight);
+            }
+            else
+            {// 範囲に入ったら、徐々に速度を下げる
+                owner->model->weight -= elapsedTime * 2.0f;
+                if (owner->model->weight <= 0.0f)
+                {// 選択ステートに行く
+                    owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::ChoseState));
+                }
+            }
+        }
+
+        // 判定
+        JudgeChangeState();
+
+        // 移動
+        Move(elapsedTime);
+
+        // 回転
+        Turn(elapsedTime);
+    }
+
+    // 終了化
+    void WalkState::Finalize()
+    {
+
+    }
+
+    // 範囲に入ればステート変更
+    void WalkState::JudgeChangeState()
+    {
+        DirectX::XMFLOAT3 playerPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 ownerPos = owner->GetTransform()->GetPosition();
+        DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&playerPos), DirectX::XMLoadFloat3(&ownerPos));
+        float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(Vec));
+
+        if (length < changeStateLength)
+        {
+            isChangeState = true;
+        }
+    }
+
+    // 移動
+    void WalkState::Move(const float& elapsedTime)
+    {
+        moveSpeed = owner->model->weight * maxMoveSpeed;
+
+        DirectX::XMFLOAT3 playerPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 ownerPos = owner->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 vec = playerPos - ownerPos;
+        vec = Normalize(vec);
+        vec = vec * moveSpeed * elapsedTime;
+        vec.y = 0.0f;   // Yは移動なし。
+        
+        owner->GetTransform()->AddPosition(vec);
+    }
+
+    // 回転処理
+    void WalkState::Turn(const float& elapsedTime)
+    {
+        DirectX::XMFLOAT3 playerPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 ownerPos = owner->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 vec = Normalize(playerPos - ownerPos);
+        owner->Turn(elapsedTime, vec.x, vec.z, 100.0f);
+    }
 }

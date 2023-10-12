@@ -4,6 +4,8 @@
 
 #include "PlayerManager.h"
 
+#include "../Input/Input.h"
+
 // DummyState
 namespace ComboAttackStoneState
 {
@@ -98,6 +100,8 @@ namespace ComboAttackStoneState
         DirectX::XMFLOAT3 setPosition = ownerFront * 2.5f;
         setPosition = ownerPos + setPosition;
 
+        setPosition.y = 0.05f;
+
         // 魔法陣の位置設定
         owner->magicCircle->GetTransform()->SetPosition(setPosition);
 
@@ -162,6 +166,9 @@ namespace ComboAttackStoneState
             {   // カメラ振動
                 Camera::Instance().ScreenVibrate(0.05f, 0.8f);
                 cameraShake = true;
+
+                // ゲームパッド振動
+                Input::Instance().GetGamePad().Vibration(0.2f, gamePadVibPower);
             }
 
             // ディレイ
@@ -192,14 +199,4 @@ namespace ComboAttackStoneState
     void ThrowState::Finalize()
     {
     }
-}
-
-namespace ComboAttackStoneState
-{
-
-}
-
-namespace ComboAttackStoneState
-{
-
 }

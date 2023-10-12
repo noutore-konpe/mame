@@ -12,6 +12,7 @@ ComboAttackStone::ComboAttackStone()
     stoneBall = std::make_unique<StoneBall>();
     magicCircle = std::make_unique<MagicCircle>();
 
+
     // ステートマシン
     {
         stateMachine.reset(new StateMachine<State<ComboAttackStone>>);

@@ -4,6 +4,18 @@
 
 namespace EnemyGolemState
 {
+    // ダミー
+    class DummyState : public State<EnemyGolem>
+    {
+    public:
+        DummyState(EnemyGolem* enemyGolem) : State(enemyGolem, "DummyState") {}
+        ~DummyState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override {};
+        void Finalize()                         override {};
+    };
+
     // 待機
     class IdleState : public State<EnemyGolem>
     {
@@ -37,6 +49,9 @@ namespace EnemyGolemState
         float timer = 0.0f;
         float shakeTime = 2.0f;
         bool isCameraShake = false;
+
+        // ゲームパッド振動強さ
+        float gamePadVibPower = 1.0f;
     };
 
     // 咆哮
@@ -65,6 +80,9 @@ namespace EnemyGolemState
 
         float maxBokehTime0 = 0.5f;
         float maxBokehTime1 = 0.5f;
+
+        // ゲームパッド振動強さ
+        float gamePadVibPower = 0.5f;
     };
 
     // 召喚
@@ -82,6 +100,11 @@ namespace EnemyGolemState
         bool isSwingUp = false;     // 腕の振り上げ完了したか
         bool isSwingDown = false;   // 腕の振り下げ完了したか
 
+        float delayTimer = 0.0f;
+        float maxDelayTime = 2.0f;
+
+        // ゲームパッド振動強さ
+        float gamePadVibPower = 0.5f;
     };
 
     // 起き上がり
@@ -115,6 +138,9 @@ namespace EnemyGolemState
         float animationTimer = 0.0f;
         float returnTimer = 0.0f;
         float returnTimer1 = 0.0f;
+
+        // ゲームパッド振動強さ
+        float gamePadVibPower = 0.3f;
     };
 
     class ComboAttack1State : public State<EnemyGolem>
@@ -155,6 +181,9 @@ namespace EnemyGolemState
         float moveFrontTimer    = 0.0f;
 
         float myTrunSpeed = DirectX::XMConvertToRadians(180);
+
+        // ゲームパッド振動強さ
+        float gamePadVibPower = 0.3f;
     };
 
     class DownState : public State<EnemyGolem>
@@ -168,12 +197,114 @@ namespace EnemyGolemState
         void Finalize()                         override;
 
     private:
-        bool isDown0 = false;
-        bool isDown1 = false;
+        bool isDown = false;
         bool isReturn = false;
         
         float getUpTimer = 0.0f;
         float maxGetUpTimer = 2.5f; // 起き上がるまでの時間
+    };
+
+    class ComboAttack2State : public State<EnemyGolem>
+    {
+    public:
+        ComboAttack2State(EnemyGolem* enemyGolem) : State(enemyGolem, "ComboAttack2State") {}
+        ~ComboAttack2State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+
+        void AttackInitialize();
+        void AttackUpdate(const float& elapsedTime);
+        void Turn(const float& elapsedTime);
+
+    private:
+        bool isComboAttackUp = false;
+        bool isComboAttackDown = false;
+        bool isComboAttackReturn = false;
+
+        int num = 0;
+        int maxNum = 3;
+
+        float delayTimer = 0.0f;
+        float maxDelayTime = 1.0f;
+    };
+
+    class ChoseState : public State<EnemyGolem>
+    {
+    public:
+        ChoseState(EnemyGolem* enemyGolem) : State(enemyGolem, "ChoseState") {}
+        ~ChoseState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+
+    private:// 定数
+        enum class STATE
+        {
+            Summon,         // 召喚
+            Attack,         // 攻撃
+            ComboAttack1,   // コンボ攻撃１
+            ComboAttack2,   // コンボ攻撃２
+            Roar,           // 咆哮
+            
+            Max,
+        };
+
+    private:
+        bool isState[static_cast<UINT>(STATE::Max)] = {};
+
+        int currentNum = 0;
+        int resetNum = 3; // 上限回数
+
+        int setState = 0;
+    };
+
+    class DeathState : public State<EnemyGolem>
+    {
+    public:
+        DeathState(EnemyGolem* enemyGolem) : State(enemyGolem, "DeathState") {}
+        ~DeathState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+
+    private:
+        bool isDeath0 = false;
+        bool isDeath1 = false;
+
+        float delayTimer = 0.0f;
+        float maxDelay = 0.2f;
+        bool isDelay = false;
+
+        float cameraShakeTimer = 0;
+        bool isCameraShake = false;
+        float maxTimer = 0.2f;
+    };
+
+    class WalkState : public State<EnemyGolem>
+    {
+    public:
+        WalkState(EnemyGolem* enemyGolem) : State(enemyGolem, "WalkState") {}
+        ~WalkState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+
+        void JudgeChangeState();                // ステート判定
+        void Move(const float& elapsedTime);    // 移動
+        void Turn(const float& elapsedTime);    // 回転
+
+    private:
+        bool isChangeState = false;
+
+        float changeStateLength = 7.0f; // ステート切り替えのためのプレイヤーとの距離
+
+        float moveSpeed = 0.0f;
+        float maxMoveSpeed = 3.0f;
     };
 };
 
