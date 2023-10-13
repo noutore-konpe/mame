@@ -212,6 +212,7 @@
     <ClCompile Include="Source\Mame\Game\BaseSkill.cpp" />
     <ClCompile Include="Source\Mame\Game\BehaviorData.cpp" />
     <ClCompile Include="Source\Mame\Game\BehaviorTree.cpp" />
+    <ClCompile Include="Source\Mame\Game\BlackHole.cpp" />
     <ClCompile Include="Source\Mame\Game\Book.cpp" />
     <ClCompile Include="Source\Mame\Game\BookState.cpp" />
     <ClCompile Include="Source\Mame\Game\Character.cpp" />
@@ -290,6 +291,7 @@
     <ClCompile Include="Source\Mame\Scene\SceneTitle.cpp" />
     <ClCompile Include="Source\Mame\Transform.cpp" />
     <ClCompile Include="Source\Taki174\Common.cpp" />
+    <ClCompile Include="Source\Taki174\DebugRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h" />
@@ -314,6 +316,7 @@
     <ClInclude Include="Source\Mame\Game\BaseSkill.h" />
     <ClInclude Include="Source\Mame\Game\BehaviorData.h" />
     <ClInclude Include="Source\Mame\Game\BehaviorTree.h" />
+    <ClInclude Include="Source\Mame\Game\BlackHole.h" />
     <ClInclude Include="Source\Mame\Game\Book.h" />
     <ClInclude Include="Source\Mame\Game\BookState.h" />
     <ClInclude Include="Source\Mame\Game\Character.h" />
@@ -401,6 +404,7 @@
     <ClInclude Include="Source\Mame\Scene\SceneTitle.h" />
     <ClInclude Include="Source\Mame\Transform.h" />
     <ClInclude Include="Source\Taki174\Common.h" />
+    <ClInclude Include="Source\Taki174\DebugRenderer.h" />
     <ClInclude Include="Source\Taki174\FunctionXMFloat3.h" />
     <ClInclude Include="Source\Taki174\OperatorXMFloat3.h" />
     <ClInclude Include="Source\Taki174\OperatorXMFloat4.h" />
@@ -451,6 +455,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\DebugPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\DebugVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="Source\Shader\EmissiveTextureUVScrollPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -743,6 +755,7 @@
     <None Include="Source\Shader\AuraEffect.hlsli" />
     <None Include="Source\Shader\bidirectionalReflectanceDistributionFunction.hlsli" />
     <None Include="Source\Shader\Bloom.hlsli" />
+    <None Include="Source\Shader\Debug.hlsli" />
     <None Include="Source\Shader\FbxModel.hlsli" />
     <None Include="Source\Shader\fullscreen_quad.hlsli" />
     <None Include="Source\Shader\geometric_primitive.hlsli" />

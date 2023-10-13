@@ -15,7 +15,7 @@ inline const float XMFloat3Dot(
 // XMFLOAT3“¯m‚Ì‹——£‚ğŒvZ
 inline const float XMFloat3Length(const DirectX::XMFLOAT3& v)
 {
-	return ::sqrtf(XMFloat3Dot(v, v));
+	return ::sqrtf(::XMFloat3Dot(v, v));
 }
 
 // XMFLOAT3“¯m‚Ì‹——£‚Ì“ñæ‚ğŒvZ
@@ -39,6 +39,7 @@ inline const DirectX::XMFLOAT3 XMFloat3Normalize(const DirectX::XMFLOAT3& v)
 inline const DirectX::XMFLOAT3 XMFloat3Normalize(
 	const DirectX::XMFLOAT3& v, float* length)
 {
+	// ³‹K‰»ƒxƒNƒgƒ‹‚ğ‹‚ß‚é‚½‚ß‚Élength‚ğ‹‚ß‚é‚Ì‚Å‚»‚ê‚ğ‚Â‚¢‚Å‚Éæ“¾‚·‚é
 	(*length) = ::XMFloat3Length(v);
 
 	if ((*length) <= 0.0f) return DirectX::XMFLOAT3(0, 0, 0);

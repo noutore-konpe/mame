@@ -12,6 +12,7 @@ public:
 
 };
 
+
 inline DirectX::XMFLOAT2  operator-(const DirectX::XMFLOAT2& f1, const DirectX::XMFLOAT2& f2)
 {
 	DirectX::XMFLOAT2 ret{};
@@ -30,6 +31,14 @@ inline DirectX::XMFLOAT2  operator*(const DirectX::XMFLOAT2& f1, const DirectX::
 	return ret;
 }
 
+// すみませんオペレーター関数の定義被りでEnemy関連でエラーが起きるので
+// Taki174のオペレーター関数の方に仮で統一しています
+#if 1
+
+#include "../../Taki174/OperatorXMFloat3.h"
+#include "../../Taki174/OperatorXMFloat4.h"
+
+#else
 inline DirectX::XMFLOAT3 operator+(const DirectX::XMFLOAT3& f1, const DirectX::XMFLOAT3& f2)
 {
 	DirectX::XMFLOAT3 ret{};
@@ -57,7 +66,6 @@ inline DirectX::XMFLOAT3 operator*(const DirectX::XMFLOAT3& f1, const DirectX::X
 	return ret;
 }
 
-
 inline DirectX::XMFLOAT3 operator*(const DirectX::XMFLOAT3& f1, float f)
 {
 	DirectX::XMFLOAT3 ret{};
@@ -75,6 +83,16 @@ inline DirectX::XMFLOAT4 operator+(const DirectX::XMFLOAT4& f1, const DirectX::X
 	return ret;
 }
 
+inline DirectX::XMFLOAT4 operator-(const DirectX::XMFLOAT4& f1, const DirectX::XMFLOAT4& f2)
+{
+	DirectX::XMFLOAT4 ret{};
+	DirectX::XMVECTOR F1{DirectX::XMLoadFloat4(&f1)};
+	DirectX::XMVECTOR F2{DirectX::XMLoadFloat4(&f2)};
+	DirectX::XMStoreFloat4(&ret, DirectX::XMVectorSubtract(F1, F2));
+	return ret;
+}
+#endif
+
 inline DirectX::XMFLOAT3 Normalize(const DirectX::XMFLOAT3& f)
 {
 	DirectX::XMFLOAT3 ret{};
@@ -90,14 +108,6 @@ inline DirectX::XMFLOAT4 ToRadians(const DirectX::XMFLOAT4& f)
 		DirectX::XMConvertToRadians(f.z),
 		DirectX::XMConvertToRadians(f.w)
 	);
-}
-inline DirectX::XMFLOAT4 operator-(const DirectX::XMFLOAT4& f1, const DirectX::XMFLOAT4& f2)
-{
-	DirectX::XMFLOAT4 ret{};
-	DirectX::XMVECTOR F1{DirectX::XMLoadFloat4(&f1)};
-	DirectX::XMVECTOR F2{DirectX::XMLoadFloat4(&f2)};
-	DirectX::XMStoreFloat4(&ret, DirectX::XMVectorSubtract(F1, F2));
-	return ret;
 }
 
 inline DirectX::XMFLOAT4 Max(const DirectX::XMFLOAT4& f1, const DirectX::XMFLOAT4& f2)

@@ -12,6 +12,8 @@
 #include "../Game/PlayerManager.h"
 #include "../Game/ItemManager.h"
 #include "../Game/Book.h"
+#include "../Game/AbilityManager.h"
+#include "../Game/BlackHole.h"
 
 #include "../Game/MagicCircle.h"
 
@@ -35,6 +37,8 @@
 #ifdef _DEBUG
 bool SceneGame::isDebugRender = false;
 #endif // _DEBUG
+
+bool SceneGame::isDrawCollision_ = false;
 
 // リソース生成
 void SceneGame::CreateResource()
@@ -225,6 +229,15 @@ void SceneGame::Initialize()
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
     expManager.Initialize();
+<<<<<<< HEAD
+=======
+
+    //今だけロックオン処理いれとく
+    Camera::Instance().SetLockOnTargetPos(enemyGolem->GetTransform());
+
+    isDrawCollision_    = false;
+
+>>>>>>> mame/Taki
 }
 
 // 終了化
@@ -611,6 +624,11 @@ void SceneGame::DrawDebug()
 
     Graphics::Instance().GetShader()->DrawDebug();
 
+    PlayerManager& plManager = PlayerManager::Instance();
+    EnemyManager& enemyManager = EnemyManager::Instance();
+    ExperiencePointManager& expManager = ExperiencePointManager::Instance();
+
+
     if (ImGui::Begin("sceneGame"))
     {
 
@@ -618,6 +636,12 @@ void SceneGame::DrawDebug()
         if (ImGui::Button("drawDebug"))
         {
             isDebugRender = isDebugRender ? false : true;
+        }
+
+        // 当たり判定描画
+        if (ImGui::Button("Draw Collision"))
+        {
+            isDrawCollision_ = (isDrawCollision_) ? false : true;
         }
 
         // 本生成
@@ -638,17 +662,21 @@ void SceneGame::DrawDebug()
 
         ImGui::Separator();
 
-        PlayerManager::Instance().DrawDebug();
+        plManager.DrawDebug();
 
         ItemManager::Instance().DrawDebug();
 
         particles->DrawDebug();
 
+<<<<<<< HEAD
         EnemyManager& enemyManager = EnemyManager::Instance();
+=======
+        enemyGolem->DrawDebug();
+
+>>>>>>> mame/Taki
         enemyManager.DrawDebug();
 
         // Exp
-        ExperiencePointManager& expManager = ExperiencePointManager::Instance();
         expManager.DrawDebug();
 
         // カメラ
