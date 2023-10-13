@@ -159,7 +159,7 @@ DirectX::XMFLOAT3 Character::GetJointPosition(size_t meshIndex, size_t boneIndex
 
 void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
 {
-    if (vx == 0 && vz == 0)return;
+    if (vx < 0.01f && vx > -0.01f && vz < 0.01f && vz > -0.01f)return;
 
     Transform* transform = GetTransform();
     rotSpeed = DirectX::XMConvertToRadians(rotSpeed * elapsedTime);
@@ -177,6 +177,11 @@ void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
     rot += 0.5f;
     float _rotSpeed = rotSpeed * rot;
 
+    //演算がオーバーフローしたときは処理しない
+    if (_rotSpeed > 100.0f || _rotSpeed < -100.0f)
+    {
+        return;
+    }
 
     //左右判定のための外積
     float cross = (vx * front.z) - (vz * front.x);
@@ -186,10 +191,8 @@ void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
 
     rotValue = cross < 0.0f ? -_rotSpeed : _rotSpeed;
 
-    if (rotation.y < FLT_MAX || rotation.y > -FLT_MAX)
-    {
+   
         transform->SetRotationY(rotation.y);
-    }
 }
 
 Character::DamageResult Character::ApplyDamage(float damage, float invincibleTime)
@@ -237,6 +240,7 @@ Character::DamageResult Character::ApplyDamage(float damage, float invincibleTim
     else
     {
         OnDamaged();
+        isDead = true;
     }
 
     //健康状態が変更した場合はtrueを返す

@@ -230,6 +230,9 @@ bool Model::UpdateBlendAnimation(const float& elapsedTime)
         return false;
     }
 
+    if (weight < 0)weight = 0;
+    else if (weight > 1)weight = 1;
+
     //アニメーション再生時間更新
     blendAnimationSeconds += elapsedTime;
 

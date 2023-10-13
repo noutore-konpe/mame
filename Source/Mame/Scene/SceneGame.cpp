@@ -332,7 +332,6 @@ void SceneGame::Update(const float& elapsedTime)
     }
 
 
-
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
     expManager.Update(elapsedTime);

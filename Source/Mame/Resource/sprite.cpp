@@ -216,6 +216,34 @@ void Sprite::PlayAnimation(const float elapsedTime, const float frameSpeed, cons
     spriteTransform.SetTexPos(texPos);
 }
 
+DirectX::XMFLOAT2 Sprite::ConvertToScreenPos(const DirectX::XMFLOAT3 worldPos)
+{
+    auto* dc = Graphics::Instance().GetDeviceContext();
+    //ビューポート
+    D3D11_VIEWPORT viewport;
+    UINT numViewports = 1;
+    dc->RSGetViewports(&numViewports, &viewport);
+
+    DirectX::XMMATRIX View = Camera::Instance().GetViewMatrix();
+    DirectX::XMMATRIX Projection = Camera::Instance().GetProjectionMatrix();
+    DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
+
+    DirectX::XMVECTOR WorldPosition = DirectX::XMLoadFloat3(&worldPos);
+
+    DirectX::XMVECTOR ScreenPosition = DirectX::XMVector3Project(
+        WorldPosition,
+        viewport.TopLeftX, viewport.TopLeftY,
+        viewport.Width, viewport.Height,
+        viewport.MinDepth, viewport.MaxDepth,
+        Projection, View, World
+    );
+
+    DirectX::XMFLOAT2 screenPosition;
+    DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
+
+    return screenPosition;
+}
+
 void Sprite::Render()
 {
     Graphics& graphics = Graphics::Instance();

@@ -71,6 +71,7 @@ public:
 private:
     std::vector<Enemy*> enemies_ = {};
     std::set<Enemy*>    removes_ = {};
+    std::set<Enemy*>    generates_ = {};
 
     ProjectileManager projectileManager_ = {};
 

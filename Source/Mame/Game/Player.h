@@ -186,6 +186,7 @@ private:
     std::unique_ptr<PlayerSkill::AttackSpeedUp> attackSpeedUpSkill;
     std::unique_ptr<PlayerSkill::BookIncrease> bookIncreaseSkill;
     std::unique_ptr<PlayerSkill::MaxHitPointUp> maxHitPointUpSkill;
+    std::unique_ptr<PlayerSkill::DefenseUp> defenseUpSkill;
 
     BaseSkill* drawingSkillCards[3];
     int drawDirectionState;//カードドロー演出ステート
