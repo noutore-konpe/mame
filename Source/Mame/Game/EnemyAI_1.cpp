@@ -24,7 +24,7 @@ EnemyAI_1::EnemyAI_1()
 
         // åïçÏê¨
         sword_ = make_unique<Model>(graphics.GetDevice(),
-            "./Resources/Model/Sword_Motion.fbx");
+            "./Resources/Model/Character/Sword_Motion.fbx");
     }
 
 
