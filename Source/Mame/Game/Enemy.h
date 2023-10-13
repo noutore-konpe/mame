@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../Taki174/OperatorXMFloat3.h"
 #include "Character.h"
 
 class Enemy : public Character
@@ -31,11 +32,18 @@ public:
     //virtual void UpdateConstants() = 0;
 
 public:
+
     int GetType() { return type; }
     void SetType(int t) { type = t; }
 
+    const DirectX::XMFLOAT3& GetVelocity() const { return velocity_; }
+    void SetVelocity(const DirectX::XMFLOAT3& velocity) { velocity_ = velocity; }
+    void AddVelocity(const DirectX::XMFLOAT3& velocity) { velocity_ += velocity; }
+
+
 protected:
-    int dropExpCount_ = 5;
+    DirectX::XMFLOAT3   velocity_       = {};
+    int                 dropExpCount_   = 5;    // ドロップする経験値の数
 
 private:
     int type = 0;

@@ -4,11 +4,12 @@
 #include "../Other/Easing.h"
 #include "../Other/MathHelper.h"
 
-#include "AbilityManager.h"
 #include "PlayerState.h"
 #include "EnemyManager.h"
 
 #include "../Scene/SceneGame.h"
+
+#include "BlackHole.h"
 
 #include <algorithm>
 
@@ -42,6 +43,8 @@ Player::Player()
 // デストラクタ
 Player::~Player()
 {
+    // アビリティマネージャー終了処理
+    abilityManager_.Finalize();
 }
 
 // 初期化
@@ -165,6 +168,10 @@ void Player::Update(const float elapsedTime)
     {
         skill->Update(elapsedTime);
     }
+
+    // アビリティマネージャー更新(仮)
+    abilityManager_.Update(elapsedTime);
+
 }
 
 // Updateの後に呼ばれる
@@ -446,9 +453,15 @@ void Player::Render(const float scale, ID3D11PixelShader* psShader)
     {
         skill->Render();
     }*/
+
 #if _DEBUG
     //stageDebugSphere->Render(stageRadius, playerPS.Get());
 #endif // _DEBUG
+
+
+    // アビリティマネージャー描画(仮)
+    abilityManager_.Render(scale);
+
 
 }
 
@@ -527,6 +540,17 @@ void Player::DrawDebug()
 #if _DEBUG
         //ImGui::DragFloat("StageRadius",&stageRadius);
 #endif // _DEBUG
+
+        // ブラックホール生成
+        if (ImGui::Button("Create BlackHole"))
+        {
+            BlackHole* blackHole = new BlackHole(&abilityManager_);
+            blackHole->Initialize();
+            abilityManager_.Register(blackHole);
+        }
+
+        // アビリティマネージャーデバッグ描画(仮)
+        abilityManager_.DrawDebug();
 
 
         ImGui::EndMenu();

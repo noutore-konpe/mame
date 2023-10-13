@@ -8,6 +8,8 @@
 #include "AttackSkill.h"
 #include "ParametricSkill.h"
 
+#include "AbilityManager.h"
+
 class Player : public Character
 {
 public: // enum関連
@@ -31,7 +33,7 @@ public: // enum関連
         Avoid
     };
 
-    
+
 public:
     Player();
     ~Player() override;
@@ -43,25 +45,25 @@ public:
     void Update(const float elapsedTime) override; // 更新処理
     void End();                                     // 毎フレーム一番最後に呼ばれる
 
-    void MoveUpdate(float elapsedTime,float ax,float ay);
+    void MoveUpdate(float elapsedTime, float ax, float ay);
     void UpdateVelocity(float elapsedTime, float ax, float ay);
 
     //入力をカメラから見たベクトルに変更しmoveVec変数に入れる関数
-    void MoveVecUpdate(float ax,float ay);
+    void MoveVecUpdate(float ax, float ay);
 
     void AvoidUpdate(float elapsedTime);
 
     void ModelRotZUpdate(float elapsedTime);
 
     void CameraControllerUpdate(float elapsedTime);
-    
+
     void Render(const float scale, ID3D11PixelShader* psShader = nullptr) override; // 描画処理
-    
+
     void SkillImagesRender();
 
     void DrawDebug() override;  // ImGui用
 
-    void PlayAnimation(Animation index,bool loop,float speed = 1.0f) { Character::PlayAnimation(static_cast<int>(index),loop,speed); }
+    void PlayAnimation(Animation index, bool loop, float speed = 1.0f) { Character::PlayAnimation(static_cast<int>(index), loop, speed); }
 
     //汎用関数
     void PlayWalkAnimation() { PlayBlendAnimation(Idle, Dash, true); }
@@ -177,7 +179,7 @@ private:
     std::unique_ptr<StateMachine<State<Player>>> stateMachine;
     //-----------------------------------------------------------------------
 
-    
+
     //---------------------------スキル-------------------------------
     std::vector<BaseSkill*> skillArray;
 
@@ -211,6 +213,7 @@ private:
     float maxDodgeSpeed;//回避中の移動速度
     //-----------------------------------------------------------------------
 
+
     //-----------------------------剣----------------------------------------
     std::unique_ptr<Model> swordModel;
     //-----------------------------------------------------------------------
@@ -219,6 +222,10 @@ private:
     //std::unique_ptr<Model> stageDebugSphere;
     
     //--------------------------------------------------------------------------------
+
+    // アビリティマネージャー(仮)
+    AbilityManager abilityManager_ = {};
+
 
 };
 

@@ -33,6 +33,8 @@ public:
     );
 
 public: // 取得・設定
+    Model* GetSword() const { return sword_.get(); }
+
     NodeBase* GetActiveNode() const { return activeNode_; }
 
     ProjectileManager* GetProjectileManager() const { return projectileManager_; }
@@ -69,6 +71,8 @@ protected:
     void UpdateNode(const float elapsedTime);
     void UpdateVelocity(const float elapsedTime);
 
+    void UpdateSword(const float elapsedTime);
+
 protected:
     void OnLanding() {}
 
@@ -86,13 +90,14 @@ protected:
     std::unique_ptr<BehaviorTree>   behaviorTree_;
     std::unique_ptr<BehaviorData>   behaviorData_; // 主にシーケンスに使う
 
+    std::unique_ptr<Model>          sword_;
+
     NodeBase* activeNode_ = nullptr; // BehaviorTreeのノードを指すだけのポインタなのでdeleteしない
 
     ProjectileManager* projectileManager_ = nullptr;
 
     DirectX::XMFLOAT3 targetPosition_ = {};
     DirectX::XMFLOAT3 moveVec_  = {};
-    DirectX::XMFLOAT3 velocity_ = {};
 
     float moveSpeed_    = 3.5f;
     float maxMoveSpeed_ = 0.0f;

@@ -3,6 +3,7 @@
 #include "../../Taki174/OperatorXMFloat3.h"
 #include "../../Taki174/FunctionXMFloat3.h"
 #include "../Graphics/Graphics.h"
+#include "ExperiencePointManager.h"
 #include "PlayerManager.h"
 
 int ExperiencePoint::nameNum_ = 0;
@@ -38,17 +39,38 @@ void ExperiencePoint::Update(const float elapsedTime)
 {
     using DirectX::XMFLOAT3;
 
-    PlayerManager& plManager = PlayerManager::Instance();
-    Transform* t = GetTransform();
-    const float elapsedFrame = elapsedTime * 60;
+    // 寿命更新
+    {
+        ExperiencePointManager& expManager = ExperiencePointManager::Instance();
+        lifeTimer_ = (std::max)(0.0f, lifeTimer_ - elapsedTime);
+        if (lifeTimer_ <= 0.0f) { expManager.Remove(this); }
+
+        // 点滅
+        {
+            const int blinkTimer = static_cast<int>(lifeTimer_ * 100.0f);
+            if (lifeTimer_ <= 4)
+            {
+                model_->color.w = (blinkTimer & 0x08) ? 1.0f : 0.25f;
+            }
+            else if (lifeTimer_ <= 8)
+            {
+                model_->color.w = (blinkTimer & 0x10) ? 1.0f : 0.25f;
+            }
+        }
+
+    }
+
+    PlayerManager& plManager    = PlayerManager::Instance();
+    Transform*     t            = GetTransform();
+    const float    elapsedFrame = elapsedTime * 60.0f;
 
     switch (step_)
     {
     case STEP::FALL_INIT:
 
-        if (velocity_.y < 0.0f) velocity_.y = 0.0f;     // すでに落下していたら速度をリセット
-        isGround_       = false;    // 空中にいる
-        isMoveToPlayer_ = false;
+        if (velocity_.y < 0.0f) velocity_.y = 0.0f; // すでに落下していたら速度をリセット
+        isGround_       = false;                    // 空中にいる
+        isMoveToPlayer_ = false;                    // プレイヤーに向かっていない
 
         step_ = STEP::FALL;
         [[fallthrough]];
@@ -97,11 +119,11 @@ void ExperiencePoint::Update(const float elapsedTime)
         }
 #else
         // 中心の位置から開始するので90度回転した状態で始める
-        circularMotion_.angle_.z = ToRadian(90.0f);
+        circularMotion_.rotation_.z = ToRadian(90.0f);
 #endif
 
-        isGround_       = true;   // 地面にいる
-        isMoveToPlayer_ = false;
+        isGround_       = true;     // 地面にいる
+        isMoveToPlayer_ = false;    // プレイヤーに向かっていない
 
         step_ = STEP::FLOTING;
         [[fallthrough]];
@@ -127,13 +149,13 @@ void ExperiencePoint::Update(const float elapsedTime)
             UpdateHorizontalMove(elapsedTime);
         }
 
-        // Y軸回転
+        // Z軸回転
         {
-            circularMotion_.angle_.z += circularMotion_.addRotate_ * elapsedTime;
-            if (circularMotion_.angle_.z > 360.0f) { circularMotion_.angle_.z -= 360.0f; }
+            circularMotion_.rotation_.z += circularMotion_.addRotate_ * elapsedTime;
+            if (circularMotion_.rotation_.z > 360.0f) { circularMotion_.rotation_.z -= 360.0f; }
             t->SetPositionY(
                 circularMotion_.center_.y +
-                ::cosf(circularMotion_.angle_.z) *
+                ::cosf(circularMotion_.rotation_.z) *
                 circularMotion_.radius_
             );
         }
@@ -141,8 +163,8 @@ void ExperiencePoint::Update(const float elapsedTime)
         break;
     case STEP::MOVE_TO_PLAYER_INIT:
 
-        isGround_       = false;
-        isMoveToPlayer_ = true;
+        isGround_       = false;    // 空中にいる
+        isMoveToPlayer_ = true;     // プレイヤーに向かっていない
 
         step_ = STEP::MOVE_TO_PLAYER;
         [[fallthrough]];
@@ -170,13 +192,15 @@ void ExperiencePoint::Update(const float elapsedTime)
         else
         {
             // プレイヤーの方へ向かう
-            const XMFLOAT3& pos = GetTransform()->GetPosition();
-            XMFLOAT3        plPos = plManager.GetPlayer()->GetTransform()->GetPosition();
-            plPos.y += 1.0f;
-            const XMFLOAT3  vecN = ::XMFloat3Normalize(plPos - pos);
-            velocity_ += vecN * acceleration_ * elapsedFrame; // 仮(プレイヤーに依存にする予定)
+            {
+                const XMFLOAT3& pos = GetTransform()->GetPosition();
+                XMFLOAT3 plPos = plManager.GetPlayer()->GetTransform()->GetPosition();
+                plPos.y += 1.0f;
+                const XMFLOAT3  vecN = ::XMFloat3Normalize(plPos - pos);
 
-            t->AddPosition(velocity_ * elapsedTime);
+                velocity_ += vecN * acceleration_ * elapsedFrame; // 仮(プレイヤーに依存にする予定)
+                t->AddPosition(velocity_ * elapsedTime);
+            }
 
             // 地面を貫通しないようにする
             if (t->GetPositionY() < 0.0f)
@@ -205,7 +229,7 @@ void ExperiencePoint::DrawDebug()
 {
 #ifdef USE_IMGUI
 
-    if (ImGui::BeginMenu(GetName()))
+    if (ImGui::BeginMenu(GetName().c_str()))
     {
         model_->DrawDebug();
 

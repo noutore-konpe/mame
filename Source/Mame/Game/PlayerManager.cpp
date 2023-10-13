@@ -1,7 +1,6 @@
 #include "PlayerManager.h"
 #include "EnemyManager.h"
 
-
 #include "../../Taki174/FunctionXMFloat3.h"
 
 // ‰Šú‰»
