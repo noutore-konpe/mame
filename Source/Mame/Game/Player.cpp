@@ -85,7 +85,7 @@ void Player::Initialize()
     defense = 0.0f;
 
     deceleration = 7.0f;
-    eyeAcceleration = InitAcceleration;
+    acceleration = InitAcceleration;
 
     //初回時のみスキルの生成と配列挿入をする
     if (drainSkill == nullptr)
@@ -212,9 +212,9 @@ void Player::MoveUpdate(float elapsedTime,float ax,float ay)
 
     //GetTransform()->SetPosition(pos);
     DirectX::XMFLOAT3 move = {
-        eyeVelocity.x * elapsedTime,
-        eyeVelocity.y * elapsedTime,
-        eyeVelocity.z * elapsedTime
+        velocity.x * elapsedTime,
+        velocity.y * elapsedTime,
+        velocity.z * elapsedTime
     };
 
     //ステージ判定
@@ -263,7 +263,7 @@ void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
     /*float ax = gamePad.GetAxisLX();
     float ay = gamePad.GetAxisLY();*/
 
-    float length{ sqrtf(eyeVelocity.x * eyeVelocity.x + eyeVelocity.z * eyeVelocity.z) };
+    float length{ sqrtf(velocity.x * velocity.x + velocity.z * velocity.z) };
 
     //アニメーションの重みの変更
     //model->weight = length / maxSpeed;
@@ -281,20 +281,20 @@ void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
 
             if ((length -= deceleration) > 0.0f)
             {
-                DirectX::XMVECTOR Velocity{eyeVelocity.x, eyeVelocity.z};
+                DirectX::XMVECTOR Velocity{velocity.x, velocity.z};
                 DirectX::XMVECTOR vecNormal{DirectX::XMVector2Normalize(Velocity)};
                 Velocity = DirectX::XMVectorScale(vecNormal, length);
 
-                eyeVelocity.x = DirectX::XMVectorGetX(Velocity);
-                eyeVelocity.z = DirectX::XMVectorGetY(Velocity);
+                velocity.x = DirectX::XMVectorGetX(Velocity);
+                velocity.z = DirectX::XMVectorGetY(Velocity);
 
                 //減速処理をした場合加速処理は飛ばす
                 return;
             }
             else
             {
-                eyeVelocity.x = 0.0f;
-                eyeVelocity.z = 0.0f;
+                velocity.x = 0.0f;
+                velocity.z = 0.0f;
 
                 return;
             }
@@ -307,7 +307,7 @@ void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
     float moveVecLength = sqrtf(moveVec.x * moveVec.x + moveVec.z * moveVec.z);
     if (moveVecLength > 0.0f)
     {
-        float eyeAcceleration;//加速力
+        float acceleration;//加速力
 
         ////ダッシュ
         //if (InputDash())
@@ -321,21 +321,21 @@ void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
         //    maxSpeed = this->maxSpeed;
         //}
 
-        eyeAcceleration = this->eyeAcceleration * elapsedTime;
+        acceleration = this->acceleration * elapsedTime;
 
         //移動ベクトルによる加速処理
-        eyeVelocity.x += moveVec.x * eyeAcceleration;
-        eyeVelocity.z += moveVec.z * eyeAcceleration;
+        velocity.x += moveVec.x * acceleration;
+        velocity.z += moveVec.z * acceleration;
 
         //最大速度制限
-        float length = sqrtf(eyeVelocity.x * eyeVelocity.x + eyeVelocity.z * eyeVelocity.z);
+        float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
         if (length > maxEyeSpeed)
         {
             DirectX::XMVECTOR vec = { moveVec.x,moveVec.z };
             vec = DirectX::XMVector2Normalize(vec);
             DirectX::XMVECTOR velo = DirectX::XMVectorScale(vec, maxEyeSpeed);
-            eyeVelocity.x = DirectX::XMVectorGetX(velo);
-            eyeVelocity.z = DirectX::XMVectorGetY(velo);
+            velocity.x = DirectX::XMVectorGetX(velo);
+            velocity.z = DirectX::XMVectorGetY(velo);
 
             length = maxEyeSpeed;
         }
@@ -346,25 +346,25 @@ void Player::AvoidUpdate(float elapsedTime)
 {
     auto front = GetTransform()->CalcForward();
 
-    float eyeAcceleration = this->dodgeAcceleration * elapsedTime;
+    float acceleration = this->dodgeAcceleration * elapsedTime;
 
     //移動ベクトルによる加速処理
-    eyeVelocity.x += front.x * eyeAcceleration;
-    eyeVelocity.z += front.z * eyeAcceleration;
+    velocity.x += front.x * acceleration;
+    velocity.z += front.z * acceleration;
 
     //最大速度制限
     float maxDodgeSpeed = this->maxDodgeSpeed + Easing::OutSine(
         static_cast<float>(model->GetCurrentKeyframeIndex()),
         static_cast<float>(model->GetCurrentKeyframeMaxIndex()/2.0f),
         2.0f, 0.0f);
-    float length = sqrtf(eyeVelocity.x * eyeVelocity.x + eyeVelocity.z * eyeVelocity.z);
+    float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
     if (length > maxDodgeSpeed)
     {
         DirectX::XMVECTOR vec = { moveVec.x,moveVec.z };
         vec = DirectX::XMVector2Normalize(vec);
         DirectX::XMVECTOR velo = DirectX::XMVectorScale(vec, maxDodgeSpeed);
-        eyeVelocity.x = DirectX::XMVectorGetX(velo);
-        eyeVelocity.z = DirectX::XMVectorGetY(velo);
+        velocity.x = DirectX::XMVectorGetX(velo);
+        velocity.z = DirectX::XMVectorGetY(velo);
 
         length = maxDodgeSpeed;
     }
@@ -376,9 +376,9 @@ void Player::AvoidUpdate(float elapsedTime)
     Turn(elapsedTime, moveVec.x, moveVec.z, 240.0f);
 
     DirectX::XMFLOAT3 velo = {
-        eyeVelocity.x * elapsedTime,
-        eyeVelocity.y * elapsedTime,
-        eyeVelocity.z * elapsedTime
+        velocity.x * elapsedTime,
+        velocity.y * elapsedTime,
+        velocity.z * elapsedTime
     };
     GetTransform()->AddPosition(velo);
 }
@@ -433,7 +433,7 @@ void Player::CameraControllerUpdate(float elapsedTime)
     {
         cTransform->AddRotationX(cameraRotSpeed * -ay * elapsedTime);
         float rotX = cTransform->GetRotation().x;
-        rotX = std::clamp(rotX,-0.35f,0.8f);
+        rotX = std::clamp(rotX,-0.10f,0.8f);
         cTransform->SetRotationX(rotX);
     }
 
@@ -568,10 +568,10 @@ void Player::AttackSteppingUpdate(float elapsedTime)
     //速度算出
     float maxEyeSpeed = Easing::OutQuart(steppingTimer,steppingTime,steppingSpeed,0.0f);
     auto front = GetTransform()->CalcForward();
-    eyeVelocity = front * maxEyeSpeed;
+    velocity = front * maxEyeSpeed;
 
     //移動処理
-    DirectX::XMFLOAT3 move = eyeVelocity * elapsedTime;
+    DirectX::XMFLOAT3 move = velocity * elapsedTime;
     GetTransform()->AddPosition(move);
 
     //回転処理

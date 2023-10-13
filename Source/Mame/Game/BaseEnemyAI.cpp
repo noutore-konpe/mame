@@ -281,13 +281,13 @@ void BaseEnemyAI::UpdateHorizontalVelocity(const float elapsedFrame)
 #endif
         {
             // 加速力
-            float eyeAcceleration = acceleration_ * elapsedFrame;
+            float acceleration = acceleration_ * elapsedFrame;
             // 空中にいるときは加速力を減らす
-            if (!isGround_) eyeAcceleration *= airControl_;
+            if (!isGround_) acceleration *= airControl_;
 
             // 移動ベクトルによる加速処理
-            velocity_.x += moveVec_.x * eyeAcceleration;
-            velocity_.z += moveVec_.z * eyeAcceleration;
+            velocity_.x += moveVec_.x * acceleration;
+            velocity_.z += moveVec_.z * acceleration;
 
             // 最大速度制限
             float length = ::sqrtf(

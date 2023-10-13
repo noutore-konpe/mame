@@ -127,11 +127,11 @@ public:
 
     std::vector<BaseSkill*>& GetSkillArray() { return skillArray; }
 
-    void SetAcceleration(const float accel) { eyeAcceleration = accel; }
+    void SetAcceleration(const float accel) { acceleration = accel; }
 
     StateMachine<State<Player>>* GetStateMachine() { return stateMachine.get(); }
 
-    void SetVelocity(const DirectX::XMFLOAT3 velo) { eyeVelocity = velo; }
+    void SetVelocity(const DirectX::XMFLOAT3 velo) { velocity = velo; }
 
     Model* GetSword() { return swordModel.get(); }
 
@@ -156,13 +156,13 @@ private:
     //--------------------------移動-----------------------------------------
     float maxEyeSpeed;
     //float maxDashSpeed = 4.0f;
-    DirectX::XMFLOAT3 eyeVelocity{};
+    DirectX::XMFLOAT3 velocity{};
 
     //カメラの向いている方向を前とした移動方向ベクトル
     DirectX::XMFLOAT3 moveVec;
 
     float deceleration;
-    float eyeAcceleration;
+    float acceleration;
     float dodgeAcceleration = 30.0f;
 
     float rotTimer = 0;

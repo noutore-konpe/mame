@@ -170,7 +170,7 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
     }
 
     //地面にカメラが埋まらないように調整
-    if (DirectX::XMVectorGetY(eye) < 0.1f)DirectX::XMVectorSetY(eye,0.1f);
+    if (DirectX::XMVectorGetY(eye) < 0.3f)DirectX::XMVectorSetY(eye,0.3f);
 
     //DirectX::XMVECTOR eye{ DirectX::XMVectorSet(camera.eye.x,camera.eye.y,camera.eye.z,1.0f) };
     //DirectX::XMVECTOR focus{ DirectX::XMVectorSet(camera.focus.x,camera.focus.y,camera.focus.z,1.0f) };
@@ -208,10 +208,10 @@ void Camera::DrawDebug()
         {
             ImGui::Checkbox("Lock On", &activeLockOn);
 
-            ImGui::DragFloat3("Velocity", &eyeVelocity.x);
+            ImGui::DragFloat3("Velocity", &velocity.x);
             ImGui::DragFloat3("Eye Pos", &eyePos.x);
             ImGui::SliderFloat("Max Speed", &maxEyeSpeed,0.1f,20.0f);
-            ImGui::SliderFloat("Acceleration", &eyeAcceleration,0.1f,10.0f);
+            ImGui::SliderFloat("Acceleration", &acceleration,0.1f,10.0f);
 
             ImGui::SliderFloat("FocalLength", &focalLength, 0.1f, 20.0f);
             ImGui::SliderFloat("OffsetY", &offsetY, 0.1f, 10.0f);
@@ -264,18 +264,18 @@ void Camera::EyeMoveDelayUpdate(float elapsedTime,
     //カメラ位置と目標位置までの距離が近いなら処理しない
     if (length < 0.1f && length > -0.1f)return;
 
-    eyeVelocity = moveVec * length * eyeAcceleration;
+    velocity = moveVec * length * acceleration;
 
     //最大速度制限
-    length = Length(eyeVelocity);
+    length = Length(velocity);
     if (length > maxEyeSpeed)
     {
-        eyeVelocity = moveVec * maxEyeSpeed;
+        velocity = moveVec * maxEyeSpeed;
 
         length = maxEyeSpeed;
     }
 
-    eyePos = eyePos + eyeVelocity * elapsedTime;
+    eyePos = eyePos + velocity * elapsedTime;
 }
 
 void Camera::FocusMoveDelayUpdate(float elapsedTime,

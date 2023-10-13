@@ -88,6 +88,8 @@ public: // 取得・設定関数
     void SetRadius(const float radius) { radius_ = radius; }
     const float GetRadius() const { return radius_; }
 
+    const float GetHeight() const { return height; }
+
     // emissive ※constansのやつなのでこいつを使う場所は UpdateConstansで使ってほしい
     void SetEmissiveIntensity(float intensity) { model->skinned_meshes->data.emissiveIntensity = intensity; }
     void SetEmissiveScrollDirection(DirectX::XMFLOAT2 scroll) { model->skinned_meshes->data.emissiveScrollDirection = scroll; }
@@ -144,6 +146,8 @@ protected:
     float maxHealth;
     float health;                   // hp
     float invincibleTime = 1.0f;    // 無敵時間
+
+    float height = 1.0f;//身長
 
 
 protected:

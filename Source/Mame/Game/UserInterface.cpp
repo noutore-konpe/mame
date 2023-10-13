@@ -6,19 +6,19 @@ void UserInterface::Initialize()
 {
     lockOnSprite = std::make_unique<Sprite>(Graphics::Instance().GetDevice(),
         L"./Resources/Image/UI/LockOn.png");
-    lockOnSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(32, 32));
+    lockOnSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(16, 16));
 }
 
 void UserInterface::Update(float elapsedTime)
 {
-    if (Camera::Instance().activeLockOn)
+    if (Camera::Instance().activeLockOn && Camera::Instance().GetLockOnTarget())
     {
         DirectX::XMFLOAT3 pos = Camera::Instance().GetLockOnTarget()->GetTransform()->GetPosition();
-        pos.y += 1;
+        pos.y += Camera::Instance().GetLockOnTarget()->GetHeight();
         lockOnSprite->GetSpriteTransform()->SetPos(Sprite::ConvertToScreenPos(pos));
         auto sPos = lockOnSprite->GetSpriteTransform()->GetPos();
-        sPos.x -= 16;
-        sPos.y -= 16;
+        sPos.x -= lockOnSprite->GetSpriteTransform()->GetSize().x / 2;
+        sPos.y -= lockOnSprite->GetSpriteTransform()->GetSize().y / 2;
         lockOnSprite->GetSpriteTransform()->SetPos(sPos);
         lockOnSprite->Update(elapsedTime);
     }
@@ -31,7 +31,10 @@ void UserInterface::Render()
 
 void UserInterface::BloomRender()
 {
-    lockOnSprite->Render();
+    if (Camera::Instance().activeLockOn && Camera::Instance().GetLockOnTarget())
+    {
+        lockOnSprite->Render();
+    }
 }
 
 void UserInterface::DrawDebug()
