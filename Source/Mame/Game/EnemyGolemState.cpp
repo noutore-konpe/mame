@@ -612,7 +612,7 @@ namespace EnemyGolemState
         DirectX::XMFLOAT3 playerPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
         DirectX::XMFLOAT3 ownerPos = owner->GetTransform()->GetPosition();
         DirectX::XMFLOAT3 vec = Normalize(playerPos - ownerPos);
-        owner->Turn(elapsedTime, vec.x, vec.z, 50.0f);
+        owner->Turn(elapsedTime, vec.x, vec.z, rotateSpeed);
     }
 }
 
@@ -773,7 +773,7 @@ namespace EnemyGolemState
         DirectX::XMFLOAT3 playerPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
         DirectX::XMFLOAT3 ownerPos = owner->GetTransform()->GetPosition();
         DirectX::XMFLOAT3 vec = Normalize(playerPos - ownerPos);
-        owner->Turn(elapsedTime, vec.x, vec.z, 50.0f);
+        owner->Turn(elapsedTime, vec.x, vec.z, rotateSpeed);
     }
 }
 
@@ -1013,6 +1013,38 @@ namespace EnemyGolemState
         DirectX::XMFLOAT3 playerPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
         DirectX::XMFLOAT3 ownerPos = owner->GetTransform()->GetPosition();
         DirectX::XMFLOAT3 vec = Normalize(playerPos - ownerPos);
-        owner->Turn(elapsedTime, vec.x, vec.z, 100.0f);
+        owner->Turn(elapsedTime, vec.x, vec.z, rotateSpeed);
+    }
+}
+
+// Attack2State
+namespace EnemyGolemState
+{
+    // ‰Šú‰»
+    void Attack2State::Initialize()
+    {
+    }
+
+    // XV
+    void Attack2State::Update(const float& elapsedTime)
+    {
+
+
+        // ‰ñ“]ˆ—
+        Turn(elapsedTime);  
+    }
+
+    // I—¹‰»
+    void Attack2State::Finalize()
+    {
+    }
+
+    // ‰ñ“]
+    void Attack2State::Turn(const float& elapsedTime)
+    {
+        DirectX::XMFLOAT3 playerPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 ownerPos = owner->GetTransform()->GetPosition();
+        DirectX::XMFLOAT3 vec = Normalize(playerPos - ownerPos);
+        owner->Turn(elapsedTime, vec.x, vec.z, rotateSpeed);
     }
 }

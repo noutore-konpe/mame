@@ -457,6 +457,12 @@
     <ClCompile Include="Source\Mame\Game\ProjectileHorming.cpp">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\MagicCircleGolemAttack2.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\MagicCircleGolemAttack2State.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -796,6 +802,12 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\ProjectileHorming.h">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\MagicCircleGolemAttack2.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\MagicCircleGolemAttack2State.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
