@@ -17,20 +17,28 @@ EnemyAI_2::EnemyAI_2()
 
     Graphics& graphics = Graphics::Instance();
 
-    model = std::make_unique<Model>(graphics.GetDevice(),
-        "./Resources/Model/Character/Player/P_Motion.fbx");
+    // モデル作成
+    {
+        model = make_unique<Model>(graphics.GetDevice(),
+            "./Resources/Model/Character/Player/P_Motion.fbx");
+
+        // 剣作成
+        sword_ = make_unique<Model>(graphics.GetDevice(),
+            "./Resources/Model/Sword_Motion.fbx");
+    }
+
 
     // emissiveTextureUVScroll
     {
         // load texture
         D3D11_TEXTURE2D_DESC texture2dDesc;
-        load_texture_from_file(graphics.GetDevice(),
+        ::load_texture_from_file(graphics.GetDevice(),
             L"./Resources/Image/Mask/noise3.png",
             emissiveTexture.GetAddressOf(),
             &texture2dDesc);
 
         // pixelShader Set (Aura)
-        CreatePsFromCso(graphics.GetDevice(),
+        ::CreatePsFromCso(graphics.GetDevice(),
             "./Resources/Shader/EmissiveTextureUVScrollPS.cso",
             emissiveTextureUVScroll.GetAddressOf());
     }
@@ -47,8 +55,9 @@ EnemyAI_2::EnemyAI_2()
         behaviorTree_->AddNode("Root", "Idle",             3, SelectRule::Non, nullptr, new IdleAction(this));
     }
 
+
     // ImGui名前設定
-    SetName("EnemyAI_2 : " + std::to_string(nameNum_++));
+    name_ = { "EnemyAI_2 : " + std::to_string(nameNum_++) };
 
 }
 
@@ -66,10 +75,13 @@ void EnemyAI_2::Initialize()
     BaseEnemyAI::Initialize();
 
     constexpr float scale = 1.5f;
-    GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
+    this->GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
+    sword_->GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
 
     moveSpeed_      = 2.0f;
     animationSpeed_ = 0.5f;
+
+    sword_->PlayAnimation(0, true); // デフォルトアニメーション再生再生
 }
 
 
@@ -77,7 +89,6 @@ void EnemyAI_2::Initialize()
 void EnemyAI_2::Update(const float& elapsedTime)
 {
     BaseEnemyAI::Update(elapsedTime);
-
 }
 
 
@@ -96,25 +107,27 @@ void EnemyAI_2::Render(const float& scale, ID3D11PixelShader* /*psShader*/)
 
     // Aura enemy
     BaseEnemyAI::Render(scale, emissiveTextureUVScroll.Get());
+
+    // 剣描画
+    sword_->Render(scale, nullptr);
+
 }
 
 
 void EnemyAI_2::DrawDebug()
 {
-    BaseEnemyAI::DrawDebug();
-
 #ifdef USE_IMGUI
+
     if (ImGui::BeginMenu(GetName()))
     {
-        Character::DrawDebug();
+        BaseEnemyAI::DrawDebug();
 
-        model->skinned_meshes->Drawdebug();
+        sword_->DrawDebug(); // 剣デバッグ描画
 
         ImGui::EndMenu();
     }
 
 #endif // USE_IMGUI
-
 }
 
 

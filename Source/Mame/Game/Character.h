@@ -58,7 +58,7 @@ public: // アニメーション関数
     void UpdateAnimation(const float& elapsedTime);
 
     // アニメーションが再生中かどうか
-    bool IsPlayAnimation() const;
+    const bool IsPlayAnimation() const;
 
 #pragma endregion
 
@@ -128,7 +128,7 @@ public:
     float invincibleTime = 1.0f;    // 無敵時間
     float rotValue;                 // 回転量
 
-private:
+protected:
     //Transform collisionSphereTransform{};
     //DirectX::XMFLOAT3 debugSphereOffset{};  // 当たり判定用
     //float       range = 1.0f;               // 球当たり判定半径(※radiusに乗り換え予定)

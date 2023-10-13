@@ -636,8 +636,18 @@ void SceneGame::Render(const float& elapsedTime)
     {
         PlayerManager::Instance().GetPlayer()->SkillImagesRender();
 
-
     }
+
+#ifdef _DEBUG
+    // デバッグレンダラ描画
+    DirectX::XMFLOAT4X4 view, projection;
+    DirectX::XMStoreFloat4x4(&view, camera.GetViewMatrix());
+    DirectX::XMStoreFloat4x4(&projection, camera.GetProjectionMatrix());
+
+    DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
+    debugRenderer->Render(graphics.GetDeviceContext(), view, projection);
+#endif // _DEBUG
+
 }
 
 // debug用

@@ -26,4 +26,3 @@ private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> emissiveTexture;
 
 };
-

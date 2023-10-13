@@ -25,9 +25,8 @@ private:
     std::unique_ptr<MagicCircle> magicCircle_;
 
     float lifeTimer_    = 5.0f;
-    float radius_       = 0.25f;
     float inhaleLength_ = 3.0f; // ‹z‚¢‚Ş‹——£
-    float inhaleForce_  = 2.0f; // ‹z‚¢‚Ş—Í
+    float inhaleForce_  = 4.0f; // ‹z‚¢‚Ş—Í
 
 };
 

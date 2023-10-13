@@ -134,7 +134,7 @@ void Character::UpdateAnimation(const float& elapsedTime)
     model->UpdateAnimation(elapsedTime);
 }
 
-bool Character::IsPlayAnimation() const
+const bool Character::IsPlayAnimation() const
 {
     return model->IsPlayAnimation();
 }

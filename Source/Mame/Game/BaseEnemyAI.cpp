@@ -30,6 +30,9 @@ void BaseEnemyAI::Update(const float& elapsedTime)
     // アニメーション更新
     Character::UpdateAnimation(elapsedTime);
 
+    // 剣の更新
+    UpdateSword(elapsedTime);
+
 }
 
 void BaseEnemyAI::Render(const float& scale, ID3D11PixelShader* psShader)
@@ -41,8 +44,6 @@ void BaseEnemyAI::Render(const float& scale, ID3D11PixelShader* psShader)
 void BaseEnemyAI::DrawDebug()
 {
 #ifdef USE_IMGUI
-    if (ImGui::BeginMenu(GetName()))
-    {
         std::string str = (activeNode_ != nullptr)
                         ? activeNode_->GetName()
                         : u8"なし";
@@ -52,14 +53,11 @@ void BaseEnemyAI::DrawDebug()
 
         Character::DrawDebug();
 
+        model->skinned_meshes->Drawdebug();
+
         //float r = GetRange();
         //ImGui::DragFloat("range", &r);
         //SetRange(r);
-
-        ImGui::EndMenu();
-    }
-    ImGui::Separator();
-
 #endif // USE_IMGUI
 }
 
@@ -150,6 +148,29 @@ void BaseEnemyAI::UpdateVelocity(const float elapsedTime)
 }
 
 
+// 剣の更新処理
+void BaseEnemyAI::UpdateSword(const float elapsedTime)
+{
+    if (nullptr == sword_) return;
+
+    Transform* swordT = sword_->GetTransform();
+    Transform* parentT = model->GetTransform();
+
+    // 位置・回転更新
+    {
+        // 親の位置と回転を代入
+        swordT->SetPosition(parentT->GetPosition());
+        swordT->SetRotation(parentT->GetRotation());
+    }
+
+    // アニメーション更新
+    // ※アニメーション再生はActionDerivedの方で行う
+    {
+        sword_->UpdateAnimation(elapsedTime);
+    }
+
+}
+
 
 void BaseEnemyAI::UpdateVerticalVelocity(const float elapsedFrame)
 {
@@ -208,6 +229,10 @@ void BaseEnemyAI::UpdateHorizontalVelocity(const float elapsedFrame)
 
     //アニメーションの重みの変更(0~1)
     model->weight = (std::min)(1.0f, oldLength / maxMoveSpeed_);
+    if (nullptr != sword_)
+    {
+        sword_->weight = (std::min)(1.0f, oldLength / maxMoveSpeed_);
+    }
 
     // XZ平面の速力を減速する
     if (oldLength > 0.0f)

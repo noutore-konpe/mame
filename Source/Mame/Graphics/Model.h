@@ -30,11 +30,14 @@ public: // 取得・設定関数関連
     std::vector<animation>* GetAnimation() { return &skinned_meshes->animation_clips; };
 
     // 現在のアニメーション番号の取得・設定
-    const int GetCurrentAnimationIndex()& { return currentAnimationIndex; }
-    void SetCurrentAnimationIndex(const int& animationIndex) { currentAnimationIndex = animationIndex; }
+    const int GetCurrentAnimationIndex() const { return currentAnimationIndex; }
+    void SetCurrentAnimationIndex(const int animationIndex) { currentAnimationIndex = animationIndex; }
+
+    // アニメーションループフラグを取得
+    const int GetAnimationLoopFlag() const { return animationLoopFlag; }
 
     // アニメーション再生速度設定（途中で再生速度を変えたいときなどに）
-    void SetAnimationSpeed(const float& speed) { animationSpeed = speed; }
+    void SetAnimationSpeed(const float speed) { animationSpeed = speed; }
 
     //現在のアニメーションが何フレーム目かの取得
     const int GetCurrentKeyframeIndex() const { return currentKeyframeIndex; }
