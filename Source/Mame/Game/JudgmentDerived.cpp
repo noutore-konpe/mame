@@ -3,6 +3,15 @@
 #include "EnemyManager.h"
 #include "PlayerManager.h"
 
+// ステージエントリー判定関数
+const bool EntryStageJudgment::Judgment()
+{
+	// ステージにすでに入っていたらfasleを返す
+	if (true == owner_->GetEntryStageFlag()) { return false; }
+
+	return true;
+}
+
 const bool PursuitJudgment::Judgment()
 {
 	using DirectX::XMFLOAT3;

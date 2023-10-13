@@ -35,6 +35,7 @@ public: // 基底クラスにある関数
     void DrawDebug()      override;
 
 public: // 関数
+    void DebugCreateEnemyFromGateway(); // 出入口から敵を生成する関数(デバッグ用)
 
 public: // 設定・取得
 
@@ -43,19 +44,15 @@ private: // 変数等々
     std::unique_ptr<Stage> stageBase;
     std::unique_ptr<Stage> stageWall;
 
-
-
     // 魔法陣
     std::unique_ptr<MagicCircleSummon> magicCircleSummon[10];
     bool isSeveralNum = false;
-
 
     // effect
     Effect* effect[4];
     //std::unique_ptr<Effect> effect[4];
 
     bool isDebugCamera = false;
-
 
 private: // GPU用定数・変数
     std::unique_ptr<FrameBuffer> framebuffers[3];
@@ -101,7 +98,9 @@ private: // GPU用定数・変数
     Microsoft::WRL::ComPtr<ID3D11PixelShader> sagePS; // 透明のシェーダー
 
 public:
-    static constexpr float stageRadius = 16.7f;//ステージ用の半径
+    static constexpr DirectX::XMFLOAT3 stageCenter = { 0,0,0 }; // ステージの中心
+    //static constexpr float stageRadius = 16.7f;                 // ステージ用の半径
+    static constexpr float stageRadius = 100.0f;                 // ステージ用の半径
 
 public: // debug用
 #ifdef _DEBUG

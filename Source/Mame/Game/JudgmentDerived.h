@@ -2,6 +2,17 @@
 #include "JudgmentBase.h"
 //#include "EnemyBlueSlime.h"
 
+
+// ステージエントリー判定関数
+class EntryStageJudgment : public JudgmentBase
+{
+public:
+	template <class TemplateAI>
+	EntryStageJudgment(TemplateAI* enemy) : JudgmentBase(enemy) {}
+	const bool Judgment() override;
+};
+
+
 class PursuitJudgment : public JudgmentBase
 {
 public:

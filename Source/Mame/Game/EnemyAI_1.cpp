@@ -50,9 +50,10 @@ EnemyAI_1::EnemyAI_1()
         behaviorTree_ = make_unique<BehaviorTree>(this);
 
         behaviorTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);
-        behaviorTree_->AddNode("Root", "CloseRangeAttack", 1, SelectRule::Non, new CloseRangeAttackJudgment(this), new CloseRangeAttackAction(this));
-        behaviorTree_->AddNode("Root", "Pursuit",          2, SelectRule::Non, new PursuitJudgment(this),          new PursuitAction(this));
-        behaviorTree_->AddNode("Root", "Idle",             3, SelectRule::Non, nullptr,                            new IdleAction(this));
+        behaviorTree_->AddNode("Root", "EntryStage",       1, SelectRule::Non, new EntryStageJudgment(this),       new EntryStageAction(this));
+        behaviorTree_->AddNode("Root", "CloseRangeAttack", 2, SelectRule::Non, new CloseRangeAttackJudgment(this), new CloseRangeAttackAction(this));
+        behaviorTree_->AddNode("Root", "Pursuit",          3, SelectRule::Non, new PursuitJudgment(this),          new PursuitAction(this));
+        behaviorTree_->AddNode("Root", "Idle",             4, SelectRule::Non, nullptr,                            new IdleAction(this));
     }
 
     SetType(static_cast<UINT>(Enemy::TYPE::Normal));
