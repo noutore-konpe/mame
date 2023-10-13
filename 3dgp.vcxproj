@@ -256,6 +256,7 @@
     <ClCompile Include="Source\Mame\Game\Stage.cpp" />
     <ClCompile Include="Source\Mame\Game\Stone.cpp" />
     <ClCompile Include="Source\Mame\Game\StoneBall.cpp" />
+    <ClCompile Include="Source\Mame\Game\UserInterface.cpp" />
     <ClCompile Include="Source\Mame\Graphics\AuraEffect.cpp" />
     <ClCompile Include="Source\Mame\Graphics\Bloom.cpp" />
     <ClCompile Include="Source\Mame\Graphics\Camera.cpp" />
@@ -363,6 +364,7 @@
     <ClInclude Include="Source\Mame\Game\StateMachine.h" />
     <ClInclude Include="Source\Mame\Game\Stone.h" />
     <ClInclude Include="Source\Mame\Game\StoneBall.h" />
+    <ClInclude Include="Source\Mame\Game\UserInterface.h" />
     <ClInclude Include="Source\Mame\Graphics\AuraEffect.h" />
     <ClInclude Include="Source\Mame\Graphics\Bloom.h" />
     <ClInclude Include="Source\Mame\Graphics\Camera.h" />

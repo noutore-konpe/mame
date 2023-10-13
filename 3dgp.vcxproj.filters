@@ -475,6 +475,7 @@
     <ClCompile Include="Source\Mame\Game\BlackHole.cpp">
       <Filter>mamelib\Mame\Game\Ability</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\UserInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -827,6 +828,7 @@
     <ClInclude Include="Source\Mame\Game\BlackHole.h">
       <Filter>mamelib\Mame\Game\Ability</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Game\UserInterface.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">
