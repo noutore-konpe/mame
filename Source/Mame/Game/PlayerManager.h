@@ -23,6 +23,8 @@ public:
     void Render(const float& scale, ID3D11PixelShader* psShader = nullptr);          // 描画処理
     void DrawDebug();                                                   // デバッグ描画
 
+    void CollisionPlayerVsEnemy();
+
 public: // 取得・設定 関連
     std::unique_ptr<Player>& GetPlayer() { return player; }
     
