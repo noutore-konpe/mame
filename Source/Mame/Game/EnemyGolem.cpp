@@ -22,6 +22,7 @@ EnemyGolem::EnemyGolem()
 
     magicCircleGolem = std::make_unique<MagicCircleGolem>();
     magicCircleEnemySummon = std::make_unique<MagicCircleEnemySummon>();
+    magicCircleGolemAttack2 = std::make_unique<MagicCircleGolemAttack2>();
     comboAttackStone = std::make_unique<ComboAttackStone>();
 
     for (int i = 0; i < 3; ++i)
@@ -67,6 +68,7 @@ void EnemyGolem::Initialize()
 
     magicCircleGolem->Initialize();
     magicCircleEnemySummon->Initialize();
+    magicCircleGolemAttack2->Initialize();
 
     comboAttackStone->Initialize();
 
@@ -103,6 +105,7 @@ void EnemyGolem::Update(const float& elapsedTime)
 
     magicCircleGolem->Update(elapsedTime);
     magicCircleEnemySummon->Update(elapsedTime);
+    magicCircleGolemAttack2->Update(elapsedTime);
     comboAttackStone->SetOwnerTransform(GetTransform());
     comboAttackStone->Update(elapsedTime);
 
@@ -136,20 +139,8 @@ void EnemyGolem::Render(const float& scale, ID3D11PixelShader* psShader)
     //Enemy::Render(scale, psShader);
     Enemy::Render(scale, golemPS.Get());
 
-    //magicCircleGolem->Render();
-    magicCircleEnemySummon->Render(DirectX::XMFLOAT4(magicCircleColor[0]));
-
-    if (currentState == static_cast<UINT>(StateMachineState::ComboAttack1State))
-    {   // •K—v‚È‚¾‚¯•`‰æ‚·‚é
-        comboAttackStone->Render();
-    }
-    if (currentState == static_cast<UINT>(StateMachineState::ComboAttack2State))
-    {   // •K—v‚È‚¾‚¯•`‰æ‚·‚é
-        for (int i = 0; i < 3; ++i)
-        {
-            comboAttackStones[i]->Render();
-        }
-    }
+    // •K—v‚È‚¾‚¯•`‰æ‚·‚é
+    SubRender();
 }
 
 // ‰e•`‰æ—p
@@ -225,6 +216,33 @@ void EnemyGolem::DrawDebug()
 
 void EnemyGolem::UpdateConstants()
 {
+}
+
+void EnemyGolem::SubRender()
+{
+    switch (currentState)
+    {
+    case static_cast<UINT>(StateMachineState::SummonState):
+        // ¢Š«–‚–@
+        magicCircleEnemySummon->Render(DirectX::XMFLOAT4(magicCircleColor[0]));
+        break;
+    case static_cast<UINT>(StateMachineState::Attack2State):
+        // UŒ‚‚Q
+        magicCircleGolemAttack2->Render(DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
+        break;
+    case static_cast<UINT>(StateMachineState::ComboAttack1State):
+        // ƒRƒ“ƒ{UŒ‚‚P
+        comboAttackStone->Render();
+        break;
+    case static_cast<UINT>(StateMachineState::ComboAttack2State):
+        // ƒRƒ“ƒ{UŒ‚‚Q
+        for (int i = 0; i < 3; ++i)
+        {
+            comboAttackStones[i]->Render();
+        }
+        break;
+    }
+    //magicCircleGolem->Render();
 }
 
 // ¢Š«–‚–@wXVˆ—
@@ -312,4 +330,9 @@ void EnemyGolem::UpdateSummoningMagicCircle(const float& lengthX, const float& l
             }
         }
     }
+}
+
+// UŒ‚–‚–@wXVˆ—
+void EnemyGolem::UpdateAttack2MagicCircle(const DirectX::XMFLOAT3& length, const float& angle)
+{
 }

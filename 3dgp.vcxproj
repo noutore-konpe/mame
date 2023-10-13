@@ -238,6 +238,8 @@
     <ClCompile Include="Source\Mame\Game\MagicCircle.cpp" />
     <ClCompile Include="Source\Mame\Game\MagicCircleEnemySummon.cpp" />
     <ClCompile Include="Source\Mame\Game\MagicCircleEnemySummonState.cpp" />
+    <ClCompile Include="Source\Mame\Game\MagicCircleGolemAttack2.cpp" />
+    <ClCompile Include="Source\Mame\Game\MagicCircleGolemAttack2State.cpp" />
     <ClCompile Include="Source\Mame\Game\MagicCircleGolemState.cpp" />
     <ClCompile Include="Source\Mame\Game\MagicCircleGolem.cpp" />
     <ClCompile Include="Source\Mame\Game\MagicCircleState.cpp" />
@@ -341,6 +343,8 @@
     <ClInclude Include="Source\Mame\Game\MagicCircle.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircleEnemySummon.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircleEnemySummonState.h" />
+    <ClInclude Include="Source\Mame\Game\MagicCircleGolemAttack2.h" />
+    <ClInclude Include="Source\Mame\Game\MagicCircleGolemAttack2State.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircleGolemState.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircleGolem.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircleState.h" />

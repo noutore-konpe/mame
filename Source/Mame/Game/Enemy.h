@@ -40,7 +40,6 @@ public:
     void SetVelocity(const DirectX::XMFLOAT3& velocity) { velocity_ = velocity; }
     void AddVelocity(const DirectX::XMFLOAT3& velocity) { velocity_ += velocity; }
 
-
 protected:
     DirectX::XMFLOAT3   velocity_       = {};
     int                 dropExpCount_   = 5;    // ドロップする経験値の数

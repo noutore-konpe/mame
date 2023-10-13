@@ -4,6 +4,7 @@
 
 #include "MagicCircleGolem.h"
 #include "MagicCircleEnemySummon.h"
+#include "MagicCircleGolemAttack2.h"
 
 #include "ComboAttackStone.h"
 
@@ -53,6 +54,7 @@ public: // 定数
         ChoseState,         // 選択ステート
         DeathState,         // 死亡
         WalkState,          // 歩き
+        Attack2State,       // 攻撃２
     };
 
     const DirectX::XMFLOAT4 magicCircleColor[10] =
@@ -96,6 +98,8 @@ public:
 
     void UpdateConstants() override;
 
+    void SubRender();   // 必要な時にだけ描画
+
 public:// 取得・設定
     // ステートマシン
     StateMachine<State<EnemyGolem>>* GetStateMachine() const { return stateMachine.get(); }
@@ -106,6 +110,8 @@ public:// 取得・設定
 public:
     // 召喚魔法陣更新処理
     void UpdateSummoningMagicCircle(const float& lengthX, const float& lengthZ, const float& angle);
+    // 攻撃魔法陣更新処理
+    void UpdateAttack2MagicCircle(const DirectX::XMFLOAT3& length, const float& angle);
 
 private:
     static int nameNum_;
@@ -113,6 +119,7 @@ private:
 public:
     std::unique_ptr<MagicCircleGolem> magicCircleGolem;
     std::unique_ptr<MagicCircleEnemySummon> magicCircleEnemySummon;
+    std::unique_ptr<MagicCircleGolemAttack2> magicCircleGolemAttack2;
     std::unique_ptr<ComboAttackStone> comboAttackStone;
     std::unique_ptr<ComboAttackStone> comboAttackStones[3];
 

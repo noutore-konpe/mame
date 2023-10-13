@@ -67,20 +67,13 @@ void SceneGame::CreateResource()
         //ItemManager::Instance().Register(new MagicCircle());
     }
 
-    // ñÇñ@êw
-    {
-        for (int i = 0; i < 10; ++i)
-        {
-            magicCircleSummon[i] = std::make_unique<MagicCircleSummon>();
-        }
-    }
 
     // enemy
     {
         EnemyGolem* enemyGolem = new EnemyGolem;
         EnemyManager::Instance().Register(enemyGolem);
 
-#if 1
+#if 0
         // max 6~7
         EnemyManager& enemyManager = EnemyManager::Instance();
         // EnemyAI_1
@@ -232,12 +225,6 @@ void SceneGame::Initialize()
     stageBase->Initialize();
     stageWall->Initialize();
 
-    // ñÇñ@êw
-    for (int i = 0; i < 10; ++i)
-    {
-        magicCircleSummon[i]->Initialize();
-    }
-
 
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
@@ -356,11 +343,6 @@ void SceneGame::Update(const float& elapsedTime)
         //enemyAura->Update(elapsedTime);
     }
 
-    // ñÇñ@êw
-    /*for (int i = 0; i < 10; ++i)
-    {
-        magicCircleSummon[i]->Update(elapsedTime);
-    }*/
 
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
@@ -510,19 +492,6 @@ void SceneGame::Render(const float& elapsedTime)
         {
             EnemyManager& enemyManager = EnemyManager::Instance();
             enemyManager.Render(enemyScaleFactor);
-
-        }
-        // ñÇñ@êw
-        if (isSeveralNum)
-        {
-            for (int i = 0; i < 10; ++i)
-            {
-                magicCircleSummon[i]->Render();
-            }
-        }
-        else
-        {
-            magicCircleSummon[0]->Render();
         }
 
         // Exp
@@ -690,38 +659,7 @@ void SceneGame::DrawDebug()
             ItemManager::Instance().Register(new Book());
         }
 
-        if (ImGui::Button("isSeveral"))
-        {
-            isSeveralNum = isSeveralNum ? false : true;
-        }
-
-        // ñÇñ@êwçƒê∂
-        if (ImGui::Button("magicCircle"))
-        {
-            if (isSeveralNum)
-            {
-                for (int i = 0; i < 10; ++i)
-                {
-                    for (int j = 0; j < 3; ++j)
-                    {
-                        magicCircleSummon[i]->magicCircle[j]->GetTransform()->
-                            SetPosition(DirectX::XMFLOAT3(cosf(i) * 7.0f, 0.0f, sinf(i) * 7.0f));
-                    }
-
-                    magicCircleSummon[i]->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleSummon::StateMachineState::AppearState));
-                }
-            }
-            else
-            {
-                for (int i = 0; i < 3; ++i)
-                {
-                    magicCircleSummon[0]->magicCircle[i]->GetTransform()->
-                        SetPosition(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
-                }
-
-                magicCircleSummon[0]->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleSummon::StateMachineState::AppearState));
-            }
-        }
+       
 
         // åoå±ílê∂ê¨
         if (ImGui::Button("Create Exp"))
@@ -740,6 +678,8 @@ void SceneGame::DrawDebug()
         particles->DrawDebug();
 
         EnemyManager& enemyManager = EnemyManager::Instance();
+
+
 
         enemyManager.DrawDebug();
 

@@ -44,9 +44,11 @@ private: // •Ï”“™X
     std::unique_ptr<Stage> stageWall;
 
 
+
     // –‚–@w
     std::unique_ptr<MagicCircleSummon> magicCircleSummon[10];
     bool isSeveralNum = false;
+
 
     // effect
     Effect* effect[4];

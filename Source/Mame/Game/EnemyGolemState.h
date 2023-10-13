@@ -184,6 +184,8 @@ namespace EnemyGolemState
 
         // ƒQ[ƒ€ƒpƒbƒhU“®‹­‚³
         float gamePadVibPower = 0.3f;
+
+        float rotateSpeed = 50.0f;  // ‰ñ“]‘¬“x
     };
 
     class DownState : public State<EnemyGolem>
@@ -228,6 +230,8 @@ namespace EnemyGolemState
 
         float delayTimer = 0.0f;
         float maxDelayTime = 1.0f;
+
+        float rotateSpeed = 50.0f;
     };
 
     class ChoseState : public State<EnemyGolem>
@@ -305,6 +309,24 @@ namespace EnemyGolemState
 
         float moveSpeed = 0.0f;
         float maxMoveSpeed = 3.0f;
+
+        float rotateSpeed = 100.0f; // ‰ñ“]‘¬“x
+    };
+
+    class Attack2State : public State<EnemyGolem>
+    {
+    public:
+        Attack2State(EnemyGolem* enemyGolem) : State(enemyGolem, "Attack2State") {}
+        ~Attack2State() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+
+        void Turn(const float& elapsedTime);    // ‰ñ“]
+
+    private:
+        float rotateSpeed = 100.0f; // ‰ñ“]‘¬“x
     };
 };
 

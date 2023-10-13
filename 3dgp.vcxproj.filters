@@ -463,6 +463,12 @@
     <ClCompile Include="Source\Mame\Game\ProjectileHorming.cpp">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\MagicCircleGolemAttack2.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\MagicCircleGolemAttack2State.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Taki174\DebugRenderer.cpp">
       <Filter>mamelib\Taki174</Filter>
     </ClCompile>
@@ -808,6 +814,12 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\ProjectileHorming.h">
       <Filter>mamelib\Mame\Game\Item\Projectile</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\MagicCircleGolemAttack2.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\MagicCircleGolemAttack2State.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
     </ClInclude>
     <ClInclude Include="Source\Taki174\DebugRenderer.h">
       <Filter>mamelib\Taki174</Filter>
