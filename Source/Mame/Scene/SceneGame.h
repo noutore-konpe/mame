@@ -99,6 +99,8 @@ private: // GPU用定数・変数
     // PS Shader
     Microsoft::WRL::ComPtr<ID3D11PixelShader> sagePS; // 透明のシェーダー
 
+public:
+    static constexpr float stageRadius = 16.7f;//ステージ用の半径
 
 public: // debug用
 #ifdef _DEBUG

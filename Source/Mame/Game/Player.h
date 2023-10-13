@@ -65,6 +65,7 @@ public:
 
     //汎用関数
     void PlayWalkAnimation() { PlayBlendAnimation(Idle, Dash, true); }
+    void PlaySwordWalkAnimation() { swordModel->PlayBlendAnimation(Idle, Dash, true); }
 
     void AttackSteppingUpdate(float elapsedTime);//攻撃間際の踏み込み処理
 
@@ -130,7 +131,7 @@ public:
 
     void SetVelocity(const DirectX::XMFLOAT3 velo) { eyeVelocity = velo; }
 
-    
+    Model* GetSword() { return swordModel.get(); }
 
 private:
     void LevelUpdate();
@@ -209,5 +210,15 @@ private:
     //----------------------------回避---------------------------------------
     float maxDodgeSpeed;//回避中の移動速度
     //-----------------------------------------------------------------------
+
+    //-----------------------------剣----------------------------------------
+    std::unique_ptr<Model> swordModel;
+    //-----------------------------------------------------------------------
+
+    //--------------------------------地形判定？------------------------------------
+    //std::unique_ptr<Model> stageDebugSphere;
+    
+    //--------------------------------------------------------------------------------
+
 };
 

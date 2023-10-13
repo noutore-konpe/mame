@@ -15,7 +15,7 @@ void Camera::Initialize()
     activeLockOn = false;
 
     eyePos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
-    focusPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
+    focusPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition() + DirectX::XMFLOAT3(0,0,2);
 }
 
 void Camera::Update(float elapsedTime)

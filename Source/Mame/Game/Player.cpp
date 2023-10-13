@@ -8,6 +8,8 @@
 #include "PlayerState.h"
 #include "EnemyManager.h"
 
+#include "../Scene/SceneGame.h"
+
 #include <algorithm>
 
 // コンストラクタ
@@ -21,6 +23,14 @@ Player::Player()
             //"./Resources/Model/Character/Player/sotai.fbx");
             //"./Resources/Model/Character/Player/P_Chara.fbx");
             "./Resources/Model/Character/Player/P_Motion.fbx");
+
+        swordModel = std::make_unique<Model>(graphics.GetDevice(),
+            "./Resources/Model/Character/Sword_Motion.fbx");
+
+#if _DEBUG
+        //stageDebugSphere = std::make_unique<Model>(graphics.GetDevice(),"./Resources/Model/Collision/sqhere.fbx");
+#endif // _DEBUG
+
 
         // pixelShader
         CreatePsFromCso(graphics.GetDevice(),
@@ -106,6 +116,8 @@ void Player::Initialize()
     //------------------------------------------------------------------------------------------
 
     LockOnInitialize();
+
+    swordModel->transform.SetScaleFactor(GetTransform()->GetScaleFactor());
 }
 
 // 終了化
@@ -138,6 +150,10 @@ void Player::Update(const float elapsedTime)
     stateMachine->Update(elapsedTime);
 
     Character::UpdateAnimation(elapsedTime);
+
+    swordModel->transform.SetPosition(GetTransform()->GetPosition());
+    swordModel->transform.SetRotation(GetTransform()->GetRotation());
+    swordModel->UpdateAnimation(elapsedTime);
 
     //MoveUpdate(elapsedTime);
 
@@ -193,7 +209,22 @@ void Player::MoveUpdate(float elapsedTime,float ax,float ay)
         eyeVelocity.y * elapsedTime,
         eyeVelocity.z * elapsedTime
     };
-    GetTransform()->AddPosition(move);
+
+    //ステージ判定
+    DirectX::XMFLOAT3 collectPos;
+    DirectX::XMFLOAT3 movePos = GetTransform()->GetPosition() + move;
+    float length = Length(movePos);
+    if (SceneGame::stageRadius < length)
+    {
+        DirectX::XMFLOAT3 moveNormal = Normalize(movePos);
+        collectPos = moveNormal * SceneGame::stageRadius;
+    }
+    else
+    {
+        collectPos = movePos;
+    }
+
+    GetTransform()->SetPosition(collectPos);
 
     Turn(elapsedTime,moveVec.x, moveVec.z,360.0f);
 }
@@ -230,6 +261,7 @@ void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
     //アニメーションの重みの変更
     //model->weight = length / maxSpeed;
     model->weight = (std::min)(1.0f, length / maxEyeSpeed);
+    swordModel->weight = model->weight;
 
 
     if (length > 0.0f)
@@ -408,10 +440,16 @@ void Player::Render(const float scale, ID3D11PixelShader* psShader)
 {
     Character::Render(scale, playerPS.Get());
 
+    swordModel->Render(scale, playerPS.Get());
+
     /*for (auto& skill : skillArray)
     {
         skill->Render();
     }*/
+#if _DEBUG
+    //stageDebugSphere->Render(stageRadius, playerPS.Get());
+#endif // _DEBUG
+
 }
 
 void Player::SkillImagesRender()
@@ -485,6 +523,11 @@ void Player::DrawDebug()
         {
             Initialize();
         }
+
+#if _DEBUG
+        //ImGui::DragFloat("StageRadius",&stageRadius);
+#endif // _DEBUG
+
 
         ImGui::EndMenu();
     }

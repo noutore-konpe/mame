@@ -7,6 +7,7 @@ namespace PlayerState
     {
         enableInputButton = false;
         owner->PlayWalkAnimation();
+        owner->PlaySwordWalkAnimation();
     }
     void NormalState::Update(const float& elapsedTime)
     {
@@ -55,6 +56,7 @@ namespace PlayerState
                 owner->ResetSteppingTimer();
                 state = UPDATE_FRAME;
                 owner->PlayAnimation(Player::Animation::Jab_1, false, owner->GetAttackSpeed());
+                owner->GetSword()->PlayAnimation(Player::Animation::Jab_1, false, owner->GetAttackSpeed());
                 initialize = true;
             }
 
@@ -72,6 +74,7 @@ namespace PlayerState
                 owner->ResetSteppingTimer();
                 state = UPDATE_FRAME;
                 owner->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
+                owner->GetSword()->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
                 initialize = true;
             }
 
@@ -88,6 +91,7 @@ namespace PlayerState
                 owner->ResetSteppingTimer();
                 state = UPDATE_FRAME;
                 owner->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
+                owner->GetSword()->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
                 initialize = true;
             }
 
@@ -161,6 +165,7 @@ namespace PlayerState
     void AvoidState::Initialize()
     {
         owner->PlayAnimation(Player::Animation::Avoid,false);
+        owner->GetSword()->PlayAnimation(Player::Animation::Avoid,false);
         owner->SetAcceleration(dodgeSpeed);
     }
 
