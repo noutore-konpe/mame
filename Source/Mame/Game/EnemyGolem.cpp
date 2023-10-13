@@ -84,6 +84,9 @@ void EnemyGolem::Initialize()
 
     currentState = static_cast<UINT>(StateMachineState::IdleState);
 
+    // ステージに入場済み扱いにする
+    entryStageFlag_ = true;
+
 #ifdef _DEBUG
     currentStateDebug = 0;
 #endif // _DEBUG

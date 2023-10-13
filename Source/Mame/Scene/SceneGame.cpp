@@ -44,6 +44,8 @@ bool SceneGame::isDebugRender = false;
 
 bool SceneGame::isDrawCollision_ = false;
 
+DirectX::XMFLOAT3 SceneGame::stageCenter = {};
+
 // ƒŠƒ\[ƒX¶¬
 void SceneGame::CreateResource()
 {
@@ -228,8 +230,8 @@ void SceneGame::Initialize()
 
     // stage
     stageBase->Initialize();
+    stageCenter = stageBase->GetTransform()->GetPosition();
     stageWall->Initialize();
-
 
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();

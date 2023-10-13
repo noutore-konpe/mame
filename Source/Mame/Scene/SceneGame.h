@@ -98,9 +98,8 @@ private: // GPU用定数・変数
     Microsoft::WRL::ComPtr<ID3D11PixelShader> sagePS; // 透明のシェーダー
 
 public:
-    static constexpr DirectX::XMFLOAT3 stageCenter = { 0,0,0 }; // ステージの中心
-    //static constexpr float stageRadius = 16.7f;                 // ステージ用の半径
-    static constexpr float stageRadius = 100.0f;                 // ステージ用の半径
+    static DirectX::XMFLOAT3 stageCenter;       // ステージの中心
+    static constexpr float stageRadius = 16.7f; // ステージ用の半径
 
 public: // debug用
 #ifdef _DEBUG

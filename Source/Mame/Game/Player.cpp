@@ -805,7 +805,7 @@ bool Player::ChangeLockOnTarget(float ax)
         peVec.x /= length;
         peVec.z /= length;
         float dot1 = (plVec.x * peVec.x) + (plVec.z * peVec.z);
-        
+
         if (dot0 < dot1)
         {
             dot0 = dot1;
@@ -841,7 +841,7 @@ void Player::LockOnUpdate()
 
     static bool buttonDown = false;
     if (!buttonDown)
-    {   
+    {
         if(ChangeLockOnTarget(ax))buttonDown = true;
     }
     if (ax <= 0.1f && ax >= -0.1f)
