@@ -101,7 +101,7 @@ namespace EnemyGolemState
         bool isSwingDown = false;   // ˜r‚ÌU‚è‰º‚°Š®—¹‚µ‚½‚©
 
         float delayTimer = 0.0f;
-        float maxDelayTime = 2.0f;
+        float maxDelayTime = 2.5f;
 
         // ƒQ[ƒ€ƒpƒbƒhU“®‹­‚³
         float gamePadVibPower = 0.5f;
@@ -329,4 +329,3 @@ namespace EnemyGolemState
         float rotateSpeed = 100.0f; // ‰ñ“]‘¬“x
     };
 };
-

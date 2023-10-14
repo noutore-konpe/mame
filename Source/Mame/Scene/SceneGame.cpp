@@ -51,7 +51,9 @@ void SceneGame::CreateResource()
     {
         stageBase = std::make_unique<Stage>();
         stageWall = std::make_unique<Stage>
+            //("./Resources/Model/Stage/hashira.fbx",
             ("./Resources/Model/Stage/stageWall.fbx",
+                //"./Resources/Shader/CharacterPS.cso");
                 "./Resources/Shader/StageWallPS.cso");
     }
 
@@ -229,15 +231,8 @@ void SceneGame::Initialize()
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
     expManager.Initialize();
-<<<<<<< HEAD
-=======
-
-    //今だけロックオン処理いれとく
-    Camera::Instance().SetLockOnTargetPos(enemyGolem->GetTransform());
 
     isDrawCollision_    = false;
-
->>>>>>> mame/Taki
 }
 
 // 終了化
@@ -662,18 +657,17 @@ void SceneGame::DrawDebug()
 
         ImGui::Separator();
 
+        stageBase->DrawDebug();
+        stageWall->DrawDebug();
+
         plManager.DrawDebug();
 
         ItemManager::Instance().DrawDebug();
 
         particles->DrawDebug();
 
-<<<<<<< HEAD
-        EnemyManager& enemyManager = EnemyManager::Instance();
-=======
-        enemyGolem->DrawDebug();
 
->>>>>>> mame/Taki
+        EnemyManager& enemyManager = EnemyManager::Instance();
         enemyManager.DrawDebug();
 
         // Exp

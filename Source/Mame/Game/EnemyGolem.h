@@ -38,10 +38,12 @@ public: // ’è”
         Death1,             // €–S1
         Down,               // ‹¯‚İ“|‚ê
         DownReturn,         // ‹¯‚İ‹N‚«ã‚ª‚è
+        Attack2,            // UŒ‚‚Q
     };
 
     enum class StateMachineState
     {
+        DummyState,         // ƒ_ƒ~[
         IdleState,          // ‘Ò‹@
         EntryState,         // “oê
         RoarState,          // ™ôšK
@@ -68,17 +70,19 @@ public: // ’è”
     };
 
 #ifdef _DEBUG
-    const char* stateName[9] =
+    const char* stateName[11] =
     {
-        "Entry",
-        "Summon",
-        "Roar",
+        "DummyState",
+        "EntryState",
+        "SummonState",
+        "RoarState",
         "Attack1State",
         "ComboAttack1State",
         "DownState",
         "ComboAttack2State",
         "DeathState",
-        "WalkState"
+        "WalkState",
+        "Attack2State",
     };
 #endif // _DEBUG
 
@@ -111,7 +115,7 @@ public:
     // ¢Š«–‚–@wXVˆ—
     void UpdateSummoningMagicCircle(const float& lengthX, const float& lengthZ, const float& angle);
     // UŒ‚–‚–@wXVˆ—
-    void UpdateAttack2MagicCircle(const DirectX::XMFLOAT3& length, const float& angle);
+    void UpdateAttack2MagicCircle(const float& lengthX, const float& lengthZ);
 
 private:
     static int nameNum_;
