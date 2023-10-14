@@ -56,6 +56,9 @@ EnemyGolem::EnemyGolem()
 
     // ImGui名前設定
     SetName("EnemyGolem" + std::to_string(nameNum_++));
+
+    //身長設定
+    height = 2.0f;
 }
 
 // デストラクタ

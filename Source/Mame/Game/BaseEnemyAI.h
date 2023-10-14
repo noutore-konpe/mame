@@ -33,6 +33,8 @@ public:
     );
 
 public: // 取得・設定
+    Model* GetSword() const { return sword_.get(); }
+
     NodeBase* GetActiveNode() const { return activeNode_; }
 
     ProjectileManager* GetProjectileManager() const { return projectileManager_; }
@@ -69,6 +71,8 @@ protected:
     void UpdateNode(const float elapsedTime);
     void UpdateVelocity(const float elapsedTime);
 
+    void UpdateSword(const float elapsedTime);
+
 protected:
     void OnLanding() {}
 
@@ -85,6 +89,8 @@ private:
 protected:
     std::unique_ptr<BehaviorTree>   behaviorTree_;
     std::unique_ptr<BehaviorData>   behaviorData_; // 主にシーケンスに使う
+
+    std::unique_ptr<Model>          sword_;
 
     NodeBase* activeNode_ = nullptr; // BehaviorTreeのノードを指すだけのポインタなのでdeleteしない
 

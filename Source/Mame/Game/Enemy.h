@@ -32,6 +32,7 @@ public:
     //virtual void UpdateConstants() = 0;
 
 public:
+
     int GetType() { return type; }
     void SetType(int t) { type = t; }
 

@@ -88,7 +88,7 @@ void BlackHole::Update(const float elapsedTime)
             if (length <= 0.5f)         continue;   // ’†S‚É‹ß‚©‚Á‚½‚çcontinue‚·‚é
 
             // “G‚ðŒ¸‘¬‚³‚¹‚é
-            const XMFLOAT3 deceleration = enemy->GetVelocity() * (-0.5f);
+            const XMFLOAT3 deceleration = enemy->GetVelocity() * (-1.0f);
             enemy->AddVelocity(deceleration * elapsedTime);
 
             // Ž©•ª‚Ì•û‚Öˆø‚«Šñ‚¹‚é
@@ -98,6 +98,7 @@ void BlackHole::Update(const float elapsedTime)
     }
 
     // magicCircle_->Update(elapsedTime);
+    magicCircle_->GetTransform()->SetPosition(this->GetTransform()->GetPosition());
 
 }
 
@@ -118,14 +119,18 @@ void BlackHole::Render(
     magicCircle_->Render(scale, psShader);
 
 #ifdef _DEBUG
+
+    // ‹z‚¢ž‚Þ”ÍˆÍ‚ð•\Ž¦
     if (true == SceneGame::isDrawCollision_)
     {
         // ƒfƒoƒbƒO‹…‘Ì•`‰æ
         DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
-        const XMFLOAT3 center = GetTransform()->GetPosition();
-        const XMFLOAT4 color = { 1,1,1,1 };
-        debugRenderer->DrawSphere(center, radius_, color);
+        const XMFLOAT3  pos    = GetTransform()->GetPosition();
+        constexpr float height = 0.5f;
+        const XMFLOAT4  color  = { 0,0,1,1 };
+        debugRenderer->DrawCylinder(pos, inhaleLength_, height, color);
     }
+
 #endif // _DEBUG
 
 }

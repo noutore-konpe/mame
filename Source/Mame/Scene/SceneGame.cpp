@@ -28,11 +28,14 @@
 
 #include "../Game/ExperiencePointManager.h"
 
+#include "../Game/UserInterface.h"
+
 #include "../framework.h"
 
 #include "SceneManager.h"
 #include "SceneLoading.h"
 #include "SceneTitle.h"
+
 
 #ifdef _DEBUG
 bool SceneGame::isDebugRender = false;
@@ -123,6 +126,7 @@ void SceneGame::CreateResource()
 #endif
     }
 
+    
     // ps Shader
     {
         CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/SagePS.cso", sagePS.GetAddressOf());
@@ -232,7 +236,13 @@ void SceneGame::Initialize()
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
     expManager.Initialize();
 
+
     isDrawCollision_    = false;
+
+    //UI
+    {
+        UserInterface::Instance().Initialize();
+    }
 }
 
 // 終了化
@@ -346,6 +356,8 @@ void SceneGame::Update(const float& elapsedTime)
 
     // effect
     EffectManager::Instance().Update(elapsedTime);
+
+    UserInterface::Instance().Update(elapsedTime);
 
 
     //カード演出中だけUpdate前にreturn呼んでるから注意！！
@@ -538,6 +550,11 @@ void SceneGame::Render(const float& elapsedTime)
         EffectManager::Instance().Render(view, projection);
     }
 
+    //ブルームあり２D
+    {
+        UserInterface::Instance().BloomRender();
+    }
+
     framebuffers[0]->Deactivate(graphics.GetDeviceContext());
 
 
@@ -563,6 +580,8 @@ void SceneGame::Render(const float& elapsedTime)
         };
         //bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceView, 0, _countof(shaderResourceView), colorPS.Get());
     }
+
+    
 
     // BLOOM
     bloomer->Make(graphics.GetDeviceContext(), framebuffers[0]->shaderResourceViews[0].Get());
@@ -606,9 +625,19 @@ void SceneGame::Render(const float& elapsedTime)
     //ブルーム無し
     {
         PlayerManager::Instance().GetPlayer()->SkillImagesRender();
-
-
+        UserInterface::Instance().Render();
     }
+
+#ifdef _DEBUG
+    // デバッグレンダラ描画
+    DirectX::XMFLOAT4X4 view, projection;
+    DirectX::XMStoreFloat4x4(&view, camera.GetViewMatrix());
+    DirectX::XMStoreFloat4x4(&projection, camera.GetProjectionMatrix());
+
+    DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
+    debugRenderer->Render(graphics.GetDeviceContext(), view, projection);
+#endif // _DEBUG
+
 }
 
 // debug用
@@ -666,7 +695,6 @@ void SceneGame::DrawDebug()
 
         particles->DrawDebug();
 
-
         EnemyManager& enemyManager = EnemyManager::Instance();
         enemyManager.DrawDebug();
 
@@ -675,6 +703,8 @@ void SceneGame::DrawDebug()
 
         // カメラ
         Camera::Instance().DrawDebug();
+
+        UserInterface::Instance().DrawDebug();
 
         ImGui::End();
     }

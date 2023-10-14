@@ -58,7 +58,7 @@ public: // アニメーション関数
     void UpdateAnimation(const float& elapsedTime);
 
     // アニメーションが再生中かどうか
-    bool IsPlayAnimation() const;
+    const bool IsPlayAnimation() const;
 
 #pragma endregion
 
@@ -87,6 +87,8 @@ public: // 取得・設定関数
 
     void SetRadius(const float radius) { radius_ = radius; }
     const float GetRadius() const { return radius_; }
+
+    const float GetHeight() const { return height; }
 
     // emissive ※constansのやつなのでこいつを使う場所は UpdateConstansで使ってほしい
     void SetEmissiveIntensity(float intensity) { model->skinned_meshes->data.emissiveIntensity = intensity; }
@@ -144,6 +146,11 @@ protected:
     float maxHealth;
     float health;                   // hp
     float invincibleTime = 1.0f;    // 無敵時間
+
+    float height = 1.0f;//身長
+
+
+protected:
     //Transform collisionSphereTransform{};
     //DirectX::XMFLOAT3 debugSphereOffset{};  // 当たり判定用
     //float       range = 1.0f;               // 球当たり判定半径(※radiusに乗り換え予定)

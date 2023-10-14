@@ -96,20 +96,16 @@ void EnemyAI_3::Render(const float& scale, ID3D11PixelShader* /*psShader*/)
 
 void EnemyAI_3::DrawDebug()
 {
-    BaseEnemyAI::DrawDebug();
-
 #ifdef USE_IMGUI
+
     if (ImGui::BeginMenu(GetName()))
     {
-        Character::DrawDebug();
-
-        model->skinned_meshes->Drawdebug();
+        BaseEnemyAI::DrawDebug();
 
         ImGui::EndMenu();
     }
 
 #endif // USE_IMGUI
-
 }
 
 

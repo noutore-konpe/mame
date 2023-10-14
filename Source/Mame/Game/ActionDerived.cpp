@@ -15,33 +15,43 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 {
 	using DirectX::XMFLOAT3;
 	using DirectX::XMFLOAT4;
-
 	using Animation = Player::Animation;
 
-	PlayerManager& playerManager = PlayerManager::Instance();
-	//EnemyManager& enemyManager = EnemyManager::Instance();
+	PlayerManager& plManager = PlayerManager::Instance();
 
 	switch (step_)
 	{
 	case 0:
-		owner_->SetRunTimer(::RandFloat(0.5f, 1.0f));
+		owner_->SetRunTimer(::RandFloat(0.5f, 1.5f));
 		//owner_->SetRunTimer(60.0f);
-		//owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::IdleNormal), true);
 
 		// 自分の位置から回転を始めるようにする
 		{
-			const XMFLOAT3&	position		= owner_->GetPosition();
-			const XMFLOAT3&	playerPosition	= playerManager.GetPlayer()->GetPosition();
-			const float		localPositionX	= position.x - playerPosition.x;
-			const float		localPositionZ	= position.z - playerPosition.z;
+			const XMFLOAT3&	pos			= owner_->GetPosition();
+			const XMFLOAT3&	plPos		= plManager.GetPlayer()->GetPosition();
+			const float		localPosX	= pos.x - plPos.x;
+			const float		localPosZ	= pos.z - plPos.z;
 
-			circleRotation_ = ::atan2f(localPositionX, localPositionZ); // return Radian Angle
+			circleRotation_ = ::atan2f(localPosX, localPosZ); // return Radian Angle
 		}
 
-		owner_->PlayBlendAnimation(
-			Animation::Idle, Animation::Dash, false,
-			owner_->GetAnimationSpeed()
-		);
+		// アニメーション再生
+		{
+			owner_->PlayBlendAnimation(
+				Animation::Idle, Animation::Dash,
+				true, owner_->GetAnimationSpeed()
+			);
+
+			// 剣のアニメーション再生
+			Model* sword = owner_->GetSword();
+			if (sword != nullptr)
+			{
+				sword->PlayBlendAnimation(
+					Animation::Idle, Animation::Dash,
+					true, owner_->GetAnimationSpeed()
+				);
+			}
+		}
 
 		++step_;
 		[[fallthrough]];
@@ -50,15 +60,15 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 		// タイマー更新
 		owner_->ElapseRunTimer(elapsedTime);
 
-		// 待機と歩きのブレンドアニメーションが終わったら
-		// 待機アニメーションにしておく
-		if (false == owner_->IsPlayAnimation())
-		{
-			owner_->PlayAnimation(
-				Animation::Idle, true,
-				owner_->GetAnimationSpeed()
-			);
-		}
+		//// 待機と歩きのブレンドアニメーションが終わったら
+		//// 待機アニメーションにしておく
+		//if (false == owner_->IsPlayAnimation())
+		//{
+		//	owner_->PlayAnimation(
+		//		Animation::Idle, true,
+		//		owner_->GetAnimationSpeed()
+		//	);
+		//}
 
 		//// 誰も近接攻撃行動中でなく近接攻撃行動クールタイマーもなければ終了
 		//if (false == enemyManager.GetIsRunningCRAAction() &&
@@ -75,13 +85,16 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 			return ActionBase::State::Complete;
 		}
 
-		const XMFLOAT3	position		= owner_->GetPosition();
-		const XMFLOAT3	playerPosition	= playerManager.GetPlayer()->GetPosition();
-		const float		vx				= playerPosition.x - position.x;
-		const float		vz				= playerPosition.z - position.z;
+		const XMFLOAT3	pos				= owner_->GetPosition();
+		const XMFLOAT3	plPos			= plManager.GetPlayer()->GetPosition();
+		const float		vx				= plPos.x - pos.x;
+		const float		vz				= plPos.z - pos.z;
 		const float		lengthSq		= (vx * vx + vz * vz);
 		const float		attackLength	= owner_->GetAttackLength();
 		const float		attackLengthSq	= attackLength * attackLength;
+
+		// 回転
+		owner_->Turn(elapsedTime, vx, vz, owner_->GetTurnSpeed());
 
 		// 攻撃距離外になったら終了(円運動の都合上甘めに設定)
 		if (lengthSq > (attackLengthSq + 5.0f))
@@ -129,9 +142,6 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 			owner_->MoveToTarget(elapsedTime, 1.0f, false);
 		}
 #endif
-
-		// 回転
-		owner_->Turn(elapsedTime, vx, vz, owner_->GetTurnSpeed());
 	}
 
 	return ActionBase::State::Run;
@@ -142,45 +152,50 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 const ActionBase::State PursuitAction::Run(const float elapsedTime)
 {
 	using DirectX::XMFLOAT3;
-
 	using Animation = Player::Animation;
 
-	PlayerManager& playerManager = PlayerManager::Instance();
+	PlayerManager& plManager = PlayerManager::Instance();
 
-	//float runTimer = owner_->GetRunTimer();
 	switch (step_)
 	{
 	case 0:
 		// 目標地点をプレイヤー位置に設定
-		owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
-		//owner_->SetRunTimer(Mathf::RandomRange(3.0f, 5.0f));
-		//owner_->GetModel()->PlayAnimation(static_cast<int>(EnemyBlueSlime::EnemyAnimation::RunFWD), true);
+		owner_->SetTargetPosition(plManager.GetPlayer()->GetPosition());
 
-		owner_->PlayBlendAnimation(
-			Animation::Idle, Animation::Dash, true,
-			owner_->GetAnimationSpeed()
-		);
+		// アニメーション再生
+		{
+			owner_->PlayBlendAnimation(
+				Animation::Idle, Animation::Dash,
+				true, owner_->GetAnimationSpeed()
+			);
+
+			// 剣のアニメーション再生
+			Model* sword = owner_->GetSword();
+			if (sword != nullptr)
+			{
+				sword->PlayBlendAnimation(
+					Animation::Idle, Animation::Dash,
+					true, owner_->GetAnimationSpeed()
+				);
+			}
+		}
 
 		++step_;
 		[[fallthrough]];
 		//break;
 	case 1:
-		//runTimer -= elapsedTime;
-		//// タイマー更新
-		//owner_->SetRunTimer(runTimer);
-
 		// 目標地点をプレイヤー位置に設定
-		owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
+		owner_->SetTargetPosition(plManager.GetPlayer()->GetPosition());
 
 		// プレイヤーとのXZ平面での距離判定
-		const XMFLOAT3	position = owner_->GetPosition();
-		const XMFLOAT3	targetPosition = owner_->GetTargetPosition();
-		const float		vx = targetPosition.x - position.x;
-		const float		vz = targetPosition.z - position.z;
-		const float		lengthSq = (vx * vx + vz * vz);
+		const XMFLOAT3	pos		  = owner_->GetPosition();
+		const XMFLOAT3	targetPos = owner_->GetTargetPosition();
+		const float		vx		  = targetPos.x - pos.x;
+		const float		vz		  = targetPos.z - pos.z;
+		const float		lengthSq  = (vx * vx + vz * vz);
 
 		// 攻撃距離圏内まで接近したら追跡成功を返す
-		const float		attackLength = owner_->GetAttackLength();
+		const float	attackLength = owner_->GetAttackLength();
 		if (lengthSq <= attackLength * attackLength)
 		{
 			step_ = 0;
@@ -192,19 +207,10 @@ const ActionBase::State PursuitAction::Run(const float elapsedTime)
 			owner_->MoveToTarget(elapsedTime, 1.0);
 		}
 
-		//// 行動時間が過ぎた時
-		//if (runTimer <= 0.0f)
-		//{
-		//	step_ = 0;
-		//	// 追跡失敗を返す
-		//	return ActionBase::State::Failed;
-		//}
-
 		break;
 	}
 
 	return ActionBase::State::Run;
-
 }
 
 
@@ -212,52 +218,79 @@ const ActionBase::State PursuitAction::Run(const float elapsedTime)
 const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 {
 	using DirectX::XMFLOAT3;
+	using Animation = Player::Animation;
 
-	PlayerManager&	playerManager	= PlayerManager::Instance();
-	EnemyManager&	enemyManager	= EnemyManager::Instance();
+	PlayerManager& plManager  = PlayerManager::Instance();
+	EnemyManager&  enmManager = EnemyManager::Instance();
 
-	//float runTimer = owner_->GetRunTimer();
 	switch (step_)
 	{
 	case 0:
-		// 目標地点をプレイヤー位置に設定
-		owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
-		owner_->SetRunTimer(::RandFloat(+1.0f, +1.0f));
+		owner_->SetRunTimer(60.0f); // タイマー設定
 
-		owner_->PlayAnimation(
-			Player::Animation::Jab_1, false,
-			owner_->GetAnimationSpeed()
-		);
+		// アニメーション再生
+		{
+			// 攻撃アニメーション再生
+			owner_->PlayAnimation(
+				Animation::Jab_1, false,
+				owner_->GetAnimationSpeed()
+			);
+
+			// 剣のアニメーション再生
+			Model* sword = owner_->GetSword();
+			if (sword != nullptr)
+			{
+				sword->PlayAnimation(
+					Animation::Jab_1, false,
+					owner_->GetAnimationSpeed()
+				);
+			}
+		}
 
 		++step_;
 		[[fallthrough]];
 		//break;
 	case 1:
-		//runTimer -= elapsedTime;
-		//owner_->SetRunTimer(runTimer);
 		// タイマー更新
 		owner_->ElapseRunTimer(elapsedTime);
 
-		// 目標地点をプレイヤー位置に設定
-		owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
+		// 回転
+		{
+			const XMFLOAT3& pos = owner_->GetTransform()->GetPosition();
+			const XMFLOAT3& plPos = plManager.GetPlayer()->GetTransform()->GetPosition();
+			const float		vx = plPos.x - pos.x;
+			const float		vz = plPos.z - pos.z;
+			owner_->Turn(elapsedTime, vx, vz, owner_->GetTurnSpeed());
+		}
 
-		// 行動しているのがわかりやすいように仮で回転させる
-		//owner_->GetTransform()->AddRotationY(ToRadian(1080.0f) * elapsedTime);
+		// 攻撃アニメーションが終わったら成功終了
+		if (false == owner_->IsPlayAnimation())
+		{
+			step_ = 0;
 
-		// 行動時間が過ぎた時
+			// CRA : 5.Action : 近接攻撃行動実行中フラグを下ろす
+			enmManager.SetIsRunningCRAAction(false);
+
+			// CRA : 6.Action : 近接攻撃行動クールタイマー設定
+			constexpr float craCoolTime = 0.0f;
+			enmManager.SetCRAActionCoolTimer(craCoolTime);
+
+			return ActionBase::State::Complete; // 成功
+		}
+
+		// 行動時間が過ぎたら失敗終了
 		if (owner_->GetRunTimer() <= 0.0f)
 		{
 			step_ = 0;
 
 			// CRA : 5.Action : 近接攻撃行動実行中フラグを下ろす
-			enemyManager.SetIsRunningCRAAction(false);
+			enmManager.SetIsRunningCRAAction(false);
 
 			// CRA : 6.Action : 近接攻撃行動クールタイマー設定
 			constexpr float craCoolTime = 0.0f;
-			enemyManager.SetCRAActionCoolTimer(craCoolTime);
+			enmManager.SetCRAActionCoolTimer(craCoolTime);
 
-			//return ActionBase::State::Failed;
-			return ActionBase::State::Complete;
+			return ActionBase::State::Failed; // 失敗
 		}
 
 		break;
@@ -271,22 +304,34 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 {
 	using DirectX::XMFLOAT3;
+	using Animation = Player::Animation;
 
-	PlayerManager&	playerManager	= PlayerManager::Instance();
-	//EnemyManager&	enemyManager	= EnemyManager::Instance();
+	PlayerManager& plManager = PlayerManager::Instance();
 
 	switch (step_)
 	{
 	case 0:
-		// 目標地点をプレイヤー位置に設定
-		//owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
 		//owner_->SetRunTimer(::RandFloat(+1.0f, +1.0f));
-		owner_->SetRunTimer(3.0f);
+		owner_->SetRunTimer(60.0f); // 行動タイマー設定
 
-		owner_->PlayAnimation(
-			Player::Animation::Jab_1, false,
-			owner_->GetAnimationSpeed()
-		);
+		// アニメーション再生
+		{
+			// 攻撃アニメーション再生
+			owner_->PlayAnimation(
+				Animation::Jab_1, false,
+				owner_->GetAnimationSpeed()
+			);
+
+			// 剣のアニメーション再生
+			Model* sword = owner_->GetSword();
+			if (sword != nullptr)
+			{
+				sword->PlayAnimation(
+					Animation::Jab_1, false,
+					owner_->GetAnimationSpeed()
+				);
+			}
+		}
 
 		++step_;
 		[[fallthrough]];
@@ -296,32 +341,38 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 		owner_->ElapseRunTimer(elapsedTime);
 
 		// 目標地点をプレイヤー位置に設定
-		owner_->SetTargetPosition(playerManager.GetPlayer()->GetPosition());
+		owner_->SetTargetPosition(plManager.GetPlayer()->GetPosition());
 
-		const XMFLOAT3	position		= owner_->GetPosition();
-		const XMFLOAT3	playerPosition	= playerManager.GetPlayer()->GetPosition();
-		const XMFLOAT3  vec				= playerPosition - position;
-		const XMFLOAT3	vecN			= ::XMFloat3Normalize(vec);
+		const XMFLOAT3	pos		= owner_->GetPosition();
+		const XMFLOAT3	plPos	= plManager.GetPlayer()->GetPosition();
+		const XMFLOAT3  vec		= plPos - pos;
+		const XMFLOAT3	vecN	= ::XMFloat3Normalize(vec);
 
 		// 回転
 		owner_->Turn(elapsedTime, vec.x, vec.z, owner_->GetTurnSpeed());
 
-		// 行動時間が過ぎた時
+		// 指定のキーフレームになったら弾丸発射
+		if (19 == owner_->model->GetCurrentKeyframeIndex())
+		{
+			const XMFLOAT3 launchPos = {
+				pos.x, (pos.y + 0.4f), pos.z,
+			};
+			ProjectileStraight* projectile = new ProjectileStraight(owner_->GetProjectileManager());
+			projectile->Launch(vecN, launchPos);
+		}
+
+		// 攻撃アニメーションが終わったら成功終了
+		if (false == owner_->IsPlayAnimation())
+		{
+			step_ = 0;
+			return ActionBase::State::Complete; // 成功
+		}
+
+		// 行動時間が過ぎたら失敗終了
 		if (owner_->GetRunTimer() <= 0.0f)
 		{
-			// 弾丸発射
-			{
-				const XMFLOAT3 launchPosition = {
-					position.x,
-					position.y + 0.4f,
-					position.z,
-				};
-				ProjectileStraight* projectile = new ProjectileStraight(owner_->GetProjectileManager());
-				projectile->Launch(vecN, launchPosition);
-			}
-
 			step_ = 0;
-			return ActionBase::State::Complete;
+			return ActionBase::State::Failed; // 失敗
 		}
 
 		break;

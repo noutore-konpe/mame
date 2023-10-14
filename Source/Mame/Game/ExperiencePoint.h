@@ -9,6 +9,7 @@
 class ExperiencePoint
 {
 private:
+    // ステップ
     enum class STEP
     {
         FALL_INIT,              // 落下初期化
@@ -20,15 +21,13 @@ private:
     };
 
 private:
+    // 円運動構造体
     struct CircularMotion
     {
-        DirectX::XMFLOAT3 center_             = { 0.0f, 0.2f, 0.0f };
-        DirectX::XMFLOAT3 angle_              = {};                          // Radian
-        float             radius_             = 0.08f;
-        float             addRotate_          = ::ToRadian(180.0f);
-        float             correct_            = 0.0f;                       // 補正値
-        //float             groundPositionY_    = center_.y - radius_;       // 円運動の開始地点Y(経験値にとっての地面位置Y)
-        //float             outGroundPositionY_ = center_.y + radius_;       // 円運動の中心+半径(+修正値)より上にいたら空中にいるものとする
+        DirectX::XMFLOAT3 center_       = { 0.0f, 0.2f, 0.0f };
+        DirectX::XMFLOAT4 rotation_     = {};                   // Radian
+        float             radius_       = 0.08f;
+        float             addRotate_    = ::ToRadian(180.0f);
     };
 
 public:
@@ -48,10 +47,11 @@ public:
 
     const STEP& GetStep() const { return step_; }
 
-    const DirectX::XMFLOAT3 GetVelocity() const { return velocity_; }
-    void SetVelocity(const DirectX::XMFLOAT3& eyeVelocity) { velocity_ = eyeVelocity; }
 
-    const char* const GetName() const { return name_.c_str(); }
+    const DirectX::XMFLOAT3& GetVelocity() const { return velocity_; }
+    void SetVelocity(const DirectX::XMFLOAT3& velocity) { velocity_ = velocity; }
+
+    const std::string& GetName() const { return name_; }
     void SetName(const std::string& name) { name_ = name; }
 
     const float GetRadius() const { return radius_; }
@@ -63,7 +63,6 @@ private:
     void UpdateVerticalVelocity(const float elapsedFrame);
     void UpdateHorizontalVelocity(const float elapsedFrame);
     void UpdateHorizontalMove(const float elapsedTime);
-
 
 private:
     static int nameNum_;
@@ -77,8 +76,9 @@ private:
     std::string         name_           = "";
     DirectX::XMFLOAT3   targetPosition_ = {};
     DirectX::XMFLOAT3   velocity_       = {};
+    float               lifeTimer_      = 60.0f;
     float               acceleration_   = 0.7f;
-    float               gravity_        = -0.1f;
+    float               gravity_        = (-0.1f);
     float               friction_       = 0.1f;
     float               airControl_     = 0.1f;
     float               radius_         = 0.25f;

@@ -43,6 +43,15 @@ private: // 変数等々
     std::unique_ptr<Stage> stageBase;
     std::unique_ptr<Stage> stageWall;
 
+<<<<<<< HEAD
+=======
+
+
+    // 魔法陣
+    std::unique_ptr<MagicCircleSummon> magicCircleSummon[10];
+    bool isSeveralNum = false;
+
+>>>>>>> mame/Tana
 
     // effect
     Effect* effect[4];
@@ -93,6 +102,9 @@ private: // GPU用定数・変数
 
     // PS Shader
     Microsoft::WRL::ComPtr<ID3D11PixelShader> sagePS; // 透明のシェーダー
+
+public:
+    static constexpr float stageRadius = 16.7f;//ステージ用の半径
 
 public: // debug用
 #ifdef _DEBUG

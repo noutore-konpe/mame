@@ -114,9 +114,9 @@ private:
     DirectX::XMFLOAT3 eyePos;
     DirectX::XMFLOAT3 focusPos = {0,0,1};
 
-    float eyeAcceleration = 3.0f;
+    float acceleration = 3.0f;
     float focusAcceleration = 9.0f;
-    DirectX::XMFLOAT3 eyeVelocity;
+    DirectX::XMFLOAT3 velocity;
     DirectX::XMFLOAT3 focusVelocity;
 
     bool enableDebugCamera = false;
