@@ -5,7 +5,7 @@
 void UserInterface::Initialize()
 {
     lockOnSprite = std::make_unique<Sprite>(Graphics::Instance().GetDevice(),
-        L"./Resources/Image/UI/LockOn.png");
+        L"./Resources/Image/UI/LockOn1.png");
     lockOnSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(16, 16));
 }
 

@@ -26,7 +26,7 @@ EnemyAI_1::EnemyAI_1()
         sword_ = make_unique<Model>(graphics.GetDevice(),
             "./Resources/Model/Character/Sword_Motion.fbx");
     }
-
+    
 
     // emissiveTextureUVScroll
     {
@@ -36,13 +36,12 @@ EnemyAI_1::EnemyAI_1()
             L"./Resources/Image/Mask/noise3.png",
             emissiveTexture.GetAddressOf(),
             &texture2dDesc);
-
+        
         // pixelShader Set (Aura)
         ::CreatePsFromCso(graphics.GetDevice(),
             "./Resources/Shader/EmissiveTextureUVScrollPS.cso",
             emissiveTextureUVScroll.GetAddressOf());
     }
-
 
     // BehaviorTreeê›íË
     {

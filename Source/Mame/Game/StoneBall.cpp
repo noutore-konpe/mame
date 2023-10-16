@@ -1,6 +1,7 @@
 #include "StoneBall.h"
 
 #include "../Graphics/Graphics.h"
+#include "../Resource/texture.h"
 
 // コンストラクタ
 StoneBall::StoneBall()
@@ -9,6 +10,16 @@ StoneBall::StoneBall()
 
     model = std::make_unique<Model>(graphics.GetDevice(),
         "./Resources/Model/Character/Enemy/rock.fbx");
+
+    D3D11_TEXTURE2D_DESC texture2dDesc;
+    load_texture_from_file(graphics.GetDevice(),
+        L"./Resources/Image/Mask/noise3.png",
+        stoneBallTexture.GetAddressOf(),
+        &texture2dDesc);
+
+    CreatePsFromCso(graphics.GetDevice(),
+        "./Resources/Shader/EmissiveTextureUVScrollPS.cso",
+        stoneBallPS.GetAddressOf());
 }
 
 StoneBall::~StoneBall()
@@ -30,7 +41,9 @@ void StoneBall::Update(const float& elapsedTime)
 
 void StoneBall::Render(const float& scale, ID3D11PixelShader* psShader)
 {
-    Stone::Render(scale, psShader);
+    UpdateConstants();
+
+    Stone::Render(scale, stoneBallPS.Get());
 }
 
 void StoneBall::DrawDebug()
@@ -40,4 +53,20 @@ void StoneBall::DrawDebug()
     model->DrawDebug();
 
     ImGui::End();
+}
+
+void StoneBall::UpdateConstants()
+{
+    Graphics& graphics = Graphics::Instance();
+
+    graphics.GetDeviceContext()->PSSetShaderResources(16, 1, stoneBallTexture.GetAddressOf());
+
+    // emissiveの強さ
+    SetEmissiveIntensity(1.5f);
+
+    // emissiveTexture ScrollDirection
+    SetEmissiveScrollDirection(DirectX::XMFLOAT2(0.25f, 0.5f));
+
+    // color
+    SetEmissiveColor(DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
 }

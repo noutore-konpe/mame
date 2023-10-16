@@ -41,7 +41,7 @@ MagicCircleGolemAttack2::~MagicCircleGolemAttack2()
 {
 }
 
-// 
+// ‰Šú‰»
 void MagicCircleGolemAttack2::Initialize()
 {
 }
@@ -58,6 +58,7 @@ void MagicCircleGolemAttack2::Update(const float& elapsedTime)
     GetStateMachine()->Update(elapsedTime);
 }
 
+// •`‰æ
 void MagicCircleGolemAttack2::Render(const DirectX::XMFLOAT4 color)
 {
     baseMagicCircle[0]->SetEmissiveColor(color);

@@ -234,6 +234,7 @@ namespace EnemyGolemState
         float rotateSpeed = 50.0f;
     };
 
+    // ‘I‘ğƒXƒe[ƒg
     class ChoseState : public State<EnemyGolem>
     {
     public:
@@ -252,7 +253,8 @@ namespace EnemyGolemState
             ComboAttack1,   // ƒRƒ“ƒ{UŒ‚‚P
             ComboAttack2,   // ƒRƒ“ƒ{UŒ‚‚Q
             Roar,           // ™ôšK
-            
+            Attack2,        // UŒ‚‚Q
+
             Max,
         };
 
@@ -263,8 +265,11 @@ namespace EnemyGolemState
         int resetNum = 3; // ãŒÀ‰ñ”
 
         int setState = 0;
+
+        int oldState = 0;
     };
 
+    // €–S
     class DeathState : public State<EnemyGolem>
     {
     public:
@@ -288,6 +293,7 @@ namespace EnemyGolemState
         float maxTimer = 0.2f;
     };
 
+    // •à‚«
     class WalkState : public State<EnemyGolem>
     {
     public:
@@ -313,6 +319,7 @@ namespace EnemyGolemState
         float rotateSpeed = 100.0f; // ‰ñ“]‘¬“x
     };
 
+    // UŒ‚‚Q
     class Attack2State : public State<EnemyGolem>
     {
     public:

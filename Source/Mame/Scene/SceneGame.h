@@ -43,16 +43,6 @@ private: // •Ï”“™X
     std::unique_ptr<Stage> stageBase;
     std::unique_ptr<Stage> stageWall;
 
-<<<<<<< HEAD
-=======
-
-
-    // –‚–@w
-    std::unique_ptr<MagicCircleSummon> magicCircleSummon[10];
-    bool isSeveralNum = false;
-
->>>>>>> mame/Tana
-
     // effect
     Effect* effect[4];
     //std::unique_ptr<Effect> effect[4];

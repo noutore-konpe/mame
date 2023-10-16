@@ -68,6 +68,8 @@ namespace MagicCircleGolemAttack2State
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
 
+        void UpdateAlpha(const float& elapsedTime);
+
     private:
         float length[3] = {};
         DirectX::XMFLOAT3 targetVec[3] = {};
@@ -80,6 +82,8 @@ namespace MagicCircleGolemAttack2State
         bool isLunch[3] = {};
         int stoneNum[3] = {};
 
+        bool isOnGround[3][3] = {};
+        float alphaTimer[3][3] = {};
 
         // ゲームパッド振動強さ
         float gamePadVibPower = 0.3f;

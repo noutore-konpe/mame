@@ -10,10 +10,19 @@ namespace MagicCircleGolemAttack2State
 {
     void DummyState::Initialize()
     {
+        // 描画用
+        owner->isAttack2 = false;
+
         for (int i = 0; i < static_cast<UINT>(MagicCircleGolemAttack2::MAGIC_CIRCLE::Max); ++i)
         {
             owner->baseMagicCircle[i]->GetTransform()->SetScale(DirectX::XMFLOAT3(0, 0, 0));
             owner->baseMagicCircle[i]->GetTransform()->SetRotation(DirectX::XMFLOAT4(0, 0, 0, 0));
+
+            for (int j = 0; j < 3; ++j)
+            {
+                owner->stoneBalls[i][j]->GetTransform()->SetPosition(DirectX::XMFLOAT3(0, -1.0f, 0));
+                //owner->stoneBalls[i][j]->GetTransform()->SetPosition(DirectX::XMFLOAT3(0, 100.0f, 0));
+            }
         }
     }
 }
@@ -21,14 +30,18 @@ namespace MagicCircleGolemAttack2State
 // AppearState
 namespace MagicCircleGolemAttack2State
 {
+    // 初期化
     void AppearState::Initialize()
     {
+        // 描画用
+        owner->isAttack2 = true;
+
         for (int i = 0; i < static_cast<UINT>(MAGIC_CIRCLE::Max); ++i)
         {
             owner->baseMagicCircle[i]->GetTransform()->SetScale(DirectX::XMFLOAT3(0, 0, 0));
             owner->baseMagicCircle[i]->GetTransform()->SetRotation(DirectX::XMFLOAT4(0, 0, 0, 0));
 
-            owner->baseMagicCircle[i]->model->PlayAnimation(0, false, 1.5f);
+            owner->baseMagicCircle[i]->model->PlayAnimation(0, true, 1.5f);
 
             // 変数初期化
             appearTimer[i] = 0.0f;
@@ -38,18 +51,9 @@ namespace MagicCircleGolemAttack2State
         delayTimer = 0.0f;
     }
 
+    // 更新
     void AppearState::Update(const float& elapsedTime)
     {
-        // アニメーション関連
-        for (int i = 0; i < static_cast<UINT>(MAGIC_CIRCLE::Max); ++i)
-        {
-            if (!owner->baseMagicCircle[i]->model->IsPlayAnimation())
-            {
-                isAnimationEnd[i] = true;
-                owner->baseMagicCircle[i]->model->PlayAnimation(0, false, rotationSpeed[i]);
-            }
-        }
-
         // 魔法陣生成処理
         UpdateAppear(elapsedTime);
 
@@ -60,6 +64,7 @@ namespace MagicCircleGolemAttack2State
         }
     }
 
+    // 終了化
     void AppearState::Finalize()
     {
 
@@ -116,6 +121,7 @@ namespace MagicCircleGolemAttack2State
     // 初期化
     void ThrowState::Initialize()
     {
+        const float scale = 2.0f;
 
         for (int i = 0; i < static_cast<UINT>(MAGIC_CIRCLE::Max); ++i)
         {
@@ -125,8 +131,10 @@ namespace MagicCircleGolemAttack2State
 
             for (int j = 0; j < static_cast<UINT>(MAGIC_CIRCLE::Max); ++j)
             {
-                owner->stoneBalls[i][j]->GetTransform()->
-                    SetPosition(owner->baseMagicCircle[i]->GetTransform()->GetPosition());
+                owner->stoneBalls[i][j]->GetTransform()->SetScale(DirectX::XMFLOAT3(scale, scale, scale));
+
+                isOnGround[i][j] = false;
+                alphaTimer[i][j] = 0.0f;
             }
         }
 
@@ -153,11 +161,6 @@ namespace MagicCircleGolemAttack2State
         {
             if (isLunch[i])
             {
-                //if (stoneFallTimer[i] > maxStoneFallTime[i] / 2.0f)
-                //{
-                //    isHoming[i] = false;
-                //}
-
                 if (isHoming[i])
                 {
                     targetVec[i] = Normalize(vec[i]);
@@ -170,6 +173,8 @@ namespace MagicCircleGolemAttack2State
                 // 地面より下に行ったら
                 if (owner->stoneBalls[i][stoneNum[i]]->GetTransform()->GetPosition().y <= 0.0f)
                 {
+                    isOnGround[i][stoneNum[i]] = true;
+
                     ++stoneNum[i];
                     isLunch[i] = false;
                     stoneFallTimer[i] = 0.0f;
@@ -186,9 +191,22 @@ namespace MagicCircleGolemAttack2State
                     else
                     {
                         isLunch[i] = true;
+
+                        // 生成初期位置設定
+                        owner->stoneBalls[i][stoneNum[i]]->GetTransform()->
+                            SetPosition(owner->baseMagicCircle[i]->GetTransform()->GetPosition());
                     }
                 }
             }
+        }
+
+        // 地面についたら弾を透明にしていく処理
+        UpdateAlpha(elapsedTime);
+
+        // アニメーション更新。（回転）
+        for (int i = 0; i < static_cast<UINT>(MAGIC_CIRCLE::Max); ++i)
+        {
+            owner->baseMagicCircle[i]->model->UpdateAnimation(elapsedTime);
         }
 
     }
@@ -197,5 +215,50 @@ namespace MagicCircleGolemAttack2State
     void ThrowState::Finalize()
     {
 
+    }
+
+    // 地面についたら弾を透明にしていく処理
+    void ThrowState::UpdateAlpha(const float& elapsedTime)
+    {
+        float maxTimer = 2.0f;
+
+        for (int i = 0; i < 3; ++i)
+        {
+            for (int j = 0; j < 3; ++j)
+            {
+                // 地面についていたら
+                if (isOnGround[i][j])
+                {
+                    if (alphaTimer[i][j] <= maxTimer)
+                    {
+                        float posY = Easing::InSine(alphaTimer[i][j], maxTimer, -2.0f, 0.0f);
+
+                        owner->stoneBalls[i][j]->GetTransform()->SetPositionY(posY);
+
+                        alphaTimer[i][j] += elapsedTime;
+                    }
+                }
+            }
+        }
+
+        if (isOnGround[2][2])
+        {
+            float maxTimer = 1.0f;
+            if (alphaTimer[2][2] <= maxTimer)
+            {
+                float scale = Easing::InSine(alphaTimer[2][2], maxTimer, 0.0f, 0.7f);
+
+                for (int i = 0; i < 3; ++i)
+                {
+                    owner->baseMagicCircle[i]->GetTransform()->SetScale(DirectX::XMFLOAT3(scale, scale, scale));
+                }
+            }
+        }
+
+        // 全部消えたら
+        if (alphaTimer[2][2] >= maxTimer)
+        {
+            owner->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleGolemAttack2::StateMachineState::DummyState));
+        }
     }
 }

@@ -45,6 +45,8 @@ public:
 
     std::unique_ptr<StoneBall> stoneBalls[3][3];
 
+    bool isAttack2 = false;
+
 private:
     // ステートマシン
     std::unique_ptr<StateMachine<State<MagicCircleGolemAttack2>>> stateMachine = nullptr;
