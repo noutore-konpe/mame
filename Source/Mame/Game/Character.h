@@ -105,6 +105,9 @@ public: // æ“¾Eİ’èŠÖ”
     const float GetDefense() const { return defense; }
     void AddDefense(const float defe) { defense += defe; }
 
+    std::vector<SphereCollider> GetHitCollider() { return HitCollider; }//‹ò‚ç‚¢”»’èæ“¾
+    std::vector<SphereCollider> GetAttackCollider() { return AttackCollider; }//UŒ‚”»’èæ“¾
+
 #pragma endregion
 
 public: // ‚»‚Ì‘¼‚ÌŠÖ”
@@ -155,6 +158,11 @@ protected:
     float invincibleTime = 1.0f;    // –³“GŠÔ
 
     float height = 1.0f;//g’·
+
+    //--------------------------------‹ò‚ç‚¢AUŒ‚”»’è------------------------------------
+    std::vector<SphereCollider> HitCollider;
+    std::vector<SphereCollider> AttackCollider;
+    //--------------------------------------------------------------------------------
 
 
 protected:
