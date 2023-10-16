@@ -260,3 +260,13 @@ bool Character::ApplyHeal(float heal)
 
     return true;
 }
+
+void Character::SphereCollider::DebugRender()
+{
+#if _DEBUG
+    // デバッグ球体描画
+    DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
+    const DirectX::XMFLOAT4  color = { 1,1,1,0.1f };
+    debugRenderer->DrawSphere(position, radius,color);
+#endif // _DEBUG
+}

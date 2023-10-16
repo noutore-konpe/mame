@@ -18,28 +18,12 @@ public:
 public:
     struct SphereCollider//”»’è—p‚Ì‹…‘Ì
     {
-        SphereCollider(const float radius) : radius(radius) 
-        {
-#if _DEBUG
-            //debugModel = std::make_unique<Model>();
-#endif // _DEBUG
-        }
+        SphereCollider(const float radius) : radius(radius) {}
 
         float radius;
         DirectX::XMFLOAT3 position;
 
-        void Render()
-        {
-#if _DEBUG
-            //debugModel->Render(radius,);
-#endif // _DEBUG
-        }
-
-    private:
-#if _DEBUG
-        std::unique_ptr<Model> debugModel;
-#endif // _DEBUG
-
+        void DebugRender();
     };
 
 public: // GPU_Instancing
@@ -169,6 +153,7 @@ public:
 
     bool isDead = false; //Ž€–Sƒtƒ‰ƒO
 
+    
 
 protected:
     float defense = 0.0f;//–hŒä—Í

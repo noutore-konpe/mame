@@ -139,6 +139,9 @@ public:
 
 private:
     void LevelUpdate();
+    
+    //地形判定後の座標取得
+    DirectX::XMFLOAT3 CollidedPosition(const DirectX::XMFLOAT3 pos);
 
 public:
     bool isSelectingSkill;//能力の選択演出中かのフラグ
@@ -222,7 +225,21 @@ private:
 
     //--------------------------------喰らい、攻撃判定------------------------------------
     //std::unique_ptr<Model> stageDebugSphere;
+    enum class HitColName
+    {
+        NECK,
+        HIP,
+        R_LEG,
+        L_LEG,
+        END
+    };
+
+    float swordScale;//剣の大きさに合わせて判定の大きさも変える
     
+    float swordColliderRadius;//剣の判定の大きさ
+    int swordColliderNum = 5;//判定の数
+
+    void ColliderPosUpdate(const float& scale);//各ジョイントに判定をつける処理
     //--------------------------------------------------------------------------------
 
     // アビリティマネージャー(仮)
