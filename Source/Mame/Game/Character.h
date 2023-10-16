@@ -15,6 +15,13 @@ public:
 
     virtual void UpdateConstants() {}
 
+public:
+    struct SphereCollider//”»’è—p‚Ì‹…‘Ì
+    {
+        float radius;
+        DirectX::XMFLOAT3 position;
+    };
+
 public: // GPU_Instancing
 #pragma region GPU_Instancing
 

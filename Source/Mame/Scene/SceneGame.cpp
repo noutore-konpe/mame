@@ -584,8 +584,6 @@ void SceneGame::Render(const float& elapsedTime)
         //bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceView, 0, _countof(shaderResourceView), colorPS.Get());
     }
 
-    
-
     // BLOOM
     bloomer->Make(graphics.GetDeviceContext(), framebuffers[0]->shaderResourceViews[0].Get());
 

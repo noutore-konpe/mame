@@ -866,6 +866,11 @@ void Player::LockOnInitialize()
     }
 }
 
+void Player::OnDead()
+{
+    stateMachine->ChangeState(DIE);
+}
+
 void Player::LevelUpdate()
 {
     if(curExp > levelUpExp)

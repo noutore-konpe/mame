@@ -33,6 +33,7 @@ namespace PlayerState
             owner->ChangeState(Player::STATE::ATTACK_JAB);
         }
     }
+
     void NormalState::Finalize()
     {
     }
@@ -42,6 +43,7 @@ namespace PlayerState
         combo = 0;
         initialize = false;
     }
+
     void JabAttackState::Update(const float& elapsedTime)
     {
         //“¥‚Ýž‚Ýˆ—
@@ -109,6 +111,7 @@ namespace PlayerState
             owner->ChangeState(Player::STATE::NORMAL);
         }
     }
+
     void JabAttackState::Finalize()
     {
         //owner->model->weight = 0.0f;
@@ -118,7 +121,6 @@ namespace PlayerState
     void JabAttackState::HitCollisionUpdate()
     {
         if (!collisionOn)return;
-
     }
 
     void JabAttackState::AttackUpdate(int dodgeCanselFrame,int comboCanselFrame)
@@ -197,6 +199,49 @@ namespace PlayerState
     {
     }
     void DieState::Finalize()
+    {
+    }
+
+    void HardAttackState::Initialize()
+    {
+
+    }
+    void HardAttackState::Update(const float& elapsedTime)
+    {
+
+    }
+    void HardAttackState::Finalize()
+    {
+
+    }
+
+    void SoftStaggerState::Initialize()
+    {
+    }
+    void SoftStaggerState::Update(const float& elapsedTime)
+    {
+    }
+    void SoftStaggerState::Finalize()
+    {
+    }
+
+    void HardStaggerState::Initialize()
+    {
+    }
+    void HardStaggerState::Update(const float& elapsedTime)
+    {
+    }
+    void HardStaggerState::Finalize()
+    {
+    }
+
+    void CounterState::Initialize()
+    {
+    }
+    void CounterState::Update(const float& elapsedTime)
+    {
+    }
+    void CounterState::Finalize()
     {
     }
 }

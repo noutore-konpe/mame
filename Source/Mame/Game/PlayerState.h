@@ -56,6 +56,18 @@ namespace PlayerState
         const float comboCanselFrame3 = 20.0f;
     };
 
+    //強攻撃
+    class HardAttackState : public State<Player>
+    {
+    public:
+        HardAttackState(Player* player) : State(player, "Avoid") {}
+        ~HardAttackState() {}
+
+        void Initialize() override;
+        void Update(const float& elapsedTime) override;
+        void Finalize() override;
+    };
+
     //回避
     class AvoidState : public State<Player>
     {
@@ -77,6 +89,42 @@ namespace PlayerState
     public:
         DieState(Player* player) : State(player, "Die") {}
         ~DieState() {}
+
+        void Initialize() override;
+        void Update(const float& elapsedTime) override;
+        void Finalize() override;
+    };
+
+    //小怯み
+    class SoftStaggerState : public State<Player>
+    {
+    public:
+        SoftStaggerState(Player* player) : State(player, "SoftStagger") {}
+        ~SoftStaggerState() {}
+
+        void Initialize() override;
+        void Update(const float& elapsedTime) override;
+        void Finalize() override;
+    };
+
+    //大怯み(吹っ飛び)
+    class HardStaggerState : public State<Player>
+    {
+    public:
+        HardStaggerState(Player* player) : State(player, "HardStagger") {}
+        ~HardStaggerState() {}
+
+        void Initialize() override;
+        void Update(const float& elapsedTime) override;
+        void Finalize() override;
+    };
+
+    //カウンター
+    class CounterState : public State<Player>
+    {
+    public:
+        CounterState(Player* player) : State(player, "HardStagger") {}
+        ~CounterState() {}
 
         void Initialize() override;
         void Update(const float& elapsedTime) override;

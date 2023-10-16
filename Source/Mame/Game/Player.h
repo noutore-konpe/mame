@@ -90,6 +90,8 @@ public:
 
     void LockOnInitialize();
 
+    void OnDead()override;
+
     //“ü—ÍŠÖ”
     static bool InputJabAttack()
     {
