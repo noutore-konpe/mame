@@ -18,10 +18,28 @@ public:
 public:
     struct SphereCollider//”»’è—p‚Ì‹…‘Ì
     {
-        SphereCollider(const float radius) : radius(radius) {}
+        SphereCollider(const float radius) : radius(radius) 
+        {
+#if _DEBUG
+            //debugModel = std::make_unique<Model>();
+#endif // _DEBUG
+        }
 
         float radius;
         DirectX::XMFLOAT3 position;
+
+        void Render()
+        {
+#if _DEBUG
+            //debugModel->Render(radius,);
+#endif // _DEBUG
+        }
+
+    private:
+#if _DEBUG
+        std::unique_ptr<Model> debugModel;
+#endif // _DEBUG
+
     };
 
 public: // GPU_Instancing
@@ -107,8 +125,8 @@ public: // æ“¾Eİ’èŠÖ”
     const float GetDefense() const { return defense; }
     void AddDefense(const float defe) { defense += defe; }
 
-    std::vector<SphereCollider> GetHitCollider() { return HitCollider; }//‹ò‚ç‚¢”»’èæ“¾
-    std::vector<SphereCollider> GetAttackCollider() { return AttackCollider; }//UŒ‚”»’èæ“¾
+    std::vector<SphereCollider> GetHitCollider() { return hitCollider; }//‹ò‚ç‚¢”»’èæ“¾
+    std::vector<SphereCollider> GetAttackCollider() { return attackCollider; }//UŒ‚”»’èæ“¾
 
 #pragma endregion
 

@@ -123,7 +123,7 @@ void Player::Initialize()
     swordModel->transform.SetScaleFactor(GetTransform()->GetScaleFactor());
 
     //------------------------------攻撃判定、喰らい判定セット---------------------------------
-    AttackCollider
+    attackCollider.emplace_back(SphereCollider(0.5f));
     //--------------------------------------------------------------------------------------
 }
 
