@@ -1,7 +1,7 @@
 #include "sprite.h"
 #include "../Other/misc.h"
 #include <sstream>
- 
+
 #include "../../../External/DirectXTK-main/Inc/WICTextureLoader.h"
 
 #include "texture.h"
@@ -40,16 +40,16 @@ Sprite::Sprite(ID3D11Device* device, const wchar_t* filename, const char* psFile
     // 定数バッファ生成
     {
         D3D11_BUFFER_DESC bufferDesc{};
-        bufferDesc.ByteWidth = sizeof(vertices);           
-        bufferDesc.Usage = D3D11_USAGE_DYNAMIC;            
-        bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;   
+        bufferDesc.ByteWidth = sizeof(vertices);
+        bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+        bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-        bufferDesc.MiscFlags = 0;                          
-        bufferDesc.StructureByteStride = 0;                
-                                                            
+        bufferDesc.MiscFlags = 0;
+        bufferDesc.StructureByteStride = 0;
+
         D3D11_SUBRESOURCE_DATA subresource_data{};
-        subresource_data.pSysMem = vertices;  
-        subresource_data.SysMemPitch = 0;     
+        subresource_data.pSysMem = vertices;
+        subresource_data.SysMemPitch = 0;
         subresource_data.SysMemSlicePitch = 0;
 
         hr = device->CreateBuffer(&bufferDesc, &subresource_data, vertexBuffer.GetAddressOf());
@@ -97,7 +97,7 @@ Sprite::Sprite(ID3D11Device* device, const wchar_t* filename, const char* psFile
         // spriteDissolve
         if (isDissolve)
         {
-            load_texture_from_file(graphics.GetDevice(), 
+            load_texture_from_file(graphics.GetDevice(),
                 L"./Resources/Image/Mask/mask.png",
                 //L"./Resources/Image/Mask/dissolve_animation.png",
                 maskTexture[0].GetAddressOf(), &maskTexture2dDesc[0]);
@@ -126,13 +126,14 @@ Sprite::Sprite(ID3D11Device* device, const wchar_t* filename, const char* psFile
 
     //---ImGui名前かぶり防止用---//
     name = "Sprite" + std::to_string(nameNum++);
-    SetName(name.c_str());    
+    SetName(name.c_str());
     //---ImGui名前かぶり防止用---//
 }
 
 // デストラクタ
 Sprite::~Sprite()
 {
+    --nameNum;
 }
 
 // 初期化

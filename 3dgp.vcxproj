@@ -292,7 +292,11 @@
     <ClCompile Include="Source\Mame\Scene\SceneTitle.cpp" />
     <ClCompile Include="Source\Mame\Transform.cpp" />
     <ClCompile Include="Source\Taki174\Common.cpp" />
+    <ClCompile Include="Source\Taki174\DamageNumeral.cpp" />
     <ClCompile Include="Source\Taki174\DebugRenderer.cpp" />
+    <ClCompile Include="Source\Taki174\Numeral.cpp" />
+    <ClCompile Include="Source\Taki174\NumeralManager.cpp" />
+    <ClCompile Include="Source\Taki174\TextRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h" />
@@ -406,10 +410,14 @@
     <ClInclude Include="Source\Mame\Scene\SceneTitle.h" />
     <ClInclude Include="Source\Mame\Transform.h" />
     <ClInclude Include="Source\Taki174\Common.h" />
+    <ClInclude Include="Source\Taki174\DamageNumeral.h" />
     <ClInclude Include="Source\Taki174\DebugRenderer.h" />
     <ClInclude Include="Source\Taki174\FunctionXMFloat3.h" />
+    <ClInclude Include="Source\Taki174\Numeral.h" />
+    <ClInclude Include="Source\Taki174\NumeralManager.h" />
     <ClInclude Include="Source\Taki174\OperatorXMFloat3.h" />
     <ClInclude Include="Source\Taki174\OperatorXMFloat4.h" />
+    <ClInclude Include="Source\Taki174\TextRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shader\phongShaderPS.hlsl">

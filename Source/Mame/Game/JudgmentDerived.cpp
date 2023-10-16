@@ -95,7 +95,7 @@ const bool LongRangeAttackJudgment::Judgment()
 	using DirectX::XMFLOAT3;
 
 	PlayerManager& playerManager = PlayerManager::Instance();
-	EnemyManager& enemyManager = EnemyManager::Instance();
+	//EnemyManager& enemyManager = EnemyManager::Instance();
 
 	//// CRA : 2.Judgment : ‘¼‚Ì“G‚ª‹ßÚUŒ‚s“®’†‚È‚çfalse
 	//if (true == enemyManager.GetIsRunningCRAAction())

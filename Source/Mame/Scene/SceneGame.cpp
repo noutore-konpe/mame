@@ -1,7 +1,8 @@
 #include "SceneGame.h"
 
-#include "../../Taki174/FunctionXMFloat3.h"
 #include "../../Taki174/Common.h"
+#include "../../Taki174/FunctionXMFloat3.h"
+#include "../../Taki174/NumeralManager.h"
 
 #include "../Graphics/Graphics.h"
 #include "../Graphics/EffectManager.h"
@@ -42,7 +43,7 @@
 bool SceneGame::isDebugRender = false;
 #endif // _DEBUG
 
-bool SceneGame::isDrawCollision_ = false;
+bool SceneGame::isDispCollision_ = false;
 
 DirectX::XMFLOAT3 SceneGame::stageCenter = {};
 
@@ -50,6 +51,7 @@ DirectX::XMFLOAT3 SceneGame::stageCenter = {};
 void SceneGame::CreateResource()
 {
     using DirectX::XMFLOAT3;
+    using std::make_unique;
 
     Graphics& graphics = Graphics::Instance();
 
@@ -77,8 +79,8 @@ void SceneGame::CreateResource()
     // enemy
     {
         EnemyManager& enemyManager = EnemyManager::Instance();
-    //    EnemyGolem* enemyGolem = new EnemyGolem;
-    //    enemyManager.Register(enemyGolem);
+        // EnemyGolem* enemyGolem = new EnemyGolem;
+        // enemyManager.Register(enemyGolem);
 
 #if 0
         // max 6~7
@@ -241,10 +243,14 @@ void SceneGame::Initialize()
     //今だけロックオン処理いれとく
     //Camera::Instance().SetLockOnTargetPos(enemyGolem->GetTransform());
 
-    isDrawCollision_    = false;
+    isDispCollision_    = false;
 
     //UI
     {
+        // Numeral
+        NumeralManager& numeralManager = NumeralManager::Instance();
+        numeralManager.Initialize();
+
         UserInterface::Instance().Initialize();
     }
 
@@ -254,6 +260,10 @@ void SceneGame::Initialize()
 // 終了化
 void SceneGame::Finalize()
 {
+    // Numeral
+    NumeralManager& numeralManager = NumeralManager::Instance();
+    numeralManager.Finalize();
+
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
     expManager.Finalize();
@@ -298,8 +308,6 @@ void SceneGame::Update(const float& elapsedTime)
     {
         particles->Integrate(Graphics::Instance().GetDeviceContext(), elapsedTime);
     }
-
-
 
     //if (gamePad.GetButtonDown() & GamePad::BTN_B)
     //    Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
@@ -355,7 +363,6 @@ void SceneGame::Update(const float& elapsedTime)
         //enemyAura->Update(elapsedTime);
     }
 
-
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
     expManager.Update(elapsedTime);
@@ -363,8 +370,14 @@ void SceneGame::Update(const float& elapsedTime)
     // effect
     EffectManager::Instance().Update(elapsedTime);
 
-    UserInterface::Instance().Update(elapsedTime);
+    // UI
+    {
+        // Numeral
+        NumeralManager& numeralManager = NumeralManager::Instance();
+        numeralManager.Update(elapsedTime);
 
+        UserInterface::Instance().Update(elapsedTime);
+    }
 
     //カード演出中だけUpdate前にreturn呼んでるから注意！！
 }
@@ -561,6 +574,10 @@ void SceneGame::Render(const float& elapsedTime)
 
     //ブルームあり２D
     {
+        // Numeral
+        NumeralManager& numeralManager = NumeralManager::Instance();
+        numeralManager.Render();
+
         UserInterface::Instance().BloomRender();
     }
 
@@ -589,7 +606,6 @@ void SceneGame::Render(const float& elapsedTime)
         };
         //bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceView, 0, _countof(shaderResourceView), colorPS.Get());
     }
-
 
 
     // BLOOM
@@ -633,6 +649,10 @@ void SceneGame::Render(const float& elapsedTime)
 
     //ブルーム無し
     {
+        // Numeral
+        NumeralManager& numeralManager = NumeralManager::Instance();
+        numeralManager.Render();
+
         PlayerManager::Instance().GetPlayer()->SkillImagesRender();
         UserInterface::Instance().Render();
     }
@@ -641,7 +661,7 @@ void SceneGame::Render(const float& elapsedTime)
     DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
 
     // ステージの範囲デバッグ描画
-    if (true == isDrawCollision_)
+    if (true == isDispCollision_)
     {
         static constexpr float    height = 0.5f;
         static constexpr XMFLOAT4 color  = { 1,1,1,1 };
@@ -680,9 +700,9 @@ void SceneGame::DrawDebug()
         }
 
         // 当たり判定描画
-        if (ImGui::Button("Draw Collision"))
+        if (ImGui::Button("Disp Collision"))
         {
-            isDrawCollision_ = (isDrawCollision_) ? false : true;
+            isDispCollision_ = (isDispCollision_) ? false : true;
         }
 
         // 本生成
@@ -718,6 +738,10 @@ void SceneGame::DrawDebug()
 
         // カメラ
         Camera::Instance().DrawDebug();
+
+        // Numeral
+        NumeralManager& numeralManager = NumeralManager::Instance();
+        numeralManager.DrawDebug();
 
         UserInterface::Instance().DrawDebug();
 

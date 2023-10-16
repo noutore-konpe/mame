@@ -40,9 +40,12 @@ public:
         void SetPos(DirectX::XMFLOAT2 p) { pos = p; }
         void SetSize(DirectX::XMFLOAT2 s) { size = s; }
         void SetColor(DirectX::XMFLOAT4 c) { color = c; }
+        void SetColorW(const float colorW) { color.w = colorW; }
         void SetAngle(float a) { angle = a; }
         void SetTexPos(DirectX::XMFLOAT2 texP) { texPos = texP; }
         void SetTexSize(DirectX::XMFLOAT2 texS) { texSize = texS; }
+
+        void AddPosY(const float posY) { pos.y += posY; }
 
         DirectX::XMFLOAT2 GetPos() { return pos; }
         DirectX::XMFLOAT2 GetSize() { return size; }
@@ -120,7 +123,7 @@ public:
     void Render();
     void Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size);
     void Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size, DirectX::XMFLOAT4 color);
-    void Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size, DirectX::XMFLOAT4 color, float angle/*degree*/);    
+    void Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size, DirectX::XMFLOAT4 color, float angle/*degree*/);
     void Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size, DirectX::XMFLOAT4 color, float angle/*degree*/, DirectX::XMFLOAT2 texPos, DirectX::XMFLOAT2 texSize); // ñ{ëÃ
 
     void DrawDebug();
@@ -185,5 +188,5 @@ private:
                                             // z: âèÇÃËáíl
                                             // w: ãÛÇ´
         DirectX::XMFLOAT4 edgeColor = {};   // âèÇÃêF
-    };                                      
-};                                          
+    };
+};

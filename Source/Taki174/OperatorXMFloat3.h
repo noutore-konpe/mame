@@ -1,9 +1,9 @@
 #pragma once
 
 #include <DirectXMath.h>
-#include "Common.h"
 
-// çáéZån
+// éZèpââéZéq
+#pragma region Arithmetic Operator
 
 inline const DirectX::XMFLOAT3 operator+(
     const DirectX::XMFLOAT3& float3_1,
@@ -14,7 +14,7 @@ inline const DirectX::XMFLOAT3 operator+(
         float3_1.y + float3_2.y,
         float3_1.z + float3_2.z,
     };
-
+    DirectX::XMFLOAT3 a = {};
     return result;
 }
 inline const DirectX::XMFLOAT3 operator+(
@@ -105,12 +105,14 @@ inline const DirectX::XMFLOAT3 operator/(
     return result;
 }
 
+#pragma endregion
 
-// çáéZë„ì¸ån
+// ï°çáë„ì¸ââéZéq
+#pragma region Compound Assignment Operator
 
 inline const DirectX::XMFLOAT3& operator+=(
-    NoConst DirectX::XMFLOAT3& float3_1,
-    const   DirectX::XMFLOAT3& float3_2)
+    DirectX::XMFLOAT3& float3_1,
+    const DirectX::XMFLOAT3& float3_2)
 {
     float3_1.x += float3_2.x;
     float3_1.y += float3_2.y;
@@ -119,7 +121,7 @@ inline const DirectX::XMFLOAT3& operator+=(
     return float3_1;
 }
 inline const DirectX::XMFLOAT3& operator+=(
-    NoConst DirectX::XMFLOAT3& float3,
+    DirectX::XMFLOAT3& float3,
     const float f)
 {
     float3.x += f;
@@ -130,8 +132,8 @@ inline const DirectX::XMFLOAT3& operator+=(
 }
 
 inline const DirectX::XMFLOAT3& operator-=(
-    NoConst DirectX::XMFLOAT3& float3_1,
-    const   DirectX::XMFLOAT3& float3_2)
+    DirectX::XMFLOAT3& float3_1,
+    const DirectX::XMFLOAT3& float3_2)
 {
     float3_1.x -= float3_2.x;
     float3_1.y -= float3_2.y;
@@ -140,7 +142,7 @@ inline const DirectX::XMFLOAT3& operator-=(
     return float3_1;
 }
 inline const DirectX::XMFLOAT3& operator-=(
-    NoConst DirectX::XMFLOAT3& float3,
+    DirectX::XMFLOAT3& float3,
     const float f)
 {
     float3.x -= f;
@@ -151,8 +153,8 @@ inline const DirectX::XMFLOAT3& operator-=(
 }
 
 inline const DirectX::XMFLOAT3& operator*=(
-    NoConst DirectX::XMFLOAT3& float3_1,
-    const   DirectX::XMFLOAT3& float3_2)
+    DirectX::XMFLOAT3& float3_1,
+    const DirectX::XMFLOAT3& float3_2)
 {
     float3_1.x *= float3_2.x;
     float3_1.y *= float3_2.y;
@@ -161,7 +163,7 @@ inline const DirectX::XMFLOAT3& operator*=(
     return float3_1;
 }
 inline const DirectX::XMFLOAT3& operator*=(
-    NoConst DirectX::XMFLOAT3& float3,
+    DirectX::XMFLOAT3& float3,
     const float f)
 {
     float3.x *= f;
@@ -172,8 +174,8 @@ inline const DirectX::XMFLOAT3& operator*=(
 }
 
 inline const DirectX::XMFLOAT3& operator/=(
-    NoConst DirectX::XMFLOAT3& float3_1,
-    const   DirectX::XMFLOAT3& float3_2)
+    DirectX::XMFLOAT3& float3_1,
+    const DirectX::XMFLOAT3& float3_2)
 {
     float3_1.x /= float3_2.x;
     float3_1.y /= float3_2.y;
@@ -182,7 +184,7 @@ inline const DirectX::XMFLOAT3& operator/=(
     return float3_1;
 }
 inline const DirectX::XMFLOAT3& operator/=(
-    NoConst DirectX::XMFLOAT3& float3,
+    DirectX::XMFLOAT3& float3,
     const float f)
 {
     float3.x /= f;
@@ -191,3 +193,21 @@ inline const DirectX::XMFLOAT3& operator/=(
 
     return float3;
 }
+
+#pragma endregion
+
+// íPçÄââéZéq
+#pragma region Unary Operator
+
+inline const DirectX::XMFLOAT3 operator+(
+    const DirectX::XMFLOAT3& float3)
+{
+    return float3 * (+1.0f);
+}
+inline const DirectX::XMFLOAT3 operator-(
+    const DirectX::XMFLOAT3& float3)
+{
+    return float3 * (-1.0f);
+}
+
+#pragma endregion

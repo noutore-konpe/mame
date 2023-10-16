@@ -3,6 +3,8 @@
 
 #include <memory>
 
+#include "../../Taki174/TextRenderer.h"
+
 #include "../Resource/sprite.h"
 
 #include "../Graphics/Effect.h"
@@ -106,7 +108,9 @@ public: // debug—p
     static bool isDebugRender;
 #endif // _DEBUG
 
-    static bool isDrawCollision_; // “–‚½‚è”»’è•`‰æ
+    static bool isDispCollision_; // “–‚½‚è”»’è•`‰æ
+
+    std::unique_ptr<TextRenderer> text_;
 
 };
 

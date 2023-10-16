@@ -1,17 +1,18 @@
 #include "Player.h"
 
+#include <algorithm>
+
+#include "../../Taki174/NumeralManager.h"
+#include "../../Taki174/Common.h"
+
 #include "../Graphics/Graphics.h"
 #include "../Other/Easing.h"
 #include "../Other/MathHelper.h"
-
-#include "PlayerState.h"
-#include "EnemyManager.h"
-
 #include "../Scene/SceneGame.h"
 
+#include "PlayerState.h"
 #include "BlackHole.h"
-
-#include <algorithm>
+#include "EnemyManager.h"
 
 // コンストラクタ
 Player::Player()
@@ -171,6 +172,22 @@ void Player::Update(const float elapsedTime)
 
     // アビリティマネージャー更新(仮)
     abilityManager_.Update(elapsedTime);
+
+    // ダメージ数字生成タイマー更新処理(仮)
+    createDmgNumeralTimer_ += elapsedTime;
+    if (createDmgNumeralTimer_ >= 1.0f)
+    {
+        Transform* t = GetTransform();
+        //const DirectX::XMFLOAT3 movement = t->CalcForward() * 5.0f;
+        //const DirectX::XMFLOAT3 postion  = t->GetPosition() + movement;
+
+        NumeralManager& numeralManager = NumeralManager::Instance();
+        numeralManager.CreateDamageNumeral(
+            ::RandInt(100000, 900000), t->GetPosition(), { 50,50 }
+        );
+
+        createDmgNumeralTimer_ = 0.0f;
+    }
 
 }
 
@@ -609,7 +626,7 @@ void Player::SelectSkillUpdate(float elapsedTime)
             if (timer < 0)timer = 0;
             else if (timer > drawDirectionTime)timer = drawDirectionTime;
             float posY = Easing::OutSine(timer, drawDirectionTime, 165.0f, -transform->GetTexSize().y);
-            transform->SetPos(DirectX::XMFLOAT2(65 + 400 * i, posY));
+            transform->SetPos(DirectX::XMFLOAT2(65.0f + 400.0f * static_cast<float>(i), posY));
 
         }
 
@@ -670,7 +687,7 @@ void Player::SelectSkillUpdate(float elapsedTime)
             float timer = _timer;
             if (timer > 0.5)timer = 0.5;
             float posY = Easing::OutSine(timer, 0.5f, -transform->GetTexSize().y,165.0f);
-            transform->SetPos(DirectX::XMFLOAT2(65 + 400 * i, posY));
+            transform->SetPos(DirectX::XMFLOAT2(65.0f + 400.0f * static_cast<float>(i), posY));
         }
 
         if (_timer > 2.2f)isSelectingSkill = false;
@@ -852,11 +869,13 @@ void Player::LockOnUpdate()
 
 void Player::LockOnInitialize()
 {
+    using DirectX::XMFLOAT3;
+
     if (EnemyManager::Instance().GetEnemyCount() == 0)return;
     float length0 = FLT_MAX;
     for (auto& enemy : EnemyManager::Instance().GetEnemies())
     {
-        auto ePos = enemy->GetTransform()->GetPosition();
+        const XMFLOAT3 ePos = enemy->GetTransform()->GetPosition();
         float length1 = Length(ePos - GetTransform()->GetPosition());
         if (length0 > length1)
         {
