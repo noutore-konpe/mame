@@ -21,10 +21,29 @@ public:
         return camera;
     }
 
+public:
+    enum class STATE
+    {
+        Wait,
+        Move0,
+        Move1,
+        Move2,
+        Move3,
+        Move4,
+        Move5,
+    };
+
     void TitleInitialize();
     void TitleUpdate(const float& elapsedTime);
+    void TitleSetPerspectiveFov(ID3D11DeviceContext* dc);
 
+    int titleState = 0;
+    bool isFocusCenter = false;
+    float easingTimer = 0.0f;
+    float angle = 0.0f;
+    float length = 27.0f;
 
+public:
     void Initialize();
 
     void Update(float elapsedTime);

@@ -166,6 +166,9 @@
     <FxCompile Include="Source\Shader\DebugVS.hlsl">
       <Filter>mamelib\Shader\DebugRenderer</Filter>
     </FxCompile>
+    <FxCompile Include="Source\Shader\SpriteEmissive.hlsl">
+      <Filter>mamelib\Shader\Sprite</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Mame\Scene\BaseScene.cpp">
@@ -476,6 +479,9 @@
       <Filter>mamelib\Mame\Game\Ability</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\UserInterface.cpp" />
+    <ClCompile Include="Source\Mame\Game\LoadingPlayer.cpp">
+      <Filter>mamelib\Mame\Game\Character\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -829,6 +835,9 @@
       <Filter>mamelib\Mame\Game\Ability</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\UserInterface.h" />
+    <ClInclude Include="Source\Mame\Game\LoadingPlayer.h">
+      <Filter>mamelib\Mame\Game\Character\Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">

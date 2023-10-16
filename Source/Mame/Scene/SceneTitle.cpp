@@ -28,9 +28,24 @@ void SceneTitle::CreateResource()
 
     // sprite
     {
-        titleLogo = std::make_unique<Sprite>(graphics.GetDevice(),
-            //L"./Resources/Image/Title/titleLogo.png");
-            L"./Resources/Image/Title/titleLogo1.png");
+        backSprite = std::make_unique<Sprite>(graphics.GetDevice(),
+            L"./Resources/Image/Title/title.png");
+        emmaSprite = std::make_unique<Sprite>(graphics.GetDevice(),
+            L"./Resources/Image/Title/Emma.png");
+        pressSprite = std::make_unique<Sprite>(graphics.GetDevice(),
+            L"./Resources/Image/Title/PressAnyButton.png");
+    }
+
+    {
+        framebuffers[0] = std::make_unique<FrameBuffer>(graphics.GetDevice(), 1280, 720, false);
+        bitBlockTransfer = std::make_unique<FullscreenQuad>(graphics.GetDevice());
+        CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/finalPassPs.cso", finalPassPS.GetAddressOf());
+
+        bloomer = std::make_unique<Bloom>(graphics.GetDevice(), 1280 / 1, 720 / 1);
+        CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/finalPassPs.cso", bloomPS.GetAddressOf());
+
+        framebuffers[1] = std::make_unique<FrameBuffer>(graphics.GetDevice(), 1280 / 1, 720 / 1, false);
+        CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/FogPS.cso", fogPS.GetAddressOf());
     }
 
     // shadow
@@ -65,6 +80,7 @@ void SceneTitle::CreateResource()
         hr = graphics.GetDevice()->CreateBuffer(&bufferDesc, nullptr,
             ConstantBuffer.GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
     }
 }
 
@@ -73,6 +89,8 @@ void SceneTitle::Initialize()
 {
     // カメラ
     Camera::Instance().TitleInitialize();
+
+    pressSprite->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(370, 520));
 }
 
 // 終了化
@@ -90,8 +108,34 @@ void SceneTitle::Update(const float& elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
 
+    Camera::Instance().TitleUpdate(elapsedTime);
+
     if (gamePad.GetButtonDown() & GamePad::BTN_A)
+    {
+        Camera::Instance().TitleInitialize();
         Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+    }
+
+    {
+        float maxTime = 1.0f;
+        if (pressTimer <= maxTime)
+        {
+            DirectX::XMFLOAT4 color = pressSprite->GetSpriteTransform()->GetColor();
+            if (isAlphaDown)
+                color.w = Easing::InSine(pressTimer, maxTime, 0.2f, 1.0f);
+            else
+                color.w = Easing::InSine(pressTimer, maxTime, 1.0f, 0.2f);
+
+            pressSprite->GetSpriteTransform()->SetColor(color);
+
+            pressTimer += elapsedTime;
+        }
+        else
+        {
+            isAlphaDown = isAlphaDown ? false : true;
+            pressTimer = 0.0f;
+        }
+    }
 }
 
 // 毎フレーム一番最後に呼ばれる
@@ -168,7 +212,7 @@ void SceneTitle::Render(const float& elapsedTime)
     shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::NONE));
     shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::SOLID));
 
-    camera.SetPerspectiveFov(graphics.GetDeviceContext());
+    camera.TitleSetPerspectiveFov(graphics.GetDeviceContext());
     DirectX::XMStoreFloat4x4(&sceneConstants.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
     sceneConstants.lightDirection = shader->GetViewPosition();
     sceneConstants.cameraPosition = shader->GetViewCamera();
@@ -192,16 +236,65 @@ void SceneTitle::Render(const float& elapsedTime)
         shader->Begin(graphics.GetDeviceContext(), rc);
     }
 
-    // モデル描画
     {
-        stageBase->Render(0.01f);
-        stageWall->Render(0.01f);
+        framebuffers[0]->Clear(graphics.GetDeviceContext());
+        framebuffers[0]->Activate(graphics.GetDeviceContext());
+
+        // モデル描画
+        {
+            stageBase->Render(0.01f);
+            stageWall->Render(0.01f);
+        }
+        // スプライト描画
+        {
+            shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
+            emmaSprite->Render();
+        }
+
+        framebuffers[0]->Deactivate(graphics.GetDeviceContext());
+
+        framebuffers[1]->Clear(graphics.GetDeviceContext());
+        framebuffers[1]->Activate(graphics.GetDeviceContext());
+        shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_OFF_ZW_OFF));
+        shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::CULL_NONE));
+        shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
+        bitBlockTransfer->Blit(graphics.GetDeviceContext(), framebuffers[0]->shaderResourceViews[1].GetAddressOf(), 0, 1, fogPS.Get());
+
+        framebuffers[1]->Deactivate(graphics.GetDeviceContext());
+
+        shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_OFF_ZW_OFF));
+        shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::CULL_NONE));
+        ID3D11ShaderResourceView* shaderResourceView[]
+        {
+            framebuffers[0]->shaderResourceViews[0].Get(),
+            framebuffers[0]->shaderResourceViews[0].Get(),/*dummy*/
+            framebuffers[1]->shaderResourceViews[0].Get(),
+        };
+
+        bloomer->Make(graphics.GetDeviceContext(), framebuffers[0]->shaderResourceViews[0].Get());
+
+        shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_OFF_ZW_OFF));
+        shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::CULL_NONE));
+        shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
+
+        ID3D11ShaderResourceView* shaderResourceViews[] =
+        {
+            framebuffers[0]->shaderResourceViews[0].Get(),
+            bloomer->ShaderResourceView(),
+            framebuffers[1]->shaderResourceViews[0].Get(),
+            framebuffers[0]->shaderResourceViews[1].Get(),
+        };
+
+        bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceViews, 0, _countof(shaderResourceViews), bloomPS.Get());
     }
 
     // spirte
     {
         shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
-        titleLogo->Render();
+        backSprite->Render();
+
+
+        pressSprite->Render();
     }
 
 }
@@ -215,4 +308,9 @@ void SceneTitle::DrawDebug()
     
     // ライトとか
     shader->DrawDebug();
+
+    backSprite->DrawDebug();
+    emmaSprite->DrawDebug();
+    pressSprite->DrawDebug();
+
 }

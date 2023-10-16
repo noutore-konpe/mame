@@ -24,6 +24,9 @@ public:
 private:
     std::unique_ptr<Sprite> lockOnSprite;
 
-    std::unique_ptr<Sprite> hpSprite;   // hp
+    std::unique_ptr<Sprite> hpSprite;           // hp
+    std::unique_ptr<Sprite> keikenchiSprite;    // åoå±ílÉQÅ[ÉW
+    std::unique_ptr<Sprite> maruSprite;         // ä€
+    std::unique_ptr<Sprite> backGageSprite[2];        // ÉQÅ[ÉWîwåi
 };
 

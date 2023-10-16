@@ -7,7 +7,6 @@
 
 #include "../Graphics/Effect.h"
 #include "../Graphics/Bloom.h"
-#include "../Graphics/SkyBox.h"
 #include "../Graphics/ShadowMap.h"
 #include "../Graphics/Particle.h"
 

@@ -13,11 +13,18 @@ SceneLoading::SceneLoading(BaseScene* nextScene) :nextScene(nextScene)
 
 void SceneLoading::CreateResource()
 {
+    loadingPlayer = std::make_unique<LoadingPlayer>();
+    titleLogo = std::make_unique<Sprite>(Graphics::Instance().GetDevice(),
+        L"./Resources/Image/Title/loading.png");
 }
 
 // 初期化
 void SceneLoading::Initialize()
 {
+    loadingPlayer->Initialize();
+    titleLogo->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(800, 480));
+    titleLogo->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(640, 360));
+
     // スレッド開始
     // std::thread(LoadingThread, this);
     // 二個目の引数はLoadingThreadの引数になるu
@@ -44,6 +51,8 @@ void SceneLoading::Begin()
 // 更新処理
 void SceneLoading::Update(const float& elapsedTime)
 {
+    loadingPlayer->Update(elapsedTime);
+
     if (nextScene->IsReady())
         Mame::Scene::SceneManager::Instance().ChangeScene(nextScene);
 }
@@ -61,12 +70,20 @@ void SceneLoading::Render(const float& elapsedTime)
         Graphics& graphics = Graphics::Instance();
 
         Mame::Scene::BaseScene::RenderInitialize();
+
+        loadingPlayer->Render(0.01f);
+        titleLogo->Render();
     }
 }
 
 void SceneLoading::DrawDebug()
 {
 #ifdef USE_IMGUI
+    Graphics::Instance().GetShader()->DrawDebug();
+
+    loadingPlayer->DrawDebug();
+
+    titleLogo->DrawDebug();
 #endif// USE_IMGUI
 }
 
