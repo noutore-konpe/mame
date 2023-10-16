@@ -18,8 +18,12 @@ public: // enum関連
     {
         NORMAL,   // 移動、待機等
         ATTACK_JAB,   // 弱攻撃
+        ATTACK_HARD,   // 強攻撃
         AVOID,   // 回避
         DIE,   // 死亡
+        STAGGER_SOFT,   // 小怯み
+        STAGGER_HARD,   // 大怯み
+        COUNTER,   // カウンター
     };
 
     // アニメーション
@@ -30,7 +34,10 @@ public: // enum関連
         Jab_1,
         Jab_2,
         //Jab_3,
-        Avoid
+        Avoid,
+        Counter,
+        CounterAttack,
+        SoftStagger
     };
 
 
@@ -71,6 +78,8 @@ public:
 
     void AttackSteppingUpdate(float elapsedTime);//攻撃間際の踏み込み処理
 
+    void OnDamaged()override;
+    void OnDead()override;
 
     void ChangeState(int newState) { stateMachine->ChangeState(newState); }
 
@@ -89,8 +98,6 @@ public:
     void LockOnUpdate();
 
     void LockOnInitialize();
-
-    void OnDead()override;
 
     //入力関数
     static bool InputJabAttack()
@@ -152,7 +159,7 @@ public:
 private:
     //----------------------------シェーダー----------------------------------
     Microsoft::WRL::ComPtr<ID3D11PixelShader> playerPS;
-    //----------------------------シェーダー----------------------------------
+    //----------------------------------------------------------------------
 
     //----------------------------カメラ関係----------------------------------
     float cameraRotSpeed = 2.0f;//旋回速度
@@ -245,6 +252,6 @@ private:
     // アビリティマネージャー(仮)
     AbilityManager abilityManager_ = {};
 
-
+    bool showCollider = true;
 };
 

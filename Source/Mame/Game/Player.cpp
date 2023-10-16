@@ -77,8 +77,12 @@ void Player::Initialize()
 
     stateMachine->RegisterState(new PlayerState::NormalState(this));
     stateMachine->RegisterState(new PlayerState::JabAttackState(this));
+    stateMachine->RegisterState(new PlayerState::HardAttackState(this));
     stateMachine->RegisterState(new PlayerState::AvoidState(this));
     stateMachine->RegisterState(new PlayerState::DieState(this));
+    stateMachine->RegisterState(new PlayerState::SoftStaggerState(this));
+    stateMachine->RegisterState(new PlayerState::HardStaggerState(this));
+    stateMachine->RegisterState(new PlayerState::CounterState(this));
 
     stateMachine->SetState(STATE::NORMAL);
 
@@ -95,6 +99,8 @@ void Player::Initialize()
     maxDodgeSpeed = 6.0f;
     baseAttackPower = 10.0f;
     attackSpeed = 1.0f;
+
+    health = 40.0f;
 
     defense = 0.0f;
 
@@ -402,7 +408,7 @@ void Player::AvoidUpdate(float elapsedTime)
     float ax = gamePad.GetAxisLX();
     float ay = gamePad.GetAxisLY();
     MoveVecUpdate(ax,ay);
-    Turn(elapsedTime, moveVec.x, moveVec.z, 240.0f);
+    Turn(elapsedTime, moveVec.x, moveVec.z, 180.0f);
 
     DirectX::XMFLOAT3 move = {
         velocity.x * elapsedTime,
@@ -486,11 +492,14 @@ void Player::Render(const float scale, ID3D11PixelShader* psShader)
 
 #if _DEBUG
     //stageDebugSphere->Render(stageRadius, playerPS.Get());
-
-    for (auto& collider : hitCollider)
+    if (showCollider)
     {
-        collider.DebugRender();
+        for (auto& collider : hitCollider)
+        {
+            collider.DebugRender();
+        }
     }
+    
 #endif // _DEBUG
 
 
@@ -519,11 +528,16 @@ void Player::SkillImagesRender()
 void Player::DrawDebug()
 {
 #ifdef USE_IMGUI
+
+
+    static float damage = 0;
     if (ImGui::BeginMenu("player"))
     {
         Character::DrawDebug();
 
         stateMachine->DrawDebug();
+
+        ImGui::Checkbox("ShoeCollider",&showCollider);
 
         if (ImGui::TreeNode("Camera"))
         {
@@ -545,6 +559,17 @@ void Player::DrawDebug()
         if(ImGui::TreeNode("Movement"))
         {
             ImGui::SliderFloat("MaxMoveSpeed", &maxEyeSpeed, 0.1f, 10.0f);
+
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("Damage"))
+        {
+            ImGui::SliderFloat("Damage", &damage,0.0f,20.0f);
+            if (ImGui::Button("Apply Damage"))
+            {
+                ApplyDamage(damage);
+            }
 
             ImGui::TreePop();
         }
@@ -900,6 +925,11 @@ void Player::LockOnInitialize()
             length0 = length1;
         }
     }
+}
+
+void Player::OnDamaged()
+{
+    stateMachine->ChangeState(STAGGER_SOFT);
 }
 
 void Player::OnDead()

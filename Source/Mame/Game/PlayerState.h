@@ -60,7 +60,7 @@ namespace PlayerState
     class HardAttackState : public State<Player>
     {
     public:
-        HardAttackState(Player* player) : State(player, "Avoid") {}
+        HardAttackState(Player* player) : State(player, "Hard Attack") {}
         ~HardAttackState() {}
 
         void Initialize() override;
@@ -99,7 +99,7 @@ namespace PlayerState
     class SoftStaggerState : public State<Player>
     {
     public:
-        SoftStaggerState(Player* player) : State(player, "SoftStagger") {}
+        SoftStaggerState(Player* player) : State(player, "Soft Stagger") {}
         ~SoftStaggerState() {}
 
         void Initialize() override;
@@ -111,7 +111,7 @@ namespace PlayerState
     class HardStaggerState : public State<Player>
     {
     public:
-        HardStaggerState(Player* player) : State(player, "HardStagger") {}
+        HardStaggerState(Player* player) : State(player, "Hard Stagger") {}
         ~HardStaggerState() {}
 
         void Initialize() override;
@@ -123,11 +123,15 @@ namespace PlayerState
     class CounterState : public State<Player>
     {
     public:
-        CounterState(Player* player) : State(player, "HardStagger") {}
+        CounterState(Player* player) : State(player, "Counter") {}
         ~CounterState() {}
 
         void Initialize() override;
         void Update(const float& elapsedTime) override;
         void Finalize() override;
+
+    private:
+        bool counterCompleted;
+        int state;
     };
 }

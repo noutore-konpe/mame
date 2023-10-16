@@ -23,7 +23,7 @@ public:
         float radius;
         DirectX::XMFLOAT3 position;
 
-        void DebugRender();
+        void DebugRender(const DirectX::XMFLOAT4 color = {1,1,1,1});
     };
 
 public: // GPU_Instancing
@@ -134,8 +134,8 @@ public: // その他の関数
         bool hit;
         float damage = 0;
     };
-    //戻り値は与えられたダメージ数
-    DamageResult ApplyDamage(float damage, float invincibleTime);
+    //戻り値は与えられたダメージ数、基本無敵時間は怯みモーションに合わせるからここは０でいい
+    DamageResult ApplyDamage(float damage, float invincibleTime = 0);
 
     bool ApplyHeal(float heal);
 
@@ -153,7 +153,7 @@ public:
 
     bool isDead = false; //死亡フラグ
 
-    
+    bool isInvincible = false;
 
 protected:
     float defense = 0.0f;//防御力

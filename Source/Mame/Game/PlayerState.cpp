@@ -217,12 +217,20 @@ namespace PlayerState
 
     void SoftStaggerState::Initialize()
     {
+        owner->PlayAnimation(Player::Animation::SoftStagger, false,1.5f);
+        owner->isInvincible = true;//–³“G
+        owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
     }
     void SoftStaggerState::Update(const float& elapsedTime)
     {
+        if (!owner->IsPlayAnimation())
+        {
+            owner->ChangeState(Player::STATE::NORMAL);
+        }
     }
     void SoftStaggerState::Finalize()
     {
+        owner->isInvincible = false;
     }
 
     void HardStaggerState::Initialize()
@@ -237,9 +245,33 @@ namespace PlayerState
 
     void CounterState::Initialize()
     {
+        counterCompleted = false;
+        owner->PlayAnimation(Player::Animation::Counter,false);
     }
     void CounterState::Update(const float& elapsedTime)
     {
+        switch (state)
+        {
+        case 0:
+            if (!owner->IsPlayAnimation())
+            {
+                owner->ChangeState(Player::STATE::NORMAL);
+            }
+
+            if (counterCompleted)
+            {
+                owner->PlayAnimation(Player::Animation::CounterAttack,false);
+                state++;
+            }
+            break;
+
+        case 1:
+            if (!owner->IsPlayAnimation())
+            {
+                owner->ChangeState(Player::STATE::NORMAL);
+            }
+            break;
+        }
     }
     void CounterState::Finalize()
     {
