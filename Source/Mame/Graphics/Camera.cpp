@@ -6,6 +6,17 @@
 #include "../Game/PlayerManager.h"
 #include "../Game/Enemy.h"
 
+void Camera::TitleInitialize()
+{
+    transform.SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 10.0f));
+    transform.SetScale(DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+    transform.SetRotation(DirectX::XMFLOAT4(0.0f, DirectX::XMConvertToRadians(180), 0.0f, 0.0f));
+}
+
+void Camera::TitleUpdate(const float& elapsedTime)
+{
+}
+
 void Camera::Initialize()
 {
     transform.SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 10.0f));

@@ -30,6 +30,8 @@ private:
     std::unique_ptr<Stage> stageBase;
     std::unique_ptr<Stage> stageWall;
 
+    std::unique_ptr<Sprite> titleLogo;
+
 private:
     std::unique_ptr<FrameBuffer> framebuffers[3];
     std::unique_ptr<FullscreenQuad> bitBlockTransfer;

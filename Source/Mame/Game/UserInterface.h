@@ -23,5 +23,7 @@ public:
 
 private:
     std::unique_ptr<Sprite> lockOnSprite;
+
+    std::unique_ptr<Sprite> hpSprite;   // hp
 };
 

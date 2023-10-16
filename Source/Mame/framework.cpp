@@ -46,8 +46,8 @@ bool framework::initialize()
 
     Mame::Scene::SceneManager::Instance().Initialize();
     // シーンタイトル
-    //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneTitle);
-    Mame::Scene::SceneManager::Instance().ChangeScene(new SceneGame);
+    Mame::Scene::SceneManager::Instance().ChangeScene(new SceneTitle);
+    //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneGame);
     //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneDemo);
 
 #ifndef _DEBUG

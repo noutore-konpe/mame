@@ -26,6 +26,13 @@ void SceneTitle::CreateResource()
                 "./Resources/Shader/StageWallPS.cso");
     }
 
+    // sprite
+    {
+        titleLogo = std::make_unique<Sprite>(graphics.GetDevice(),
+            //L"./Resources/Image/Title/titleLogo.png");
+            L"./Resources/Image/Title/titleLogo1.png");
+    }
+
     // shadow
     {
         shadow.shadowMap = std::make_unique<ShadowMap>(graphics.GetDevice(),
@@ -65,7 +72,7 @@ void SceneTitle::CreateResource()
 void SceneTitle::Initialize()
 {
     // ƒJƒƒ‰
-    Camera::Instance().Initialize();
+    Camera::Instance().TitleInitialize();
 }
 
 // I—¹‰»
@@ -189,6 +196,12 @@ void SceneTitle::Render(const float& elapsedTime)
     {
         stageBase->Render(0.01f);
         stageWall->Render(0.01f);
+    }
+
+    // spirte
+    {
+        shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
+        titleLogo->Render();
     }
 
 }

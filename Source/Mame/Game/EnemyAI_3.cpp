@@ -42,9 +42,10 @@ EnemyAI_3::EnemyAI_3()
         behaviorTree_ = make_unique<BehaviorTree>(this);
 
         behaviorTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);
-        behaviorTree_->AddNode("Root", "LongRangeAttack", 1, SelectRule::Non, new LongRangeAttackJudgment(this), new LongRangeAttackAction(this));
-        behaviorTree_->AddNode("Root", "Pursuit", 2, SelectRule::Non, new PursuitJudgment(this), new PursuitAction(this));
-        behaviorTree_->AddNode("Root", "Idle", 3, SelectRule::Non, nullptr, new IdleAction(this));
+        behaviorTree_->AddNode("Root", "EntryStage",      1, SelectRule::Non, new EntryStageJudgment(this),      new EntryStageAction(this));
+        behaviorTree_->AddNode("Root", "LongRangeAttack", 2, SelectRule::Non, new LongRangeAttackJudgment(this), new LongRangeAttackAction(this));
+        behaviorTree_->AddNode("Root", "Pursuit",         3, SelectRule::Non, new PursuitJudgment(this),         new PursuitAction(this));
+        behaviorTree_->AddNode("Root", "Idle",            4, SelectRule::Non, nullptr,                           new IdleAction(this));
     }
 
     SetType(static_cast<UINT>(Enemy::TYPE::Normal));
@@ -119,7 +120,7 @@ void EnemyAI_3::UpdateConstants()
         // emissiveTexture ScrollDirection
         SetEmissiveScrollDirection(DirectX::XMFLOAT2(0.25f, 0.5f));
 
-        // color 
+        // color
         SetEmissiveColor(DirectX::XMFLOAT4(0.00f, 0.80f, 0.81f, 1.0f));
     }
 

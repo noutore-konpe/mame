@@ -32,7 +32,6 @@ public:
     //virtual void UpdateConstants() = 0;
 
 public:
-
     int GetType() { return type; }
     void SetType(int t) { type = t; }
 
@@ -40,11 +39,16 @@ public:
     void SetVelocity(const DirectX::XMFLOAT3& velocity) { velocity_ = velocity; }
     void AddVelocity(const DirectX::XMFLOAT3& velocity) { velocity_ += velocity; }
 
+    const bool GetEntryStageFlag() const { return entryStageFlag_; }
+    void SetEntryStageFlag(const bool entryStageFlag) { entryStageFlag_ = entryStageFlag; }
+
 protected:
     DirectX::XMFLOAT3   velocity_       = {};
-    int                 dropExpCount_   = 5;    // ドロップする経験値の数
+    int                 dropExpCount_   = 5;        // ドロップする経験値の数
+    bool                entryStageFlag_ = false;    // ステージに入ったかどうかのフラグ
 
 private:
     int type = 0;
+
 };
 

@@ -3,6 +3,17 @@
 //#include "EnemyBlueSlime.h"
 
 
+// ステージエントリー行動
+class EntryStageAction : public ActionBase
+{
+public:
+	template <class TemplateAI>
+	EntryStageAction(TemplateAI* enemy) : ActionBase(enemy) {}
+	const ActionBase::State Run(const float elapsedTime) override;
+
+};
+
+
 // 待機行動
 class IdleAction : public ActionBase
 {

@@ -21,6 +21,10 @@ public:
         return camera;
     }
 
+    void TitleInitialize();
+    void TitleUpdate(const float& elapsedTime);
+
+
     void Initialize();
 
     void Update(float elapsedTime);

@@ -7,6 +7,9 @@ void UserInterface::Initialize()
     lockOnSprite = std::make_unique<Sprite>(Graphics::Instance().GetDevice(),
         L"./Resources/Image/UI/LockOn1.png");
     lockOnSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(16, 16));
+
+    hpSprite = std::make_unique<Sprite>(Graphics::Instance().GetDevice(),
+        L"./Resources/Image/UI/hp.png");
 }
 
 void UserInterface::Update(float elapsedTime)
@@ -26,7 +29,7 @@ void UserInterface::Update(float elapsedTime)
 
 void UserInterface::Render()
 {
-
+    hpSprite->Render();
 }
 
 void UserInterface::BloomRender()
@@ -35,6 +38,7 @@ void UserInterface::BloomRender()
     {
         lockOnSprite->Render();
     }
+
 }
 
 void UserInterface::DrawDebug()
@@ -43,6 +47,7 @@ void UserInterface::DrawDebug()
     {
         lockOnSprite->DrawDebug();
 
+        hpSprite->DrawDebug();
 
         ImGui::EndMenu();
     }
