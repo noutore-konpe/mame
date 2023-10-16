@@ -18,6 +18,8 @@ public:
 public:
     struct SphereCollider//”»’è—p‚Ì‹…‘Ì
     {
+        SphereCollider(const float radius) : radius(radius) {}
+
         float radius;
         DirectX::XMFLOAT3 position;
     };
@@ -160,8 +162,8 @@ protected:
     float height = 1.0f;//g’·
 
     //--------------------------------‹ò‚ç‚¢AUŒ‚”»’è------------------------------------
-    std::vector<SphereCollider> HitCollider;
-    std::vector<SphereCollider> AttackCollider;
+    std::vector<SphereCollider> hitCollider;
+    std::vector<SphereCollider> attackCollider;
     //--------------------------------------------------------------------------------
 
 

@@ -121,6 +121,10 @@ void Player::Initialize()
     LockOnInitialize();
 
     swordModel->transform.SetScaleFactor(GetTransform()->GetScaleFactor());
+
+    //------------------------------攻撃判定、喰らい判定セット---------------------------------
+    AttackCollider
+    //--------------------------------------------------------------------------------------
 }
 
 // 終了化
