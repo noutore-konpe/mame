@@ -9,7 +9,9 @@
 
 enum class BGM
 {
-    temp,
+    Title,
+    Title1,
+    Title2,
     BGM_Max,
 };
 

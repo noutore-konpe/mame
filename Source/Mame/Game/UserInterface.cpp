@@ -8,8 +8,8 @@ void UserInterface::Initialize()
 
     lockOnSprite = std::make_unique<Sprite>(graphics.GetDevice(),
         L"./Resources/Image/UI/LockOn.png");
-    //L"./Resources/Image/UI/LockOn1.png");
     lockOnSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(16, 16));
+    lockOnSprite->GetSpriteTransform()->SetTexSize(DirectX::XMFLOAT2(256, 256));
 
     hpSprite = std::make_unique<Sprite>(graphics.GetDevice(),
         L"./Resources/Image/UI/hp.png");
@@ -47,6 +47,7 @@ void UserInterface::Update(float elapsedTime)
         sPos.y -= lockOnSprite->GetSpriteTransform()->GetSize().y / 2;
         lockOnSprite->GetSpriteTransform()->SetPos(sPos);
         lockOnSprite->Update(elapsedTime);
+        lockOnSprite->PlayAnimation(elapsedTime, 7.0f, 4, false);
     }
 }
 

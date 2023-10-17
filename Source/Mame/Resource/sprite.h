@@ -38,18 +38,42 @@ public:
         void DrawDebug();
 
         void SetPos(DirectX::XMFLOAT2 p) { pos = p; }
+        void SetPosX(float x) { pos.x = x; }
+        void SetPosY(float y) { pos.y = y; }
         void SetSize(DirectX::XMFLOAT2 s) { size = s; }
+        void SetSizeX(float x) { size.x = x; }
+        void SetSizeY(float y) { size.y = y; }
         void SetColor(DirectX::XMFLOAT4 c) { color = c; }
+        void SetColorR(float r) { color.x = r; }
+        void SetColorG(float g) { color.y = g; }
+        void SetColorB(float b) { color.z = b; }
+        void SetColorA(float a) { color.w = a; }
         void SetAngle(float a) { angle = a; }
         void SetTexPos(DirectX::XMFLOAT2 texP) { texPos = texP; }
+        void SetTexPosX(float x) { texPos.x = x; }
+        void SetTexPosY(float y) { texPos.y = y; }
         void SetTexSize(DirectX::XMFLOAT2 texS) { texSize = texS; }
+        void SetTexSizeX(float x) { texSize.x = x; }
+        void SetTexSizeY(float y) { texSize.y = y; }
 
         DirectX::XMFLOAT2 GetPos() { return pos; }
+        float GetPosX() { return pos.x; }
+        float GetPosY() { return pos.y; }
         DirectX::XMFLOAT2 GetSize() { return size; }
+        float GetSizeX() { return size.x; }
+        float GetSizeY() { return size.y; }
         DirectX::XMFLOAT4 GetColor() { return color; }
+        float GetColorR() { return color.x; }
+        float GetColorG() { return color.y; }
+        float GetColorB() { return color.z; }
+        float GetColorA() { return color.w; }
         float GetAngle() { return angle; }
         DirectX::XMFLOAT2 GetTexPos() { return texPos; }
+        float GetTexPosX() { return texPos.x; }
+        float GetTexPosY() { return texPos.y; }
         DirectX::XMFLOAT2 GetTexSize() { return texSize; }
+        float GetTexSizeX() { return texSize.x; }
+        float GetTexSizeY() { return texSize.y; }
     };
 
     struct SpriteDissolve

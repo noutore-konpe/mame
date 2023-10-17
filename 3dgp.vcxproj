@@ -291,6 +291,7 @@
     <ClCompile Include="Source\Mame\Scene\SceneLoading.cpp" />
     <ClCompile Include="Source\Mame\Scene\SceneManager.cpp" />
     <ClCompile Include="Source\Mame\Scene\SceneTitle.cpp" />
+    <ClCompile Include="Source\Mame\Scene\SceneTutorial.cpp" />
     <ClCompile Include="Source\Mame\Transform.cpp" />
     <ClCompile Include="Source\Taki174\Common.cpp" />
     <ClCompile Include="Source\Taki174\DebugRenderer.cpp" />
@@ -406,6 +407,7 @@
     <ClInclude Include="Source\Mame\Scene\SceneLoading.h" />
     <ClInclude Include="Source\Mame\Scene\SceneManager.h" />
     <ClInclude Include="Source\Mame\Scene\SceneTitle.h" />
+    <ClInclude Include="Source\Mame\Scene\SceneTutorial.h" />
     <ClInclude Include="Source\Mame\Transform.h" />
     <ClInclude Include="Source\Taki174\Common.h" />
     <ClInclude Include="Source\Taki174\DebugRenderer.h" />

@@ -129,6 +129,11 @@ void SceneGame::CreateResource()
 #endif
     }
 
+    // sprite
+    {
+        whiteSprite = std::make_unique<Sprite>(graphics.GetDevice(),
+            L"./Resources/Image/Game/white.png");
+    }
 
     // ps Shader
     {
@@ -139,6 +144,10 @@ void SceneGame::CreateResource()
         load_texture_from_file(graphics.GetDevice(),
             L"./Resources/Image/Mask/noise3.png",
             emissiveTexture.GetAddressOf(), &texture2dDesc);
+
+        load_texture_from_file(graphics.GetDevice(),
+            L"./Resources/Image/Particle/circle.png",
+            particleTexture.GetAddressOf(), &texture2dDesc);
 
         //CreatePsFromCso(graphics.GetDevice(),"./Resources/Shader/EmissiveTextureUVScrollPS.cso",emissiveTexture)
     }
@@ -216,11 +225,11 @@ void SceneGame::CreateResource()
 // 初期化
 void SceneGame::Initialize()
 {
-    // カメラ
-    Camera::Instance().Initialize();
-
     // player
     PlayerManager::Instance().Initialize();
+
+    // カメラ
+    Camera::Instance().Initialize();
 
     // item
     ItemManager::Instance().Initialize();
@@ -246,6 +255,9 @@ void SceneGame::Initialize()
     {
         UserInterface::Instance().Initialize();
     }
+
+    isWhiteSpriteRender = true;
+    whiteSpriteTimer = 0.0f;
 }
 
 // 終了化
@@ -285,6 +297,9 @@ void SceneGame::Begin()
 void SceneGame::Update(const float& elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
+
+    // 最初の白飛びのスプライト
+    UpdateWhiteSprite(elapsedTime);
 
     if (gamePad.GetButtonDown() & GamePad::BTN_A)
     {
@@ -517,7 +532,8 @@ void SceneGame::Render(const float& elapsedTime)
     shader->SetDepthStencileState(static_cast<size_t>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
     shader->SetRasterizerState(static_cast<size_t>(Shader::RASTER_STATE::CULL_NONE));
     shader->SetBlendState(static_cast<size_t>(Shader::BLEND_STATE::ADD));
-    shader->GSSetConstantBuffer();
+    graphics.GetDeviceContext()->GSSetConstantBuffers(1, 1, ConstantBuffer.GetAddressOf());
+    graphics.GetDeviceContext()->PSSetShaderResources(16, 1, particleTexture.GetAddressOf());
     particles->Render(graphics.GetDeviceContext());
 
     // シェーダーエフェクト
@@ -632,6 +648,10 @@ void SceneGame::Render(const float& elapsedTime)
     {
         PlayerManager::Instance().GetPlayer()->SkillImagesRender();
         UserInterface::Instance().Render();
+
+        // ※これより下に何も描画しない
+        if(isWhiteSpriteRender) whiteSprite->Render();
+        // ※これより下に何も描画しない
     }
 
 #ifdef _DEBUG
@@ -796,4 +816,22 @@ void SceneGame::DebugCreateEnemyFromGateway()
 
     }
 
+}
+
+void SceneGame::UpdateWhiteSprite(const float& elapsedTime)
+{
+    if (isWhiteSpriteRender)
+    {
+        float maxTime = 1.0f;
+        if (whiteSpriteTimer <= maxTime)
+        {
+            float alpha = Easing::InSine(whiteSpriteTimer, maxTime, 0.0f, 1.0f);
+            whiteSprite->GetSpriteTransform()->SetColorA(alpha);
+            whiteSpriteTimer += elapsedTime;
+        }
+        else
+        {
+            isWhiteSpriteRender = false;
+        }
+    }
 }

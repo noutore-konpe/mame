@@ -482,6 +482,9 @@
     <ClCompile Include="Source\Mame\Game\LoadingPlayer.cpp">
       <Filter>mamelib\Mame\Game\Character\Player</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Scene\SceneTutorial.cpp">
+      <Filter>mamelib\Mame\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -837,6 +840,9 @@
     <ClInclude Include="Source\Mame\Game\UserInterface.h" />
     <ClInclude Include="Source\Mame\Game\LoadingPlayer.h">
       <Filter>mamelib\Mame\Game\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Scene\SceneTutorial.h">
+      <Filter>mamelib\Mame\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

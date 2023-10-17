@@ -35,5 +35,14 @@ private:
 private:
     std::unique_ptr<LoadingPlayer> loadingPlayer = nullptr;
     std::unique_ptr<Sprite> titleLogo = nullptr;
+
+    Microsoft::WRL::ComPtr<ID3D11Buffer> playerConstant;
+    struct PlayerConstants
+    {
+        DirectX::XMFLOAT4 color;
+    }playerConstants;
+
+    bool isChangeScene = false;
+    float easingTimer = 0.0f;
 };
 

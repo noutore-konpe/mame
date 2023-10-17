@@ -27,16 +27,24 @@ public:
     void DrawDebug()    override;
 
 private:
+    void PressAnyButton(const float& elapsedTime);
+    bool IsChangeScene(const float& elapsedTime);
+
+private:
     std::unique_ptr<Stage> stageBase;
     std::unique_ptr<Stage> stageWall;
 
     std::unique_ptr<Sprite> backSprite;
     std::unique_ptr<Sprite> emmaSprite;
     std::unique_ptr<Sprite> pressSprite;
+    std::unique_ptr<Sprite> fadeSprite;
 
-    // 変数
-    bool isAlphaDown = false;
-    float pressTimer = 0.0f;
+    // ----- 変数 -----
+    float pressTimer = 0.0f;    // 点滅用タイマー(Press Any Button)
+    bool isAlphaDown = false;   // 点滅切り替え用(Press Any Button)
+    
+    bool isFade = false;    // フェードを行うか
+    float fadeTimer = 0.0f; // フェード用のタイマー
 
 private:
     std::unique_ptr<FrameBuffer> framebuffers[3];

@@ -1,57 +1,69 @@
-#include "SceneTitle.h"
-#include "SceneGame.h"
-#include "SceneLoading.h"
-#include "../Mame.h"
+#include "SceneTutorial.h"
 
-#include "../Graphics/Graphics.h"
 #include "../Input/Input.h"
-
-#include "../Resource/AudioManager.h"
+#include "../Graphics/Graphics.h"
+#include "../Graphics/EffectManager.h"
 
 #include "../Other/misc.h"
+
 #include "../Resource/texture.h"
+
+#include "../Game/PlayerManager.h"
+#include "../Game/ItemManager.h"
+#include "../Game/Book.h"
+#include "../Game/AbilityManager.h"
+#include "../Game/BlackHole.h"
+
+#include "../Game/EnemyManager.h"
+#include "../Game/EnemyTestAI.h"
+#include "../Game/EnemyAI_1.h"
+#include "../Game/EnemyAI_2.h"
+#include "../Game/EnemyAI_3.h"
+
+#include "../Game/ProjectileManager.h"
+#include "../Game/ProjectileHorming.h"
+
+#include "../Game/ExperiencePointManager.h"
+
+#include "../Game/UserInterface.h"
 
 #include "../framework.h"
 
+#include "SceneManager.h"
+#include "SceneLoading.h"
+#include "SceneGame.h"
+
+DirectX::XMFLOAT3 SceneTutorial::stageCenter = {};
+
 // リソース生成
-void SceneTitle::CreateResource()
+void SceneTutorial::CreateResource()
 {
     Graphics& graphics = Graphics::Instance();
 
     // stage
-    {
-        stageBase = std::make_unique<Stage>();
-        stageWall = std::make_unique<Stage>
-            ("./Resources/Model/Stage/stageWall.fbx",
-                "./Resources/Shader/StageWallPS.cso");
-    }
+    stageBase = std::make_unique<Stage>();
+    stageWall = std::make_unique<Stage>
+        ("./Resources/Model/Stage/stageWall.fbx",
+            "./Resources/Shader/StageWallPS.cso");
 
-    // sprite
-    {
-        backSprite = std::make_unique<Sprite>(graphics.GetDevice(),
-            L"./Resources/Image/Title/title.png");
-        emmaSprite = std::make_unique<Sprite>(graphics.GetDevice(),
-            L"./Resources/Image/Title/Emma.png");
-        pressSprite = std::make_unique<Sprite>(graphics.GetDevice(),
-            L"./Resources/Image/Title/PressAnyButton.png");
-        fadeSprite = std::make_unique<Sprite>(graphics.GetDevice(),
-            L"./Resources/Image/Title/fade.png");
-    }
+    // player
+    PlayerManager::Instance().GetPlayer() = std::make_unique<Player>();
 
+
+    // graphics
     {
-        framebuffers[0] = std::make_unique<FrameBuffer>(graphics.GetDevice(), 1280, 720, false);
+        framebuffers[0] = std::make_unique<FrameBuffer>(graphics.GetDevice(), 1280, 720);
         bitBlockTransfer = std::make_unique<FullscreenQuad>(graphics.GetDevice());
-        CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/finalPassPs.cso", finalPassPS.GetAddressOf());
 
+        // bloom
         bloomer = std::make_unique<Bloom>(graphics.GetDevice(), 1280 / 1, 720 / 1);
         CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/finalPassPs.cso", bloomPS.GetAddressOf());
 
+        // fog
         framebuffers[1] = std::make_unique<FrameBuffer>(graphics.GetDevice(), 1280 / 1, 720 / 1, false);
         CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/FogPS.cso", fogPS.GetAddressOf());
-    }
 
-    // shadow
-    {
+        // shadow
         shadow.shadowMap = std::make_unique<ShadowMap>(graphics.GetDevice(),
             shadow.shadowMapWidth, shadow.shadowMapHeight);
 
@@ -65,12 +77,8 @@ void SceneTitle::CreateResource()
         desc.StructureByteStride = 0;
         hr = graphics.GetDevice()->CreateBuffer(&desc, nullptr, shadowConstantBuffer.GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-    }
 
-    // 定数バッファー
-    {
-        HRESULT hr{ S_OK };
-
+        // 定数バッファー
         D3D11_BUFFER_DESC bufferDesc{};
         bufferDesc.ByteWidth = sizeof(Shader::SceneConstants);
         bufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -82,72 +90,65 @@ void SceneTitle::CreateResource()
         hr = graphics.GetDevice()->CreateBuffer(&bufferDesc, nullptr,
             ConstantBuffer.GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
     }
 }
 
 // 初期化
-void SceneTitle::Initialize()
+void SceneTutorial::Initialize()
 {
+    // player
+    PlayerManager::Instance().Initialize();
+
     // カメラ
-    Camera::Instance().TitleInitialize();
+    Camera::Instance().Initialize();
 
-    pressSprite->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(370, 520));
-    fadeSprite->GetSpriteTransform()->SetColorA(0.0f);
+    // item
+    ItemManager::Instance().Initialize();
 
-    //AudioManager::Instance().PlayBGM(BGM::Title, true);
-    AudioManager::Instance().PlayBGM(BGM::Title1, true);
-    //AudioManager::Instance().PlayBGM(BGM::Title2, true);
+    // enemy
+    EnemyManager& enemyManager = EnemyManager::Instance();
+    enemyManager.Initialize();
+    //enemyAura->Initialize();
 
-    // 変数初期化
-    pressTimer = 0.0f;
-    isAlphaDown = false;
-    fadeTimer = 0.0f;
-    isFade = false;
+    // stage
+    stageBase->Initialize();
+    stageCenter = stageBase->GetTransform()->GetPosition();
+    stageWall->Initialize();
+
+    // Exp
+    ExperiencePointManager& expManager = ExperiencePointManager::Instance();
+    expManager.Initialize();
+
+    UserInterface::Instance().Initialize();
 }
 
-// 終了化
-void SceneTitle::Finalize()
+void SceneTutorial::Finalize()
 {
-    AudioManager::Instance().StopAllBGM();
+    // Exp
+    ExperiencePointManager& expManager = ExperiencePointManager::Instance();
+    expManager.Finalize();
+
+    EnemyManager& enemyManager = EnemyManager::Instance();
+    enemyManager.Finalize();
+
+    ItemManager::Instance().Finalize();
+
+    PlayerManager::Instance().Finalize();
 }
 
-// 毎フレーム一番最初に呼ばれる
-void SceneTitle::Begin()
-{
-}
-
-// 更新処理
-void SceneTitle::Update(const float& elapsedTime)
-{
-    GamePad& gamePad = Input::Instance().GetGamePad();
-
-    Camera::Instance().TitleUpdate(elapsedTime);
-
-    if (gamePad.GetButtonDown() & GamePad::BTN_A)
-    {
-        isFade = true;
-    }
-
-    // scene切り替え
-    if (IsChangeScene(elapsedTime))
-    {
-        Camera::Instance().TitleInitialize();
-        Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
-        return;
-    }
-
-    // ボタンの点滅処理
-    PressAnyButton(elapsedTime);
-}
-
-// 毎フレーム一番最後に呼ばれる
-void SceneTitle::End()
+void SceneTutorial::Begin()
 {
 }
 
-// 描画処理
-void SceneTitle::Render(const float& elapsedTime)
+void SceneTutorial::Update(const float& elapsedTime)
+{
+}
+
+void SceneTutorial::End()
+{
+}
+
+void SceneTutorial::Render(const float& elapsedTime)
 {
     Graphics& graphics = Graphics::Instance();
     Shader* shader = graphics.GetShader();
@@ -159,7 +160,8 @@ void SceneTitle::Render(const float& elapsedTime)
         // 描画の初期設定※必ず呼ぶこと！！！
         Mame::Scene::BaseScene::RenderInitialize();
 
-        // Shadow : make shadow map
+
+        // SHADOW : make shadow map
         {
             const float aspectRatio = shadow.shadowMap->viewport.Width / shadow.shadowMap->viewport.Height;
             DirectX::XMVECTOR F =
@@ -202,7 +204,6 @@ void SceneTitle::Render(const float& elapsedTime)
 
             // SHADOW : 影つけたいモデルはここにRenderする
             {
-
             }
 
             shadow.shadowMap->Deactivete(graphics.GetDeviceContext());
@@ -215,7 +216,7 @@ void SceneTitle::Render(const float& elapsedTime)
     shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::NONE));
     shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::SOLID));
 
-    camera.TitleSetPerspectiveFov(graphics.GetDeviceContext());
+    camera.SetPerspectiveFov(graphics.GetDeviceContext());
     DirectX::XMStoreFloat4x4(&sceneConstants.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
     sceneConstants.lightDirection = shader->GetViewPosition();
     sceneConstants.cameraPosition = shader->GetViewCamera();
@@ -228,40 +229,68 @@ void SceneTitle::Render(const float& elapsedTime)
     graphics.GetDeviceContext()->VSSetConstantBuffers(1, 1, ConstantBuffer.GetAddressOf());
     graphics.GetDeviceContext()->PSSetConstantBuffers(1, 1, ConstantBuffer.GetAddressOf());
 
-    // SHADOW : bind shadow map at slot 8
-    graphics.GetDeviceContext()->PSSetShaderResources(8, 1, shadow.shadowMap->shaderResourceView.GetAddressOf());
-
     {
         // カメラ関係
-        RenderContext rc;
+        RenderContext rc = {};
         rc.lightDirection = { 0.0f, -1.0f, 0.0f, 0.0f };
 
         shader->Begin(graphics.GetDeviceContext(), rc);
     }
 
-    {
-        framebuffers[0]->Clear(graphics.GetDeviceContext());
-        framebuffers[0]->Activate(graphics.GetDeviceContext());
+    // EMISSIVE
+    //graphics.GetDeviceContext()->PSSetShaderResources(16, 1, emissiveTexture.GetAddressOf());
 
-        // モデル描画
+    // SHADOW : bind shadow map at slot 8
+    graphics.GetDeviceContext()->PSSetShaderResources(8, 1, shadow.shadowMap->shaderResourceView.GetAddressOf());
+
+    framebuffers[0]->Clear(graphics.GetDeviceContext());
+    framebuffers[0]->Activate(graphics.GetDeviceContext());
+
+    // モデル描画
+    {
+        // stage
         {
             stageBase->Render(0.01f);
             stageWall->Render(0.01f);
         }
-        // スプライト描画
+
+        // player
         {
-            shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
-            emmaSprite->Render();
+            PlayerManager::Instance().Render(0.01f);
         }
 
-        framebuffers[0]->Deactivate(graphics.GetDeviceContext());
+        // Exp
+        ExperiencePointManager& expManager = ExperiencePointManager::Instance();
+        expManager.Render(1.0f);
 
+    }
+
+    // 3Dエフェクト描画
+    {
+        Camera& camera = Camera::Instance();
+        DirectX::XMFLOAT4X4 view, projection;
+        DirectX::XMStoreFloat4x4(&view, camera.GetViewMatrix());
+        DirectX::XMStoreFloat4x4(&projection, camera.GetProjectionMatrix());
+
+        EffectManager::Instance().Render(view, projection);
+    }
+
+    //ブルームあり２D
+    {
+        UserInterface::Instance().BloomRender();
+    }
+
+    framebuffers[0]->Deactivate(graphics.GetDeviceContext());
+
+    // FOG
+    {
         framebuffers[1]->Clear(graphics.GetDeviceContext());
         framebuffers[1]->Activate(graphics.GetDeviceContext());
         shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_OFF_ZW_OFF));
         shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::CULL_NONE));
-        shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
-        bitBlockTransfer->Blit(graphics.GetDeviceContext(), framebuffers[0]->shaderResourceViews[1].GetAddressOf(), 0, 1, fogPS.Get());
+        shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::NONE));
+
+        bitBlockTransfer->Blit(graphics.GetDeviceContext(), framebuffers[0]->shaderResourceViews[1].GetAddressOf()/*Depth*/, 0, 1, fogPS.Get());
 
         framebuffers[1]->Deactivate(graphics.GetDeviceContext());
 
@@ -273,95 +302,34 @@ void SceneTitle::Render(const float& elapsedTime)
             framebuffers[0]->shaderResourceViews[0].Get(),/*dummy*/
             framebuffers[1]->shaderResourceViews[0].Get(),
         };
-
-        bloomer->Make(graphics.GetDeviceContext(), framebuffers[0]->shaderResourceViews[0].Get());
-
-        shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_OFF_ZW_OFF));
-        shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::CULL_NONE));
-        shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
-
-        ID3D11ShaderResourceView* shaderResourceViews[] =
-        {
-            framebuffers[0]->shaderResourceViews[0].Get(),
-            bloomer->ShaderResourceView(),
-            framebuffers[1]->shaderResourceViews[0].Get(),
-            framebuffers[0]->shaderResourceViews[1].Get(),
-        };
-
-        bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceViews, 0, _countof(shaderResourceViews), bloomPS.Get());
     }
 
-    // spirte
+
+
+    // BLOOM
+    bloomer->Make(graphics.GetDeviceContext(), framebuffers[0]->shaderResourceViews[0].Get());
+
+    shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_OFF_ZW_OFF));
+    shader->SetRasterizerState(static_cast<UINT>(Shader::RASTER_STATE::CULL_NONE));
+    shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
+
+    ID3D11ShaderResourceView* shaderResourceViews[] =
     {
-        shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
-        backSprite->Render();
+        framebuffers[0]->shaderResourceViews[0].Get(),
+        bloomer->ShaderResourceView(),
+        framebuffers[1]->shaderResourceViews[0].Get(),
+        framebuffers[0]->shaderResourceViews[1].Get(),
+    };
 
+    bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceViews, 0, _countof(shaderResourceViews), bloomPS.Get());
 
-        pressSprite->Render();
-
-        // これを最後にRenderする
-        fadeSprite->Render();
-
-        // ※これより下に何も書かない
-    }
-
-}
-
-
-// デバッグ用
-void SceneTitle::DrawDebug()
-{
-    Graphics& graphics = Graphics::Instance();
-    Shader* shader = graphics.GetShader();
-    
-    // ライトとか
-    shader->DrawDebug();
-
-    backSprite->DrawDebug();
-    emmaSprite->DrawDebug();
-    pressSprite->DrawDebug();
-
-}
-
-void SceneTitle::PressAnyButton(const float& elapsedTime)
-{
-    float maxTime = 1.0f;
-    if (pressTimer <= maxTime)
+    //ブルーム無し
     {
-        DirectX::XMFLOAT4 color = pressSprite->GetSpriteTransform()->GetColor();
-        if (isAlphaDown)
-            color.w = Easing::InSine(pressTimer, maxTime, 0.2f, 1.0f);
-        else
-            color.w = Easing::InSine(pressTimer, maxTime, 1.0f, 0.2f);
-
-        pressSprite->GetSpriteTransform()->SetColor(color);
-
-        pressTimer += elapsedTime;
-    }
-    else
-    {
-        isAlphaDown = isAlphaDown ? false : true;
-        pressTimer = 0.0f;
+        PlayerManager::Instance().GetPlayer()->SkillImagesRender();
+        UserInterface::Instance().Render();
     }
 }
 
-bool SceneTitle::IsChangeScene(const float& elapsedTime)
+void SceneTutorial::DrawDebug()
 {
-    if (isFade)
-    {
-        float maxTime = 1.0f;
-        if (fadeTimer <= maxTime)
-        {
-            float alpha = Easing::InSine(fadeTimer, maxTime, 1.0f, 0.0f);
-            fadeSprite->GetSpriteTransform()->SetColorA(alpha);
-            fadeTimer += elapsedTime;
-        }
-        else
-        {
-            fadeSprite->GetSpriteTransform()->SetColorA(1.0f);
-            return true;
-        }
-    }
-
-    return false;
 }
