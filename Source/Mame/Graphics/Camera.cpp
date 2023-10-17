@@ -6,6 +6,217 @@
 #include "../Game/PlayerManager.h"
 #include "../Game/Enemy.h"
 
+#include "../Other/MathHelper.h"
+
+void Camera::TitleInitialize()
+{
+    transform.SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 10.0f));
+    transform.SetScale(DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+    transform.SetRotation(DirectX::XMFLOAT4(0.0f, DirectX::XMConvertToRadians(180), 0.0f, 0.0f));
+
+    titleState = 0;
+    easingTimer = 0.0f;
+    isFocusCenter = false;
+}
+
+void Camera::TitleUpdate(const float& elapsedTime)
+{
+    switch (titleState)
+    {
+    case static_cast<UINT>(STATE::Wait):
+        easingTimer += elapsedTime;
+
+        if (easingTimer <= 5.0f)
+        {
+            titleState = static_cast<UINT>(STATE::Move0);
+            easingTimer = 0.0f;
+        }
+
+        GetTransform()->SetPositionZ(0.0f);
+
+        break;
+    case static_cast<UINT>(STATE::Move0):
+    {
+        float moveSpeed = 6.0f;
+        float place = 27.0f;
+
+        if (GetTransform()->GetPositionZ() <= place)
+        {
+            GetTransform()->AddPositionZ(moveSpeed * elapsedTime);
+        }
+        else
+        {
+            GetTransform()->SetPositionZ(place);
+            easingTimer = 0.0f;
+            titleState = static_cast<UINT>(STATE::Move1);
+        }
+    }
+        break;
+    case static_cast<UINT>(STATE::Move1):
+        easingTimer += elapsedTime;
+
+        if (easingTimer >= 0.5f)
+        {
+            easingTimer = 0.0f;
+            angle = 0.0f;
+            titleState = static_cast<UINT>(STATE::Move2);
+        }
+
+        break;
+    case static_cast<UINT>(STATE::Move2):
+    {
+        isFocusCenter = true;
+
+        float maxTime = 1.0f;
+        float angleValue;
+        if (easingTimer <= maxTime)
+        {
+            angleValue = Easing::InSine(easingTimer, maxTime, 15.0f, 0.0f);
+            easingTimer += elapsedTime;
+        }
+        else
+        {
+            angleValue = 15.0f;
+        }
+
+        DirectX::XMFLOAT3 pos = GetTransform()->GetPosition();
+
+        DirectX::XMFLOAT3 vec = pos;
+        vec.x = sinf(angle);
+        vec.z = cosf(angle);
+
+        vec.x *= length;
+        vec.z *= length;
+
+        angle -= DirectX::XMConvertToRadians(angleValue) * elapsedTime;
+
+        GetTransform()->SetPosition(vec);
+
+        //if (angle <= DirectX::XMConvertToRadians(-360))
+        if (angle <= DirectX::XMConvertToRadians(-720))
+        {
+            titleState = static_cast<UINT>(STATE::Move3);
+        }
+    }
+        break;
+    case static_cast<UINT>(STATE::Move3):
+    {
+        isFocusCenter = false;
+
+        float moveSpeed = 6.0f;
+        float place = 19.0f;
+
+        if (GetTransform()->GetPositionZ() >= place)
+        {
+            GetTransform()->AddPositionZ(-moveSpeed * elapsedTime);
+        }
+        else
+        {
+            float posY = GetTransform()->GetPosition().y;
+            GetTransform()->SetPosition(DirectX::XMFLOAT3(0, posY, place));
+
+            easingTimer = 0.0f;
+            titleState = static_cast<UINT>(STATE::Move4);
+        }
+    }
+
+        break;
+    case static_cast<UINT>(STATE::Move4):
+    {
+        isFocusCenter = true;
+
+        float moveSpeed = 12.0f;
+        float place = 60.0f;
+
+        if (GetTransform()->GetPositionY() < place)
+        {
+            GetTransform()->AddPositionY(moveSpeed * elapsedTime);
+        }
+        else
+        {
+            DirectX::XMFLOAT3 pos = GetTransform()->GetPosition();
+            GetTransform()->SetPosition(DirectX::XMFLOAT3(pos.x, place, pos.z));
+
+            easingTimer += elapsedTime;
+            if (easingTimer >= 2.0f)
+            {
+                easingTimer = 0.0f;
+                titleState = static_cast<UINT>(STATE::Move5);
+            }
+        }
+
+    }
+        break;
+    case static_cast<UINT>(STATE::Move5):
+    {
+        isFocusCenter = true;
+
+        float moveSpeed = 12.0f;
+        float place = 1.0f;
+
+        if (GetTransform()->GetPositionY() >= place)
+        {
+            GetTransform()->AddPositionY(-moveSpeed * elapsedTime);
+        }
+        else
+        {
+            DirectX::XMFLOAT3 pos = GetTransform()->GetPosition();
+            GetTransform()->SetPosition(DirectX::XMFLOAT3(pos.x, place, pos.z));
+
+            titleState = static_cast<UINT>(STATE::Move0);
+        }
+
+    }
+
+        break;
+    }
+}
+
+void Camera::TitleSetPerspectiveFov(ID3D11DeviceContext* dc)
+{
+    D3D11_VIEWPORT viewport{};
+    UINT unm_viewports{ 1 };
+    dc->RSGetViewports(&unm_viewports, &viewport);
+
+    float aspect_ratio{ viewport.Width / viewport.Height };
+    P = { DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(30),aspect_ratio,0.1f,1000.0f) };
+
+    DirectX::XMVECTOR eye;
+    DirectX::XMVECTOR focus;
+
+
+
+    if (isFocusCenter)
+    {
+        DirectX::XMFLOAT3 pos = transform.GetPosition();
+
+        eye = { DirectX::XMVectorSet(pos.x, pos.y, pos.z, 1.0f) };
+
+        focus = { DirectX::XMVectorSet(
+            0.0f,
+            1.0f,
+            0.0f,
+            1.0f) };
+
+        focus = DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&screenVibrationOffset), focus);
+    }
+    else
+    {
+        DirectX::XMFLOAT3 pos = transform.GetPosition();
+        DirectX::XMFLOAT3 forward = transform.CalcForward();
+        eye = { DirectX::XMVectorSet(pos.x, pos.y, pos.z, 1.0f) };
+        focus = { DirectX::XMVectorSet(pos.x + forward.x, pos.y + forward.y, pos.z + forward.z, 1.0f) };
+    }
+
+    //ínñ Ç…ÉJÉÅÉâÇ™ñÑÇ‹ÇÁÇ»Ç¢ÇÊÇ§Ç…í≤êÆ
+    if (DirectX::XMVectorGetY(eye) < 0.3f)DirectX::XMVectorSetY(eye, 0.3f);
+
+    //DirectX::XMVECTOR eye{ DirectX::XMVectorSet(camera.eye.x,camera.eye.y,camera.eye.z,1.0f) };
+    //DirectX::XMVECTOR focus{ DirectX::XMVectorSet(camera.focus.x,camera.focus.y,camera.focus.z,1.0f) };
+    DirectX::XMVECTOR up{ DirectX::XMVectorSet(camera.up.x,camera.up.y,camera.up.z,0.0f) };
+    V = { DirectX::XMMatrixLookAtLH(eye, focus, up) };
+}
+
 void Camera::Initialize()
 {
     transform.SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 10.0f));
@@ -176,8 +387,6 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
     //DirectX::XMVECTOR focus{ DirectX::XMVectorSet(camera.focus.x,camera.focus.y,camera.focus.z,1.0f) };
     DirectX::XMVECTOR up{ DirectX::XMVectorSet(camera.up.x,camera.up.y,camera.up.z,0.0f) };
     V = { DirectX::XMMatrixLookAtLH(eye, focus, up) };
-
-    //DebugMoveCamera();
 }
 
 void Camera::DrawDebug()
@@ -185,6 +394,8 @@ void Camera::DrawDebug()
     if (ImGui::BeginMenu("Camera"))
     {
         //ImGui::Begin("Camera");
+
+        ImGui::DragFloat("length", &length);
 
         transform.DrawDebug();
 

@@ -18,7 +18,7 @@ float4 main(PSIn psIn) : SV_TARGET
 {
     float4 color = textureMaps[0].Sample(samplerStates[ANISOTROPIC], psIn.texcoord);
     float alpha = color.a;
-
+    
     // ÉKÉìÉ}ï‚ê≥
     const float GAMMA = 2.2;
     color.rgb = pow(color.rgb, GAMMA);

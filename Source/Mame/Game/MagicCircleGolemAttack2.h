@@ -5,6 +5,8 @@
 
 #include "StateMachine.h"
 
+#include "StoneBall.h"
+
 class MagicCircleGolemAttack2
 {
 public:
@@ -21,6 +23,7 @@ public:
     {
         DummyState,
         AppearState,
+        ThrowState,
     };
 
 public:
@@ -39,6 +42,10 @@ public:// 取得・設定
 
 public:
     std::unique_ptr<MagicCircle> baseMagicCircle[static_cast<UINT>(MAGIC_CIRCLE::Max)];
+
+    std::unique_ptr<StoneBall> stoneBalls[3][3];
+
+    bool isAttack2 = false;
 
 private:
     // ステートマシン

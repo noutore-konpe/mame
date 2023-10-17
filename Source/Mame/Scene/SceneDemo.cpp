@@ -440,7 +440,6 @@ void SceneDemo::Render(const float& elapsedTime)
     shader->SetDepthStencileState(static_cast<size_t>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
     shader->SetRasterizerState(static_cast<size_t>(Shader::RASTER_STATE::CULL_NONE));
     shader->SetBlendState(static_cast<size_t>(Shader::BLEND_STATE::ADD));
-    shader->GSSetConstantBuffer();
     particles->Render(graphics.GetDeviceContext());
 #endif// PARTICLE
 

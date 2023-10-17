@@ -66,6 +66,11 @@ void ExperiencePointManager::Render(
 {
     for (ExperiencePoint*& exp : exps_)
     {
+        // ƒJƒƒ‰ŠO‚È‚ç•`‰æ‚µ‚È‚¢
+        bool isInCamera = false;
+        Sprite::ConvertToScreenPos(exp->GetTransform()->GetPosition(), &isInCamera);
+        if (false == isInCamera) { continue; }
+
         exp->Render(scale, psShader);
     }
 }

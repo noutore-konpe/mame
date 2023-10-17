@@ -1,17 +1,17 @@
 #include "Player.h"
 
+#include <algorithm>
+
+#include "../../Taki174/Common.h"
+
 #include "../Graphics/Graphics.h"
 #include "../Other/Easing.h"
 #include "../Other/MathHelper.h"
-
-#include "PlayerState.h"
-#include "EnemyManager.h"
-
 #include "../Scene/SceneGame.h"
 
+#include "PlayerState.h"
 #include "BlackHole.h"
-
-#include <algorithm>
+#include "EnemyManager.h"
 
 // コンストラクタ
 Player::Player()
@@ -102,7 +102,8 @@ void Player::Initialize()
 
     health = 40.0f;
 
-    defense = 0.0f;
+    defence = 0.0f;
+
 
     deceleration = 7.0f;
     acceleration = InitAcceleration;
@@ -675,7 +676,7 @@ void Player::SelectSkillUpdate(float elapsedTime)
             if (timer < 0)timer = 0;
             else if (timer > drawDirectionTime)timer = drawDirectionTime;
             float posY = Easing::OutSine(timer, drawDirectionTime, 165.0f, -transform->GetTexSize().y);
-            transform->SetPos(DirectX::XMFLOAT2(65 + 400 * i, posY));
+            transform->SetPos(DirectX::XMFLOAT2(65.0f + 400.0f * static_cast<float>(i), posY));
 
         }
 
@@ -736,7 +737,7 @@ void Player::SelectSkillUpdate(float elapsedTime)
             float timer = _timer;
             if (timer > 0.5)timer = 0.5;
             float posY = Easing::OutSine(timer, 0.5f, -transform->GetTexSize().y,165.0f);
-            transform->SetPos(DirectX::XMFLOAT2(65 + 400 * i, posY));
+            transform->SetPos(DirectX::XMFLOAT2(65.0f + 400.0f * static_cast<float>(i), posY));
         }
 
         if (_timer > 2.2f)isSelectingSkill = false;
@@ -871,7 +872,7 @@ bool Player::ChangeLockOnTarget(float ax)
         peVec.x /= length;
         peVec.z /= length;
         float dot1 = (plVec.x * peVec.x) + (plVec.z * peVec.z);
-        
+
         if (dot0 < dot1)
         {
             dot0 = dot1;
@@ -907,7 +908,7 @@ void Player::LockOnUpdate()
 
     static bool buttonDown = false;
     if (!buttonDown)
-    {   
+    {
         if(ChangeLockOnTarget(ax))buttonDown = true;
     }
     if (ax <= 0.1f && ax >= -0.1f)
@@ -918,11 +919,13 @@ void Player::LockOnUpdate()
 
 void Player::LockOnInitialize()
 {
+    using DirectX::XMFLOAT3;
+
     if (EnemyManager::Instance().GetEnemyCount() == 0)return;
     float length0 = FLT_MAX;
     for (auto& enemy : EnemyManager::Instance().GetEnemies())
     {
-        auto ePos = enemy->GetTransform()->GetPosition();
+        const XMFLOAT3 ePos = enemy->GetTransform()->GetPosition();
         float length1 = Length(ePos - GetTransform()->GetPosition());
         if (length0 > length1)
         {

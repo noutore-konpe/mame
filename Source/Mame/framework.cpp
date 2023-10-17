@@ -3,10 +3,11 @@
 #include <fstream>
 
 #include "Graphics/EffectManager.h"
+#include "Scene/SceneManager.h"
 #include "Scene/SceneTitle.h"
 #include "Scene/SceneGame.h"
 #include "Scene/SceneDemo.h"
-#include "Scene/SceneManager.h"
+#include "Scene/SceneTutorial.h"
 
 #include "Resource/AudioManager.h"
 
@@ -41,13 +42,14 @@ bool framework::initialize()
     _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
     // 音楽読み込み
-    //audioManager.LoadAudio();
-    //audioManager.StopAllAudio(); // 全音楽停止
+    audioManager.LoadAudio();
+    audioManager.StopAllAudio(); // 全音楽停止
 
     Mame::Scene::SceneManager::Instance().Initialize();
     // シーンタイトル
-    //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneTitle);
-    Mame::Scene::SceneManager::Instance().ChangeScene(new SceneGame);
+    //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneTutorial);
+    Mame::Scene::SceneManager::Instance().ChangeScene(new SceneTitle);
+    //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneGame);
     //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneDemo);
 
 #ifndef _DEBUG

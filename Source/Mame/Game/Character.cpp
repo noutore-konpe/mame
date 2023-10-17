@@ -207,7 +207,7 @@ Character::DamageResult Character::ApplyDamage(float damage, float invincibleTim
     }
 
     //防御力の影響
-    damage -= defense;
+    damage -= defence;
     result.damage = damage;
 
     //ダメージが０の場合は健康状態を変更する必要がない

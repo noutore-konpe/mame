@@ -775,8 +775,3 @@ void Shader::EntryLight2()
         lightConstant.spotLight.color.z = 0.0f;
     }
 }
-
-void Shader::GSSetConstantBuffer()
-{
-    Graphics::Instance().GetDeviceContext()->GSSetConstantBuffers(1, 1, ConstantBuffer[0].GetAddressOf());
-}

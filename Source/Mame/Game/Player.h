@@ -232,6 +232,7 @@ private:
 
     //--------------------------------喰らい、攻撃判定------------------------------------
     //std::unique_ptr<Model> stageDebugSphere;
+
     enum class HitColName
     {
         NECK,
@@ -247,11 +248,14 @@ private:
     int swordColliderNum = 5;//判定の数
 
     void ColliderPosUpdate(const float& scale);//各ジョイントに判定をつける処理
+
     //--------------------------------------------------------------------------------
 
     // アビリティマネージャー(仮)
     AbilityManager abilityManager_ = {};
 
+
     bool showCollider = true;
+
 };
 

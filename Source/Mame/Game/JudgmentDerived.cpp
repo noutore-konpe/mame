@@ -3,6 +3,15 @@
 #include "EnemyManager.h"
 #include "PlayerManager.h"
 
+// ステージエントリー判定関数
+const bool EntryStageJudgment::Judgment()
+{
+	// ステージにすでに入っていたらfasleを返す
+	if (true == owner_->GetEntryStageFlag()) { return false; }
+
+	return true;
+}
+
 const bool PursuitJudgment::Judgment()
 {
 	using DirectX::XMFLOAT3;
@@ -86,19 +95,6 @@ const bool LongRangeAttackJudgment::Judgment()
 	using DirectX::XMFLOAT3;
 
 	PlayerManager& playerManager = PlayerManager::Instance();
-	EnemyManager& enemyManager = EnemyManager::Instance();
-
-	//// CRA : 2.Judgment : 他の敵が近接攻撃行動中ならfalse
-	//if (true == enemyManager.GetIsRunningCRAAction())
-	//{
-	//	return false;
-	//}
-
-	//// CRA : 3.Judgment : 近接攻撃行動クールタイムが終わっていなければfalse
-	//if (enemyManager.GetCRAActionCoolTimer() > 0.0f)
-	//{
-	//	return false;
-	//}
 
 	// プレイヤーとのXZ平面での距離判定
 	const XMFLOAT3&	position = owner_->GetPosition();
@@ -114,25 +110,25 @@ const bool LongRangeAttackJudgment::Judgment()
 		return false;
 	}
 
-	//// 他の敵の方がプレイヤーに近ければfalse
-	//const size_t enemyCount = enemyManager.GetEnemyCount();
-	//for (size_t i = 0; i < enemyCount; ++i)
-	//{
-	//	BaseEnemyAI* enemy = enemyManager.GetEnemy(i);
-	//
-	//	if (enemy != owner_)
-	//	{
-	//		const XMFLOAT3	otherPosition = enemy->GetPosition();
-	//		const float		otherVx = targetPosition.x - otherPosition.x;
-	//		const float		otherVz = targetPosition.z - otherPosition.z;
-	//		const float		otherLengthSq = (otherVx * otherVx + otherVz * otherVz);
-	//
-	//		if (lengthSq > otherLengthSq) return false;
-	//	}
-	//}
+	// カメラ外なら遠距離攻撃をしない
+	bool isInCamera = false;
+	Sprite::ConvertToScreenPos(position, &isInCamera);
+	if (false == isInCamera) { return false; }
 
 	return true;
 }
+
+// ひるみ判定関数
+const bool FlinchJudgment::Judgment()
+{
+	// ひるみフラグが立っていなければfalse
+	if (false == owner_->GetIsFlinch()) return false;
+
+	// ひるませる
+	return true;
+}
+
+
 
 // BattleNodeに遷移できるか判定
 const bool BattleJudgment::Judgment()

@@ -2,6 +2,9 @@
 
 #include "../../Taki174/OperatorXMFloat3.h"
 #include "Character.h"
+#include "BehaviorTree.h"
+#include "BehaviorData.h"
+#include "NodeBase.h"
 
 class Enemy : public Character
 {
@@ -32,19 +35,50 @@ public:
     //virtual void UpdateConstants() = 0;
 
 public:
-
-    int GetType() { return type; }
-    void SetType(int t) { type = t; }
+    const TYPE GetType() const { return type; }
+    void SetType(const TYPE t) { type = t; }
 
     const DirectX::XMFLOAT3& GetVelocity() const { return velocity_; }
     void SetVelocity(const DirectX::XMFLOAT3& velocity) { velocity_ = velocity; }
     void AddVelocity(const DirectX::XMFLOAT3& velocity) { velocity_ += velocity; }
 
+    const float GetRunTimer() const { return runTimer_; }
+    void SetRunTimer(const float runTimer) { runTimer_ = runTimer; }
+
+    const float GetAnimationSpeed() const { return animationSpeed_; }
+    void SetAnimationSpeed(const float animationSpeed) { animationSpeed_ = animationSpeed; }
+
+    const int GetStep() const { return step_; }
+    void SetStep(const int step) { step_ = step; }
+
+    const bool GetEntryStageFlag() const { return entryStageFlag_; }
+    void SetEntryStageFlag(const bool entryStageFlag) { entryStageFlag_ = entryStageFlag; }
+
+    const bool GetIsFlinch() const { return isFlinch_; }
+    void SetIsFlinch(const bool isFlinch) { isFlinch_ = isFlinch; }
+
+public:
+    // 実行タイマー経過
+    void ElapseRunTimer(const float elapsedTime) { runTimer_ = (std::max)(0.0f, runTimer_ - elapsedTime); }
+
+    // ひるませる
+    void Flinch();
+
 protected:
+    std::unique_ptr<BehaviorTree>   behaviorTree_;
+    std::unique_ptr<BehaviorData>   behaviorData_;  // 主にシーケンスに使う
+    NodeBase*           activeNode_     = nullptr;  // BehaviorTreeのノードを指すだけのポインタなのでdeleteしない
+
     DirectX::XMFLOAT3   velocity_       = {};
-    int                 dropExpCount_   = 5;    // ドロップする経験値の数
+    float               runTimer_       = 0.0f;     // 実行タイマー
+    float               animationSpeed_ = 1.0f;     // アニメーション速度
+    int                 dropExpCount_   = 5;        // ドロップする経験値の数
+    int                 step_           = 0;        // 行動ステップ
+    bool                entryStageFlag_ = false;    // ステージに入ったかどうかのフラグ
+    bool                isFlinch_       = false;    // ひるみフラグ
 
 private:
-    int type = 0;
+    TYPE type = TYPE::Normal;
+
 };
 

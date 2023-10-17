@@ -8,6 +8,7 @@
 
 int EnemyGolem::nameNum_;
 
+
 // コンストラクタ
 EnemyGolem::EnemyGolem()
 {
@@ -34,6 +35,7 @@ EnemyGolem::EnemyGolem()
     {
         stateMachine.reset(new StateMachine<State<EnemyGolem>>);
 
+        GetStateMachine()->RegisterState(new EnemyGolemState::DummyState(this));
         GetStateMachine()->RegisterState(new EnemyGolemState::IdleState(this));
         GetStateMachine()->RegisterState(new EnemyGolemState::EntryState(this));
         GetStateMachine()->RegisterState(new EnemyGolemState::RoarState(this));
@@ -46,17 +48,18 @@ EnemyGolem::EnemyGolem()
         GetStateMachine()->RegisterState(new EnemyGolemState::ChoseState(this));
         GetStateMachine()->RegisterState(new EnemyGolemState::DeathState(this));
         GetStateMachine()->RegisterState(new EnemyGolemState::WalkState(this));
+        GetStateMachine()->RegisterState(new EnemyGolemState::Attack2State(this));
 
-        GetStateMachine()->SetState(static_cast<UINT>(StateMachineState::IdleState));
+        GetStateMachine()->SetState(static_cast<UINT>(StateMachineState::DummyState));
     }
 
-    SetType(static_cast<UINT>(Enemy::TYPE::Golem));
+    SetType(Enemy::TYPE::Golem);
 
     // ImGui名前設定
     SetName("EnemyGolem" + std::to_string(nameNum_++));
 
     //身長設定
-    height = 2.0f;
+    lockOnHeight = 2.0f;
 }
 
 // デストラクタ
@@ -86,6 +89,9 @@ void EnemyGolem::Initialize()
     Character::PlayAnimation(static_cast<UINT>(Animation::Idle), true);
 
     currentState = static_cast<UINT>(StateMachineState::IdleState);
+
+    // ステージに入場済み扱いにする
+    entryStageFlag_ = true;
 
 #ifdef _DEBUG
     currentStateDebug = 0;
@@ -119,6 +125,7 @@ void EnemyGolem::Update(const float& elapsedTime)
     }
 
     UpdateSummoningMagicCircle(4.0f, 3.0f, DirectX::XMConvertToRadians(45));
+    UpdateAttack2MagicCircle(2.0f, 3.5f);
 
     // ステートマシン更新
     GetStateMachine()->Update(elapsedTime);
@@ -144,6 +151,8 @@ void EnemyGolem::Render(const float& scale, ID3D11PixelShader* psShader)
 
     // 必要な時だけ描画する
     SubRender();
+
+    //magicCircleGolemAttack2->Render(DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
 }
 
 // 影描画用
@@ -169,38 +178,44 @@ void EnemyGolem::DrawDebug()
 
         comboAttackStone->DrawDebug();
 
-        ImGui::SliderInt("currentState", &currentStateDebug, 0, 8);
+        ImGui::SliderInt("currentState", &currentStateDebug, 0, 10);
 
         if (ImGui::Button(stateName[currentStateDebug]))
         {
             switch (currentStateDebug)
             {
             case 0:
-                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::EntryState));
+                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::DummyState));
                 break;
             case 1:
-                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::SummonState));
+                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::EntryState));
                 break;
             case 2:
-                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::RoarState));
+                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::SummonState));
                 break;
             case 3:
-                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::Attack1State));
+                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::RoarState));
                 break;
             case 4:
-                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::ComboAttack1State));
+                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::Attack1State));
                 break;
             case 5:
-                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::DownState));
+                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::ComboAttack1State));
                 break;
             case 6:
-                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::ComboAttack2State));
+                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::DownState));
                 break;
             case 7:
-                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::DeathState));
+                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::ComboAttack2State));
                 break;
             case 8:
+                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::DeathState));
+                break;
+            case 9:
                 GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::WalkState));
+                break;
+            case 10:
+                GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::Attack2State));
                 break;
             }
         }
@@ -229,10 +244,6 @@ void EnemyGolem::SubRender()
         // 召喚魔法
         magicCircleEnemySummon->Render(DirectX::XMFLOAT4(magicCircleColor[0]));
         break;
-    case static_cast<UINT>(StateMachineState::Attack2State):
-        // 攻撃２
-        magicCircleGolemAttack2->Render(DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
-        break;
     case static_cast<UINT>(StateMachineState::ComboAttack1State):
         // コンボ攻撃１
         comboAttackStone->Render();
@@ -245,7 +256,12 @@ void EnemyGolem::SubRender()
         }
         break;
     }
-    //magicCircleGolem->Render();
+    
+    if (magicCircleGolemAttack2->isAttack2)
+    {
+        // 攻撃２
+        magicCircleGolemAttack2->Render(DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
+    }
 }
 
 // 召喚魔法陣更新処理
@@ -336,6 +352,49 @@ void EnemyGolem::UpdateSummoningMagicCircle(const float& lengthX, const float& l
 }
 
 // 攻撃魔法陣更新処理
-void EnemyGolem::UpdateAttack2MagicCircle(const DirectX::XMFLOAT3& length, const float& angle)
+void EnemyGolem::UpdateAttack2MagicCircle(const float& lengthX, const float& lengthZ)
 {
+    // ゴーレムの位置
+    DirectX::XMFLOAT3 ownerPosition = GetTransform()->GetPosition();
+    // ゴーレムの前ベクトル
+    DirectX::XMFLOAT3 ownerFrontVec = GetTransform()->CalcForward();
+    // ゴーレムの右ベクトル
+    DirectX::XMFLOAT3 ownerRightVec = GetTransform()->CalcRight();
+    
+
+    // 真ん中の魔法陣
+    DirectX::XMFLOAT3 centerPos =
+    {
+        ownerPosition.x + ownerFrontVec.x * 2.0f,
+        ownerPosition.y + 2.0f,
+        ownerPosition.z + ownerFrontVec.z * 2.0f
+    };
+
+    DirectX::XMFLOAT3 centerRightVec = 
+        magicCircleGolemAttack2->baseMagicCircle[static_cast<UINT>(MagicCircleGolemAttack2::MAGIC_CIRCLE::Center)]->GetTransform()->CalcRight();
+
+    float direction = 2.0f;
+    DirectX::XMFLOAT3 sidePos[2] =
+    {
+        {
+            centerPos.x + centerRightVec.x * direction,
+            centerPos.y + centerRightVec.y,
+            centerPos.z + centerRightVec.z * direction
+        },
+        {
+            centerPos.x - centerRightVec.x * direction,
+            centerPos.y - centerRightVec.y,
+            centerPos.z - centerRightVec.z * direction
+        }
+    };
+
+    magicCircleGolemAttack2->baseMagicCircle[static_cast<UINT>(MagicCircleGolemAttack2::MAGIC_CIRCLE::Center)]->GetTransform()->SetPosition(centerPos);
+    magicCircleGolemAttack2->baseMagicCircle[static_cast<UINT>(MagicCircleGolemAttack2::MAGIC_CIRCLE::Right)]->GetTransform()->SetPosition(sidePos[0]);
+    magicCircleGolemAttack2->baseMagicCircle[static_cast<UINT>(MagicCircleGolemAttack2::MAGIC_CIRCLE::Left)]->GetTransform()->SetPosition(sidePos[1]);
+    
+    for (int i = 0; i < static_cast<UINT>(MagicCircleGolemAttack2::MAGIC_CIRCLE::Max); ++i)
+    {
+        magicCircleGolemAttack2->baseMagicCircle[i]->GetTransform()->
+            SetRotationY(GetTransform()->GetRotation().y);
+    }
 }

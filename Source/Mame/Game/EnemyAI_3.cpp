@@ -38,16 +38,19 @@ EnemyAI_3::EnemyAI_3()
 
     // BehaviorTree設定
     {
-        behaviorData_ = make_unique<BehaviorData>();
-        behaviorTree_ = make_unique<BehaviorTree>(this);
+        behaviorData_ = make_unique<BehaviorData>();        // ビヘイビアデータ生成
+        behaviorTree_ = make_unique<BehaviorTree>(this);    // ビヘイビアツリー生成
 
-        behaviorTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);
-        behaviorTree_->AddNode("Root", "LongRangeAttack", 1, SelectRule::Non, new LongRangeAttackJudgment(this), new LongRangeAttackAction(this));
-        behaviorTree_->AddNode("Root", "Pursuit", 2, SelectRule::Non, new PursuitJudgment(this), new PursuitAction(this));
-        behaviorTree_->AddNode("Root", "Idle", 3, SelectRule::Non, nullptr, new IdleAction(this));
+        // ビヘイビアノード追加
+        behaviorTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);                                                                  // 根っこ
+        behaviorTree_->AddNode("Root", "Flinch",           1, SelectRule::Non, new FlinchJudgment(this),           new FlinchAction(this));             // ひるみ
+        behaviorTree_->AddNode("Root", "EntryStage",       2, SelectRule::Non, new EntryStageJudgment(this),       new EntryStageAction(this));         // ステージ入場
+        behaviorTree_->AddNode("Root", "CloseRangeAttack", 3, SelectRule::Non, new LongRangeAttackJudgment(this),  new LongRangeAttackAction(this));    // 遠距離攻撃
+        behaviorTree_->AddNode("Root", "Pursuit",          4, SelectRule::Non, new PursuitJudgment(this),          new PursuitAction(this));            // 追跡
+        behaviorTree_->AddNode("Root", "Idle",             5, SelectRule::Non, nullptr,                            new IdleAction(this));               // 待機
     }
 
-    SetType(static_cast<UINT>(Enemy::TYPE::Normal));
+    SetType(Enemy::TYPE::Normal);
 
     // ImGui名前設定
     SetName("EnemyAI_3 : " + std::to_string(nameNum_++));
@@ -119,7 +122,7 @@ void EnemyAI_3::UpdateConstants()
         // emissiveTexture ScrollDirection
         SetEmissiveScrollDirection(DirectX::XMFLOAT2(0.25f, 0.5f));
 
-        // color 
+        // color
         SetEmissiveColor(DirectX::XMFLOAT4(0.00f, 0.80f, 0.81f, 1.0f));
     }
 

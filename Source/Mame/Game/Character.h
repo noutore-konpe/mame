@@ -81,33 +81,30 @@ public: // æ“¾Eİ’èŠÖ”
     DirectX::XMFLOAT3 GetJointPosition(size_t meshIndex, size_t boneIndex, const float& scale);
 
     Transform* GetTransform() { return model->GetTransform(); }
-    //Transform* GetCollisionSphereTransform() { return &collisionSphereTransform; }
 
     const DirectX::XMFLOAT3& GetPosition() { return GetTransform()->GetPosition(); }
     void SetPosition(const DirectX::XMFLOAT3& pos) { GetTransform()->SetPosition(pos); }
 
-    //void SetDebugSphereOffset(DirectX::XMFLOAT3 offset) { debugSphereOffset = offset; }
-    //DirectX::XMFLOAT3 GetDebugSphereOffset() { return debugSphereOffset; }
-
     const char* const GetName() const { return name_.c_str(); }
     void SetName(const std::string& n) { name_ = n; }
-
-    //// ¦radius‚Éæ‚èŠ·‚¦—\’è
-    //void SetRange(const float r) { range = r; }
-    //float GetRange() { return range; }
 
     void SetRadius(const float radius) { radius_ = radius; }
     const float GetRadius() const { return radius_; }
 
-    const float GetHeight() const { return height; }
+
+    const float GetLockOnHeight() const { return lockOnHeight; }
+
+    void SetHeight(const float height) { height_ = height; }
+    const float GetHeight() const { return height_; }
+
 
     // emissive ¦constans‚Ì‚â‚Â‚È‚Ì‚Å‚±‚¢‚Â‚ğg‚¤êŠ‚Í UpdateConstans‚Åg‚Á‚Ä‚Ù‚µ‚¢
     void SetEmissiveIntensity(float intensity) { model->skinned_meshes->data.emissiveIntensity = intensity; }
     void SetEmissiveScrollDirection(DirectX::XMFLOAT2 scroll) { model->skinned_meshes->data.emissiveScrollDirection = scroll; }
     void SetEmissiveColor(DirectX::XMFLOAT4 color) { model->skinned_meshes->data.emissiveColor = color; }
 
-    const float GetDefense() const { return defense; }
-    void AddDefense(const float defe) { defense += defe; }
+    const float GetDefense() const { return defence; }
+    void AddDefense(const float defe) { defence += defe; }
 
     std::vector<SphereCollider> GetHitCollider() { return hitCollider; }//‹ò‚ç‚¢”»’èæ“¾
     std::vector<SphereCollider> GetAttackCollider() { return attackCollider; }//UŒ‚”»’èæ“¾
@@ -144,6 +141,7 @@ public: // ‚»‚Ì‘¼‚ÌŠÖ”
 public:
     std::unique_ptr<Model> model;
 
+
 //#ifdef _DEBUG
 //    std::unique_ptr<Model> debugSqhere;   // “–‚½‚è”»’è—pQ‹…
 //#endif // _DEBUG
@@ -156,27 +154,21 @@ public:
     bool isInvincible = false;
 
 protected:
-    float defense = 0.0f;//–hŒä—Í
+    std::string name_           = "";       // –¼‘O(ImGui‚Ég—p)
+    float       radius_         = 0.25f;    // ”¼Œa(“–‚½‚è”»’è‚Ég—p)
+    float       height_         = 1.5f;     // ‚‚³(ˆÊ’uC³‚Ég—p)
+
 
     float maxHealth;
     float health;                   // hp
     float invincibleTime = 1.0f;    // –³“GŠÔ
 
-    float height = 1.0f;//g’·
+    float lockOnHeight = 1.0f;//g’·
+    float       defence         = 0.0f;     // –hŒä—Í
 
     //--------------------------------‹ò‚ç‚¢AUŒ‚”»’è------------------------------------
     std::vector<SphereCollider> hitCollider;
     std::vector<SphereCollider> attackCollider;
     //--------------------------------------------------------------------------------
-
-
-protected:
-    //Transform collisionSphereTransform{};
-    //DirectX::XMFLOAT3 debugSphereOffset{};  // “–‚½‚è”»’è—p
-    //float       range = 1.0f;               // ‹…“–‚½‚è”»’è”¼Œa(¦radius‚Éæ‚èŠ·‚¦—\’è)
-
-    std::string name_    = "";
-    float       radius_ = 0.25f;
-
 };
 

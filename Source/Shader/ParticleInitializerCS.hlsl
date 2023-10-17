@@ -28,10 +28,11 @@ void main(uint3 dtid : SV_DISPATCHTHREADID)
     
     
     
-        p.color.xyz = particleColor.rgb;
+    p.color.xyz = particleColor.rgb;
     p.color.w = 1.0f;
     
-    p.age = 10.0 * f2;
+    p.age = 100.0 * f2;
+    //p.age = 10.0 * f2;
     p.state = 0;
     
     particleBuffer[id] = p;

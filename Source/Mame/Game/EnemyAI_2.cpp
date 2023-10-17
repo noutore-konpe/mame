@@ -46,15 +46,18 @@ EnemyAI_2::EnemyAI_2()
 
     // BehaviorTree設定
     {
-        behaviorData_ = make_unique<BehaviorData>();
-        behaviorTree_ = make_unique<BehaviorTree>(this);
+        behaviorData_ = make_unique<BehaviorData>();        // ビヘイビアデータ生成
+        behaviorTree_ = make_unique<BehaviorTree>(this);    // ビヘイビアツリー生成
 
-        behaviorTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);
-        behaviorTree_->AddNode("Root", "CloseRangeAttack", 1, SelectRule::Non, new CloseRangeAttackJudgment(this), new CloseRangeAttackAction(this));
-        behaviorTree_->AddNode("Root", "Pursuit",          2, SelectRule::Non, new PursuitJudgment(this), new PursuitAction(this));
-        behaviorTree_->AddNode("Root", "Idle",             3, SelectRule::Non, nullptr, new IdleAction(this));
+        // ビヘイビアノード追加
+        behaviorTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);                                                                  // 根っこ
+        behaviorTree_->AddNode("Root", "Flinch",           1, SelectRule::Non, new FlinchJudgment(this),           new FlinchAction(this));             // ひるみ
+        behaviorTree_->AddNode("Root", "EntryStage",       2, SelectRule::Non, new EntryStageJudgment(this),       new EntryStageAction(this));         // ステージ入場
+        behaviorTree_->AddNode("Root", "CloseRangeAttack", 3, SelectRule::Non, new CloseRangeAttackJudgment(this), new CloseRangeAttackAction(this));   // 近距離攻撃
+        behaviorTree_->AddNode("Root", "Pursuit",          4, SelectRule::Non, new PursuitJudgment(this),          new PursuitAction(this));            // 追跡
+        behaviorTree_->AddNode("Root", "Idle",             5, SelectRule::Non, nullptr,                            new IdleAction(this));               // 待機
     }
-    SetType(static_cast<UINT>(Enemy::TYPE::Normal));
+    SetType(Enemy::TYPE::Normal);
 
 
 

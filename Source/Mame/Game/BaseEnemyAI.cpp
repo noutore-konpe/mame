@@ -32,7 +32,6 @@ void BaseEnemyAI::Update(const float& elapsedTime)
 
     // Œ•‚ÌXV
     UpdateSword(elapsedTime);
-
 }
 
 void BaseEnemyAI::Render(const float& scale, ID3D11PixelShader* psShader)

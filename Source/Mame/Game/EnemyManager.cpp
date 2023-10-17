@@ -2,6 +2,7 @@
 
 #include "../../Taki174/Common.h"
 #include "../../Taki174/FunctionXMFloat3.h"
+#include "../Scene/SceneGame.h"
 #include "../Game/Collision.h"
 
 void EnemyManager::Initialize()
@@ -94,8 +95,11 @@ void EnemyManager::Update(const float elapsedTime)
 
     projectileManager_.Update(elapsedTime);
 
-    // エネミー同士の衝突判定処理
+    // エネミー同士の衝突処理
     CollisionEnemyVsEnemy(elapsedTime);
+
+    // 敵とステージとの衝突処理
+    CollisionEnemyVsStage(elapsedTime);
 
 }
 
@@ -115,6 +119,11 @@ void EnemyManager::Render(const float scale, ID3D11PixelShader* psShader)
 {
     for (Enemy*& enemy : enemies_)
     {
+        // カメラ外なら描画しない
+        bool isInCamera = false;
+        Sprite::ConvertToScreenPos(enemy->GetTransform()->GetPosition(), &isInCamera);
+        if (false == isInCamera) { continue; }
+
         enemy->Render(scale, psShader);
     }
 
@@ -157,6 +166,16 @@ void EnemyManager::DrawDebug()
 #ifdef USE_IMGUI
     if (ImGui::BeginMenu("Enemies"))
     {
+
+        // 敵ひるませるボタン
+        if (ImGui::Button("FlinchEnemies"))
+        {
+            for (Enemy*& enemy : enemies_)
+            {
+                enemy->Flinch();
+            }
+        }
+
         for (Enemy*& enemy : enemies_)
         {
             enemy->DrawDebug();
@@ -193,7 +212,7 @@ void EnemyManager::RenderShadow(const float scale, ID3D11PixelShader* psShader)
     for (Enemy*& enemy : enemies_)
     {
         // ゴーレムじゃなかったら描画
-        if (enemy->GetType() != static_cast<UINT>(Enemy::TYPE::Golem))
+        if (enemy->GetType() != Enemy::TYPE::Golem)
         {
             enemy->Render(scale, psShader);
         }
@@ -224,18 +243,16 @@ void EnemyManager::CollisionEnemyVsEnemy(const float /*elapsedTime*/)
         {
             Enemy* enemyB = enemyManager.GetEnemy(b);
 
-            const XMFLOAT3  positionA   = enemyA->GetPosition();
-            const XMFLOAT3  positionB   = enemyB->GetPosition();
-            const float     radiusA     = enemyA->GetRadius();
-            const float     radiusB     = enemyB->GetRadius();
+            const XMFLOAT3& positionA = enemyA->GetPosition();
+            const XMFLOAT3& positionB = enemyB->GetPosition();
+            const float     radiusA   = enemyA->GetRadius();
+            const float     radiusB   = enemyB->GetRadius();
 
-            const XMFLOAT3  vecAtoB     = positionB - positionA;
-            const float     lengthSq    = ::XMFloat3LengthSq(vecAtoB);
-            const float     range       = radiusA + radiusB;
-
+            const XMFLOAT3  vecAtoB   = positionB - positionA;
+            const float     lengthSq  = ::XMFloat3LengthSq(vecAtoB);
+            const float     range     = radiusA + radiusB;
 
             if (lengthSq > (range * range)) continue;
-
 
             const XMFLOAT3 vecAtoB_N = ::XMFloat3Normalize(vecAtoB);
 
@@ -257,6 +274,41 @@ void EnemyManager::CollisionEnemyVsEnemy(const float /*elapsedTime*/)
 
         }
 
+    }
+
+}
+
+
+void EnemyManager::CollisionEnemyVsStage(const float /*elapsedTime*/)
+{
+    using DirectX::XMFLOAT3;
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    // 敵のステージ内外判定処理を行う
+    const size_t enemyCount = enemyManager.GetEnemyCount();
+    for (size_t i = 0; i < enemyCount; ++i)
+    {
+        Enemy* enemy = enemyManager.GetEnemy(i);
+
+        // 敵がまだステージに入場していなければ判定を行わない
+        if (false == enemy->GetEntryStageFlag()) continue;
+
+        // 距離の二乗を取得
+        Transform*     enemyT   = enemy->GetTransform();
+        const XMFLOAT3 vec      = enemyT->GetPosition() - SceneGame::stageCenter;
+        const float    lengthSq = ::XMFloat3LengthSq(vec);
+
+        // ステージの半径の二乗を取得
+        const float stageRadiusSq = SceneGame::stageRadius * SceneGame::stageRadius;
+
+        // ステージ内にいるならcontinue
+        if (lengthSq <= stageRadiusSq) continue;
+
+        // ベクトルを正規化
+        const XMFLOAT3 vecN = vec / ::sqrtf(lengthSq);
+
+        // 修正した位置を代入
+        enemyT->SetPosition(SceneGame::stageCenter + vecN * SceneGame::stageRadius);
     }
 
 }
