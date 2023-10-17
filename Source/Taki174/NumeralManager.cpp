@@ -97,6 +97,6 @@ void NumeralManager::CreateDamageNumeral(
     const float rowOffset)
 {
     DamageNumeral* dmgNumeral = new DamageNumeral(damage, worldPos, size, color, angle, rowOffset);
-    dmgNumeral->SetParent(parent);
+    dmgNumeral->SetParent(parent); // ’Ç]‚·‚ée‚ğİ’è
     this->Register(dmgNumeral);
 }

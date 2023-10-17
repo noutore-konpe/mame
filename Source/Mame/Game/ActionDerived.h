@@ -13,7 +13,6 @@ public:
 
 };
 
-
 // ë“ã@çsìÆ
 class IdleAction : public ActionBase
 {
@@ -56,6 +55,15 @@ public:
 	const ActionBase::State Run(const float elapsedTime) override;
 };
 
+// Ç–ÇÈÇ›çsìÆ
+class FlinchAction : public ActionBase
+{
+public:
+	template <class TemplateAI>
+	FlinchAction(TemplateAI* enemy) : ActionBase(enemy) {}
+	const ActionBase::State Run(const float elapsedTime) override;
+
+};
 
 
 // í èÌçUåÇ

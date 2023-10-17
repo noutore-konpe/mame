@@ -53,6 +53,9 @@ public: // 取得・設定
     const float GetAnimationSpeed() const { return animationSpeed_; }
     void SetAnimationSpeed(const float animationSpeed) { animationSpeed_ = animationSpeed; }
 
+    const bool GetIsFlinch() const { return isFlinch_; }
+    void SetIsFlinch(const bool isFlinch) { isFlinch_ = isFlinch; }
+
 public:
     void Move(
         const float vx,
@@ -99,20 +102,21 @@ protected:
     DirectX::XMFLOAT3 targetPosition_ = {};
     DirectX::XMFLOAT3 moveVec_  = {};
 
-    float moveSpeed_    = 3.5f;
-    float maxMoveSpeed_ = 0.0f;
-    float turnSpeed_    = 360.0f;
-    float gravity_      = -1.0f;
-    float friction_     = 0.2f;
-    float airControl_   = 0.3f;
-    float acceleration_ = 0.3f;
+    float moveSpeed_        = 3.5f;
+    float maxMoveSpeed_     = 0.0f;
+    float turnSpeed_        = 360.0f;
+    float gravity_          = -1.0f;
+    float friction_         = 0.2f;
+    float airControl_       = 0.3f;
+    float acceleration_     = 0.3f;
 
-    float attackLength_ = 3.0f; // 攻撃距離
-    float runTimer_     = 0.0f;
+    float attackLength_     = 3.0f;     // 攻撃距離
+    float runTimer_         = 0.0f;
 
-    float animationSpeed_ = 1.0f; // アニメーション速度
+    float animationSpeed_   = 1.0f;     // アニメーション速度
 
-    bool isGround_      = false;
+    bool isGround_          = false;
+    bool isFlinch_          = false;    // ひるみフラグ
 
 };
 

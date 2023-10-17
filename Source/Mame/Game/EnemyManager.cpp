@@ -119,6 +119,11 @@ void EnemyManager::Render(const float scale, ID3D11PixelShader* psShader)
 {
     for (Enemy*& enemy : enemies_)
     {
+        // ƒJƒƒ‰ŠO‚È‚ç•`‰æ‚µ‚È‚¢
+        bool isInCamera = false;
+        Sprite::ConvertToScreenPos(enemy->GetTransform()->GetPosition(), &isInCamera);
+        if (false == isInCamera) { continue; }
+
         enemy->Render(scale, psShader);
     }
 

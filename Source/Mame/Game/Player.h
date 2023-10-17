@@ -30,7 +30,10 @@ public: // enumŠÖ˜A
         Jab_1,
         Jab_2,
         //Jab_3,
-        Avoid
+        Avoid,
+        Avoid2,
+        Avoid3,
+        Flinch, // ‚Ð‚é‚Ý
     };
 
 

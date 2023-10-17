@@ -152,8 +152,8 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 			return ActionBase::State::Complete;
 		}
 
-		const XMFLOAT3	pos				= owner_->GetPosition();
-		const XMFLOAT3	plPos			= plManager.GetPlayer()->GetPosition();
+		const XMFLOAT3&	pos				= owner_->GetPosition();
+		const XMFLOAT3&	plPos			= plManager.GetPlayer()->GetPosition();
 		const float		vx				= plPos.x - pos.x;
 		const float		vz				= plPos.z - pos.z;
 		const float		lengthSq		= (vx * vx + vz * vz);
@@ -449,6 +449,53 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 }
 
 
+// ひるみ行動
+const ActionBase::State FlinchAction::Run(const float elapsedTime)
+{
+	using Animation = Player::Animation;
+
+	switch (step_)
+	{
+	case 0:
+		//owner_->SetRunTimer(1.5f);
+
+		// ひるみアニメーション再生
+		{
+			owner_->PlayAnimation(Animation::Flinch, owner_->GetAnimationSpeed());
+
+			Model* sword = owner_->GetSword();
+			if (sword != nullptr)
+			{
+				sword->PlayAnimation(Animation::Flinch, owner_->GetAnimationSpeed());
+			}
+		}
+
+		[[fallthrough]];
+		//break;
+	case 1:
+		//owner_->ElapseRunTimer(elapsedTime);
+
+		//// 時間が経過したらひるみを終了
+		//if (owner_->GetRunTimer() <= 0.0f)
+		// ひるみアニメーションが終わったら終了
+		if (false == owner_->IsPlayAnimation())
+		{
+			step_ = 0;
+			owner_->SetIsFlinch(false); // ひるみフラグを下ろす
+
+			return ActionBase::State::Complete;
+		}
+
+		break;
+	}
+
+	return ActionBase::State::Run;
+}
+
+
+
+
+
 // 攻撃行動
 const ActionBase::State NormalAction::Run(const float /*elapsedTime*/)
 {
@@ -597,6 +644,7 @@ const ActionBase::State LeaveAction::Run(const float /*elapsedTime*/)
 	return ActionBase::State::Run;
 }
 
+
 // 回復行動
 const ActionBase::State RecoverAction::Run(const float /*elapsedTime*/)
 {
@@ -618,3 +666,4 @@ const ActionBase::State RecoverAction::Run(const float /*elapsedTime*/)
 
 	return ActionBase::State::Run;
 }
+
