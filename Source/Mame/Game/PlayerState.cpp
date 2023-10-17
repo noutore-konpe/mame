@@ -218,7 +218,7 @@ namespace PlayerState
     void SoftStaggerState::Initialize()
     {
         owner->PlayAnimation(Player::Animation::SoftStagger, false,1.5f);
-        owner->isInvincible = true;//–³“G
+        //owner->isInvincible = true;//–³“G
         owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
     }
     void SoftStaggerState::Update(const float& elapsedTime)
@@ -230,7 +230,7 @@ namespace PlayerState
     }
     void SoftStaggerState::Finalize()
     {
-        owner->isInvincible = false;
+        //owner->isInvincible = false;
     }
 
     void HardStaggerState::Initialize()

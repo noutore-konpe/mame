@@ -498,6 +498,11 @@ void Player::Render(const float scale, ID3D11PixelShader* psShader)
         {
             collider.DebugRender();
         }
+
+        for (auto& collider : attackCollider)
+        {
+            collider.DebugRender(DirectX::XMFLOAT4(1,0,0,1));
+        }
     }
     
 #endif // _DEBUG
@@ -507,7 +512,7 @@ void Player::Render(const float scale, ID3D11PixelShader* psShader)
     abilityManager_.Render(scale);
 
     //判定移動
-    ColliderPosUpdate(scale);
+    //ColliderPosUpdate(scale);
 }
 
 void Player::SkillImagesRender()
@@ -995,9 +1000,9 @@ void Player::ColliderPosUpdate(const float& scale)
         //DirectX::XMFLOAT4X4 world{};
         //DirectX::XMStoreFloat4x4(&world, swordModel->GetTransform()->CalcWorldMatrix(scale));
         ////const std::string swordMeshName = "sword_rig_1004:sword_rig_1005:sword_mdl_1005:Sword";
-        //const std::string swordMeshName = "sword_mdl_1005:Sword";
-        //const DirectX::XMFLOAT3 swordRoot = swordModel->skinned_meshes->JointPosition(swordMeshName, "j_sword",&swordModel->keyframe ,world);//根本
-        //const DirectX::XMFLOAT3 swordTip = swordModel->skinned_meshes->JointPosition(swordMeshName, "j_sword_end", &swordModel->keyframe, world);//先端
+        //const std::string swordMeshName = "sword_rig_1004:sword_rig_1005:sword_mdl_1005:Sword";
+        //const DirectX::XMFLOAT3 swordRoot = swordModel->skinned_meshes->JointPosition(swordMeshName, "sword_rig_1004:sword_rig_1005:j_sword",&swordModel->keyframe ,world);//根本
+        //const DirectX::XMFLOAT3 swordTip = swordModel->skinned_meshes->JointPosition(swordMeshName, "sword_rig_1004:sword_rig_1005:j_sword_end", &swordModel->keyframe, world);//先端
      
         //const DirectX::XMFLOAT3 vec = swordTip - swordRoot;
         //float swordLength = Length(vec);
