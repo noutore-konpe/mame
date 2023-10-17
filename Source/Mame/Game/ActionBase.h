@@ -25,6 +25,6 @@ public:
 protected:
 	BaseEnemyAI* owner_ = nullptr;
 
-	int step_ = 0;
+	//int step_ = 0;
 
 };

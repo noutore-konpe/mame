@@ -9,6 +9,15 @@
 
 #include <assert.h>
 
+/// <summary>
+/// ノード追加関数
+/// </summary>
+/// <param name="parentName：親の名前"></param>
+/// <param name="entryName：追加するノードの名前"></param>
+/// <param name="priority：優先順位"></param>
+/// <param name="selectRule：選択ルール"></param>
+/// <param name="judgment：行動に移る判定クラス"></param>
+/// <param name="action：行動クラス"></param>
 void BehaviorTree::AddNode(
 	const std::string& parentName,
 	const std::string& entryName,

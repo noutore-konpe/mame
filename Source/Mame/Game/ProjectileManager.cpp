@@ -1,7 +1,7 @@
 #include "ProjectileManager.h"
 
 #include "../../Taki174/Common.h"
-
+#include "../Resource/sprite.h"
 
 // コンストラクタ
 ProjectileManager::ProjectileManager()
@@ -87,6 +87,11 @@ void ProjectileManager::Render(const float scale, ID3D11PixelShader* psShader)
 {
     for (Projectile*& projectile : projectiles_)
     {
+        // カメラ外なら描画しない
+        bool isInCamera = false;
+        Sprite::ConvertToScreenPos(projectile->GetTransform()->GetPosition(), &isInCamera);
+        if (false == isInCamera) { continue; }
+
         projectile->Render(scale, psShader);
     }
 }

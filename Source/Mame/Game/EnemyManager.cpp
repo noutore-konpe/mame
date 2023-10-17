@@ -119,6 +119,11 @@ void EnemyManager::Render(const float scale, ID3D11PixelShader* psShader)
 {
     for (Enemy*& enemy : enemies_)
     {
+        // ƒJƒƒ‰ŠO‚È‚ç•`‰æ‚µ‚È‚¢
+        bool isInCamera = false;
+        Sprite::ConvertToScreenPos(enemy->GetTransform()->GetPosition(), &isInCamera);
+        if (false == isInCamera) { continue; }
+
         enemy->Render(scale, psShader);
     }
 
@@ -161,6 +166,16 @@ void EnemyManager::DrawDebug()
 #ifdef USE_IMGUI
     if (ImGui::BeginMenu("Enemies"))
     {
+
+        // “G‚Ð‚é‚Ü‚¹‚éƒ{ƒ^ƒ“
+        if (ImGui::Button("FlinchEnemies"))
+        {
+            for (Enemy*& enemy : enemies_)
+            {
+                enemy->Flinch();
+            }
+        }
+
         for (Enemy*& enemy : enemies_)
         {
             enemy->DrawDebug();
@@ -197,7 +212,7 @@ void EnemyManager::RenderShadow(const float scale, ID3D11PixelShader* psShader)
     for (Enemy*& enemy : enemies_)
     {
         // ƒS[ƒŒƒ€‚¶‚á‚È‚©‚Á‚½‚ç•`‰æ
-        if (enemy->GetType() != static_cast<UINT>(Enemy::TYPE::Golem))
+        if (enemy->GetType() != Enemy::TYPE::Golem)
         {
             enemy->Render(scale, psShader);
         }

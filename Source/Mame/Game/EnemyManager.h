@@ -48,7 +48,7 @@ public:
 public:
     // エネミー数取得
     const size_t GetEnemyCount() const { return enemies_.size(); }
-    void GetSpecifyEnemy(int type, std::vector<Enemy*>& e) const
+    void GetSpecifyEnemy(const Enemy::TYPE& type, std::vector<Enemy*>& e) const
     {
         for (Enemy* enemy : enemies_)
         {

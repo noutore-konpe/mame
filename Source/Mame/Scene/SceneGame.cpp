@@ -652,7 +652,7 @@ void SceneGame::Render(const float& elapsedTime)
         bool isBokeh = false;
         for (Enemy* enemy : EnemyManager::Instance().GetEnemies())
         {
-            if (enemy->GetType() == static_cast<UINT>(Enemy::TYPE::Golem))
+            if (enemy->GetType() == Enemy::TYPE::Golem)
             {
                 enemyGolem = enemy;
                 if (enemyGolem->GetCurrentState() == static_cast<UINT>(EnemyGolem::StateMachineState::RoarState))
@@ -811,7 +811,7 @@ void SceneGame::DebugCreateEnemyFromGateway()
     // 敵を出現させるゲートの指定(-1ならランダムで番号を決める）
     ImGui::SliderInt(
         "gateWayIndex(-1 is RandomSpawn)",
-        &gatewayIndex, -1, gatewayCount
+        &gatewayIndex, -1, (gatewayCount - 1)
     );
 
     // ゲートから敵を生成

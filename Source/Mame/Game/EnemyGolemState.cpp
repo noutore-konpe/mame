@@ -59,7 +59,7 @@ namespace EnemyGolemState
         owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Landing), false);
 
         landingTimer = 0.0f;
-        
+
         timer = 0.0f;
         isCameraShake = false;
     }
@@ -301,7 +301,7 @@ namespace EnemyGolemState
     // 初期化
     void Attack1State::Initialize()
     {
-        
+
 
         owner->SetCurrentState(static_cast<UINT>(EnemyGolem::StateMachineState::Attack1State));
 
@@ -320,7 +320,7 @@ namespace EnemyGolemState
 
     // 更新
     void Attack1State::Update(const float& elapsedTime)
-    {        
+    {
         // 腕ひき
         if (!isAttack1_tame)
         {
@@ -409,7 +409,7 @@ namespace EnemyGolemState
         isComboAttack3Up        = false;
         isComboAttack3Down      = false;
         isComboAttack3Return    = false;
-        
+
         moveTimer = 0.0f;
         moveFrontTimer = 0.0f;
 
@@ -429,7 +429,7 @@ namespace EnemyGolemState
 
         // 待機ステートへ
         if (owner->comboAttackStone->isChangeState)
-        {   
+        {
             owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::IdleState));
             owner->comboAttackStone->isChangeState = false;
         }
@@ -585,7 +585,7 @@ namespace EnemyGolemState
         {
             // アニメーションが終わったら
             if (!owner->IsPlayAnimation())
-            {                
+            {
             }
         }
     }
@@ -607,7 +607,7 @@ namespace EnemyGolemState
 
         return false;
     }
-    
+
     // 回転処理
     void ComboAttack1State::Turn(const float& elapsedTime)
     {
@@ -648,7 +648,7 @@ namespace EnemyGolemState
                 isDown = true;
             }
         }
-        
+
         if (!isReturn && isDown)
         {
             getUpTimer += elapsedTime;
@@ -711,7 +711,7 @@ namespace EnemyGolemState
             AttackUpdate(elapsedTime);
         }
         else
-        {   
+        {
             if (delayTimer >= maxDelayTime)
             {
                 // 待機ステート
@@ -815,7 +815,7 @@ namespace EnemyGolemState
             if (setState == static_cast<UINT>(STATE::Summon))
             {
                 std::vector<Enemy*> enemy;
-                EnemyManager::Instance().GetSpecifyEnemy(static_cast<UINT>(Enemy::TYPE::Normal), enemy);
+                EnemyManager::Instance().GetSpecifyEnemy(Enemy::TYPE::Normal, enemy);
 
                 if (enemy.size() > 0)
                 {
@@ -858,7 +858,7 @@ namespace EnemyGolemState
             owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::Attack2State));
             break;
         }
-        
+
         isState[setState] = true;
     }
 
@@ -948,7 +948,7 @@ namespace EnemyGolemState
             true);
 
         owner->model->weight = 0.0f;
-        
+
         // 変数初期化
         isChangeState = false;
         moveSpeed = 0.0f;
@@ -1015,7 +1015,7 @@ namespace EnemyGolemState
         vec = Normalize(vec);
         vec = vec * moveSpeed * elapsedTime;
         vec.y = 0.0f;   // Yは移動なし。
-        
+
         owner->GetTransform()->AddPosition(vec);
     }
 
@@ -1053,7 +1053,7 @@ namespace EnemyGolemState
         }
 
         // 回転処理
-        Turn(elapsedTime);  
+        Turn(elapsedTime);
     }
 
     // 終了化

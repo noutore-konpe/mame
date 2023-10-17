@@ -53,7 +53,7 @@ EnemyGolem::EnemyGolem()
         GetStateMachine()->SetState(static_cast<UINT>(StateMachineState::DummyState));
     }
 
-    SetType(static_cast<UINT>(Enemy::TYPE::Golem));
+    SetType(Enemy::TYPE::Golem);
 
     // ImGui–¼‘Oİ’è
     SetName("EnemyGolem" + std::to_string(nameNum_++));
