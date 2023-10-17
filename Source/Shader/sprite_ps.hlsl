@@ -6,7 +6,7 @@ SamplerState linear_sampler_state : register(s1);
 SamplerState anisotropic_sampler_state : register(s2);
 float4 main(VS_OUT pin) :SV_TARGET
 {
-    float4 color = color_map.Sample(anisotropic_sampler_state,pin.texcoord);
+    float4 color = color_map.Sample(point_sampler_state, pin.texcoord);
     //return color;
     float alpha = color.a;
 #if 0

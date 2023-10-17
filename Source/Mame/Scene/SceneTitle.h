@@ -30,11 +30,28 @@ private:
     std::unique_ptr<Stage> stageBase;
     std::unique_ptr<Stage> stageWall;
 
+    std::unique_ptr<Sprite> backSprite;
+    std::unique_ptr<Sprite> emmaSprite;
+    std::unique_ptr<Sprite> pressSprite;
+
+    // ïœêî
+    bool isAlphaDown = false;
+    float pressTimer = 0.0f;
+
 private:
     std::unique_ptr<FrameBuffer> framebuffers[3];
     std::unique_ptr<FullscreenQuad> bitBlockTransfer;
 
     Microsoft::WRL::ComPtr<ID3D11Buffer> ConstantBuffer;
+    Microsoft::WRL::ComPtr<ID3D11PixelShader> finalPassPS;
+
+
+    // BLOOM
+    std::unique_ptr<Bloom> bloomer;
+    Microsoft::WRL::ComPtr<ID3D11PixelShader> bloomPS;
+
+    // FOG
+    Microsoft::WRL::ComPtr<ID3D11PixelShader> fogPS;
 
     // SHADOW
     struct Shadow

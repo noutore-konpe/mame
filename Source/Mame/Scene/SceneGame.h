@@ -9,7 +9,6 @@
 
 #include "../Graphics/Effect.h"
 #include "../Graphics/Bloom.h"
-#include "../Graphics/SkyBox.h"
 #include "../Graphics/ShadowMap.h"
 #include "../Graphics/Particle.h"
 
@@ -45,10 +44,6 @@ private: // •Ï”“™X
     // stage
     std::unique_ptr<Stage> stageBase;
     std::unique_ptr<Stage> stageWall;
-
-    // –‚–@w
-    std::unique_ptr<MagicCircleSummon> magicCircleSummon[10];
-    bool isSeveralNum = false;
 
     // effect
     Effect* effect[4];

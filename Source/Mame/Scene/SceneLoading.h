@@ -3,7 +3,10 @@
 #include "BaseScene.h"
 
 #include <thread>
+#include <memory>
 
+#include "../Game/LoadingPlayer.h"
+#include "../Resource/sprite.h"
 
 class SceneLoading : public Mame::Scene::BaseScene
 {
@@ -28,5 +31,9 @@ private:
 private:
     BaseScene*      nextScene   = nullptr;
     std::thread*    thread      = nullptr;
+
+private:
+    std::unique_ptr<LoadingPlayer> loadingPlayer = nullptr;
+    std::unique_ptr<Sprite> titleLogo = nullptr;
 };
 

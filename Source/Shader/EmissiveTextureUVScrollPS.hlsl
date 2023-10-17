@@ -1,9 +1,6 @@
 #include "FbxModel.hlsli"
 
 // íËêî
-#define POINT_LIGHT 1
-#define SPOT_LIGHT 0
-#define LIM_LIGHT 0
 #define HEMISPHERE_LIGHT 1
 
 #define POINT 0

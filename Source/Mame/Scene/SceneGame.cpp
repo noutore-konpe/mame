@@ -59,7 +59,9 @@ void SceneGame::CreateResource()
     {
         stageBase = std::make_unique<Stage>();
         stageWall = std::make_unique<Stage>
+            //("./Resources/Model/Stage/hashira.fbx",
             ("./Resources/Model/Stage/stageWall.fbx",
+                //"./Resources/Shader/CharacterPS.cso");
                 "./Resources/Shader/StageWallPS.cso");
     }
 
@@ -79,8 +81,13 @@ void SceneGame::CreateResource()
     // enemy
     {
         EnemyManager& enemyManager = EnemyManager::Instance();
+
         // EnemyGolem* enemyGolem = new EnemyGolem;
         // enemyManager.Register(enemyGolem);
+
+        EnemyGolem* enemyGolem = new EnemyGolem;
+        enemyManager.Register(enemyGolem);
+
 
 #if 0
         // max 6~7
@@ -240,10 +247,13 @@ void SceneGame::Initialize()
     expManager.Initialize();
 
 
+
     //今だけロックオン処理いれとく
     //Camera::Instance().SetLockOnTargetPos(enemyGolem->GetTransform());
 
     isDispCollision_    = false;
+
+    //isDrawCollision_    = false;
 
     //UI
     {
@@ -253,8 +263,6 @@ void SceneGame::Initialize()
 
         UserInterface::Instance().Initialize();
     }
-
-
 }
 
 // 終了化
@@ -724,12 +732,17 @@ void SceneGame::DrawDebug()
 
         ImGui::Separator();
 
+        stageBase->DrawDebug();
+        stageWall->DrawDebug();
+
         plManager.DrawDebug();
 
         ItemManager::Instance().DrawDebug();
 
         particles->DrawDebug();
 
+
+        EnemyManager& enemyManager = EnemyManager::Instance();
         enemyManager.DrawDebug();
 
         // Exp

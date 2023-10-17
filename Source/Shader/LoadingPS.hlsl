@@ -1,9 +1,5 @@
-SamplerState samplerState : register(s0);
-Texture2D textureMap : register(t8);
-
-float4 main(float4 position :SV_POSITION,float2 texcoord : TEXCOORD) : SV_TARGET
+float4 main() : SV_TARGET
 {
-    float4 color = textureMap.Sample(samplerState, texcoord);
-    
-    return color;
+    return float4(0.3f, 0.3f, 0.3f, 1.0f);
+    //return float4(1.0f, 1.0f, 1.0f, 1.0f);
 }
