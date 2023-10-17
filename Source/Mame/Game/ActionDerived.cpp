@@ -17,7 +17,7 @@ const ActionBase::State EntryStageAction::Run(const float elapsedTime)
 	using DirectX::XMFLOAT3;
 	using Animation = Player::Animation;
 
-	switch (step_)
+	switch (owner_->GetStep())
 	{
 	case 0:
 		// 現在の位置からステージ中心に向かってある程度進んだ位置を目標地点に設定
@@ -46,7 +46,7 @@ const ActionBase::State EntryStageAction::Run(const float elapsedTime)
 			}
 		}
 
-		++step_;
+		owner_->SetStep(1);
 		[[fallthrough]];
 		//break;
 	case 1:
@@ -66,7 +66,7 @@ const ActionBase::State EntryStageAction::Run(const float elapsedTime)
 		{
 			owner_->SetEntryStageFlag(true); // ステージに入った
 
-			step_ = 0;
+			owner_->SetStep(0);
 			return ActionBase::State::Complete;
 		}
 
@@ -86,7 +86,7 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 
 	PlayerManager& plManager = PlayerManager::Instance();
 
-	switch (step_)
+	switch (owner_->GetStep())
 	{
 	case 0:
 		owner_->SetRunTimer(::RandFloat(0.5f, 1.5f));
@@ -120,7 +120,7 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 			}
 		}
 
-		++step_;
+		owner_->SetStep(1);
 		[[fallthrough]];
 	//	break;
 	case 1:
@@ -145,10 +145,17 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 		//	return ActionBase::State::Complete;
 		//}
 
+		//// ひるみフラグが立っていれば終了
+		//if (true == owner_->GetIsFlinch())
+		//{
+		//	step_ = 0;
+		//	return ActionBase::State::Failed;
+		//}
+
 		// 待機時間が過ぎたら終了
 		if (owner_->GetRunTimer() <= 0.0f)
 		{
-			step_ = 0;
+			owner_->SetStep(0);
 			return ActionBase::State::Complete;
 		}
 
@@ -166,7 +173,7 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 		// 攻撃距離外になったら終了(円運動の都合上甘めに設定)
 		if (lengthSq > (attackLengthSq + 5.0f))
 		{
-			step_ = 0;
+			owner_->SetStep(0);
 			return ActionBase::State::Complete;
 		}
 
@@ -223,7 +230,7 @@ const ActionBase::State PursuitAction::Run(const float elapsedTime)
 
 	PlayerManager& plManager = PlayerManager::Instance();
 
-	switch (step_)
+	switch (owner_->GetStep())
 	{
 	case 0:
 		// 目標地点をプレイヤー位置に設定
@@ -247,7 +254,7 @@ const ActionBase::State PursuitAction::Run(const float elapsedTime)
 			}
 		}
 
-		++step_;
+		owner_->SetStep(1);
 		[[fallthrough]];
 		//break;
 	case 1:
@@ -265,7 +272,7 @@ const ActionBase::State PursuitAction::Run(const float elapsedTime)
 		const float	attackLength = owner_->GetAttackLength();
 		if (lengthSq <= attackLength * attackLength)
 		{
-			step_ = 0;
+			owner_->SetStep(0);
 			return ActionBase::State::Complete;
 		}
 		// 目標地点へ移動
@@ -290,7 +297,7 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 	PlayerManager& plManager  = PlayerManager::Instance();
 	EnemyManager&  enmManager = EnemyManager::Instance();
 
-	switch (step_)
+	switch (owner_->GetStep())
 	{
 	case 0:
 		owner_->SetRunTimer(60.0f); // タイマー設定
@@ -314,7 +321,7 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 			}
 		}
 
-		++step_;
+		owner_->SetStep(1);
 		[[fallthrough]];
 		//break;
 	case 1:
@@ -333,7 +340,7 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 		// 攻撃アニメーションが終わったら成功終了
 		if (false == owner_->IsPlayAnimation())
 		{
-			step_ = 0;
+			owner_->SetStep(0);
 
 			// CRA : 5.Action : 近接攻撃行動実行中フラグを下ろす
 			enmManager.SetIsRunningCRAAction(false);
@@ -348,7 +355,7 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 		// 行動時間が過ぎたら失敗終了
 		if (owner_->GetRunTimer() <= 0.0f)
 		{
-			step_ = 0;
+			owner_->SetStep(0);
 
 			// CRA : 5.Action : 近接攻撃行動実行中フラグを下ろす
 			enmManager.SetIsRunningCRAAction(false);
@@ -375,7 +382,7 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 
 	PlayerManager& plManager = PlayerManager::Instance();
 
-	switch (step_)
+	switch (owner_->GetStep())
 	{
 	case 0:
 		//owner_->SetRunTimer(::RandFloat(+1.0f, +1.0f));
@@ -400,7 +407,7 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 			}
 		}
 
-		++step_;
+		owner_->SetStep(1);
 		[[fallthrough]];
 		//break;
 	case 1:
@@ -431,14 +438,14 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 		// 攻撃アニメーションが終わったら成功終了
 		if (false == owner_->IsPlayAnimation())
 		{
-			step_ = 0;
+			owner_->SetStep(0);
 			return ActionBase::State::Complete; // 成功
 		}
 
 		// 行動時間が過ぎたら失敗終了
 		if (owner_->GetRunTimer() <= 0.0f)
 		{
-			step_ = 0;
+			owner_->SetStep(0);
 			return ActionBase::State::Failed; // 失敗
 		}
 
@@ -454,22 +461,24 @@ const ActionBase::State FlinchAction::Run(const float elapsedTime)
 {
 	using Animation = Player::Animation;
 
-	switch (step_)
+	switch (owner_->GetStep())
 	{
 	case 0:
 		//owner_->SetRunTimer(1.5f);
 
 		// ひるみアニメーション再生
 		{
-			owner_->PlayAnimation(Animation::Flinch, owner_->GetAnimationSpeed());
+			owner_->PlayAnimation(Animation::Flinch, false, owner_->GetAnimationSpeed());
 
 			Model* sword = owner_->GetSword();
 			if (sword != nullptr)
 			{
-				sword->PlayAnimation(Animation::Flinch, owner_->GetAnimationSpeed());
+				// こっちは待機アニメーションにしておく
+				sword->PlayAnimation(Animation::Idle, false, owner_->GetAnimationSpeed());
 			}
 		}
 
+		owner_->SetStep(1);
 		[[fallthrough]];
 		//break;
 	case 1:
@@ -480,7 +489,7 @@ const ActionBase::State FlinchAction::Run(const float elapsedTime)
 		// ひるみアニメーションが終わったら終了
 		if (false == owner_->IsPlayAnimation())
 		{
-			step_ = 0;
+			owner_->SetStep(0);
 			owner_->SetIsFlinch(false); // ひるみフラグを下ろす
 
 			return ActionBase::State::Complete;
