@@ -111,7 +111,8 @@ DebugRenderer::DebugRenderer(ID3D11Device* device)
 
 		HRESULT hr = device->CreateDepthStencilState(&desc, depthStencilState.GetAddressOf());
 		//_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
-		_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));	}
+		_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+	}
 
 	// ラスタライザーステート
 	{
@@ -136,7 +137,7 @@ DebugRenderer::DebugRenderer(ID3D11Device* device)
 	CreateSphereMesh(device, 1.0f, 16, 16);
 
 	// 円柱メッシュ作成
-	CreateCylinderMesh(device, 1.0f, 1.0f, 0.0f, 1.0f, 16, 1);
+	CreateCylinderMesh(device, 1.0f, 1.0f, 0.0f, 1.0f, 16 * 2.0f, 1);
 
 	// 箱メッシュ作成
 	CreateBoxMesh(device, 1.0f);

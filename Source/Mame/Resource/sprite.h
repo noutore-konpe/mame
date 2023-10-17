@@ -38,11 +38,16 @@ public:
         void DrawDebug();
 
         void SetPos(DirectX::XMFLOAT2 p) { pos = p; }
+        void SetPosX(const float posX) { pos.x = posX; }
+        void SetPosY(const float posY) { pos.y = posY; }
         void SetSize(DirectX::XMFLOAT2 s) { size = s; }
         void SetColor(DirectX::XMFLOAT4 c) { color = c; }
+        void SetColorW(const float colorW) { color.w = colorW; }
         void SetAngle(float a) { angle = a; }
         void SetTexPos(DirectX::XMFLOAT2 texP) { texPos = texP; }
         void SetTexSize(DirectX::XMFLOAT2 texS) { texSize = texS; }
+
+        void AddPosY(const float posY) { pos.y += posY; }
 
         DirectX::XMFLOAT2 GetPos() { return pos; }
         DirectX::XMFLOAT2 GetSize() { return size; }
@@ -115,12 +120,12 @@ public:
     );
 
     //ワールド座標からスクリーン座標に変更後描画
-    static DirectX::XMFLOAT2 ConvertToScreenPos(const DirectX::XMFLOAT3 worldPos);
+    static DirectX::XMFLOAT2 ConvertToScreenPos(const DirectX::XMFLOAT3 worldPos, bool* isDraw = nullptr); // isDraw：描画するか
 
     void Render();
     void Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size);
     void Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size, DirectX::XMFLOAT4 color);
-    void Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size, DirectX::XMFLOAT4 color, float angle/*degree*/);    
+    void Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size, DirectX::XMFLOAT4 color, float angle/*degree*/);
     void Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size, DirectX::XMFLOAT4 color, float angle/*degree*/, DirectX::XMFLOAT2 texPos, DirectX::XMFLOAT2 texSize); // 本体
 
     void DrawDebug();
@@ -185,5 +190,5 @@ private:
                                             // z: 縁の閾値
                                             // w: 空き
         DirectX::XMFLOAT4 edgeColor = {};   // 縁の色
-    };                                      
-};                                          
+    };
+};

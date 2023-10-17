@@ -4,11 +4,78 @@
 #include "../../Taki174/FunctionXMFloat3.h"
 #include "../../Taki174/Common.h"
 
+#include "../Scene/SceneGame.h"
+
 #include "BaseEnemyAI.h"
 #include "EnemyManager.h"
 #include "PlayerManager.h"
-
 #include "ProjectileStraight.h"
+
+// ステージエントリー行動
+const ActionBase::State EntryStageAction::Run(const float elapsedTime)
+{
+	using DirectX::XMFLOAT3;
+	using Animation = Player::Animation;
+
+	switch (step_)
+	{
+	case 0:
+		// 現在の位置からステージ中心に向かってある程度進んだ位置を目標地点に設定
+		{
+			const XMFLOAT3& pos  = owner_->GetTransform()->GetPosition();
+			const XMFLOAT3  vecN = ::XMFloat3Normalize(SceneGame::stageCenter - pos);
+			static constexpr float moveLength = 19.0f;	// 出入口からステージくらいまでの距離
+			owner_->SetTargetPosition(pos + vecN * moveLength);
+		}
+
+		// アニメーション再生
+		{
+			owner_->PlayBlendAnimation(
+				Animation::Idle, Animation::Dash,
+				true, owner_->GetAnimationSpeed()
+			);
+
+			// 剣のアニメーション再生
+			Model* sword = owner_->GetSword();
+			if (sword != nullptr)
+			{
+				sword->PlayBlendAnimation(
+					Animation::Idle, Animation::Dash,
+					true, owner_->GetAnimationSpeed()
+				);
+			}
+		}
+
+		++step_;
+		[[fallthrough]];
+		//break;
+	case 1:
+		// 目標地点へ移動
+		owner_->MoveToTarget(elapsedTime, 1.0);
+
+		// 目標地点とのXZ平面での距離判定
+		const XMFLOAT3&	pos		  = owner_->GetPosition();
+		const XMFLOAT3&	targetPos = owner_->GetTargetPosition();
+		const float		vx = targetPos.x - pos.x;
+		const float		vz = targetPos.z - pos.z;
+		const float		lengthXZSq = (vx * vx + vz * vz);
+
+		// 目標地点に到達したら成功終了する
+		static constexpr float acceptableLength = 0.1f; // 許容する距離
+		if (lengthXZSq <= acceptableLength * acceptableLength)
+		{
+			owner_->SetEntryStageFlag(true); // ステージに入った
+
+			step_ = 0;
+			return ActionBase::State::Complete;
+		}
+
+		break;
+	}
+
+	return ActionBase::State::Run;
+}
+
 
 // 待機行動
 const ActionBase::State IdleAction::Run(const float elapsedTime)

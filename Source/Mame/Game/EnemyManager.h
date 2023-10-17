@@ -32,6 +32,9 @@ public:
 
     void CollisionEnemyVsEnemy(const float elapsedTime);
 
+    // 敵とステージとの衝突処理
+    void CollisionEnemyVsStage(const float elapsedTime);
+
 public:
     // エネミー登録
     void Register(Enemy* enemy);

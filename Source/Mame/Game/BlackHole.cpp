@@ -121,7 +121,7 @@ void BlackHole::Render(
 #ifdef _DEBUG
 
     // 吸い込む範囲を表示
-    if (true == SceneGame::isDrawCollision_)
+    if (true == SceneGame::isDispCollision_)
     {
         // デバッグ球体描画
         DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();

@@ -1,5 +1,8 @@
 #include "EnemyAI_1.h"
 
+#include "../../Taki174/NumeralManager.h"
+#include "../../Taki174/Common.h"
+
 #include "../Graphics/Graphics.h"
 #include "../Resource/texture.h"
 
@@ -50,9 +53,10 @@ EnemyAI_1::EnemyAI_1()
         behaviorTree_ = make_unique<BehaviorTree>(this);
 
         behaviorTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);
-        behaviorTree_->AddNode("Root", "CloseRangeAttack", 1, SelectRule::Non, new CloseRangeAttackJudgment(this), new CloseRangeAttackAction(this));
-        behaviorTree_->AddNode("Root", "Pursuit",          2, SelectRule::Non, new PursuitJudgment(this),          new PursuitAction(this));
-        behaviorTree_->AddNode("Root", "Idle",             3, SelectRule::Non, nullptr,                            new IdleAction(this));
+        behaviorTree_->AddNode("Root", "EntryStage",       1, SelectRule::Non, new EntryStageJudgment(this),       new EntryStageAction(this));
+        behaviorTree_->AddNode("Root", "CloseRangeAttack", 2, SelectRule::Non, new CloseRangeAttackJudgment(this), new CloseRangeAttackAction(this));
+        behaviorTree_->AddNode("Root", "Pursuit",          3, SelectRule::Non, new PursuitJudgment(this),          new PursuitAction(this));
+        behaviorTree_->AddNode("Root", "Idle",             4, SelectRule::Non, nullptr,                            new IdleAction(this));
     }
 
     SetType(static_cast<UINT>(Enemy::TYPE::Normal));
@@ -82,6 +86,28 @@ void EnemyAI_1::Initialize()
 void EnemyAI_1::Update(const float& elapsedTime)
 {
     BaseEnemyAI::Update(elapsedTime);
+
+    // ダメージ数字生成タイマー更新処理(仮)
+    createDmgNumeralTimer_ += elapsedTime;
+    if (createDmgNumeralTimer_ >= 1.0f)
+    {
+        Transform* t = GetTransform();
+        DirectX::XMFLOAT3 position = t->GetPosition();
+        position.y += height_; // キャラクターの頭上に設定
+
+        const int               damage    = ::RandInt(0, 999);
+        const DirectX::XMFLOAT2 size      = { 30.0f, 30.0f };
+        const DirectX::XMFLOAT4 color     = { 1.0f, 0.5f, 0.0f, 1.0f };
+        const float             angle     = 0.0f;
+        const float             rowOffset = 35.0f; // 行の間隔調整用
+
+        NumeralManager& numeralManager = NumeralManager::Instance();
+        numeralManager.CreateDamageNumeral(
+            this, damage, position, size, color, angle, rowOffset
+        );
+
+        createDmgNumeralTimer_ = 0.0f;
+    }
 }
 
 

@@ -56,7 +56,7 @@ EnemyGolem::EnemyGolem()
     SetName("EnemyGolem" + std::to_string(nameNum_++));
 
     //身長設定
-    height = 2.0f;
+    lockOnHeight = 2.0f;
 }
 
 // デストラクタ
@@ -86,6 +86,9 @@ void EnemyGolem::Initialize()
     Character::PlayAnimation(static_cast<UINT>(Animation::Idle), true);
 
     currentState = static_cast<UINT>(StateMachineState::IdleState);
+
+    // ステージに入場済み扱いにする
+    entryStageFlag_ = true;
 
 #ifdef _DEBUG
     currentStateDebug = 0;

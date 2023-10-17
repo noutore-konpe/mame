@@ -1,6 +1,8 @@
 #include "SceneGame.h"
 
 #include "../../Taki174/Common.h"
+#include "../../Taki174/FunctionXMFloat3.h"
+#include "../../Taki174/NumeralManager.h"
 
 #include "../Graphics/Graphics.h"
 #include "../Graphics/EffectManager.h"
@@ -41,12 +43,15 @@
 bool SceneGame::isDebugRender = false;
 #endif // _DEBUG
 
-bool SceneGame::isDrawCollision_ = false;
+bool SceneGame::isDispCollision_ = false;
+
+DirectX::XMFLOAT3 SceneGame::stageCenter = {};
 
 // リソース生成
 void SceneGame::CreateResource()
 {
     using DirectX::XMFLOAT3;
+    using std::make_unique;
 
     Graphics& graphics = Graphics::Instance();
 
@@ -73,12 +78,12 @@ void SceneGame::CreateResource()
 
     // enemy
     {
-        EnemyGolem* enemyGolem = new EnemyGolem;
-        EnemyManager::Instance().Register(enemyGolem);
+        EnemyManager& enemyManager = EnemyManager::Instance();
+        // EnemyGolem* enemyGolem = new EnemyGolem;
+        // enemyManager.Register(enemyGolem);
 
 #if 0
         // max 6~7
-        EnemyManager& enemyManager = EnemyManager::Instance();
         // EnemyAI_1
         for (int i = 0; i < 2; ++i)
         {
@@ -124,7 +129,7 @@ void SceneGame::CreateResource()
 #endif
     }
 
-    
+
     // ps Shader
     {
         CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/SagePS.cso", sagePS.GetAddressOf());
@@ -227,8 +232,8 @@ void SceneGame::Initialize()
 
     // stage
     stageBase->Initialize();
+    stageCenter = stageBase->GetTransform()->GetPosition();
     stageWall->Initialize();
-
 
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
@@ -238,10 +243,14 @@ void SceneGame::Initialize()
     //今だけロックオン処理いれとく
     //Camera::Instance().SetLockOnTargetPos(enemyGolem->GetTransform());
 
-    isDrawCollision_    = false;
+    isDispCollision_    = false;
 
     //UI
     {
+        // Numeral
+        NumeralManager& numeralManager = NumeralManager::Instance();
+        numeralManager.Initialize();
+
         UserInterface::Instance().Initialize();
     }
 
@@ -251,6 +260,10 @@ void SceneGame::Initialize()
 // 終了化
 void SceneGame::Finalize()
 {
+    // Numeral
+    NumeralManager& numeralManager = NumeralManager::Instance();
+    numeralManager.Finalize();
+
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
     expManager.Finalize();
@@ -295,8 +308,6 @@ void SceneGame::Update(const float& elapsedTime)
     {
         particles->Integrate(Graphics::Instance().GetDeviceContext(), elapsedTime);
     }
-
-    
 
     //if (gamePad.GetButtonDown() & GamePad::BTN_B)
     //    Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
@@ -352,7 +363,6 @@ void SceneGame::Update(const float& elapsedTime)
         //enemyAura->Update(elapsedTime);
     }
 
-
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
     expManager.Update(elapsedTime);
@@ -360,8 +370,14 @@ void SceneGame::Update(const float& elapsedTime)
     // effect
     EffectManager::Instance().Update(elapsedTime);
 
-    UserInterface::Instance().Update(elapsedTime);
+    // UI
+    {
+        // Numeral
+        NumeralManager& numeralManager = NumeralManager::Instance();
+        numeralManager.Update(elapsedTime);
 
+        UserInterface::Instance().Update(elapsedTime);
+    }
 
     //カード演出中だけUpdate前にreturn呼んでるから注意！！
 }
@@ -374,6 +390,9 @@ void SceneGame::End()
 // 描画処理
 void SceneGame::Render(const float& elapsedTime)
 {
+    using DirectX::XMFLOAT3;
+    using DirectX::XMFLOAT4;
+
     Graphics& graphics = Graphics::Instance();
     Shader* shader = graphics.GetShader();
 
@@ -555,6 +574,10 @@ void SceneGame::Render(const float& elapsedTime)
 
     //ブルームあり２D
     {
+        // Numeral
+        NumeralManager& numeralManager = NumeralManager::Instance();
+        numeralManager.Render();
+
         UserInterface::Instance().BloomRender();
     }
 
@@ -625,17 +648,30 @@ void SceneGame::Render(const float& elapsedTime)
 
     //ブルーム無し
     {
+        // Numeral
+        NumeralManager& numeralManager = NumeralManager::Instance();
+        numeralManager.Render();
+
         PlayerManager::Instance().GetPlayer()->SkillImagesRender();
         UserInterface::Instance().Render();
     }
 
 #ifdef _DEBUG
+    DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
+
+    // ステージの範囲デバッグ描画
+    if (true == isDispCollision_)
+    {
+        static constexpr float    height = 0.5f;
+        static constexpr XMFLOAT4 color  = { 1,1,1,1 };
+        debugRenderer->DrawCylinder(stageCenter, stageRadius, height, color);
+    }
+
     // デバッグレンダラ描画
     DirectX::XMFLOAT4X4 view, projection;
     DirectX::XMStoreFloat4x4(&view, camera.GetViewMatrix());
     DirectX::XMStoreFloat4x4(&projection, camera.GetProjectionMatrix());
 
-    DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
     debugRenderer->Render(graphics.GetDeviceContext(), view, projection);
 #endif // _DEBUG
 
@@ -649,10 +685,9 @@ void SceneGame::DrawDebug()
 
     Graphics::Instance().GetShader()->DrawDebug();
 
-    PlayerManager& plManager = PlayerManager::Instance();
-    EnemyManager& enemyManager = EnemyManager::Instance();
-    ExperiencePointManager& expManager = ExperiencePointManager::Instance();
-
+    PlayerManager&          plManager    = PlayerManager::Instance();
+    EnemyManager&           enemyManager = EnemyManager::Instance();
+    ExperiencePointManager& expManager   = ExperiencePointManager::Instance();
 
     if (ImGui::Begin("sceneGame"))
     {
@@ -664,9 +699,9 @@ void SceneGame::DrawDebug()
         }
 
         // 当たり判定描画
-        if (ImGui::Button("Draw Collision"))
+        if (ImGui::Button("Disp Collision"))
         {
-            isDrawCollision_ = (isDrawCollision_) ? false : true;
+            isDispCollision_ = (isDispCollision_) ? false : true;
         }
 
         // 本生成
@@ -675,8 +710,6 @@ void SceneGame::DrawDebug()
             ItemManager::Instance().Register(new Book());
         }
 
-       
-
         // 経験値生成
         if (ImGui::Button("Create Exp"))
         {
@@ -684,6 +717,10 @@ void SceneGame::DrawDebug()
             const int count = ::RandInt(5, 20);
             ExperiencePointManager::Instance().CreateExp(position, count);
         }
+        ImGui::Separator();
+
+        // ゲートから敵を生成する
+        DebugCreateEnemyFromGateway();
 
         ImGui::Separator();
 
@@ -693,10 +730,6 @@ void SceneGame::DrawDebug()
 
         particles->DrawDebug();
 
-        EnemyManager& enemyManager = EnemyManager::Instance();
-
-
-
         enemyManager.DrawDebug();
 
         // Exp
@@ -704,6 +737,10 @@ void SceneGame::DrawDebug()
 
         // カメラ
         Camera::Instance().DrawDebug();
+
+        // Numeral
+        NumeralManager& numeralManager = NumeralManager::Instance();
+        numeralManager.DrawDebug();
 
         UserInterface::Instance().DrawDebug();
 
@@ -725,4 +762,59 @@ void SceneGame::DrawDebug()
     }
 
 #endif
+}
+
+
+// ゲートから敵を生成する関数(デバッグ用)
+void SceneGame::DebugCreateEnemyFromGateway()
+{
+    using DirectX::XMFLOAT3;
+
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    static int           gatewayIndex = -1;    // 敵を出現させるゲートの番号(-1でランダム)
+    static constexpr int gatewayCount = 10;    // ゲートの数
+
+    // 敵を出現させるゲートの指定(-1ならランダムで番号を決める）
+    ImGui::SliderInt(
+        "gateWayIndex(-1 is RandomSpawn)",
+        &gatewayIndex, -1, gatewayCount
+    );
+
+    // ゲートから敵を生成
+    if (ImGui::Button("CreateEnemyFromGateway"))
+    {
+        // 360度をゲート数分に等分したときの角度
+        static constexpr float angle = 360.0f / static_cast<float>(gatewayCount);
+
+        // Y回転値テーブルを作成
+        float rotationY_table[gatewayCount] = {};
+        for (int i = 0; i < gatewayCount; ++i)
+        {
+            rotationY_table[i] = ::ToRadian(angle * static_cast<float>(i));
+        }
+
+        // Y回転値を取得
+        const int rotationY_index = {
+            (gatewayIndex != -1)
+            ? gatewayIndex
+            : ::RandInt(0, gatewayCount)
+        };
+        const float rotationY = rotationY_table[rotationY_index];
+
+        // ステージの中心からゲートの奥ぐらいまでの半径
+        static constexpr float radius = 35.0f;
+
+        // 生成位置設定(XZ平面)
+        XMFLOAT3 createPos = {};
+        createPos.x = stageCenter.x + ::sinf(rotationY) * radius;
+        createPos.z = stageCenter.z + ::cosf(rotationY) * radius;
+
+        // 敵生成(EnemyAI_1)
+        EnemyAI_1* enemyAI_1 = new EnemyAI_1();
+        enemyAI_1->GetTransform()->SetPosition(createPos);
+        enemyManager.Register(enemyAI_1);
+
+    }
+
 }
