@@ -245,7 +245,7 @@ private:
     float swordScale;//剣の大きさに合わせて判定の大きさも変える
     
     float swordColliderRadius;//剣の判定の大きさ
-    int swordColliderNum = 5;//判定の数
+    int swordColliderNum;//判定の数
 
     void ColliderPosUpdate(const float& scale);//各ジョイントに判定をつける処理
 

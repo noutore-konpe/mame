@@ -246,16 +246,24 @@ namespace PlayerState
     void CounterState::Initialize()
     {
         counterCompleted = false;
-        owner->PlayAnimation(Player::Animation::Counter,false);
+        owner->PlayAnimation(Player::Animation::Counter, false); 
+        timer = 0;
     }
     void CounterState::Update(const float& elapsedTime)
     {
         switch (state)
         {
-        case 0:
-            if (!owner->IsPlayAnimation())
+        case 0://前隙モーション
+            if (owner->model->GetCurrentKeyframeIndex() > startUpFrame)
             {
-                owner->ChangeState(Player::STATE::NORMAL);
+                state++;
+            }
+            break;
+
+        case 1://カウンター受付時間、後隙
+            if (timer < receptionTime)
+            {
+                //判定処理
             }
 
             if (counterCompleted)
@@ -263,9 +271,10 @@ namespace PlayerState
                 owner->PlayAnimation(Player::Animation::CounterAttack,false);
                 state++;
             }
-            break;
 
-        case 1:
+            timer += elapsedTime;
+            break;
+        case 2:
             if (!owner->IsPlayAnimation())
             {
                 owner->ChangeState(Player::STATE::NORMAL);

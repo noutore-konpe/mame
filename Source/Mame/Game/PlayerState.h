@@ -131,7 +131,11 @@ namespace PlayerState
         void Finalize() override;
 
     private:
-        bool counterCompleted;
+        bool counterCompleted;//カウンター成立フラグ
         int state;
+
+        const int startUpFrame = 10;//カウンター受付開始アニメーション
+        const float receptionTime = 0.3f;//カウンター受付時間
+        float timer;
     };
 }
