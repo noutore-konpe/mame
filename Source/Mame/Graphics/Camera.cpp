@@ -421,6 +421,7 @@ void Camera::DrawDebug()
 
             ImGui::DragFloat3("Velocity", &velocity.x);
             ImGui::DragFloat3("Eye Pos", &eyePos.x);
+            ImGui::DragFloat3("Focus Pos", &focusPos.x);
             ImGui::SliderFloat("Max Speed", &maxEyeSpeed,0.1f,20.0f);
             ImGui::SliderFloat("Acceleration", &acceleration,0.1f,10.0f);
 

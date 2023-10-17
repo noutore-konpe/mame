@@ -3,6 +3,8 @@
 
 #include <memory>
 
+#include "../../Taki174/TextRenderer.h"
+
 #include "../Resource/sprite.h"
 
 #include "../Graphics/Effect.h"
@@ -34,7 +36,7 @@ public: // 基底クラスにある関数
     void DrawDebug()      override;
 
 public: // 関数
-    void DebugCreateEnemyFromGateway(); // 出入口から敵を生成する関数(デバッグ用)
+    void DebugCreateEnemyFromGateway(); // ゲートから敵を生成する関数(デバッグ用)
 
     void UpdateWhiteSprite(const float& elapsedTime);
 
@@ -108,7 +110,9 @@ public: // debug用
     static bool isDebugRender;
 #endif // _DEBUG
 
-    static bool isDrawCollision_; // 当たり判定描画
+    static bool isDispCollision_; // 当たり判定描画
+
+    std::unique_ptr<TextRenderer> text_;
 
 };
 

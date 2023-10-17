@@ -7,6 +7,7 @@
 #include "JudgmentBase.h"
 #include "BehaviorData.h"
 
+#include <assert.h>
 
 void BehaviorTree::AddNode(
 	const std::string& parentName,

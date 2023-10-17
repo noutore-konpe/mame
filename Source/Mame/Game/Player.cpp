@@ -1,17 +1,17 @@
 #include "Player.h"
 
+#include <algorithm>
+
+#include "../../Taki174/Common.h"
+
 #include "../Graphics/Graphics.h"
 #include "../Other/Easing.h"
 #include "../Other/MathHelper.h"
-
-#include "PlayerState.h"
-#include "EnemyManager.h"
-
 #include "../Scene/SceneGame.h"
 
+#include "PlayerState.h"
 #include "BlackHole.h"
-
-#include <algorithm>
+#include "EnemyManager.h"
 
 // コンストラクタ
 Player::Player()
@@ -27,6 +27,7 @@ Player::Player()
 
         swordModel = std::make_unique<Model>(graphics.GetDevice(),
             "./Resources/Model/Character/Sword_Motion.fbx");
+            //"./Resources/Model/Character/mdl_sword.fbx");
 
 #if _DEBUG
         //stageDebugSphere = std::make_unique<Model>(graphics.GetDevice(),"./Resources/Model/Collision/sqhere.fbx");
@@ -37,6 +38,19 @@ Player::Player()
         CreatePsFromCso(graphics.GetDevice(),
             "./Resources/Shader/playerPS.cso",
             playerPS.GetAddressOf());
+    }
+
+    //喰らい判定、攻撃判定セット
+    {
+        for (int i = 0; i < swordColliderNum; i++)
+        {
+            attackCollider.emplace_back(SphereCollider(swordColliderRadius));
+        }
+
+        for (int i = 0; i < static_cast<int>(HitColName::END); i++)
+        {
+            hitCollider.emplace_back(SphereCollider(0.15f));
+        }
     }
 }
 
@@ -63,8 +77,12 @@ void Player::Initialize()
 
     stateMachine->RegisterState(new PlayerState::NormalState(this));
     stateMachine->RegisterState(new PlayerState::JabAttackState(this));
+    stateMachine->RegisterState(new PlayerState::HardAttackState(this));
     stateMachine->RegisterState(new PlayerState::AvoidState(this));
     stateMachine->RegisterState(new PlayerState::DieState(this));
+    stateMachine->RegisterState(new PlayerState::SoftStaggerState(this));
+    stateMachine->RegisterState(new PlayerState::HardStaggerState(this));
+    stateMachine->RegisterState(new PlayerState::CounterState(this));
 
     stateMachine->SetState(STATE::NORMAL);
 
@@ -82,7 +100,10 @@ void Player::Initialize()
     baseAttackPower = 10.0f;
     attackSpeed = 1.0f;
 
-    defense = 0.0f;
+    health = 40.0f;
+
+    defence = 0.0f;
+
 
     deceleration = 7.0f;
     acceleration = InitAcceleration;
@@ -121,7 +142,20 @@ void Player::Initialize()
     LockOnInitialize();
 
     swordModel->transform.SetScaleFactor(GetTransform()->GetScaleFactor());
-}
+
+    //攻撃判定
+    swordColliderNum = 5;
+    swordColliderRadius = 0.07f;
+    swordScale = 0.7f;
+    swordModel->GetTransform()->SetScaleFactor(swordScale);
+
+    //喰らい判定
+    hitCollider[static_cast<int>(HitColName::NECK)].radius = 0.1f;
+    hitCollider[static_cast<int>(HitColName::HIP)].radius = 0.12f;
+    hitCollider[static_cast<int>(HitColName::R_LEG)].radius = 0.07f;
+    hitCollider[static_cast<int>(HitColName::L_LEG)].radius = 0.07f;
+    
+    }
 
 // 終了化
 void Player::Finalize()
@@ -172,6 +206,8 @@ void Player::Update(const float elapsedTime)
     // アビリティマネージャー更新(仮)
     abilityManager_.Update(elapsedTime);
 
+   
+
 }
 
 // Updateの後に呼ばれる
@@ -217,21 +253,21 @@ void Player::MoveUpdate(float elapsedTime,float ax,float ay)
         velocity.z * elapsedTime
     };
 
-    //ステージ判定
-    DirectX::XMFLOAT3 collectPos;
-    DirectX::XMFLOAT3 movePos = GetTransform()->GetPosition() + move;
-    float length = Length(movePos);
-    if (SceneGame::stageRadius < length)
-    {
-        DirectX::XMFLOAT3 moveNormal = Normalize(movePos);
-        collectPos = moveNormal * SceneGame::stageRadius;
-    }
-    else
-    {
-        collectPos = movePos;
-    }
+    ////ステージ判定
+    //DirectX::XMFLOAT3 collectPos;
+    //float length = Length(movePos);
+    //if (SceneGame::stageRadius < length)
+    //{
+    //    DirectX::XMFLOAT3 moveNormal = Normalize(movePos);
+    //    collectPos = moveNormal * SceneGame::stageRadius;
+    //}
+    //else
+    //{
+    //    collectPos = movePos;
+    //}
 
-    GetTransform()->SetPosition(collectPos);
+    DirectX::XMFLOAT3 movePos = GetTransform()->GetPosition() + move;
+    GetTransform()->SetPosition(CollidedPosition(movePos));
 
     Turn(elapsedTime,moveVec.x, moveVec.z,360.0f);
 }
@@ -373,14 +409,15 @@ void Player::AvoidUpdate(float elapsedTime)
     float ax = gamePad.GetAxisLX();
     float ay = gamePad.GetAxisLY();
     MoveVecUpdate(ax,ay);
-    Turn(elapsedTime, moveVec.x, moveVec.z, 240.0f);
+    Turn(elapsedTime, moveVec.x, moveVec.z, 180.0f);
 
-    DirectX::XMFLOAT3 velo = {
+    DirectX::XMFLOAT3 move = {
         velocity.x * elapsedTime,
         velocity.y * elapsedTime,
         velocity.z * elapsedTime
     };
-    GetTransform()->AddPosition(velo);
+    DirectX::XMFLOAT3 movePos = GetTransform()->GetPosition() + move;
+    GetTransform()->SetPosition(CollidedPosition(movePos));
 }
 
 void Player::ModelRotZUpdate(float elapsedTime)
@@ -456,13 +493,22 @@ void Player::Render(const float scale, ID3D11PixelShader* psShader)
 
 #if _DEBUG
     //stageDebugSphere->Render(stageRadius, playerPS.Get());
+    if (showCollider)
+    {
+        for (auto& collider : hitCollider)
+        {
+            collider.DebugRender();
+        }
+    }
+    
 #endif // _DEBUG
 
 
     // アビリティマネージャー描画(仮)
     abilityManager_.Render(scale);
 
-
+    //判定移動
+    ColliderPosUpdate(scale);
 }
 
 void Player::SkillImagesRender()
@@ -483,11 +529,16 @@ void Player::SkillImagesRender()
 void Player::DrawDebug()
 {
 #ifdef USE_IMGUI
+
+
+    static float damage = 0;
     if (ImGui::BeginMenu("player"))
     {
         Character::DrawDebug();
 
         stateMachine->DrawDebug();
+
+        ImGui::Checkbox("ShoeCollider",&showCollider);
 
         if (ImGui::TreeNode("Camera"))
         {
@@ -509,6 +560,17 @@ void Player::DrawDebug()
         if(ImGui::TreeNode("Movement"))
         {
             ImGui::SliderFloat("MaxMoveSpeed", &maxEyeSpeed, 0.1f, 10.0f);
+
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("Damage"))
+        {
+            ImGui::SliderFloat("Damage", &damage,0.0f,20.0f);
+            if (ImGui::Button("Apply Damage"))
+            {
+                ApplyDamage(damage);
+            }
 
             ImGui::TreePop();
         }
@@ -571,8 +633,8 @@ void Player::AttackSteppingUpdate(float elapsedTime)
     velocity = front * maxEyeSpeed;
 
     //移動処理
-    DirectX::XMFLOAT3 move = velocity * elapsedTime;
-    GetTransform()->AddPosition(move);
+    DirectX::XMFLOAT3 movePos = velocity * elapsedTime + GetTransform()->GetPosition();
+    GetTransform()->SetPosition(CollidedPosition(movePos));
 
     //回転処理
     GamePad& gamePad = Input::Instance().GetGamePad();
@@ -609,7 +671,7 @@ void Player::SelectSkillUpdate(float elapsedTime)
             if (timer < 0)timer = 0;
             else if (timer > drawDirectionTime)timer = drawDirectionTime;
             float posY = Easing::OutSine(timer, drawDirectionTime, 165.0f, -transform->GetTexSize().y);
-            transform->SetPos(DirectX::XMFLOAT2(65 + 400 * i, posY));
+            transform->SetPos(DirectX::XMFLOAT2(65.0f + 400.0f * static_cast<float>(i), posY));
 
         }
 
@@ -670,7 +732,7 @@ void Player::SelectSkillUpdate(float elapsedTime)
             float timer = _timer;
             if (timer > 0.5)timer = 0.5;
             float posY = Easing::OutSine(timer, 0.5f, -transform->GetTexSize().y,165.0f);
-            transform->SetPos(DirectX::XMFLOAT2(65 + 400 * i, posY));
+            transform->SetPos(DirectX::XMFLOAT2(65.0f + 400.0f * static_cast<float>(i), posY));
         }
 
         if (_timer > 2.2f)isSelectingSkill = false;
@@ -852,11 +914,13 @@ void Player::LockOnUpdate()
 
 void Player::LockOnInitialize()
 {
+    using DirectX::XMFLOAT3;
+
     if (EnemyManager::Instance().GetEnemyCount() == 0)return;
     float length0 = FLT_MAX;
     for (auto& enemy : EnemyManager::Instance().GetEnemies())
     {
-        auto ePos = enemy->GetTransform()->GetPosition();
+        const XMFLOAT3 ePos = enemy->GetTransform()->GetPosition();
         float length1 = Length(ePos - GetTransform()->GetPosition());
         if (length0 > length1)
         {
@@ -864,6 +928,16 @@ void Player::LockOnInitialize()
             length0 = length1;
         }
     }
+}
+
+void Player::OnDamaged()
+{
+    stateMachine->ChangeState(STAGGER_SOFT);
+}
+
+void Player::OnDead()
+{
+    stateMachine->ChangeState(DIE);
 }
 
 void Player::LevelUpdate()
@@ -883,5 +957,60 @@ void Player::LevelUpdate()
 
         //レベルが上がると能力を取得出来る
         isSelectingSkill = true;
+    }
+}
+
+DirectX::XMFLOAT3 Player::CollidedPosition(const DirectX::XMFLOAT3 pos)
+{
+    //ステージ判定
+    DirectX::XMFLOAT3 collectPos;
+    
+    float length = Length(pos);
+    if (SceneGame::stageRadius < length)
+    {
+        DirectX::XMFLOAT3 moveNormal = Normalize(pos);
+        collectPos = moveNormal * SceneGame::stageRadius;
+    }
+    else
+    {
+        collectPos = pos;
+    }
+
+    return collectPos;
+}
+
+void Player::ColliderPosUpdate(const float& scale)
+{
+    //喰らい判定
+    {
+        const std::string meshBodyName = "setup_0927:chara_rig_0906:ref:pasted__Body";
+        const std::string meshLegName = "setup_0927:chara_rig_0906:ref:pasted__Socks";
+        hitCollider[static_cast<int>(HitColName::NECK)].position = GetJointPosition(meshBodyName, "setup_0927:chara_rig_0906:j_Neck", scale);
+        hitCollider[static_cast<int>(HitColName::HIP)].position = GetJointPosition(meshBodyName, "setup_0927:chara_rig_0906:j_Hips", scale);
+
+        //hitCollider[static_cast<int>(HitColName::LEG)].position = GetJointPosition(meshBodyName,"setup_0927:chara_rig_0906:j_Sentar",scale);
+        hitCollider[static_cast<int>(HitColName::R_LEG)].position = GetJointPosition(meshLegName, "setup_0927:chara_rig_0906:j_RightLeg", scale);
+        hitCollider[static_cast<int>(HitColName::L_LEG)].position = GetJointPosition(meshLegName, "setup_0927:chara_rig_0906:j_LeftLeg", scale);
+    }
+
+    //攻撃判定
+    {
+        //DirectX::XMFLOAT4X4 world{};
+        //DirectX::XMStoreFloat4x4(&world, swordModel->GetTransform()->CalcWorldMatrix(scale));
+        ////const std::string swordMeshName = "sword_rig_1004:sword_rig_1005:sword_mdl_1005:Sword";
+        //const std::string swordMeshName = "sword_mdl_1005:Sword";
+        //const DirectX::XMFLOAT3 swordRoot = swordModel->skinned_meshes->JointPosition(swordMeshName, "j_sword",&swordModel->keyframe ,world);//根本
+        //const DirectX::XMFLOAT3 swordTip = swordModel->skinned_meshes->JointPosition(swordMeshName, "j_sword_end", &swordModel->keyframe, world);//先端
+     
+        //const DirectX::XMFLOAT3 vec = swordTip - swordRoot;
+        //float swordLength = Length(vec);
+        //const DirectX::XMFLOAT3 vecNormal = Normalize(swordTip - swordRoot);
+
+        //const float collideInterval = swordLength / swordColliderNum;//判定ごとの設置間隔
+
+        //for (auto& collider : attackCollider)
+        //{
+        //    collider.position = swordRoot + vecNormal * collideInterval;
+        //}
     }
 }

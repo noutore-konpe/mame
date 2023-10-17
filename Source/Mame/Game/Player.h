@@ -18,8 +18,12 @@ public: // enum関連
     {
         NORMAL,   // 移動、待機等
         ATTACK_JAB,   // 弱攻撃
+        ATTACK_HARD,   // 強攻撃
         AVOID,   // 回避
         DIE,   // 死亡
+        STAGGER_SOFT,   // 小怯み
+        STAGGER_HARD,   // 大怯み
+        COUNTER,   // カウンター
     };
 
     // アニメーション
@@ -30,7 +34,10 @@ public: // enum関連
         Jab_1,
         Jab_2,
         //Jab_3,
-        Avoid
+        Avoid,
+        Counter,
+        CounterAttack,
+        SoftStagger
     };
 
 
@@ -71,6 +78,8 @@ public:
 
     void AttackSteppingUpdate(float elapsedTime);//攻撃間際の踏み込み処理
 
+    void OnDamaged()override;
+    void OnDead()override;
 
     void ChangeState(int newState) { stateMachine->ChangeState(newState); }
 
@@ -137,6 +146,9 @@ public:
 
 private:
     void LevelUpdate();
+    
+    //地形判定後の座標取得
+    DirectX::XMFLOAT3 CollidedPosition(const DirectX::XMFLOAT3 pos);
 
 public:
     bool isSelectingSkill;//能力の選択演出中かのフラグ
@@ -147,7 +159,7 @@ public:
 private:
     //----------------------------シェーダー----------------------------------
     Microsoft::WRL::ComPtr<ID3D11PixelShader> playerPS;
-    //----------------------------シェーダー----------------------------------
+    //----------------------------------------------------------------------
 
     //----------------------------カメラ関係----------------------------------
     float cameraRotSpeed = 2.0f;//旋回速度
@@ -218,14 +230,32 @@ private:
     std::unique_ptr<Model> swordModel;
     //-----------------------------------------------------------------------
 
-    //--------------------------------地形判定？------------------------------------
+    //--------------------------------喰らい、攻撃判定------------------------------------
     //std::unique_ptr<Model> stageDebugSphere;
+
+    enum class HitColName
+    {
+        NECK,
+        HIP,
+        R_LEG,
+        L_LEG,
+        END
+    };
+
+    float swordScale;//剣の大きさに合わせて判定の大きさも変える
     
+    float swordColliderRadius;//剣の判定の大きさ
+    int swordColliderNum = 5;//判定の数
+
+    void ColliderPosUpdate(const float& scale);//各ジョイントに判定をつける処理
+
     //--------------------------------------------------------------------------------
 
     // アビリティマネージャー(仮)
     AbilityManager abilityManager_ = {};
 
+
+    bool showCollider = true;
 
 };
 
