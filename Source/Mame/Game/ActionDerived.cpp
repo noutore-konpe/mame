@@ -468,7 +468,7 @@ const ActionBase::State FlinchAction::Run(const float elapsedTime)
 
 		// ひるみアニメーション再生
 		{
-			owner_->PlayAnimation(Animation::Flinch, false, owner_->GetAnimationSpeed());
+			owner_->PlayAnimation(Animation::SoftStagger, false, owner_->GetAnimationSpeed());
 
 			Model* sword = owner_->GetSword();
 			if (sword != nullptr)
