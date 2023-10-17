@@ -4,6 +4,8 @@
 #include <vector>
 #include <set>
 
+class Character;
+
 class NumeralManager
 {
 private:
@@ -31,11 +33,13 @@ public:
 public:
     // É_ÉÅÅ[ÉWêîéöê∂ê¨
     void CreateDamageNumeral(
+        Character* parent,
         const int numeral,
         const DirectX::XMFLOAT3& worldPos,
-        const DirectX::XMFLOAT2& size = { 1,1 },
+        const DirectX::XMFLOAT2& size = { 30, 30 },
         const DirectX::XMFLOAT4& color = { 1,1,1,1 },
-        const float angle = 0.0f
+        const float angle = 0.0f,
+        const float rowOffset = 25.0f
     );
 
 private:

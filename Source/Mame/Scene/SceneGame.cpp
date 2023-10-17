@@ -720,7 +720,7 @@ void SceneGame::DrawDebug()
         }
         ImGui::Separator();
 
-        //
+        // ゲートから敵を生成する
         DebugCreateEnemyFromGateway();
 
         ImGui::Separator();
@@ -766,26 +766,26 @@ void SceneGame::DrawDebug()
 }
 
 
-// 出入口から敵を生成する関数(デバッグ用)
+// ゲートから敵を生成する関数(デバッグ用)
 void SceneGame::DebugCreateEnemyFromGateway()
 {
     using DirectX::XMFLOAT3;
 
     EnemyManager& enemyManager = EnemyManager::Instance();
 
-    static int           gatewayIndex = -1;    // 敵を出現させる出入口の番号(-1でランダム)
-    static constexpr int gatewayCount = 20;    // 出入口の数
+    static int           gatewayIndex = -1;    // 敵を出現させるゲートの番号(-1でランダム)
+    static constexpr int gatewayCount = 10;    // ゲートの数
 
-    // 敵を出現させる出入り口の指定(-1ならランダムで番号を決める）
+    // 敵を出現させるゲートの指定(-1ならランダムで番号を決める）
     ImGui::SliderInt(
         "gateWayIndex(-1 is RandomSpawn)",
         &gatewayIndex, -1, gatewayCount
     );
 
-    // 出入口から敵を生成
+    // ゲートから敵を生成
     if (ImGui::Button("CreateEnemyFromGateway"))
     {
-        // 360度を20等分したときの角度（18度）
+        // 360度をゲート数分に等分したときの角度
         static constexpr float angle = 360.0f / static_cast<float>(gatewayCount);
 
         // Y回転値テーブルを作成
@@ -803,7 +803,7 @@ void SceneGame::DebugCreateEnemyFromGateway()
         };
         const float rotationY = rotationY_table[rotationY_index];
 
-        // ステージの中心から出入口の奥ぐらいまでの半径
+        // ステージの中心からゲートの奥ぐらいまでの半径
         static constexpr float radius = 35.0f;
 
         // 生成位置設定(XZ平面)
@@ -811,7 +811,7 @@ void SceneGame::DebugCreateEnemyFromGateway()
         createPos.x = stageCenter.x + ::sinf(rotationY) * radius;
         createPos.z = stageCenter.z + ::cosf(rotationY) * radius;
 
-        // 敵生成
+        // 敵生成(EnemyAI_1)
         EnemyAI_1* enemyAI_1 = new EnemyAI_1();
         enemyAI_1->GetTransform()->SetPosition(createPos);
         enemyManager.Register(enemyAI_1);

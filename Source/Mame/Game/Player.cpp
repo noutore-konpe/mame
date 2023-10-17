@@ -2,7 +2,6 @@
 
 #include <algorithm>
 
-#include "../../Taki174/NumeralManager.h"
 #include "../../Taki174/Common.h"
 
 #include "../Graphics/Graphics.h"
@@ -83,7 +82,7 @@ void Player::Initialize()
     baseAttackPower = 10.0f;
     attackSpeed = 1.0f;
 
-    defense = 0.0f;
+    defence = 0.0f;
 
     deceleration = 7.0f;
     eyeAcceleration = InitAcceleration;
@@ -172,22 +171,6 @@ void Player::Update(const float elapsedTime)
 
     // アビリティマネージャー更新(仮)
     abilityManager_.Update(elapsedTime);
-
-    // ダメージ数字生成タイマー更新処理(仮)
-    createDmgNumeralTimer_ += elapsedTime;
-    if (createDmgNumeralTimer_ >= 1.0f)
-    {
-        Transform* t = GetTransform();
-        //const DirectX::XMFLOAT3 movement = t->CalcForward() * 5.0f;
-        //const DirectX::XMFLOAT3 postion  = t->GetPosition() + movement;
-
-        NumeralManager& numeralManager = NumeralManager::Instance();
-        numeralManager.CreateDamageNumeral(
-            ::RandInt(100000, 900000), t->GetPosition(), { 50,50 }
-        );
-
-        createDmgNumeralTimer_ = 0.0f;
-    }
 
 }
 

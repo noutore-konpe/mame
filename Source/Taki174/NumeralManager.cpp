@@ -88,11 +88,15 @@ void NumeralManager::ClearAll()
 }
 
 void NumeralManager::CreateDamageNumeral(
-    const int numeral,
+    Character* parent,
+    const int damage,
     const DirectX::XMFLOAT3& worldPos,
     const DirectX::XMFLOAT2& size,
     const DirectX::XMFLOAT4& color,
-    const float angle)
+    const float angle,
+    const float rowOffset)
 {
-    Register(new DamageNumeral(numeral, worldPos, size, color, angle));
+    DamageNumeral* dmgNumeral = new DamageNumeral(damage, worldPos, size, color, angle, rowOffset);
+    dmgNumeral->SetParent(parent);
+    this->Register(dmgNumeral);
 }

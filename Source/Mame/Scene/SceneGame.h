@@ -37,7 +37,7 @@ public: // 基底クラスにある関数
     void DrawDebug()      override;
 
 public: // 関数
-    void DebugCreateEnemyFromGateway(); // 出入口から敵を生成する関数(デバッグ用)
+    void DebugCreateEnemyFromGateway(); // ゲートから敵を生成する関数(デバッグ用)
 
 public: // 設定・取得
 

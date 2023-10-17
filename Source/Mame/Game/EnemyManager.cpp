@@ -264,7 +264,7 @@ void EnemyManager::CollisionEnemyVsEnemy(const float /*elapsedTime*/)
 }
 
 
-void EnemyManager::CollisionEnemyVsStage(const float elapsedTime)
+void EnemyManager::CollisionEnemyVsStage(const float /*elapsedTime*/)
 {
     using DirectX::XMFLOAT3;
     EnemyManager& enemyManager = EnemyManager::Instance();

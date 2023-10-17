@@ -226,8 +226,5 @@ private:
     // アビリティマネージャー(仮)
     AbilityManager abilityManager_ = {};
 
-    // ダメージ数字生成タイマー(仮)
-    float createDmgNumeralTimer_ = 0.0f;
-
 };
 

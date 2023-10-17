@@ -38,6 +38,8 @@ public:
         void DrawDebug();
 
         void SetPos(DirectX::XMFLOAT2 p) { pos = p; }
+        void SetPosX(const float posX) { pos.x = posX; }
+        void SetPosY(const float posY) { pos.y = posY; }
         void SetSize(DirectX::XMFLOAT2 s) { size = s; }
         void SetColor(DirectX::XMFLOAT4 c) { color = c; }
         void SetColorW(const float colorW) { color.w = colorW; }
@@ -118,7 +120,7 @@ public:
     );
 
     //ワールド座標からスクリーン座標に変更後描画
-    static DirectX::XMFLOAT2 ConvertToScreenPos(const DirectX::XMFLOAT3 worldPos);
+    static DirectX::XMFLOAT2 ConvertToScreenPos(const DirectX::XMFLOAT3 worldPos, bool* isDraw = nullptr); // isDraw：描画するか
 
     void Render();
     void Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 pos, DirectX::XMFLOAT2 size);

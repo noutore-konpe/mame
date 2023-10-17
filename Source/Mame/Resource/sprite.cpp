@@ -217,7 +217,9 @@ void Sprite::PlayAnimation(const float elapsedTime, const float frameSpeed, cons
     spriteTransform.SetTexPos(texPos);
 }
 
-DirectX::XMFLOAT2 Sprite::ConvertToScreenPos(const DirectX::XMFLOAT3 worldPos)
+DirectX::XMFLOAT2 Sprite::ConvertToScreenPos(
+    const DirectX::XMFLOAT3 worldPos,
+    bool* isDraw)
 {
     auto* dc = Graphics::Instance().GetDeviceContext();
     //ビューポート
@@ -241,6 +243,9 @@ DirectX::XMFLOAT2 Sprite::ConvertToScreenPos(const DirectX::XMFLOAT3 worldPos)
 
     DirectX::XMFLOAT2 screenPosition;
     DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
+
+    const float screenPositionZ = DirectX::XMVectorGetZ(ScreenPosition);
+    if (isDraw != nullptr) { (*isDraw) = (screenPositionZ >= 1.0f) ? false : true; }
 
     return screenPosition;
 }
