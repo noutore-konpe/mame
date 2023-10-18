@@ -94,12 +94,12 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 
 		// Ž©•ª‚ÌˆÊ’u‚©‚ç‰ñ“]‚ðŽn‚ß‚é‚æ‚¤‚É‚·‚é
 		{
-			const XMFLOAT3&	pos			= owner_->GetPosition();
-			const XMFLOAT3&	plPos		= plManager.GetPlayer()->GetPosition();
-			const float		localPosX	= pos.x - plPos.x;
-			const float		localPosZ	= pos.z - plPos.z;
-
-			circleRotation_ = ::atan2f(localPosX, localPosZ); // return Radian Angle
+			//const XMFLOAT3&	pos			= owner_->GetPosition();
+			//const XMFLOAT3&	plPos		= plManager.GetPlayer()->GetPosition();
+			//const float		localPosX	= pos.x - plPos.x;
+			//const float		localPosZ	= pos.z - plPos.z;
+			//
+			//circleRotation_ = ::atan2f(localPosX, localPosZ); // return Radian Angle
 		}
 
 		// ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
@@ -171,7 +171,7 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 		owner_->Turn(elapsedTime, vx, vz, owner_->GetTurnSpeed());
 
 		// UŒ‚‹——£ŠO‚É‚È‚Á‚½‚çI—¹(‰~‰^“®‚Ì“s‡ãŠÃ‚ß‚ÉÝ’è)
-		if (lengthSq > (attackLengthSq + 5.0f))
+		if (lengthSq > (attackLengthSq /*+ 5.0f*/))
 		{
 			owner_->SetStep(0);
 			return ActionBase::State::Complete;

@@ -7,7 +7,7 @@
 #include "../Scene/SceneGame.h"
 
 
-// 番号に対応するゲートの位置を返す
+// 番号に対応するゲートの位置を返す(※-1でランダムなゲート位置を返す)
 inline DirectX::XMFLOAT3 GetGatewayPosition(/*NoConst*/ int gatewayIndex)
 {
     static constexpr int gatewayCount = 10; // ゲートの数
@@ -15,9 +15,9 @@ inline DirectX::XMFLOAT3 GetGatewayPosition(/*NoConst*/ int gatewayIndex)
     // ゲート番号超過修正
     if (gatewayIndex > gatewayCount) gatewayIndex = gatewayCount;
 
-    // 最初の一回だけ位置テーブルを作成するようにする
+    // 最初の一回だけY回転値テーブルを作成するようにする
     // ※すべてのゲート位置をひとつひとつ手動で設定するのが
-    // 　面倒なのでfor文でゲート方向を向くY回転値のテーブルを
+    // 　面倒なのでfor文で各ゲート方向を向くY回転値のテーブルを
     // 　作成してゲート位置を設定する
     static float rotationY_table[gatewayCount] = {};    // Y回転値テーブル(static)
     static bool  createRotationY_TableFlag     = false; // Y回転値テーブル作成フラグ(static)
@@ -43,12 +43,12 @@ inline DirectX::XMFLOAT3 GetGatewayPosition(/*NoConst*/ int gatewayIndex)
     // ステージの中心からゲートの奥ぐらいまでのだいたいの半径(距離)
     static constexpr float RADIUS = 35.0f;
 
-    // ゲートのXZ位置設定
+    // ゲートの位置を取得
     DirectX::XMFLOAT3 gatewayPos = {};
     gatewayPos.x = SceneGame::stageCenter.x + ::sinf(rotationY) * RADIUS;
     gatewayPos.z = SceneGame::stageCenter.z + ::cosf(rotationY) * RADIUS;
 
-    // ゲートのXZ位置を返す
+    // ゲートの位置を返す
     return gatewayPos;
 }
 
@@ -58,8 +58,6 @@ inline DirectX::XMFLOAT3 GetGatewayPosition(/*NoConst*/ int gatewayIndex)
 // ウェーブエネミー構造体
 struct WaveEnemySet
 {
-    // 配列を作るときにどの値が何の値を指しているのか
-    // わかりやすいようにコンストラクタを作成しておく
     WaveEnemySet(
         const float              spawnTime,
         const std::string&       name,
@@ -152,7 +150,7 @@ public: // Get・Set Function
     const int GetCurrentWaveEnemyCount() const { return waveParent_.children_->spawnEnemyCount_; }
 
 private:
-    static constexpr float BREAK_TIME = 5.0f; // 現在のウェーブから次のウェーブに移るまでの休憩時間
+    static constexpr float BREAK_TIME_ = 5.0f; // 現在のウェーブから次のウェーブに移るまでの休憩時間
 
 private:
     WaveParent  waveParent_             = {};       // ウェーブの親(ウェーブを管理)

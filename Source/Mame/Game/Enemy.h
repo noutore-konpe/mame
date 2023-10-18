@@ -60,6 +60,9 @@ public:
     const bool GetIsFlinch() const { return isFlinch_; }
     void SetIsFlinch(const bool isFlinch) { isFlinch_ = isFlinch; }
 
+    const bool GetIsWaveEnemy() const { return isWaveEnemy_; }
+    void SetIsWaveEnemy(const bool isWaveEnemy) { isWaveEnemy_ = isWaveEnemy; }
+
 public:
     // 実行タイマー経過
     void ElapseRunTimer(const float elapsedTime) { runTimer_ = (std::max)(0.0f, runTimer_ - elapsedTime); }
@@ -79,7 +82,7 @@ protected:
     int                 step_           = 0;        // 行動ステップ
     bool                entryStageFlag_ = false;    // ステージに入ったかどうかのフラグ
     bool                isFlinch_       = false;    // ひるみフラグ
-    bool                isWaveEnemy_    = false;    // ウェーブで管理された敵であるか(デストラクタで使用)
+    bool                isWaveEnemy_    = false;    // ウェーブで生成された敵であるか(デストラクタで使用)
 
 private:
     TYPE type = TYPE::Normal;

@@ -9,7 +9,6 @@ Enemy::~Enemy()
     {
         WaveManager::Instance().ReduceRemainingEnemyCounter();
     }
-
 }
 
 void Enemy::Initialize()
