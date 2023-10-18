@@ -488,6 +488,9 @@
     <ClCompile Include="Source\Taki174\DamageNumeral.cpp">
       <Filter>mamelib\Taki174\Numerals</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\WaveManager.cpp">
+      <Filter>mamelib\Mame\Game\Wave</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -853,6 +856,9 @@
     <ClInclude Include="Source\Taki174\DamageNumeral.h">
       <Filter>mamelib\Taki174\Numerals</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Game\WaveManager.h">
+      <Filter>mamelib\Mame\Game\Wave</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">
@@ -1066,6 +1072,9 @@
     </Filter>
     <Filter Include="mamelib\Taki174\Numerals">
       <UniqueIdentifier>{7f6bbdac-d2e8-40b5-a879-2e65022b9f42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Wave">
+      <UniqueIdentifier>{f30bbd6c-e1d9-4dc2-98f5-0e023a8b91ba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

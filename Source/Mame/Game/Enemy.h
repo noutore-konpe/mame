@@ -17,7 +17,7 @@ public:
 
 public:
     Enemy() {}
-    virtual ~Enemy() {}
+    virtual ~Enemy();
 
     virtual void Initialize();                                          // 初期化
     virtual void Finalize() = 0;                                        // 終了化
@@ -48,6 +48,9 @@ public:
     const float GetAnimationSpeed() const { return animationSpeed_; }
     void SetAnimationSpeed(const float animationSpeed) { animationSpeed_ = animationSpeed; }
 
+    const int GetDropExpCount() const { return dropExpCount_; }
+    void SetDropExpCount(const int dropExpCount) { dropExpCount_ = dropExpCount; }
+
     const int GetStep() const { return step_; }
     void SetStep(const int step) { step_ = step; }
 
@@ -76,6 +79,7 @@ protected:
     int                 step_           = 0;        // 行動ステップ
     bool                entryStageFlag_ = false;    // ステージに入ったかどうかのフラグ
     bool                isFlinch_       = false;    // ひるみフラグ
+    bool                isWaveEnemy_    = false;    // ウェーブで管理された敵であるか(デストラクタで使用)
 
 private:
     TYPE type = TYPE::Normal;
