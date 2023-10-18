@@ -21,12 +21,25 @@ public:
     void BloomRender();//ƒuƒ‹[ƒ€Œø‰Ê•t‚«‚Ì•`‰æ
     void DrawDebug();
 
+    void RenderLv();
+    void RenderWave();
+
 private:
     std::unique_ptr<Sprite> lockOnSprite;
 
     std::unique_ptr<Sprite> hpSprite;           // hp
     std::unique_ptr<Sprite> keikenchiSprite;    // ŒoŒ±’lƒQ[ƒW
     std::unique_ptr<Sprite> maruSprite;         // ŠÛ
-    std::unique_ptr<Sprite> backGageSprite[2];        // ƒQ[ƒW”wŒi
+    std::unique_ptr<Sprite> backGageSprite[2];  // ƒQ[ƒW”wŒi
+
+    std::unique_ptr<Sprite> lvSprite;   // Lv
+    std::unique_ptr<Sprite> waveSprite; // Wave
+    std::unique_ptr<Sprite> numSprite;  // num
+    std::unique_ptr<Sprite> chonchonSprite; // :
+
+#ifdef _DEBUG
+    int lv = 0;
+    int wave = 0;
+#endif
 };
 

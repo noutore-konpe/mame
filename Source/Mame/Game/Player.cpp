@@ -508,7 +508,7 @@ void Player::Render(const float scale, ID3D11PixelShader* psShader)
     abilityManager_.Render(scale);
 
     //”»’èˆÚ“®
-    ColliderPosUpdate(scale);
+    //ColliderPosUpdate(scale);
 }
 
 void Player::SkillImagesRender()

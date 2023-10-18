@@ -53,6 +53,7 @@ private: // •Ï”“™X
     Effect* effect[4];
     //std::unique_ptr<Effect> effect[4];
 
+    bool isParticleInitialize = false;
     bool isDebugCamera = false;
     bool isWhiteSpriteRender = false;
     float whiteSpriteTimer = 0.0f;

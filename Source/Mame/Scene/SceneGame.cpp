@@ -273,6 +273,8 @@ void SceneGame::Initialize()
         UserInterface::Instance().Initialize();
     }
 
+    
+    isParticleInitialize = false; // particle用
     isWhiteSpriteRender = true;
     whiteSpriteTimer = 0.0f;
 }
@@ -322,18 +324,17 @@ void SceneGame::Update(const float& elapsedTime)
     // 最初の白飛びのスプライト
     UpdateWhiteSprite(elapsedTime);
 
-    if (gamePad.GetButtonDown() & GamePad::BTN_A)
+    if (!isParticleInitialize)
     {
+        isParticleInitialize = false;
         particles->Initialize(Graphics::Instance().GetDeviceContext(), 0);
-    }
+    }    
 
     if (integrateParticles)
     {
         particles->Integrate(Graphics::Instance().GetDeviceContext(), elapsedTime);
     }
 
-    //if (gamePad.GetButtonDown() & GamePad::BTN_B)
-    //    Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
 
 #ifdef _DEBUG
     // Debug用カメラ
@@ -719,6 +720,7 @@ void SceneGame::DrawDebug()
 
     if (ImGui::Begin("sceneGame"))
     {
+        Graphics::Instance().GetShader()->DrawDebug();
 
         // デバッグプリミティブ描画
         if (ImGui::Button("drawDebug"))
