@@ -98,6 +98,9 @@ public: // Žæ“¾EÝ’èŠÖ”
     const float GetHeight() const { return height_; }
 
 
+    void SetHealth(const float hp)       { health = hp; }
+    void SetMaxHealth(const float maxHp) { maxHealth = maxHp; }
+
     // emissive ¦constans‚Ì‚â‚Â‚È‚Ì‚Å‚±‚¢‚Â‚ðŽg‚¤êŠ‚Í UpdateConstans‚ÅŽg‚Á‚Ä‚Ù‚µ‚¢
     void SetEmissiveIntensity(float intensity) { model->skinned_meshes->data.emissiveIntensity = intensity; }
     void SetEmissiveScrollDirection(DirectX::XMFLOAT2 scroll) { model->skinned_meshes->data.emissiveScrollDirection = scroll; }

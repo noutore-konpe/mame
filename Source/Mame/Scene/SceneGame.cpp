@@ -32,6 +32,8 @@
 
 #include "../Game/UserInterface.h"
 
+#include "../Game/WaveManager.h"
+
 #include "../framework.h"
 
 #include "SceneManager.h"
@@ -160,7 +162,6 @@ void SceneGame::CreateResource()
     }
 
 
-
     // particle
     {
         particles = std::make_unique<decltype(particles)::element_type>(graphics.GetDevice(), 1000);
@@ -273,10 +274,19 @@ void SceneGame::Initialize()
         UserInterface::Instance().Initialize();
     }
 
-    
+
     isParticleInitialize = false; // particle用
     isWhiteSpriteRender = true;
     whiteSpriteTimer = 0.0f;
+
+    // Wave Initialize
+    {
+        WaveManager& waveManager = WaveManager::Instance();
+
+        // ウェーブ初期化（ウェーブ番号を指定すると好きなウェーブから開始できる（※デバッグ時のみ有効））
+        static constexpr int startWaveIndex = -1;
+        waveManager.InitWave(startWaveIndex);
+    }
 }
 
 // 終了化
@@ -401,6 +411,14 @@ void SceneGame::Update(const float& elapsedTime)
         numeralManager.Update(elapsedTime);
 
         UserInterface::Instance().Update(elapsedTime);
+    }
+
+    // Wave Update
+    {
+        WaveManager& waveManager = WaveManager::Instance();
+
+        // ウェーブ更新
+        waveManager.UpdateWave(elapsedTime);
     }
 
     //カード演出中だけUpdate前にreturn呼んでるから注意！！
@@ -778,6 +796,14 @@ void SceneGame::DrawDebug()
         numeralManager.DrawDebug();
 
         UserInterface::Instance().DrawDebug();
+
+        // Wave DrawDebug
+        {
+            WaveManager& waveManager = WaveManager::Instance();
+
+            // ウェーブデバッグ描画
+            waveManager.DrawDebug();
+        }
 
         ImGui::End();
     }

@@ -1,5 +1,15 @@
 #include "Enemy.h"
 #include "EnemyManager.h"
+#include "WaveManager.h"
+
+Enemy::~Enemy()
+{
+    // ウェーブで管理されていた敵なら残りのウェーブエネミーカウントを１減らす
+    if (true == isWaveEnemy_)
+    {
+        WaveManager::Instance().ReduceRemainingEnemyCounter();
+    }
+}
 
 void Enemy::Initialize()
 {
