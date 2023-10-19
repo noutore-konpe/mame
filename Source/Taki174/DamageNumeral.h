@@ -2,8 +2,6 @@
 
 #include "Numeral.h"
 
-class Character;
-
 class DamageNumeral : public Numeral
 {
 public:
@@ -23,8 +21,6 @@ public:
     void BloomRender() override;    //ƒuƒ‹[ƒ€Œø‰Ê•t‚«‚Ì•`‰æ
     void DrawDebug()   override;
 
-    void SetParent(Character* parent) { parent_ = parent; }
-
 private:
     static constexpr float LIFE_TIME_ = 1.5f;
 
@@ -32,7 +28,6 @@ private:
     static unsigned int nameNum_;
 
 private:
-    Character*  parent_     = nullptr;
     float       lifeTimer_  = LIFE_TIME_;
     float       addPosY_    = 0.0f;
 };

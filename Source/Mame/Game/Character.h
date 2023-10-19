@@ -165,17 +165,17 @@ public:
     bool isInvincible = false;
 
 protected:
-    std::string name_           = "";       // 名前(ImGuiに使用)
-    float       radius_         = 0.25f;    // 半径(当たり判定に使用)
-    float       height_         = 1.5f;     // 高さ(位置修正に使用)
+    std::string name_           = "";           // 名前(ImGuiに使用)
+    float       radius_         = 0.25f;        // 半径(当たり判定に使用)
+    float       height_         = 1.5f;         // 高さ(位置修正に使用)
 
 
-    float maxHealth;
-    float health;                   // hp
-    float invincibleTime = 1.0f;    // 無敵時間
+    float       maxHealth       = 1.0f;
+    float       health          = maxHealth;    // hp
+    float       invincibleTime  = 1.0f;         // 無敵時間
 
-    float lockOnHeight = 1.0f;//身長
-    float       defence         = 0.0f;     // 防御力
+    float       lockOnHeight    = 1.0f;         // 身長
+    float       defence         = 0.0f;         // 防御力
 
     //--------------------------------喰らい、攻撃判定------------------------------------
     std::vector<SphereCollider> hitCollider;

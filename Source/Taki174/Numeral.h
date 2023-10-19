@@ -3,6 +3,8 @@
 #include <vector>
 #include "../Mame/Resource/sprite.h"
 
+class Character;
+
 class Numeral
 {
 public:
@@ -22,11 +24,18 @@ public:
     virtual void BloomRender(); // ƒuƒ‹[ƒ€Œø‰Ê•t‚«‚Ì•`‰æ
     virtual void DrawDebug();
 
+public:
+    const Character* GetParent() { return parent_; }
+    void SetParent(Character* parent) { parent_ = parent; }
+
 protected:
     void Destroy();
 
 protected:
     static constexpr DirectX::XMFLOAT2 TEX_SIZE_ = { 60.0f, 100.0f };
+
+protected:
+    Character*           parent_ = nullptr;
 
 protected:
     std::vector<Sprite*> sprites_;

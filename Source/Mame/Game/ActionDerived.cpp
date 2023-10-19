@@ -611,12 +611,17 @@ const ActionBase::State BlowOffAction::Run(const float elapsedTime)
 	{
 	case 0:
 
-		// 速度に吹っ飛ばす力を加える
+		// 吹っ飛ばす力を速度に設定する
+		const XMFLOAT3 blowOffVecN	= ::XMFloat3Normalize(owner_->GetBlowOffVec());
 		{
-			const XMFLOAT3 blowOffVecN	= ::XMFloat3Normalize(owner_->GetBlowOffVec());
-			const XMFLOAT3 force		= blowOffVecN * owner_->GetBlowOffForce();
-			owner_->AddVelocity(force * elapsedTime);
+			XMFLOAT3 force	 = {};
+				     force.x = blowOffVecN.x * owner_->GetBlowOffForce();
+				     force.z = blowOffVecN.z * owner_->GetBlowOffForce();
+			owner_->SetVelocity(force);
 		}
+
+		// 吹っ飛ばされた方向を向く
+		owner_->GetTransform()->SetRotationY(::atan2f(-blowOffVecN.x, -blowOffVecN.z));
 
 		// 吹っ飛びアニメーション再生
 		{
@@ -649,8 +654,8 @@ const ActionBase::State BlowOffAction::Run(const float elapsedTime)
 			}
 
 			// 透明にしていく
-			const float reduceColorW = (-1.0f) * elapsedTime;
-			modelColor->w = (std::max)(0.0f, modelColor->w - reduceColorW);
+			const float reduceColorW = (-10.0f) * elapsedTime;
+			modelColor->w = (std::max)(0.0f, modelColor->w + reduceColorW);
 
 			// ある程度透明になったら
 			if (modelColor->w <= 0.5f)
@@ -686,6 +691,10 @@ const ActionBase::State BlowOffAction::Run(const float elapsedTime)
 
 		break;
 	}
+
+	// 位置更新
+	const XMFLOAT3 addPos = owner_->GetVelocity() * elapsedTime;
+	owner_->GetTransform()->AddPosition(addPos);
 
 	return ActionBase::State::Run;
 }

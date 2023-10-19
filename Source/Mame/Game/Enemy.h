@@ -101,7 +101,7 @@ protected:
 
     DirectX::XMFLOAT3   velocity_       = {};
     DirectX::XMFLOAT3   blowOffVec_     = {};       // 吹っ飛ぶ方向ベクトル(未正規化)
-    float               blowOffForce_   = 5.0f;     // 吹っ飛ぶ力
+    float               blowOffForce_   = 10.0f;    // 吹っ飛ぶ力
     float               runTimer_       = 0.0f;     // 実行タイマー
     float               animationSpeed_ = 1.0f;     // アニメーション速度
     int                 dropExpCount_   = 5;        // ドロップする経験値の数
