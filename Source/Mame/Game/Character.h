@@ -23,6 +23,9 @@ public:
         float radius;
         DirectX::XMFLOAT3 position;
 
+        //判定をするかしないのフラグ（攻撃判定が一瞬だけ欲しい時に使う 今回はゴーレムにしか使わん）
+        bool activeAttack;
+
         void DebugRender(const DirectX::XMFLOAT4 color = {1,1,1,1});
     };
 

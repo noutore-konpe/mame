@@ -86,6 +86,7 @@ void SceneGame::CreateResource()
         // enemyManager.Register(enemyGolem);
 
         EnemyGolem* enemyGolem = new EnemyGolem;
+        enemyGolem->Initialize();
         enemyManager.Register(enemyGolem);
 
 
@@ -845,6 +846,7 @@ void SceneGame::DebugCreateEnemyFromGateway()
 
         // “G¶¬(EnemyAI_1)
         EnemyAI_1* enemyAI_1 = new EnemyAI_1();
+        enemyAI_1->Initialize();
         enemyAI_1->GetTransform()->SetPosition(createPos);
         enemyManager.Register(enemyAI_1);
 

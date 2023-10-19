@@ -1,5 +1,6 @@
 #include "PlayerState.h"
 #include "Player.h"
+#include "PlayerManager.h"
 
 namespace PlayerState
 {
@@ -42,6 +43,7 @@ namespace PlayerState
     {
         combo = 0;
         initialize = false;
+        owner->isActiveAttackFrame = true;
     }
 
     void JabAttackState::Update(const float& elapsedTime)
@@ -110,17 +112,28 @@ namespace PlayerState
         {
             owner->ChangeState(Player::STATE::NORMAL);
         }
+
+        HitCollisionUpdate();
     }
 
     void JabAttackState::Finalize()
     {
         //owner->model->weight = 0.0f;
         owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
+        owner->isActiveAttackFrame = false;
     }
 
     void JabAttackState::HitCollisionUpdate()
     {
-        if (!collisionOn)return;
+        std::vector<Enemy*> hitEnemies;
+        if (PlayerManager::Instance().AttackCollisionPlayerToEnemy(hitEnemies))
+        {
+            for (auto& enemy : hitEnemies)
+            {
+                enemy->ApplyDamage(owner->jabMotionAtkMuls[combo],0.1f);
+                enemy->Flinch();
+            }
+        }
     }
 
     void JabAttackState::AttackUpdate(int dodgeCanselFrame,int comboCanselFrame)
@@ -162,6 +175,15 @@ namespace PlayerState
             }
             break;
         }
+
+        /*if (state < COMBO_AND_DODGE_CANSEL_FRAME)
+        {
+            owner->isActiveAttackFrame = true;
+        }
+        else
+        {
+            owner->isActiveAttackFrame = false;
+        }*/
     }
 
     void AvoidState::Initialize()

@@ -129,6 +129,8 @@ void EnemyAI_1::Render(const float& scale, ID3D11PixelShader* /*psShader*/)
     // Œ••`‰æ
     sword_->Render(scale, nullptr);
 
+    BaseEnemyAI::ColliderPosUpdate(scale);
+
 }
 
 

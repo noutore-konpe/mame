@@ -156,6 +156,8 @@ public:
     static constexpr float InitAcceleration = 10.0f;
 
     float actualRotValue;//回避中、実際に回転させるZ値
+
+    bool isActiveAttackFrame;
 private:
     //----------------------------シェーダー----------------------------------
     Microsoft::WRL::ComPtr<ID3D11PixelShader> playerPS;
@@ -219,8 +221,11 @@ private:
     const float steppingSpeed = 5.0f;//攻撃間際の踏み込み最高速度
     const float steppingTime = 0.2f;//踏み込み時間
     float steppingTimer = 0;
-    //-----------------------------------------------------------------------
 
+public://getter作るのめんどいだけ
+    float jabMotionAtkMuls[3];
+    //-----------------------------------------------------------------------
+private:
     //----------------------------回避---------------------------------------
     float maxDodgeSpeed;//回避中の移動速度
     //-----------------------------------------------------------------------
@@ -239,6 +244,8 @@ private:
         HIP,
         R_LEG,
         L_LEG,
+        R_ELBOW,
+        L_ELBOW,
         END
     };
 
@@ -253,9 +260,6 @@ private:
 
     // アビリティマネージャー(仮)
     AbilityManager abilityManager_ = {};
-
-
-    bool showCollider = true;
 
 };
 

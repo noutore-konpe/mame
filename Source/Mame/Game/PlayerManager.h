@@ -25,6 +25,8 @@ public:
 
     void CollisionPlayerVsEnemy();
 
+    bool AttackCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies);
+
 public: // æ“¾Eİ’è ŠÖ˜A
     std::unique_ptr<Player>& GetPlayer() { return player; }
     

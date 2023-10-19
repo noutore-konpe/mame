@@ -46,8 +46,6 @@ namespace PlayerState
         int combo;//現在の連撃回数
         bool initialize;//コンボ毎の初期化処理フラグ
 
-        bool collisionOn;//判定処理をするか
-
         const float dodgeCanselFrame1 = 10.0f;
         const float dodgeCanselFrame2 = 10.0f;
         const float dodgeCanselFrame3 = 10.0f;

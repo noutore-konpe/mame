@@ -96,7 +96,7 @@ public:
     void Update(const float& elapsedTime)                       override; // 更新処理
     void End()                                                  override; // 毎フレーム一番最後に呼ばれる
     void Render(const float& scale, ID3D11PixelShader* psShader = nullptr)   override; // 描画処理
-    
+
     void Render(const float& scale, bool shadow, ID3D11PixelShader* psShader = nullptr) override;
     void DrawDebug()                                            override; // デバッグ描画
 
@@ -117,6 +117,28 @@ public:
     // 攻撃魔法陣更新処理
     void UpdateAttack2MagicCircle(const float& lengthX, const float& lengthZ);
 
+private:
+    enum class ColliderName
+    {
+        HIP,
+        R_LEG,
+        L_LEG,
+        R_LEG_END,
+        L_LEG_END,
+        R_SHOULDER,
+        L_SHOULDER,
+        //R_ELBOW,
+        //L_ELBOW,
+        R_HAND,
+        L_HAND,
+        END
+    };
+
+    //当たり判定設定
+    void ColliderInitialize();
+
+    //当たり判定をボーンにくっつける
+    void ColliderPosUpdate(const float& scale);
 private:
     static int nameNum_;
 
