@@ -6,8 +6,9 @@
 #include "Scene/SceneManager.h"
 #include "Scene/SceneTitle.h"
 #include "Scene/SceneGame.h"
-#include "Scene/SceneDemo.h"
+#include "Scene/SceneResult.h"
 #include "Scene/SceneTutorial.h"
+#include "Scene/SceneLoading.h"
 
 #include "Resource/AudioManager.h"
 
@@ -50,7 +51,7 @@ bool framework::initialize()
     //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneTutorial);
     Mame::Scene::SceneManager::Instance().ChangeScene(new SceneTitle);
     //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneGame);
-    //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneDemo);
+    //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneResult);
 
 #ifndef _DEBUG
     ShowCursor(!FULLSCREEN);	// フルスクリーン時はカーソルを消す

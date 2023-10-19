@@ -1,9 +1,9 @@
-#include "LoadingPlayer.h"
+#include "PlayerResult.h"
 
 #include "../Graphics/Graphics.h"
 
 // コンストラクタ
-LoadingPlayer::LoadingPlayer()
+PlayerResult::PlayerResult()
 {
     Graphics& graphics = Graphics::Instance();
 
@@ -18,7 +18,8 @@ LoadingPlayer::LoadingPlayer()
         loadPS.GetAddressOf());
 }
 
-void LoadingPlayer::Initialize()
+// 初期化
+void PlayerResult::Initialize()
 {
     float scale = 0.6f;
 
@@ -27,31 +28,34 @@ void LoadingPlayer::Initialize()
     GetTransform()->SetRotationY(DirectX::XMConvertToRadians(90));
 
     swordModel->transform.SetScaleFactor(0.7f);
-    swordModel->PlayAnimation(1, true);
-    PlayAnimation(1, true);
+    swordModel->PlayAnimation(0, true);
+    PlayAnimation(0, true);
 }
 
-void LoadingPlayer::Finalize()
-{
-}
-
-void LoadingPlayer::Update(const float elapsedTime)
+// 更新
+void PlayerResult::Update(const float elapsedTime)
 {
     swordModel->transform.SetPosition(GetTransform()->GetPosition());
     swordModel->transform.SetRotation(GetTransform()->GetRotation());
     swordModel->UpdateAnimation(elapsedTime);
 
     UpdateAnimation(elapsedTime);
+
+    GetTransform()->AddRotationY(elapsedTime);
+    float rotY = GetTransform()->GetRotation().y;
+    if (rotY > DirectX::XMConvertToRadians(360))
+        rotY -= DirectX::XMConvertToRadians(360);
+    GetTransform()->SetRotationY(rotY);
 }
 
-void LoadingPlayer::Render(const float scale, ID3D11PixelShader* psShader)
+// 描画
+void PlayerResult::Render(const float scale, ID3D11PixelShader* psShader)
 {
     model->Render(scale, loadPS.Get());
     swordModel->Render(scale, loadPS.Get());
 }
 
-void LoadingPlayer::DrawDebug()
+void PlayerResult::DrawDebug()
 {
-    //model->DrawDebug();
-    swordModel->DrawDebug();
+    model->DrawDebug();
 }

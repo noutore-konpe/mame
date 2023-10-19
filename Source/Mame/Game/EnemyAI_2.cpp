@@ -79,7 +79,7 @@ void EnemyAI_2::Initialize()
 
     BaseEnemyAI::Initialize();
 
-    constexpr float scale = 1.5f;
+    constexpr float scale = 1.0f;
     this->GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
     sword_->GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
 

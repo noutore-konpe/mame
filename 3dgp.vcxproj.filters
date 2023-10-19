@@ -172,6 +172,12 @@
     <FxCompile Include="Source\Shader\EnemyPS.hlsl">
       <Filter>mamelib\Shader\Fbx</Filter>
     </FxCompile>
+    <FxCompile Include="Source\Shader\ResultPS.hlsl">
+      <Filter>mamelib\Shader\Fbx</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\FinalPassTexturePS.hlsl">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Mame\Scene\BaseScene.cpp">
@@ -502,6 +508,15 @@
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\WaveManager.cpp">
       <Filter>mamelib\Mame\Game\Wave</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Scene\SceneResult.cpp">
+      <Filter>mamelib\Mame\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyGolemResult.cpp">
+      <Filter>mamelib\Mame\Game\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\PlayerResult.cpp">
+      <Filter>mamelib\Mame\Game\Result</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -877,6 +892,15 @@
     <ClInclude Include="Source\Mame\Game\WaveManager.h">
       <Filter>mamelib\Mame\Game\Wave</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Scene\SceneResult.h">
+      <Filter>mamelib\Mame\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyGolemResult.h">
+      <Filter>mamelib\Mame\Game\Result</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\PlayerResult.h">
+      <Filter>mamelib\Mame\Game\Result</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">
@@ -1093,6 +1117,9 @@
     </Filter>
     <Filter Include="mamelib\Mame\Game\Wave">
       <UniqueIdentifier>{f30bbd6c-e1d9-4dc2-98f5-0e023a8b91ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Result">
+      <UniqueIdentifier>{b1b665d5-7267-490d-9970-57b5e6745b86}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -67,6 +67,9 @@ void EnemyAI_3::Initialize()
 {
     BaseEnemyAI::Initialize();
 
+    constexpr float scale = 0.7f;
+    this->GetTransform()->SetScale(DirectX::XMFLOAT3(scale, scale, scale));
+
     attackLength_ = 6.0f; // UŒ‚‚ª‰Â”\‚È‹——£‚ğ‚Ì‚Î‚·
 
     ColliderInitialize();

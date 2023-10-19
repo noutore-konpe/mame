@@ -1,6 +1,8 @@
 #include "SceneTitle.h"
 #include "SceneGame.h"
 #include "SceneLoading.h"
+#include "SceneResult.h"
+
 #include "../Mame.h"
 
 #include "../Graphics/Graphics.h"
@@ -133,7 +135,8 @@ void SceneTitle::Update(const float& elapsedTime)
     if (IsChangeScene(elapsedTime))
     {
         Camera::Instance().TitleInitialize();
-        Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneResult));
         return;
     }
 
