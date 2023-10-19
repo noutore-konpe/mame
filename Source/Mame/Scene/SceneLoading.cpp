@@ -73,6 +73,7 @@ void SceneLoading::Update(const float& elapsedTime)
 {
     loadingPlayer->Update(elapsedTime);
 
+#if 1
     if (nextScene->IsReady())
     {
         float maxTime = 1.0f;
@@ -99,6 +100,7 @@ void SceneLoading::Update(const float& elapsedTime)
     {
         Mame::Scene::SceneManager::Instance().ChangeScene(nextScene);
     }
+#endif
 }
 
 // Update‚ÌŒã‚ÉŒÄ‚Î‚ê‚é

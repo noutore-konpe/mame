@@ -79,6 +79,10 @@ void EnemyAI_1::Initialize()
 {
     BaseEnemyAI::Initialize();
 
+    constexpr float scale = 0.7f;
+    this->GetTransform()->SetScale(DirectX::XMFLOAT3(scale, scale, scale));
+    sword_->GetTransform()->SetScale(DirectX::XMFLOAT3(scale, scale, scale));
+
     sword_->PlayAnimation(0, true); // デフォルトアニメーション再生再生
 }
 

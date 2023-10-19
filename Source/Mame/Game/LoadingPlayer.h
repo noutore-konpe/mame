@@ -17,5 +17,7 @@ public:
 
 private:
     Microsoft::WRL::ComPtr<ID3D11PixelShader> loadPS;
+
+    std::unique_ptr<Model> swordModel;
 };
 
