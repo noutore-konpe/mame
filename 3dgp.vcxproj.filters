@@ -169,6 +169,9 @@
     <FxCompile Include="Source\Shader\SpriteEmissive.hlsl">
       <Filter>mamelib\Shader\Sprite</Filter>
     </FxCompile>
+    <FxCompile Include="Source\Shader\EnemyPS.hlsl">
+      <Filter>mamelib\Shader\Fbx</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Mame\Scene\BaseScene.cpp">

@@ -326,13 +326,16 @@ void SceneTitle::DrawDebug()
 void SceneTitle::PressAnyButton(const float& elapsedTime)
 {
     float maxTime = 1.0f;
+    float maxAlpha = 0.6f;
+    float minAlpha = 0.1f;
+
     if (pressTimer <= maxTime)
     {
         DirectX::XMFLOAT4 color = pressSprite->GetSpriteTransform()->GetColor();
         if (isAlphaDown)
-            color.w = Easing::InSine(pressTimer, maxTime, 0.2f, 1.0f);
+            color.w = Easing::InSine(pressTimer, maxTime, minAlpha, maxAlpha);
         else
-            color.w = Easing::InSine(pressTimer, maxTime, 1.0f, 0.2f);
+            color.w = Easing::InSine(pressTimer, maxTime, maxAlpha, minAlpha);
 
         pressSprite->GetSpriteTransform()->SetColor(color);
 

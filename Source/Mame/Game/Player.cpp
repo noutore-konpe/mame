@@ -13,6 +13,8 @@
 #include "BlackHole.h"
 #include "EnemyManager.h"
 
+#include "UserInterface.h"
+
 // コンストラクタ
 Player::Player()
 {
@@ -853,6 +855,7 @@ bool Player::ChangeLockOnTarget(float ax)
     if (sideEnemys.size() == 1)
     {
         camera.SetLockOnTarget(sideEnemys.at(0));
+        UserInterface::Instance().SetLockOnInitialize();
         return true;
     }
 
@@ -876,6 +879,7 @@ bool Player::ChangeLockOnTarget(float ax)
     }
 
     camera.SetLockOnTarget(nextLockOnTarget);
+    UserInterface::Instance().SetLockOnInitialize();
 
     return true;
 }
@@ -925,6 +929,7 @@ void Player::LockOnInitialize()
         if (length0 > length1)
         {
             Camera::Instance().SetLockOnTarget(enemy);
+            UserInterface::Instance().SetLockOnInitialize();
             length0 = length1;
         }
     }

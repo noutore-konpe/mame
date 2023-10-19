@@ -31,7 +31,7 @@ EnemyAI_3::EnemyAI_3()
 
         // pixelShader Set (Aura)
         CreatePsFromCso(graphics.GetDevice(),
-            "./Resources/Shader/EmissiveTextureUVScrollPS.cso",
+            "./Resources/Shader/EnemyPS.cso",
             emissiveTextureUVScroll.GetAddressOf());
     }
 
@@ -117,7 +117,7 @@ void EnemyAI_3::UpdateConstants()
     // emissive
     {
         // emissive‚Ì‹­‚³
-        SetEmissiveIntensity(1.5f);
+        SetEmissiveIntensity(1.25f);
 
         // emissiveTexture ScrollDirection
         SetEmissiveScrollDirection(DirectX::XMFLOAT2(0.25f, 0.5f));

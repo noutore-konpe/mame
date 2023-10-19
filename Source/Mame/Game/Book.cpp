@@ -89,7 +89,7 @@ void Book::Render(const float& scale, ID3D11PixelShader* psShader)
     Item::Render(scale, psShader);
 
     // ’eŠÛ•`‰æˆ—
-    projectileManager.Render(0.1f);
+    projectileManager.Render(0.01f);
 }
 
 // ImGui—p

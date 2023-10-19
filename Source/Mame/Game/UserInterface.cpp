@@ -2,6 +2,8 @@
 #include "../Graphics/Graphics.h"
 #include "Enemy.h"
 
+#include "../Other/Easing.h"
+
 void UserInterface::Initialize()
 {
     Graphics& graphics = Graphics::Instance();
@@ -10,6 +12,10 @@ void UserInterface::Initialize()
         L"./Resources/Image/UI/LockOn.png");
     lockOnSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(16, 16));
     lockOnSprite->GetSpriteTransform()->SetTexSize(DirectX::XMFLOAT2(256, 256));
+
+    lockOnMaruSprite = std::make_unique<Sprite>(graphics.GetDevice(),
+        L"./Resources/Image/UI/LockOnMaru.png");
+    lockOnMaruSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(16, 16));
 
     hpSprite = std::make_unique<Sprite>(graphics.GetDevice(),
         L"./Resources/Image/UI/hp.png");
@@ -30,6 +36,13 @@ void UserInterface::Initialize()
         L"./Resources/Image/UI/numbers.png");
     chonchonSprite = std::make_unique<Sprite>(graphics.GetDevice(),
         L"./Resources/Image/UI/chonchon.png");
+
+    whiteSprite = std::make_unique<Sprite>(graphics.GetDevice(),
+        L"./Resources/Image/Game/white.png");
+    waveSlideSprite = std::make_unique<Sprite>(graphics.GetDevice(),
+        L"./Resources/Image/UI/wave.png");
+    numSlideSprite = std::make_unique<Sprite>(graphics.GetDevice(),
+        L"./Resources/Image/UI/numbers.png");
 
     // 初期化
     hpSprite->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(25.0f, 0.0f));
@@ -52,24 +65,33 @@ void UserInterface::Initialize()
     numSprite->GetSpriteTransform()->SetTexSize(DirectX::XMFLOAT2(60, 100));
     chonchonSprite->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(55.0f, 55.0f));
     chonchonSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(10.0f, 13.0f));
-}
 
-void UserInterface::Update(float elapsedTime)
-{
-    if (Camera::Instance().activeLockOn && Camera::Instance().GetLockOnTarget())
+    whiteSprite->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(0, 200));
+    whiteSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(1280, 70));
+    whiteSprite->GetSpriteTransform()->SetColorA(0.5f);
+    waveSlideSprite->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(490, 220));
+    waveSlideSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(102.4f, 51.2f));
+    numSlideSprite->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(610, 200));
+    numSlideSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(48, 80)); 
+    numSlideSprite->GetSpriteTransform()->SetTexSize(DirectX::XMFLOAT2(60, 100));
+
+    for (int i = 0; i < 4; ++i)
     {
-        DirectX::XMFLOAT3 pos = Camera::Instance().GetLockOnTarget()->GetTransform()->GetPosition();
-        pos.y += Camera::Instance().GetLockOnTarget()->GetHeight();
-        lockOnSprite->GetSpriteTransform()->SetPos(Sprite::ConvertToScreenPos(pos));
-        auto sPos = lockOnSprite->GetSpriteTransform()->GetPos();
-        sPos.x -= lockOnSprite->GetSpriteTransform()->GetSize().x / 2;
-        sPos.y -= lockOnSprite->GetSpriteTransform()->GetSize().y / 2;
-        lockOnSprite->GetSpriteTransform()->SetPos(sPos);
-        lockOnSprite->Update(elapsedTime);
-        lockOnSprite->PlayAnimation(elapsedTime, 7.0f, 4, false);
+        numPosition[i] = DirectX::XMFLOAT2(600, 200);
     }
 }
 
+// 更新
+void UserInterface::Update(float elapsedTime)
+{
+    // ロックオン
+    UpdateLockOnSprite(elapsedTime);
+
+    // 流れていくwaveSprite
+    UpdateWaveSprite(elapsedTime);
+}
+
+// 描画
 void UserInterface::Render()
 {
     backGageSprite[0]->Render();
@@ -78,8 +100,11 @@ void UserInterface::Render()
     keikenchiSprite->Render();
     maruSprite->Render();
 
+
     RenderLv();
     RenderWave();
+
+    if(isWaveSlideSprite) RenderWaveSlide();
 }
 
 void UserInterface::BloomRender()
@@ -87,21 +112,34 @@ void UserInterface::BloomRender()
     if (Camera::Instance().activeLockOn && Camera::Instance().GetLockOnTarget())
     {
         lockOnSprite->Render();
-    }
 
+        if (isLockOnInitialize) lockOnMaruSprite->Render();
+    }
 }
 
 void UserInterface::DrawDebug()
 {
     if (ImGui::BeginMenu("UserInterface"))
     {
+        if (ImGui::Button("waveSlide"))
+        {
+            isWaveSlideSprite = true;
+            slideState = 0;
+        }
+
         ImGui::SliderInt("Lv", &lv, 0, 1000);
         ImGui::SliderInt("Wave", &wave, 0, 1000);
 
-        numSprite->DrawDebug();
+
+        whiteSprite->DrawDebug();
+        waveSlideSprite->DrawDebug();
+        numSlideSprite->DrawDebug();
+        
+
+        //numSprite->DrawDebug();
         //lvSprite->DrawDebug();
         //waveSprite->DrawDebug();
-        chonchonSprite->DrawDebug();
+        //chonchonSprite->DrawDebug();
         
         //lockOnSprite->DrawDebug();
 
@@ -114,6 +152,297 @@ void UserInterface::DrawDebug()
         ImGui::EndMenu();
     }
 
+}
+
+// ロックオン
+void UserInterface::UpdateLockOnSprite(const float& elapsedTime)
+{
+    // ロックオン中央画像
+    if (Camera::Instance().activeLockOn && Camera::Instance().GetLockOnTarget())
+    {
+        DirectX::XMFLOAT3 pos = Camera::Instance().GetLockOnTarget()->GetTransform()->GetPosition();
+        pos.y += Camera::Instance().GetLockOnTarget()->GetLockOnHeight();
+        lockOnSprite->GetSpriteTransform()->SetPos(Sprite::ConvertToScreenPos(pos));
+        auto sPos = lockOnSprite->GetSpriteTransform()->GetPos();
+        sPos.x -= lockOnSprite->GetSpriteTransform()->GetSizeX() / 2;
+        sPos.y -= lockOnSprite->GetSpriteTransform()->GetSizeY() / 2;
+        lockOnSprite->GetSpriteTransform()->SetPos(sPos);
+        lockOnSprite->Update(elapsedTime);
+        lockOnSprite->PlayAnimation(elapsedTime, 7.0f, 4, false);
+    }
+
+    // ロックオンの最初に出る丸い枠
+    if (isLockOnInitialize)
+    {
+        float maxTime = 0.3f;
+        float minSize = 16.0f;
+        float maxSize = 64.0f;
+        if (lockOnTimer <= maxTime)
+        {
+            float size = Easing::InSine(lockOnTimer, maxTime, minSize, maxSize);
+
+            lockOnMaruSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(size, size));
+
+            lockOnTimer += elapsedTime;
+        }
+        else
+        {
+            lockOnMaruSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(minSize, minSize));
+            lockOnTimer = 0.0f;
+            isLockOnInitialize = false;
+        }
+
+        DirectX::XMFLOAT3 pos = Camera::Instance().GetLockOnTarget()->GetTransform()->GetPosition();
+        pos.y += Camera::Instance().GetLockOnTarget()->GetLockOnHeight();
+        lockOnMaruSprite->GetSpriteTransform()->SetPos(Sprite::ConvertToScreenPos(pos));
+        DirectX::XMFLOAT2 sPos = lockOnMaruSprite->GetSpriteTransform()->GetPos();
+        sPos.x -= lockOnMaruSprite->GetSpriteTransform()->GetSizeX() / 2;
+        sPos.y -= lockOnMaruSprite->GetSpriteTransform()->GetSizeY() / 2;
+        lockOnMaruSprite->GetSpriteTransform()->SetPos(sPos);
+    }
+    else
+    {
+        lockOnTimer = 0.0f;
+    }
+}
+
+void UserInterface::UpdateWaveSprite(const float& elapsedTime)
+{
+    if (isWaveSlideSprite)
+    {
+        switch (slideState)
+        {
+        case static_cast<UINT>(STATE::Idle):
+            // 待機
+            whiteSprite->GetSpriteTransform()->SetColorA(0.0f);
+            waveSlideSprite->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(1280, 220));
+            for (int i = 0; i < 4; ++i)
+            {
+                numPosition[i] = DirectX::XMFLOAT2(1280, 200);
+            }
+            easingTimer = 0.0f;
+            slideState = static_cast<UINT>(STATE::CreateWhite);
+            break;
+        case static_cast<UINT>(STATE::CreateWhite):
+        {
+            float maxTime = 0.2f;
+            if (easingTimer <= maxTime)
+            {
+                float alpha = Easing::InSine(easingTimer, maxTime, 0.5f, 0.0f);
+
+                whiteSprite->GetSpriteTransform()->SetColorA(alpha);
+
+                easingTimer += elapsedTime;
+            }
+            else
+            {
+                whiteSprite->GetSpriteTransform()->SetColorA(0.5f);
+                easingTimer = 0.0f;
+                slideState = static_cast<UINT>(STATE::FadeIn);
+            }
+        }
+        break;
+        case static_cast<UINT>(STATE::FadeIn):
+            // フェードイン
+        {
+            float maxTime = 0.8f;
+            float maxWave = 490.0f;
+            float maxNum0 = 610.0f;
+            float maxNum1 = 660.0f;
+            float maxNum2 = 710.0f;
+            float maxNum3 = 760.0f;
+#if 0
+            float minWave = 1280.0f;
+            float minNum0 = 1400.0f;
+            float minNum1 = 1450.0f;
+            float minNum2 = 1500.0f;
+            float minNum3 = 1550.0f;
+#else
+            float minWave = 1280.0f;
+            float minNum0 = 1280.0f;
+            float minNum1 = 1280.0f;
+            float minNum2 = 1280.0f;
+            float minNum3 = 1280.0f;
+#endif
+
+            if (easingTimer <= maxTime)
+            {
+                float wavePosX = Easing::InSine(easingTimer, maxTime, maxWave, minWave);
+                float num0PosX = Easing::InSine(easingTimer, maxTime, maxNum0, minNum0);
+                float num1PosX = Easing::InSine(easingTimer, maxTime, maxNum1, minNum1);
+                float num2PosX = Easing::InSine(easingTimer, maxTime, maxNum2, minNum2);
+                float num3PosX = Easing::InSine(easingTimer, maxTime, maxNum3, minNum3);
+
+                waveSlideSprite->GetSpriteTransform()->SetPosX(wavePosX);
+
+                numPosition[0].x = num0PosX;
+                numPosition[1].x = num1PosX;
+                numPosition[2].x = num2PosX;
+                numPosition[3].x = num3PosX;
+
+                easingTimer += elapsedTime;
+            }
+            else
+            {
+                waveSlideSprite->GetSpriteTransform()->SetPosX(maxWave);
+                numPosition[0].x = maxNum0;
+                numPosition[1].x = maxNum1;
+                numPosition[2].x = maxNum2;
+                numPosition[3].x = maxNum3;
+                easingTimer = 0.0f;
+                slideState = static_cast<UINT>(STATE::Display);
+            }
+        }
+        break;
+        case static_cast<UINT>(STATE::Display):
+            // 表示
+        {
+            float maxTime = 1.0f;
+            if (easingTimer <= maxTime)
+            {
+                easingTimer += elapsedTime;
+            }
+            else
+            {
+                easingTimer = 0.0f;
+                slideState = static_cast<UINT>(STATE::FadeOut);
+            }
+        }
+        break;
+        case static_cast<UINT>(STATE::FadeOut):
+            // フェードアウト
+        {
+            float maxTime = 0.8f;
+            float minWave = 490.0f;
+            float minNum0 = 610.0f;
+            float minNum1 = 660.0f;
+            float minNum2 = 710.0f;
+            float minNum3 = 760.0f;
+
+#if 0
+            float maxWave = -310.0f;
+            float maxNum0 = -190.0f;
+            float maxNum1 = -140.0f;
+            float maxNum2 = -90.0f;
+            float maxNum3 = -40.0f;
+#else
+            float maxWave = -100.0f;
+            float maxNum0 = -40.0f;
+            float maxNum1 = -40.0f;
+            float maxNum2 = -40.0f;
+            float maxNum3 = -40.0f;
+#endif
+
+            if (easingTimer <= maxTime)
+            {
+                float wavePosX = Easing::InSine(easingTimer, maxTime, maxWave, minWave);
+                float num0PosX = Easing::InSine(easingTimer, maxTime, maxNum0, minNum0);
+                float num1PosX = Easing::InSine(easingTimer, maxTime, maxNum1, minNum1);
+                float num2PosX = Easing::InSine(easingTimer, maxTime, maxNum2, minNum2);
+                float num3PosX = Easing::InSine(easingTimer, maxTime, maxNum3, minNum3);
+
+                waveSlideSprite->GetSpriteTransform()->SetPosX(wavePosX);
+
+                numPosition[0].x = num0PosX;
+                numPosition[1].x = num1PosX;
+                numPosition[2].x = num2PosX;
+                numPosition[3].x = num3PosX;
+
+                easingTimer += elapsedTime;
+            }
+            else
+            {
+                waveSlideSprite->GetSpriteTransform()->SetPosX(maxWave);
+                numPosition[0].x = maxNum0;
+                numPosition[1].x = maxNum1;
+                numPosition[2].x = maxNum2;
+                numPosition[3].x = maxNum3;
+                easingTimer = 0.0f;
+                slideState = static_cast<UINT>(STATE::DeleteWhite);
+            }
+        }
+        break;
+        case static_cast<UINT>(STATE::DeleteWhite):
+            // 白背景透明化
+        {
+            float maxTime = 0.2f;
+            if (easingTimer <= maxTime)
+            {
+                float alpha = Easing::InSine(easingTimer, maxTime, 0.0f, 0.5f);
+
+                whiteSprite->GetSpriteTransform()->SetColorA(alpha);
+
+                easingTimer += elapsedTime;
+            }
+            else
+            {
+                whiteSprite->GetSpriteTransform()->SetColorA(0.0f);
+                easingTimer = 0.0f;
+                slideState = static_cast<UINT>(STATE::Idle);
+                isWaveSlideSprite = false;
+            }
+        }
+        break;
+        }
+    }
+}
+
+void UserInterface::RenderWaveSlide()
+{
+    float texSizeX = 60;
+    float one = wave % 10 * texSizeX;
+    float ten = wave / 10 % 10 * texSizeX;
+    float hundred = wave / 100 % 10 * texSizeX;
+    float thousand = wave / 1000 % 10 * texSizeX;
+
+    whiteSprite->Render();
+    waveSlideSprite->Render();
+
+    numSlideSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(48, 80));
+    numSlideSprite->GetSpriteTransform()->SetPosY(200);
+
+    if (wave < 10)
+    {
+        numSlideSprite->GetSpriteTransform()->SetPos(numPosition[0]);
+        numSlideSprite->GetSpriteTransform()->SetTexPosX(one);
+        numSlideSprite->Render();
+    }
+    else if (wave < 100)
+    {
+        numSlideSprite->GetSpriteTransform()->SetPos(numPosition[0]);
+        numSlideSprite->GetSpriteTransform()->SetTexPosX(ten);
+        numSlideSprite->Render();
+        numSlideSprite->GetSpriteTransform()->SetPos(numPosition[1]);
+        numSlideSprite->GetSpriteTransform()->SetTexPosX(one);
+        numSlideSprite->Render();
+    }
+    else if (wave < 1000)
+    {
+        numSlideSprite->GetSpriteTransform()->SetPos(numPosition[0]);
+        numSlideSprite->GetSpriteTransform()->SetTexPosX(hundred);
+        numSlideSprite->Render();
+        numSlideSprite->GetSpriteTransform()->SetPos(numPosition[1]);
+        numSlideSprite->GetSpriteTransform()->SetTexPosX(ten);
+        numSlideSprite->Render();
+        numSlideSprite->GetSpriteTransform()->SetPos(numPosition[2]);
+        numSlideSprite->GetSpriteTransform()->SetTexPosX(one);
+        numSlideSprite->Render();
+    }
+    else if (wave < 10000)
+    {
+        numSlideSprite->GetSpriteTransform()->SetPos(numPosition[0]);
+        numSlideSprite->GetSpriteTransform()->SetTexPosX(thousand);
+        numSlideSprite->Render();
+        numSlideSprite->GetSpriteTransform()->SetPos(numPosition[1]);
+        numSlideSprite->GetSpriteTransform()->SetTexPosX(hundred);
+        numSlideSprite->Render();
+        numSlideSprite->GetSpriteTransform()->SetPos(numPosition[2]);
+        numSlideSprite->GetSpriteTransform()->SetTexPosX(ten);
+        numSlideSprite->Render();
+        numSlideSprite->GetSpriteTransform()->SetPos(numPosition[3]);
+        numSlideSprite->GetSpriteTransform()->SetTexPosX(one);
+        numSlideSprite->Render();
+    }
 }
 
 void UserInterface::RenderLv()
