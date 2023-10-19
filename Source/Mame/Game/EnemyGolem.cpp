@@ -6,6 +6,8 @@
 
 #include "EnemyGolemState.h"
 
+#include "../Scene/SceneGame.h"
+
 int EnemyGolem::nameNum_;
 
 
@@ -83,7 +85,7 @@ void EnemyGolem::Initialize()
         comboAttackStones[i]->Initialize();
     }
 
-    GetTransform()->SetPositionY(10.0f);
+    //GetTransform()->SetPositionY(10.0f);
 
     // アニメーション再生
     Character::PlayAnimation(static_cast<UINT>(Animation::Idle), true);
@@ -92,6 +94,9 @@ void EnemyGolem::Initialize()
 
     // ステージに入場済み扱いにする
     entryStageFlag_ = true;
+
+    //判定設定
+    ColliderInitialize();
 
 #ifdef _DEBUG
     currentStateDebug = 0;
@@ -153,6 +158,23 @@ void EnemyGolem::Render(const float& scale, ID3D11PixelShader* psShader)
     SubRender();
 
     //magicCircleGolemAttack2->Render(DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
+
+#if _DEBUG
+    if (SceneGame::isDispCollision_)
+    {
+        for (auto& collider : hitCollider)
+        {
+            collider.DebugRender();
+        }
+
+        for (auto& collider : attackCollider)
+        {
+            collider.DebugRender(DirectX::XMFLOAT4(1, 0, 0, 1));
+        }
+    }
+#endif
+
+    ColliderPosUpdate(scale);//判定位置を各ジョイントに追従
 }
 
 // 影描画用
@@ -224,6 +246,21 @@ void EnemyGolem::DrawDebug()
         {
             magicCircleEnemySummon->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleEnemySummon::StateMachineState::AppearState));
         }
+
+        ImGui::Begin("Collider");
+        
+        ImGui::SliderFloat("hip", &hitCollider[static_cast<float>(ColliderName::HIP)].radius, 0.0f, 2.0f);
+        ImGui::SliderFloat("R_leg", &hitCollider[static_cast<float>(ColliderName::R_LEG)].radius, 0.0f, 2.0f);
+        ImGui::SliderFloat("L_leg", &hitCollider[static_cast<float>(ColliderName::L_LEG)].radius, 0.0f, 2.0f);
+        ImGui::SliderFloat("R_knee", &hitCollider[static_cast<float>(ColliderName::R_LEG_END)].radius, 0.0f, 2.0f);
+        ImGui::SliderFloat("L_knee", &hitCollider[static_cast<float>(ColliderName::L_LEG_END)].radius, 0.0f, 2.0f);
+        ImGui::SliderFloat("R_shoulder", &hitCollider[static_cast<float>(ColliderName::R_SHOULDER)].radius, 0.0f, 2.0f);
+        ImGui::SliderFloat("L_shoulder", &hitCollider[static_cast<float>(ColliderName::L_SHOULDER)].radius, 0.0f, 2.0f);
+        ImGui::SliderFloat("R_hand", &hitCollider[static_cast<float>(ColliderName::R_HAND)].radius, 0.0f, 2.0f);
+        ImGui::SliderFloat("L_hand", &hitCollider[static_cast<float>(ColliderName::L_HAND)].radius, 0.0f, 2.0f);
+
+        ImGui::End();
+        
 
         ImGui::EndMenu();
     }
@@ -396,5 +433,51 @@ void EnemyGolem::UpdateAttack2MagicCircle(const float& lengthX, const float& len
     {
         magicCircleGolemAttack2->baseMagicCircle[i]->GetTransform()->
             SetRotationY(GetTransform()->GetRotation().y);
+    }
+}
+
+void EnemyGolem::ColliderInitialize()
+{
+    //初期化
+    if (hitCollider.size() == 0)
+    {
+        for (int i = 0; i < static_cast<int>(ColliderName::END); i++)
+        {
+            attackCollider.emplace_back(SphereCollider(0.3f));
+        }
+
+        for (int i = 0; i < static_cast<int>(ColliderName::END); i++)
+        {
+            hitCollider.emplace_back(SphereCollider(0.55f));
+        }
+    }
+    const float scale = GetTransform()->GetScale().x;
+    /*hitCollider[static_cast<int>(ColliderName::NECK)].radius = 0.15f * scale;
+    hitCollider[static_cast<int>(ColliderName::HIP)].radius = 0.17f * scale;
+    hitCollider[static_cast<int>(ColliderName::R_LEG)].radius = 0.12f * scale;
+    hitCollider[static_cast<int>(ColliderName::L_LEG)].radius = 0.12f * scale;
+    hitCollider[static_cast<int>(ColliderName::R_LEG_END)].radius = 0.12f * scale;
+    hitCollider[static_cast<int>(ColliderName::L_LEG_END)].radius = 0.12f * scale;
+    hitCollider[static_cast<int>(ColliderName::R_ELBOW)].radius = 0.12f * scale;
+    hitCollider[static_cast<int>(ColliderName::L_ELBOW)].radius = 0.12f * scale;
+    hitCollider[static_cast<int>(ColliderName::R_HAND)].radius = 0.12f * scale;
+    hitCollider[static_cast<int>(ColliderName::L_HAND)].radius = 0.12f * scale;*/
+}
+
+void EnemyGolem::ColliderPosUpdate(const float& scale)
+{
+    hitCollider[static_cast<int>(ColliderName::HIP)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface11", "golem_setup_1004:golem_rig_1005:j_Spine", scale);
+    hitCollider[static_cast<int>(ColliderName::R_SHOULDER)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface6", "golem_setup_1004:golem_rig_1005:j_RightArm", scale);
+    hitCollider[static_cast<int>(ColliderName::L_SHOULDER)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface5", "golem_setup_1004:golem_rig_1005:j_LeftArm", scale);
+    hitCollider[static_cast<int>(ColliderName::R_HAND)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface3", "golem_setup_1004:golem_rig_1005:j_RightHand", scale);
+    hitCollider[static_cast<int>(ColliderName::L_HAND)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface1", "golem_setup_1004:golem_rig_1005:j_LeftHand", scale);
+    hitCollider[static_cast<int>(ColliderName::R_LEG)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface11", "golem_setup_1004:golem_rig_1005:j_RightUptLeg", scale);
+    hitCollider[static_cast<int>(ColliderName::L_LEG)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface11", "golem_setup_1004:golem_rig_1005:j_LeftUptLeg", scale);
+    hitCollider[static_cast<int>(ColliderName::R_LEG_END)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface9", "golem_setup_1004:golem_rig_1005:j_RighttLeg", scale);
+    hitCollider[static_cast<int>(ColliderName::L_LEG_END)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface8", "golem_setup_1004:golem_rig_1005:j_LefttLeg", scale);
+
+    for (int i = 0; i < static_cast<int>(ColliderName::END); i++)
+    {
+        attackCollider[i].position = hitCollider[i].position;
     }
 }

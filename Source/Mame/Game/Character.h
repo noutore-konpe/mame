@@ -23,6 +23,9 @@ public:
         float radius;
         DirectX::XMFLOAT3 position;
 
+        //判定をするかしないのフラグ（攻撃判定が一瞬だけ欲しい時に使う 今回はゴーレムにしか使わん）
+        bool activeAttack;
+
         void DebugRender(const DirectX::XMFLOAT4 color = {1,1,1,1});
     };
 
@@ -99,7 +102,9 @@ public: // 取得・設定関数
 
 
     void SetHealth(const float hp)       { health = hp; }
+    const float GetHealth() const { return health; }
     void SetMaxHealth(const float maxHp) { maxHealth = maxHp; }
+    const float GetMaxHealth() const { return maxHealth; }
 
     // emissive ※constansのやつなのでこいつを使う場所は UpdateConstansで使ってほしい
     void SetEmissiveIntensity(float intensity) { model->skinned_meshes->data.emissiveIntensity = intensity; }

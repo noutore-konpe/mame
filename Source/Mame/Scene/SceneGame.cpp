@@ -88,6 +88,7 @@ void SceneGame::CreateResource()
         // enemyManager.Register(enemyGolem);
 
         EnemyGolem* enemyGolem = new EnemyGolem;
+        enemyGolem->Initialize();
         enemyManager.Register(enemyGolem);
 
 
@@ -97,7 +98,7 @@ void SceneGame::CreateResource()
         for (int i = 0; i < 2; ++i)
         {
             EnemyAI_1* enemyAI_1 = new EnemyAI_1;
-
+            enemyAI_1->Initialize();
             const XMFLOAT3 setPosition = {
                 ::RandFloat(-10.0f, +10.0f),
                 0.0f,
@@ -111,6 +112,7 @@ void SceneGame::CreateResource()
         for (int i = 0; i < 2; ++i)
         {
             EnemyAI_2* enemyAI_2 = new EnemyAI_2;
+            enemyAI_2->Initialize();
 
             const XMFLOAT3 setPosition = {
                 ::RandFloat(-10.0f, +10.0f),
@@ -125,6 +127,7 @@ void SceneGame::CreateResource()
         for (int i = 0; i < 2; ++i)
         {
             EnemyAI_3* enemyAI_3 = new EnemyAI_3;
+            enemyAI_3->Initialize();
 
             const XMFLOAT3 setPosition = {
                 ::RandFloat(-10.0f, +10.0f),
@@ -873,6 +876,7 @@ void SceneGame::DebugCreateEnemyFromGateway()
 
         // “G¶¬(EnemyAI_1)
         EnemyAI_1* enemyAI_1 = new EnemyAI_1();
+        enemyAI_1->Initialize();
         enemyAI_1->GetTransform()->SetPosition(createPos);
         enemyManager.Register(enemyAI_1);
 

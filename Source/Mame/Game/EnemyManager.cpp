@@ -5,6 +5,8 @@
 #include "../Scene/SceneGame.h"
 #include "../Game/Collision.h"
 
+#include "../Game/PlayerManager.h"
+
 void EnemyManager::Initialize()
 {
     // CRA : 0.Initialize : ‰Šú‰»
@@ -311,4 +313,40 @@ void EnemyManager::CollisionEnemyVsStage(const float /*elapsedTime*/)
         enemyT->SetPosition(SceneGame::stageCenter + vecN * SceneGame::stageRadius);
     }
 
+}
+
+bool EnemyManager::AttackCollisionPlayerToEnemy(Enemy* my)
+{
+    for (auto& atkCollider : my->GetAttackCollider())
+    {
+        for (auto& hitCollider : PlayerManager::Instance().GetPlayer()->GetHitCollider())
+        {
+            if (Collision::IntersectSphereVsSphere(
+                atkCollider.position, atkCollider.radius,
+                hitCollider.position, hitCollider.radius))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool EnemyManager::ACAttackCollisionPlayerToEnemy(Enemy* my)
+{
+    for (auto& atkCollider : my->GetAttackCollider())
+    {
+        if (atkCollider.activeAttack)continue;
+
+        for (auto& hitCollider : PlayerManager::Instance().GetPlayer()->GetHitCollider())
+        {
+            if (Collision::IntersectSphereVsSphere(
+                atkCollider.position, atkCollider.radius,
+                hitCollider.position, hitCollider.radius))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
 }

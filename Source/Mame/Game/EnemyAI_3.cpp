@@ -69,6 +69,7 @@ void EnemyAI_3::Initialize()
 
     attackLength_ = 6.0f; // UŒ‚‚ª‰Â”\‚È‹——£‚ğ‚Ì‚Î‚·
 
+    ColliderInitialize();
 }
 
 
@@ -94,6 +95,7 @@ void EnemyAI_3::Render(const float& scale, ID3D11PixelShader* /*psShader*/)
     // Aura enemy
     BaseEnemyAI::Render(scale, emissiveTextureUVScroll.Get());
 
+    ColliderPosUpdate(scale);
 }
 
 

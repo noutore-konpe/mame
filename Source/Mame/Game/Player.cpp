@@ -44,6 +44,8 @@ Player::Player()
 
     //喰らい判定、攻撃判定セット
     {
+        swordColliderNum = 5;
+        swordColliderRadius = 0.1f;
         for (int i = 0; i < swordColliderNum; i++)
         {
             attackCollider.emplace_back(SphereCollider(swordColliderRadius));
@@ -102,7 +104,12 @@ void Player::Initialize()
     baseAttackPower = 10.0f;
     attackSpeed = 1.0f;
 
-    health = 40.0f;
+    jabMotionAtkMuls[0] = 1.0f;
+    jabMotionAtkMuls[1] = 1.2f;
+    jabMotionAtkMuls[2] = 2.3f;
+
+    health = 400.0f;
+    maxHealth = 400.0f;
 
     defence = 0.0f;
 
@@ -147,7 +154,7 @@ void Player::Initialize()
 
     //攻撃判定
     swordColliderNum = 5;
-    swordColliderRadius = 0.07f;
+    swordColliderRadius = 0.1f;
     swordScale = 0.7f;
     swordModel->GetTransform()->SetScaleFactor(swordScale);
 
@@ -156,6 +163,8 @@ void Player::Initialize()
     hitCollider[static_cast<int>(HitColName::HIP)].radius = 0.12f;
     hitCollider[static_cast<int>(HitColName::R_LEG)].radius = 0.07f;
     hitCollider[static_cast<int>(HitColName::L_LEG)].radius = 0.07f;
+    hitCollider[static_cast<int>(HitColName::R_ELBOW)].radius = 0.07f;
+    hitCollider[static_cast<int>(HitColName::L_ELBOW)].radius = 0.07f;
     
     }
 
@@ -495,11 +504,16 @@ void Player::Render(const float scale, ID3D11PixelShader* psShader)
 
 #if _DEBUG
     //stageDebugSphere->Render(stageRadius, playerPS.Get());
-    if (showCollider)
+    if (SceneGame::isDispCollision_)
     {
         for (auto& collider : hitCollider)
         {
             collider.DebugRender();
+        }
+
+        for (auto& collider : attackCollider)
+        {
+            collider.DebugRender(DirectX::XMFLOAT4(1,0,0,1));
         }
     }
     
@@ -510,7 +524,7 @@ void Player::Render(const float scale, ID3D11PixelShader* psShader)
     abilityManager_.Render(scale);
 
     //判定移動
-    //ColliderPosUpdate(scale);
+    ColliderPosUpdate(scale);
 }
 
 void Player::SkillImagesRender()
@@ -540,7 +554,7 @@ void Player::DrawDebug()
 
         stateMachine->DrawDebug();
 
-        ImGui::Checkbox("ShoeCollider",&showCollider);
+        //ImGui::Checkbox("ShoeCollider",&showCollider);
 
         if (ImGui::TreeNode("Camera"))
         {
@@ -988,34 +1002,36 @@ void Player::ColliderPosUpdate(const float& scale)
 {
     //喰らい判定
     {
-        const std::string meshBodyName = "setup_0927:chara_rig_0906:ref:pasted__Body";
-        const std::string meshLegName = "setup_0927:chara_rig_0906:ref:pasted__Socks";
-        hitCollider[static_cast<int>(HitColName::NECK)].position = GetJointPosition(meshBodyName, "setup_0927:chara_rig_0906:j_Neck", scale);
-        hitCollider[static_cast<int>(HitColName::HIP)].position = GetJointPosition(meshBodyName, "setup_0927:chara_rig_0906:j_Hips", scale);
-
+        const std::string meshBodyName = "ref_P:chara_rig_0906:chara_mdl_1017:pasted__Body";
+        const std::string meshLegName = "ref_P:chara_rig_0906:chara_mdl_1017:pasted__Socks";
+        hitCollider[static_cast<int>(HitColName::NECK)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_Neck", scale);
+        hitCollider[static_cast<int>(HitColName::HIP)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_Hips", scale);
+        hitCollider[static_cast<int>(HitColName::R_ELBOW)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_RightForeArm", scale);
+        hitCollider[static_cast<int>(HitColName::L_ELBOW)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_LeftForeArm", scale);
+    
         //hitCollider[static_cast<int>(HitColName::LEG)].position = GetJointPosition(meshBodyName,"setup_0927:chara_rig_0906:j_Sentar",scale);
-        hitCollider[static_cast<int>(HitColName::R_LEG)].position = GetJointPosition(meshLegName, "setup_0927:chara_rig_0906:j_RightLeg", scale);
-        hitCollider[static_cast<int>(HitColName::L_LEG)].position = GetJointPosition(meshLegName, "setup_0927:chara_rig_0906:j_LeftLeg", scale);
+        hitCollider[static_cast<int>(HitColName::R_LEG)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_RightLeg", scale);
+        hitCollider[static_cast<int>(HitColName::L_LEG)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_LeftLeg", scale);
     }
 
     //攻撃判定
     {
-        //DirectX::XMFLOAT4X4 world{};
-        //DirectX::XMStoreFloat4x4(&world, swordModel->GetTransform()->CalcWorldMatrix(scale));
-        ////const std::string swordMeshName = "sword_rig_1004:sword_rig_1005:sword_mdl_1005:Sword";
-        //const std::string swordMeshName = "sword_mdl_1005:Sword";
-        //const DirectX::XMFLOAT3 swordRoot = swordModel->skinned_meshes->JointPosition(swordMeshName, "j_sword",&swordModel->keyframe ,world);//根本
-        //const DirectX::XMFLOAT3 swordTip = swordModel->skinned_meshes->JointPosition(swordMeshName, "j_sword_end", &swordModel->keyframe, world);//先端
+        DirectX::XMFLOAT4X4 world{};
+        DirectX::XMStoreFloat4x4(&world, swordModel->GetTransform()->CalcWorldMatrix(scale));
+        //const std::string swordMeshName = "sword_rig_1004:sword_rig_1005:sword_mdl_1005:Sword";
+        const std::string swordMeshName = "sword_rig_1004:sword_rig_1005:sword_mdl_1005:Sword";
+        const DirectX::XMFLOAT3 swordRoot = swordModel->skinned_meshes->JointPosition(swordMeshName, "sword_rig_1004:sword_rig_1005:j_sword",&swordModel->keyframe ,world);//根本
+        const DirectX::XMFLOAT3 swordTip = swordModel->skinned_meshes->JointPosition(swordMeshName, "sword_rig_1004:sword_rig_1005:j_sword_end", &swordModel->keyframe, world);//先端
      
-        //const DirectX::XMFLOAT3 vec = swordTip - swordRoot;
-        //float swordLength = Length(vec);
-        //const DirectX::XMFLOAT3 vecNormal = Normalize(swordTip - swordRoot);
+        const DirectX::XMFLOAT3 vec = swordTip - swordRoot;
+        float swordLength = Length(vec);
+        const DirectX::XMFLOAT3 vecNormal = Normalize(vec);
 
-        //const float collideInterval = swordLength / swordColliderNum;//判定ごとの設置間隔
+        const float collideInterval = swordLength / swordColliderNum;//判定ごとの設置間隔
 
-        //for (auto& collider : attackCollider)
-        //{
-        //    collider.position = swordRoot + vecNormal * collideInterval;
-        //}
+        for (int i = 0;i < attackCollider.size();++i)
+        {
+            attackCollider[i].position = swordRoot + vecNormal * collideInterval * i;
+        }
     }
 }

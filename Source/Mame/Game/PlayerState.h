@@ -1,6 +1,8 @@
 #pragma once
 #include "State.h"
+#include <vector>
 
+class Enemy;
 class Player;
 namespace PlayerState
 {
@@ -46,14 +48,15 @@ namespace PlayerState
         int combo;//現在の連撃回数
         bool initialize;//コンボ毎の初期化処理フラグ
 
-        bool collisionOn;//判定処理をするか
-
         const float dodgeCanselFrame1 = 10.0f;
         const float dodgeCanselFrame2 = 10.0f;
         const float dodgeCanselFrame3 = 10.0f;
         const float comboCanselFrame1 = 20.0f;
         const float comboCanselFrame2 = 20.0f;
         const float comboCanselFrame3 = 20.0f;
+
+        //１つの攻撃モーションに二回連続でヒットしないように一度攻撃
+        std::vector<Enemy*> hit;
     };
 
     //強攻撃
@@ -131,7 +134,11 @@ namespace PlayerState
         void Finalize() override;
 
     private:
-        bool counterCompleted;
+        bool counterCompleted;//カウンター成立フラグ
         int state;
+
+        const int startUpFrame = 10;//カウンター受付開始アニメーション
+        const float receptionTime = 0.3f;//カウンター受付時間
+        float timer;
     };
 }

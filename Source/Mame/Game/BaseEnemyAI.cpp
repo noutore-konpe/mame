@@ -2,6 +2,9 @@
 
 #include "../../Taki174/Common.h"
 #include "EnemyManager.h"
+#include "../Other/MathHelper.h"
+
+#include "../Scene/SceneGame.h"
 
 BaseEnemyAI::BaseEnemyAI()
 {
@@ -12,6 +15,12 @@ BaseEnemyAI::BaseEnemyAI()
 void BaseEnemyAI::Initialize()
 {
     Character::Initialize();
+
+    //ジョイント位置取得するために適当なアニメーション再生
+    //※アニメーションを流しとかないとkeyframeに情報が入らないからジョイント位置がとれない
+    PlayAnimation(0,true);
+
+    ColliderInitialize();
 }
 
 void BaseEnemyAI::Update(const float& elapsedTime)
@@ -37,6 +46,23 @@ void BaseEnemyAI::Update(const float& elapsedTime)
 void BaseEnemyAI::Render(const float& scale, ID3D11PixelShader* psShader)
 {
     Character::Render(scale, psShader);
+
+#if _DEBUG
+    if (SceneGame::isDispCollision_)
+    {
+        for (auto& collider : hitCollider)
+        {
+            collider.DebugRender();
+        }
+
+        for (auto& collider : attackCollider)
+        {
+            collider.DebugRender(DirectX::XMFLOAT4(1, 0, 0, 1));
+        }
+    }
+#endif
+
+    //ColliderPosUpdate(scale);
 }
 
 // ImGui用
@@ -58,6 +84,83 @@ void BaseEnemyAI::DrawDebug()
         //ImGui::DragFloat("range", &r);
         //SetRange(r);
 #endif // USE_IMGUI
+}
+
+void BaseEnemyAI::ColliderInitialize()
+{
+    //初期化
+    if (hitCollider.size() == 0)
+    {
+        swordColliderNum = 5;
+        swordColliderRadius = 0.12f;
+        if (sword_ != nullptr)
+        {
+            for (int i = 0; i < swordColliderNum; i++)
+            {
+                attackCollider.emplace_back(SphereCollider(swordColliderRadius));
+            }
+        }
+
+        for (int i = 0; i < static_cast<int>(HitColName::END); i++)
+        {
+            hitCollider.emplace_back(SphereCollider(0.1f));
+        }
+    }
+    const float scale = GetTransform()->GetScale().x;
+    hitCollider[static_cast<int>(HitColName::NECK)].radius        = 0.15f * scale;
+    hitCollider[static_cast<int>(HitColName::HIP)].radius         = 0.25f * scale;
+    hitCollider[static_cast<int>(HitColName::R_LEG)].radius       = 0.15f * scale;
+    hitCollider[static_cast<int>(HitColName::L_LEG)].radius       = 0.15f * scale;
+    hitCollider[static_cast<int>(HitColName::R_LEG_END)].radius   = 0.15f * scale;
+    hitCollider[static_cast<int>(HitColName::L_LEG_END)].radius   = 0.15f * scale;
+    hitCollider[static_cast<int>(HitColName::R_ELBOW)].radius     = 0.12f * scale;
+    hitCollider[static_cast<int>(HitColName::L_ELBOW)].radius     = 0.12f * scale;
+    hitCollider[static_cast<int>(HitColName::R_HAND)].radius      = 0.12f * scale;
+    hitCollider[static_cast<int>(HitColName::L_HAND)].radius      = 0.12f * scale;
+}
+
+void BaseEnemyAI::ColliderPosUpdate(const float& scale)
+{
+    //喰らい判定
+    {
+        const std::string meshBodyName = "ref_P:chara_rig_0906:chara_mdl_1017:pasted__Body";
+        const std::string meshLegName = "ref_P:chara_rig_0906:chara_mdl_1017:pasted__Socks";
+        hitCollider[static_cast<int>(HitColName::NECK)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_Neck", scale);
+        hitCollider[static_cast<int>(HitColName::HIP)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_Hips", scale);
+        hitCollider[static_cast<int>(HitColName::R_ELBOW)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_RightForeArm", scale);
+        hitCollider[static_cast<int>(HitColName::L_ELBOW)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_LeftForeArm", scale);
+        hitCollider[static_cast<int>(HitColName::R_HAND)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_RightHand", scale);
+        hitCollider[static_cast<int>(HitColName::L_HAND)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_LeftHand", scale);
+
+
+        //hitCollider[static_cast<int>(HitColName::LEG)].position = GetJointPosition(meshBodyName,"ref_P:chara_rig_0906:j_Sentar",scale);
+        hitCollider[static_cast<int>(HitColName::R_LEG)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_RightLeg", scale);
+        hitCollider[static_cast<int>(HitColName::L_LEG)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_LeftLeg", scale);
+        hitCollider[static_cast<int>(HitColName::R_LEG_END)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_RightFoot", scale);
+        hitCollider[static_cast<int>(HitColName::L_LEG_END)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_LeftFoot", scale);
+    }
+
+    //攻撃判定
+    if(attackCollider.size() > 0)
+    {
+        DirectX::XMFLOAT4X4 world{};
+        DirectX::XMStoreFloat4x4(&world, sword_->GetTransform()->CalcWorldMatrix(scale));
+        //const std::string swordMeshName = "sword_rig_1004:sword_rig_1005:sword_mdl_1005:Sword";
+        const std::string swordMeshName = "sword_rig_1004:sword_rig_1005:sword_mdl_1005:Sword";
+        const DirectX::XMFLOAT3 swordRoot = sword_->skinned_meshes->JointPosition(swordMeshName, "sword_rig_1004:sword_rig_1005:j_sword", &sword_->keyframe, world);//根本
+        const DirectX::XMFLOAT3 swordTip = sword_->skinned_meshes->JointPosition(swordMeshName, "sword_rig_1004:sword_rig_1005:j_sword_end", &sword_->keyframe, world);//先端
+
+        const DirectX::XMFLOAT3 vec = swordTip - swordRoot;
+        float swordLength = Length(vec);
+        const DirectX::XMFLOAT3 vecNormal = Normalize(vec);
+
+        const float collideInterval = swordLength / swordColliderNum;//判定ごとの設置間隔
+
+        for (int i = 0; i < attackCollider.size(); ++i)
+        {
+            attackCollider[i].position = swordRoot + vecNormal * collideInterval * i;
+        }
+    }
 }
 
 

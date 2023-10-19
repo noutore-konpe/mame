@@ -4,6 +4,8 @@
 
 #include "../Other/Easing.h"
 
+#include "PlayerManager.h"
+
 void UserInterface::Initialize()
 {
     Graphics& graphics = Graphics::Instance();
@@ -79,6 +81,13 @@ void UserInterface::Initialize()
     {
         numPosition[i] = DirectX::XMFLOAT2(600, 200);
     }
+
+    //プログラム全体で一度だけ画像サイズを取得
+    static bool once = [&]() {
+        hpSpriteSizeX = hpSprite->GetSpriteTransform()->GetSizeX();
+        expSpriteSizeX = keikenchiSprite->GetSpriteTransform()->GetSizeX();
+        return true;
+    }();
 }
 
 // 更新
@@ -89,6 +98,9 @@ void UserInterface::Update(float elapsedTime)
 
     // 流れていくwaveSprite
     UpdateWaveSprite(elapsedTime);
+
+    //ｈｐと経験値のゲージを実際の値と同期
+    UpdateHpExpGauge();
 }
 
 // 描画
@@ -387,6 +399,16 @@ void UserInterface::UpdateWaveSprite(const float& elapsedTime)
     }
 }
 
+void UserInterface::UpdateHpExpGauge()
+{
+    auto* player = PlayerManager::Instance().GetPlayer().get();
+
+    hpSprite->GetSpriteTransform()->SetSizeX(hpSpriteSizeX * (player->GetHealth() / player->GetMaxHealth()));
+    keikenchiSprite->GetSpriteTransform()->SetSizeX(expSpriteSizeX * (player->GetCurExp() / player->GetLevelUpExp()));
+
+
+}
+
 void UserInterface::RenderWaveSlide()
 {
     float texSizeX = 60;
@@ -447,6 +469,7 @@ void UserInterface::RenderWaveSlide()
 
 void UserInterface::RenderLv()
 {
+    const int lv = PlayerManager::Instance().GetPlayer()->GetLevel();
     float texSizeX = 60;
     float one = lv % 10 * texSizeX;
     float ten = lv / 10 % 10 * texSizeX;

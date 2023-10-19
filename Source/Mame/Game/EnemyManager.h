@@ -35,6 +35,12 @@ public:
     // 敵とステージとの衝突処理
     void CollisionEnemyVsStage(const float elapsedTime);
 
+    //攻撃判定を取得する関数
+    static bool AttackCollisionPlayerToEnemy(Enemy* my);
+
+    //ACはActive Check コライダーのisActiveがtrueになっている物のみ判定する関数
+    static bool ACAttackCollisionPlayerToEnemy(Enemy* my);
+
 public:
     // エネミー登録
     void Register(Enemy* enemy);

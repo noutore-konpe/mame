@@ -87,6 +87,8 @@ void EnemyAI_2::Initialize()
     animationSpeed_ = 0.5f;
 
     sword_->PlayAnimation(0, true); // デフォルトアニメーション再生再生
+
+    ColliderInitialize();
 }
 
 
@@ -116,6 +118,7 @@ void EnemyAI_2::Render(const float& scale, ID3D11PixelShader* /*psShader*/)
     // 剣描画
     sword_->Render(scale, nullptr);
 
+    ColliderPosUpdate(scale);
 }
 
 

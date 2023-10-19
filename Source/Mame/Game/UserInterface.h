@@ -39,6 +39,7 @@ public:// 設定・取得
 private:
     void UpdateLockOnSprite(const float& elapsedTime);
     void UpdateWaveSprite(const float& elapsedTime);
+    void UpdateHpExpGauge();
 
     void RenderWaveSlide();
     void RenderLv();
@@ -69,6 +70,9 @@ private:
     bool isWaveSlideSprite = false; // 画面真ん中に出す処理
     int slideState = 0;             // スライド用
     float easingTimer = 0.0f;       // easing用
+
+    float hpSpriteSizeX;//サイズの初期値を保持しときたいだけ
+    float expSpriteSizeX;
 
 #ifdef _DEBUG
     int lv = 0;
