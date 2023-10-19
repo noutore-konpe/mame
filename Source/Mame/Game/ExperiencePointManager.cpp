@@ -1,4 +1,7 @@
 #include "ExperiencePointManager.h"
+
+#include "../../Taki174/FunctionXMFloat3.h"
+#include "../Scene/SceneGame.h"
 #include "PlayerManager.h"
 #include "Collision.h"
 
@@ -49,6 +52,7 @@ void ExperiencePointManager::Update(const float elapsedTime)
 
     CollisionExpVsPlayer(elapsedTime);
     CollisionExpVsExp(elapsedTime);
+    CollisionExpVsStage(elapsedTime);
 }
 
 
@@ -127,8 +131,71 @@ void ExperiencePointManager::CollisionExpVsPlayer(const float /*elapsedTime*/)
 }
 
 
-void ExperiencePointManager::CollisionExpVsExp(const float /*elapsedTime*/)
+void ExperiencePointManager::CollisionExpVsExp(const float elapsedTime)
 {
+    using DirectX::XMFLOAT3;
+
+    const size_t enemyCount = GetExpCount();
+    for (size_t a = 0; a < enemyCount; ++a)
+    {
+        ExperiencePoint* expA = GetExp(a);
+
+        // a以降の敵と判定を行う（a以前はすでに判定済みのため）
+        for (size_t b = a + 1; b < enemyCount; ++b)
+        {
+            ExperiencePoint* expB = GetExp(b);
+
+            const XMFLOAT3& posA    = expA->GetTransform()->GetPosition();
+            const XMFLOAT3& posB    = expB->GetTransform()->GetPosition();
+            const float     radiusA = expA->GetRadius();
+            const float     radiusB = expB->GetRadius();
+
+            const XMFLOAT3  vecFromAtoB = posB - posA;
+            const float     lengthSq = ::XMFloat3LengthSq(vecFromAtoB);
+            const float     range = radiusA + radiusB;
+
+            if (lengthSq > (range * range)) continue;
+
+            const XMFLOAT3 vecN_fromAtoB = ::XMFloat3Normalize(vecFromAtoB);
+
+            // じんわりとBを押しのける
+            const XMFLOAT3 moveForce = vecN_fromAtoB * 0.5f;
+            expB->GetTransform()->AddPosition(moveForce * elapsedTime);
+        }
+
+    }
+
+}
+
+
+void ExperiencePointManager::CollisionExpVsStage(const float /*elapsedTime*/)
+{
+    using DirectX::XMFLOAT3;
+
+    // 経験値のステージ内外判定処理を行う
+    const size_t enemyCount = GetExpCount();
+    for (size_t i = 0; i < enemyCount; ++i)
+    {
+        ExperiencePoint* exp = GetExp(i);
+
+        // 距離の二乗を取得
+        Transform*     expT     = exp->GetTransform();
+        const XMFLOAT3 vec      = expT->GetPosition() - SceneGame::stageCenter;
+        const float    lengthSq = ::XMFloat3LengthSq(vec);
+
+        // ステージの半径の二乗を取得
+        const float stageRadiusSq = SceneGame::stageRadius * SceneGame::stageRadius;
+
+        // ステージ内にいるならcontinue
+        if (lengthSq <= stageRadiusSq) continue;
+
+        // ベクトルを正規化
+        const XMFLOAT3 vecN = vec / ::sqrtf(lengthSq);
+
+        // 修正した位置を代入
+        expT->SetPosition(SceneGame::stageCenter + vecN * SceneGame::stageRadius);
+    }
+
 }
 
 

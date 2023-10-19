@@ -341,7 +341,7 @@ void SceneGame::Update(const float& elapsedTime)
     {
         isParticleInitialize = false;
         particles->Initialize(Graphics::Instance().GetDeviceContext(), 0);
-    }    
+    }
 
     if (integrateParticles)
     {
@@ -836,35 +836,38 @@ void SceneGame::DebugCreateEnemyFromGateway()
 
     EnemyManager& enemyManager = EnemyManager::Instance();
 
-    static int           gatewayIndex = -1;    // 敵を出現させるゲートの番号(-1でランダム)
-    static constexpr int gatewayCount = 10;    // ゲートの数
+    static int gatewayIndex = -1;    // 敵を出現させるゲートの番号(-1でランダム)
 
     // 敵を出現させるゲートの指定(-1ならランダムで番号を決める）
     ImGui::SliderInt(
         "gateWayIndex(-1 is RandomSpawn)",
-        &gatewayIndex, -1, (gatewayCount - 1)
+        &gatewayIndex, -1, (GATEWAY_COUNT_ - 1)
     );
 
     // ゲートから敵を生成
     if (ImGui::Button("CreateEnemyFromGateway"))
     {
         // 360度をゲート数分に等分したときの角度
-        static constexpr float angle = 360.0f / static_cast<float>(gatewayCount);
+        static constexpr float angle = 360.0f / static_cast<float>(GATEWAY_COUNT_);
 
         // Y回転値テーブルを作成
-        float rotationY_table[gatewayCount] = {};
-        for (int i = 0; i < gatewayCount; ++i)
+        static float rotationY_table[GATEWAY_COUNT_] = {};      // Y回転値テーブル(static)
+        static bool  createRotationY_TableFlag       = false;   // Y回転値テーブル作成フラグ(static)
+        if (false == createRotationY_TableFlag)
         {
-            rotationY_table[i] = ::ToRadian(angle * static_cast<float>(i));
+            // Y回転値テーブルを作成
+            for (int i = 0; i < SceneGame::GATEWAY_COUNT_; ++i)
+            {
+                rotationY_table[i] = ::ToRadian(angle * static_cast<float>(i));
+            }
+
+            // Y回転値テーブルを作成した(フラグON)
+            createRotationY_TableFlag = true;
         }
 
         // Y回転値を取得
-        const int rotationY_index = {
-            (gatewayIndex != -1)
-            ? gatewayIndex
-            : ::RandInt(0, gatewayCount)
-        };
-        const float rotationY = rotationY_table[rotationY_index];
+        const int   rotationY_index = (gatewayIndex > -1) ? gatewayIndex: ::RandInt(0, GATEWAY_COUNT_);
+        const float rotationY       = rotationY_table[rotationY_index];
 
         // ステージの中心からゲートの奥ぐらいまでの半径
         static constexpr float radius = 35.0f;

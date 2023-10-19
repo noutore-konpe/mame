@@ -24,7 +24,7 @@ private:
     // â~â^ìÆç\ë¢ëÃ
     struct CircularMotion
     {
-        DirectX::XMFLOAT3 center_       = { 0.0f, 0.2f, 0.0f };
+        DirectX::XMFLOAT3 center_       = { 0.0f, 0.25f, 0.0f };
         DirectX::XMFLOAT4 rotation_     = {};                   // Radian
         float             radius_       = 0.08f;
         float             addRotate_    = ::ToRadian(180.0f);
@@ -81,7 +81,7 @@ private:
     float               gravity_        = (-0.1f);
     float               friction_       = 0.1f;
     float               airControl_     = 0.1f;
-    float               radius_         = 0.25f;
+    float               radius_         = 0.1f;
     bool                isGround_       = false;
     bool                isMoveToPlayer_ = false;
 

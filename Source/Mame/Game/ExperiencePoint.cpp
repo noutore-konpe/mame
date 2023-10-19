@@ -3,6 +3,7 @@
 #include "../../Taki174/OperatorXMFloat3.h"
 #include "../../Taki174/FunctionXMFloat3.h"
 #include "../Graphics/Graphics.h"
+#include "../Scene/SceneGame.h"
 #include "ExperiencePointManager.h"
 #include "PlayerManager.h"
 
@@ -136,8 +137,8 @@ void ExperiencePoint::Update(const float elapsedTime)
             break;
         }
 
-        // 空中にいたら落下状態に移行する
-        if (t->GetPositionY() > circularMotion_.center_.y)
+        // 空中にいたら落下状態に移行する(+α許容値)
+        if (t->GetPositionY() > circularMotion_.center_.y + 0.1f)
         {
             step_ = STEP::FALL_INIT;
             break;
@@ -182,8 +183,8 @@ void ExperiencePoint::Update(const float elapsedTime)
                 break;
             }
 
-            // 空中にいたら落下状態に移行する
-            if (t->GetPositionY() > circularMotion_.center_.y)
+            // 空中にいたら落下状態に移行する(+α許容値)
+            if (t->GetPositionY() > circularMotion_.center_.y + 0.1f)
             {
                 step_ = STEP::FALL_INIT;
                 break;
@@ -193,10 +194,10 @@ void ExperiencePoint::Update(const float elapsedTime)
         {
             // プレイヤーの方へ向かう
             {
-                const XMFLOAT3& pos = GetTransform()->GetPosition();
-                XMFLOAT3 plPos = plManager.GetPlayer()->GetTransform()->GetPosition();
-                plPos.y += 1.0f;
-                const XMFLOAT3  vecN = ::XMFloat3Normalize(plPos - pos);
+                const XMFLOAT3& pos      = GetTransform()->GetPosition();
+                      XMFLOAT3  plPos    = plManager.GetPlayer()->GetTransform()->GetPosition();
+                                plPos.y += plManager.GetPlayer()->GetHeight() * 0.5f;
+                const XMFLOAT3  vecN     = ::XMFloat3Normalize(plPos - pos);
 
                 velocity_ += vecN * acceleration_ * elapsedFrame; // 仮(プレイヤーに依存にする予定)
                 t->AddPosition(velocity_ * elapsedTime);
@@ -212,6 +213,10 @@ void ExperiencePoint::Update(const float elapsedTime)
 
         break;
     }
+
+    // 回転
+    t->AddRotationY(::ToRadian(45.0f) * elapsedTime);
+
 }
 
 
@@ -222,6 +227,15 @@ void ExperiencePoint::Render(const float scale, ID3D11PixelShader* psShader)
     );
 
     model_->Render(scale, psShader);
+
+    // 当たり判定球描画
+#ifdef _DEBUG
+    if (true == SceneGame::isDispCollision_)
+    {
+        DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
+        debugRenderer->DrawSphere(GetTransform()->GetPosition(), radius_, { 1,1,1,1 });
+    }
+#endif
 }
 
 
@@ -247,11 +261,11 @@ const bool ExperiencePoint::SearchPlayer()
 
     PlayerManager& plManager = PlayerManager::Instance();
 
-    const XMFLOAT3& pos      = GetTransform()->GetPosition();
-    XMFLOAT3        plPos    = plManager.GetPlayer()->GetTransform()->GetPosition();
-    plPos.y += 1.0f;
-    const XMFLOAT3  vec      = plPos - pos;
-    const float    lengthSq = ::XMFloat3LengthSq(vec);
+    const XMFLOAT3& pos       = this->GetTransform()->GetPosition();
+    XMFLOAT3        plPos     = plManager.GetPlayer()->GetTransform()->GetPosition();
+                    plPos.y  += plManager.GetPlayer()->GetHeight() * 0.5f;
+    const XMFLOAT3  vec       = plPos - pos;
+    const float     lengthSq  = ::XMFloat3LengthSq(vec);
 
     constexpr float plCollectExpLengthSq = 6.0f * 6.0f; // 仮(プレイヤーに依存する予定)
     if (lengthSq > plCollectExpLengthSq) return false;
