@@ -70,6 +70,9 @@ public:
     // ひるませる
     void Flinch();
 
+    //攻撃判定とダメージ処理 引数は与えるダメージ量
+    void AttackCollisionOnPlayer(const float damage);
+
 protected:
     std::unique_ptr<BehaviorTree>   behaviorTree_;
     std::unique_ptr<BehaviorData>   behaviorData_;  // 主にシーケンスに使う

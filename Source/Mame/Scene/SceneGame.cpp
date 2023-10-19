@@ -92,7 +92,7 @@ void SceneGame::CreateResource()
         enemyManager.Register(enemyGolem);
 
 
-#if 1
+#if 0
         // max 6~7
         // EnemyAI_1
         for (int i = 0; i < 2; ++i)

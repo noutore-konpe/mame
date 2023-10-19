@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include "EnemyManager.h"
 #include "WaveManager.h"
+#include "PlayerManager.h"
 
 Enemy::~Enemy()
 {
@@ -48,4 +49,12 @@ void Enemy::Flinch()
     EnemyManager& enmManager = EnemyManager::Instance();
     enmManager.SetIsRunningCRAAction(false);
 
+}
+
+void Enemy::AttackCollisionOnPlayer(const float damage)
+{
+    if (EnemyManager::AttackCollisionPlayerToEnemy(this))
+    {
+        PlayerManager::Instance().GetPlayer()->ApplyDamage(damage);
+    }
 }
