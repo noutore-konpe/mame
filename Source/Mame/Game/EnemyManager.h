@@ -41,6 +41,15 @@ public:
     //ACはActive Check コライダーのisActiveがtrueになっている物のみ判定する関数
     static bool ACAttackCollisionPlayerToEnemy(Enemy* my);
 
+    // キル数をリセットする
+    void ResetKillNum()
+    {
+        enemy1KillNum = 0;
+        enemy2KillNum = 0;
+        enemy3KillNum = 0;
+        enemyGolemKillNum = 0;
+    }
+
 public:
     // エネミー登録
     void Register(Enemy* enemy);
@@ -77,6 +86,11 @@ public:
     const float GetCRAActionCoolTimer() const { return craActionCoolTimer_; }
     void SetCRAActionCoolTimer(const float craActionCoolTime) { craActionCoolTimer_ = craActionCoolTime; }
 
+    int GetEnemy1KillNum() { return enemy1KillNum; }
+    int GetEnemy2KillNum() { return enemy2KillNum; }
+    int GetEnemy3KillNum() { return enemy3KillNum; }
+    int GetEnemyGolemKillNum() { return enemyGolemKillNum; }
+
 private:
     std::vector<Enemy*> enemies_ = {};
     std::set<Enemy*>    removes_ = {};
@@ -87,5 +101,9 @@ private:
     float   craActionCoolTimer_ = 0.0f;     // 近接攻撃行動クールタイマー
     bool    isRunningCRAAction_ = false;    // 誰かが近接攻撃行動を実行中か
 
+    int enemy1KillNum = 0;
+    int enemy2KillNum = 0;
+    int enemy3KillNum = 0;
+    int enemyGolemKillNum = 0;
 };
 
