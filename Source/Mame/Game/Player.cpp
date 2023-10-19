@@ -13,6 +13,8 @@
 #include "BlackHole.h"
 #include "EnemyManager.h"
 
+#include "UserInterface.h"
+
 // コンストラクタ
 Player::Player()
 {
@@ -27,6 +29,7 @@ Player::Player()
 
         swordModel = std::make_unique<Model>(graphics.GetDevice(),
             "./Resources/Model/Character/Sword_Motion.fbx");
+            //"./Resources/Model/Character/mdl_sword.fbx");
 
 #if _DEBUG
         //stageDebugSphere = std::make_unique<Model>(graphics.GetDevice(),"./Resources/Model/Collision/sqhere.fbx");
@@ -37,6 +40,21 @@ Player::Player()
         CreatePsFromCso(graphics.GetDevice(),
             "./Resources/Shader/playerPS.cso",
             playerPS.GetAddressOf());
+    }
+
+    //喰らい判定、攻撃判定セット
+    {
+        swordColliderNum = 5;
+        swordColliderRadius = 0.1f;
+        for (int i = 0; i < swordColliderNum; i++)
+        {
+            attackCollider.emplace_back(SphereCollider(swordColliderRadius));
+        }
+
+        for (int i = 0; i < static_cast<int>(HitColName::END); i++)
+        {
+            hitCollider.emplace_back(SphereCollider(0.15f));
+        }
     }
 }
 
@@ -63,8 +81,12 @@ void Player::Initialize()
 
     stateMachine->RegisterState(new PlayerState::NormalState(this));
     stateMachine->RegisterState(new PlayerState::JabAttackState(this));
+    stateMachine->RegisterState(new PlayerState::HardAttackState(this));
     stateMachine->RegisterState(new PlayerState::AvoidState(this));
     stateMachine->RegisterState(new PlayerState::DieState(this));
+    stateMachine->RegisterState(new PlayerState::SoftStaggerState(this));
+    stateMachine->RegisterState(new PlayerState::HardStaggerState(this));
+    stateMachine->RegisterState(new PlayerState::CounterState(this));
 
     stateMachine->SetState(STATE::NORMAL);
 
@@ -82,10 +104,18 @@ void Player::Initialize()
     baseAttackPower = 10.0f;
     attackSpeed = 1.0f;
 
+    jabMotionAtkMuls[0] = 1.0f;
+    jabMotionAtkMuls[1] = 1.2f;
+    jabMotionAtkMuls[2] = 2.3f;
+
+    health = 400.0f;
+    maxHealth = 400.0f;
+
     defence = 0.0f;
 
+
     deceleration = 7.0f;
-    eyeAcceleration = InitAcceleration;
+    acceleration = InitAcceleration;
 
     //初回時のみスキルの生成と配列挿入をする
     if (drainSkill == nullptr)
@@ -121,7 +151,22 @@ void Player::Initialize()
     LockOnInitialize();
 
     swordModel->transform.SetScaleFactor(GetTransform()->GetScaleFactor());
-}
+
+    //攻撃判定
+    swordColliderNum = 5;
+    swordColliderRadius = 0.1f;
+    swordScale = 0.7f;
+    swordModel->GetTransform()->SetScaleFactor(swordScale);
+
+    //喰らい判定
+    hitCollider[static_cast<int>(HitColName::NECK)].radius = 0.1f;
+    hitCollider[static_cast<int>(HitColName::HIP)].radius = 0.12f;
+    hitCollider[static_cast<int>(HitColName::R_LEG)].radius = 0.07f;
+    hitCollider[static_cast<int>(HitColName::L_LEG)].radius = 0.07f;
+    hitCollider[static_cast<int>(HitColName::R_ELBOW)].radius = 0.07f;
+    hitCollider[static_cast<int>(HitColName::L_ELBOW)].radius = 0.07f;
+    
+    }
 
 // 終了化
 void Player::Finalize()
@@ -172,6 +217,8 @@ void Player::Update(const float elapsedTime)
     // アビリティマネージャー更新(仮)
     abilityManager_.Update(elapsedTime);
 
+   
+
 }
 
 // Updateの後に呼ばれる
@@ -212,26 +259,26 @@ void Player::MoveUpdate(float elapsedTime,float ax,float ay)
 
     //GetTransform()->SetPosition(pos);
     DirectX::XMFLOAT3 move = {
-        eyeVelocity.x * elapsedTime,
-        eyeVelocity.y * elapsedTime,
-        eyeVelocity.z * elapsedTime
+        velocity.x * elapsedTime,
+        velocity.y * elapsedTime,
+        velocity.z * elapsedTime
     };
 
-    //ステージ判定
-    DirectX::XMFLOAT3 collectPos;
-    DirectX::XMFLOAT3 movePos = GetTransform()->GetPosition() + move;
-    float length = Length(movePos);
-    if (SceneGame::stageRadius < length)
-    {
-        DirectX::XMFLOAT3 moveNormal = Normalize(movePos);
-        collectPos = moveNormal * SceneGame::stageRadius;
-    }
-    else
-    {
-        collectPos = movePos;
-    }
+    ////ステージ判定
+    //DirectX::XMFLOAT3 collectPos;
+    //float length = Length(movePos);
+    //if (SceneGame::stageRadius < length)
+    //{
+    //    DirectX::XMFLOAT3 moveNormal = Normalize(movePos);
+    //    collectPos = moveNormal * SceneGame::stageRadius;
+    //}
+    //else
+    //{
+    //    collectPos = movePos;
+    //}
 
-    GetTransform()->SetPosition(collectPos);
+    DirectX::XMFLOAT3 movePos = GetTransform()->GetPosition() + move;
+    GetTransform()->SetPosition(CollidedPosition(movePos));
 
     Turn(elapsedTime,moveVec.x, moveVec.z,360.0f);
 }
@@ -263,7 +310,7 @@ void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
     /*float ax = gamePad.GetAxisLX();
     float ay = gamePad.GetAxisLY();*/
 
-    float length{ sqrtf(eyeVelocity.x * eyeVelocity.x + eyeVelocity.z * eyeVelocity.z) };
+    float length{ sqrtf(velocity.x * velocity.x + velocity.z * velocity.z) };
 
     //アニメーションの重みの変更
     //model->weight = length / maxSpeed;
@@ -281,20 +328,20 @@ void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
 
             if ((length -= deceleration) > 0.0f)
             {
-                DirectX::XMVECTOR Velocity{eyeVelocity.x, eyeVelocity.z};
+                DirectX::XMVECTOR Velocity{velocity.x, velocity.z};
                 DirectX::XMVECTOR vecNormal{DirectX::XMVector2Normalize(Velocity)};
                 Velocity = DirectX::XMVectorScale(vecNormal, length);
 
-                eyeVelocity.x = DirectX::XMVectorGetX(Velocity);
-                eyeVelocity.z = DirectX::XMVectorGetY(Velocity);
+                velocity.x = DirectX::XMVectorGetX(Velocity);
+                velocity.z = DirectX::XMVectorGetY(Velocity);
 
                 //減速処理をした場合加速処理は飛ばす
                 return;
             }
             else
             {
-                eyeVelocity.x = 0.0f;
-                eyeVelocity.z = 0.0f;
+                velocity.x = 0.0f;
+                velocity.z = 0.0f;
 
                 return;
             }
@@ -307,7 +354,7 @@ void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
     float moveVecLength = sqrtf(moveVec.x * moveVec.x + moveVec.z * moveVec.z);
     if (moveVecLength > 0.0f)
     {
-        float eyeAcceleration;//加速力
+        float acceleration;//加速力
 
         ////ダッシュ
         //if (InputDash())
@@ -321,21 +368,21 @@ void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
         //    maxSpeed = this->maxSpeed;
         //}
 
-        eyeAcceleration = this->eyeAcceleration * elapsedTime;
+        acceleration = this->acceleration * elapsedTime;
 
         //移動ベクトルによる加速処理
-        eyeVelocity.x += moveVec.x * eyeAcceleration;
-        eyeVelocity.z += moveVec.z * eyeAcceleration;
+        velocity.x += moveVec.x * acceleration;
+        velocity.z += moveVec.z * acceleration;
 
         //最大速度制限
-        float length = sqrtf(eyeVelocity.x * eyeVelocity.x + eyeVelocity.z * eyeVelocity.z);
+        float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
         if (length > maxEyeSpeed)
         {
             DirectX::XMVECTOR vec = { moveVec.x,moveVec.z };
             vec = DirectX::XMVector2Normalize(vec);
             DirectX::XMVECTOR velo = DirectX::XMVectorScale(vec, maxEyeSpeed);
-            eyeVelocity.x = DirectX::XMVectorGetX(velo);
-            eyeVelocity.z = DirectX::XMVectorGetY(velo);
+            velocity.x = DirectX::XMVectorGetX(velo);
+            velocity.z = DirectX::XMVectorGetY(velo);
 
             length = maxEyeSpeed;
         }
@@ -346,25 +393,25 @@ void Player::AvoidUpdate(float elapsedTime)
 {
     auto front = GetTransform()->CalcForward();
 
-    float eyeAcceleration = this->dodgeAcceleration * elapsedTime;
+    float acceleration = this->dodgeAcceleration * elapsedTime;
 
     //移動ベクトルによる加速処理
-    eyeVelocity.x += front.x * eyeAcceleration;
-    eyeVelocity.z += front.z * eyeAcceleration;
+    velocity.x += front.x * acceleration;
+    velocity.z += front.z * acceleration;
 
     //最大速度制限
     float maxDodgeSpeed = this->maxDodgeSpeed + Easing::OutSine(
         static_cast<float>(model->GetCurrentKeyframeIndex()),
         static_cast<float>(model->GetCurrentKeyframeMaxIndex()/2.0f),
         2.0f, 0.0f);
-    float length = sqrtf(eyeVelocity.x * eyeVelocity.x + eyeVelocity.z * eyeVelocity.z);
+    float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
     if (length > maxDodgeSpeed)
     {
         DirectX::XMVECTOR vec = { moveVec.x,moveVec.z };
         vec = DirectX::XMVector2Normalize(vec);
         DirectX::XMVECTOR velo = DirectX::XMVectorScale(vec, maxDodgeSpeed);
-        eyeVelocity.x = DirectX::XMVectorGetX(velo);
-        eyeVelocity.z = DirectX::XMVectorGetY(velo);
+        velocity.x = DirectX::XMVectorGetX(velo);
+        velocity.z = DirectX::XMVectorGetY(velo);
 
         length = maxDodgeSpeed;
     }
@@ -373,14 +420,15 @@ void Player::AvoidUpdate(float elapsedTime)
     float ax = gamePad.GetAxisLX();
     float ay = gamePad.GetAxisLY();
     MoveVecUpdate(ax,ay);
-    Turn(elapsedTime, moveVec.x, moveVec.z, 240.0f);
+    Turn(elapsedTime, moveVec.x, moveVec.z, 180.0f);
 
-    DirectX::XMFLOAT3 velo = {
-        eyeVelocity.x * elapsedTime,
-        eyeVelocity.y * elapsedTime,
-        eyeVelocity.z * elapsedTime
+    DirectX::XMFLOAT3 move = {
+        velocity.x * elapsedTime,
+        velocity.y * elapsedTime,
+        velocity.z * elapsedTime
     };
-    GetTransform()->AddPosition(velo);
+    DirectX::XMFLOAT3 movePos = GetTransform()->GetPosition() + move;
+    GetTransform()->SetPosition(CollidedPosition(movePos));
 }
 
 void Player::ModelRotZUpdate(float elapsedTime)
@@ -433,7 +481,7 @@ void Player::CameraControllerUpdate(float elapsedTime)
     {
         cTransform->AddRotationX(cameraRotSpeed * -ay * elapsedTime);
         float rotX = cTransform->GetRotation().x;
-        rotX = std::clamp(rotX,-0.35f,0.8f);
+        rotX = std::clamp(rotX,-0.10f,0.8f);
         cTransform->SetRotationX(rotX);
     }
 
@@ -456,13 +504,27 @@ void Player::Render(const float scale, ID3D11PixelShader* psShader)
 
 #if _DEBUG
     //stageDebugSphere->Render(stageRadius, playerPS.Get());
+    if (SceneGame::isDispCollision_)
+    {
+        for (auto& collider : hitCollider)
+        {
+            collider.DebugRender();
+        }
+
+        for (auto& collider : attackCollider)
+        {
+            collider.DebugRender(DirectX::XMFLOAT4(1,0,0,1));
+        }
+    }
+    
 #endif // _DEBUG
 
 
     // アビリティマネージャー描画(仮)
     abilityManager_.Render(scale);
 
-
+    //判定移動
+    ColliderPosUpdate(scale);
 }
 
 void Player::SkillImagesRender()
@@ -483,11 +545,16 @@ void Player::SkillImagesRender()
 void Player::DrawDebug()
 {
 #ifdef USE_IMGUI
+
+
+    static float damage = 0;
     if (ImGui::BeginMenu("player"))
     {
         Character::DrawDebug();
 
         stateMachine->DrawDebug();
+
+        //ImGui::Checkbox("ShoeCollider",&showCollider);
 
         if (ImGui::TreeNode("Camera"))
         {
@@ -509,6 +576,17 @@ void Player::DrawDebug()
         if(ImGui::TreeNode("Movement"))
         {
             ImGui::SliderFloat("MaxMoveSpeed", &maxEyeSpeed, 0.1f, 10.0f);
+
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("Damage"))
+        {
+            ImGui::SliderFloat("Damage", &damage,0.0f,20.0f);
+            if (ImGui::Button("Apply Damage"))
+            {
+                ApplyDamage(damage);
+            }
 
             ImGui::TreePop();
         }
@@ -568,11 +646,11 @@ void Player::AttackSteppingUpdate(float elapsedTime)
     //速度算出
     float maxEyeSpeed = Easing::OutQuart(steppingTimer,steppingTime,steppingSpeed,0.0f);
     auto front = GetTransform()->CalcForward();
-    eyeVelocity = front * maxEyeSpeed;
+    velocity = front * maxEyeSpeed;
 
     //移動処理
-    DirectX::XMFLOAT3 move = eyeVelocity * elapsedTime;
-    GetTransform()->AddPosition(move);
+    DirectX::XMFLOAT3 movePos = velocity * elapsedTime + GetTransform()->GetPosition();
+    GetTransform()->SetPosition(CollidedPosition(movePos));
 
     //回転処理
     GamePad& gamePad = Input::Instance().GetGamePad();
@@ -791,6 +869,7 @@ bool Player::ChangeLockOnTarget(float ax)
     if (sideEnemys.size() == 1)
     {
         camera.SetLockOnTarget(sideEnemys.at(0));
+        UserInterface::Instance().SetLockOnInitialize();
         return true;
     }
 
@@ -814,6 +893,7 @@ bool Player::ChangeLockOnTarget(float ax)
     }
 
     camera.SetLockOnTarget(nextLockOnTarget);
+    UserInterface::Instance().SetLockOnInitialize();
 
     return true;
 }
@@ -863,9 +943,20 @@ void Player::LockOnInitialize()
         if (length0 > length1)
         {
             Camera::Instance().SetLockOnTarget(enemy);
+            UserInterface::Instance().SetLockOnInitialize();
             length0 = length1;
         }
     }
+}
+
+void Player::OnDamaged()
+{
+    stateMachine->ChangeState(STAGGER_SOFT);
+}
+
+void Player::OnDead()
+{
+    stateMachine->ChangeState(DIE);
 }
 
 void Player::LevelUpdate()
@@ -885,5 +976,62 @@ void Player::LevelUpdate()
 
         //レベルが上がると能力を取得出来る
         isSelectingSkill = true;
+    }
+}
+
+DirectX::XMFLOAT3 Player::CollidedPosition(const DirectX::XMFLOAT3 pos)
+{
+    //ステージ判定
+    DirectX::XMFLOAT3 collectPos;
+    
+    float length = Length(pos);
+    if (SceneGame::stageRadius < length)
+    {
+        DirectX::XMFLOAT3 moveNormal = Normalize(pos);
+        collectPos = moveNormal * SceneGame::stageRadius;
+    }
+    else
+    {
+        collectPos = pos;
+    }
+
+    return collectPos;
+}
+
+void Player::ColliderPosUpdate(const float& scale)
+{
+    //喰らい判定
+    {
+        const std::string meshBodyName = "ref_P:chara_rig_0906:chara_mdl_1017:pasted__Body";
+        const std::string meshLegName = "ref_P:chara_rig_0906:chara_mdl_1017:pasted__Socks";
+        hitCollider[static_cast<int>(HitColName::NECK)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_Neck", scale);
+        hitCollider[static_cast<int>(HitColName::HIP)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_Hips", scale);
+        hitCollider[static_cast<int>(HitColName::R_ELBOW)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_RightForeArm", scale);
+        hitCollider[static_cast<int>(HitColName::L_ELBOW)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_LeftForeArm", scale);
+    
+        //hitCollider[static_cast<int>(HitColName::LEG)].position = GetJointPosition(meshBodyName,"setup_0927:chara_rig_0906:j_Sentar",scale);
+        hitCollider[static_cast<int>(HitColName::R_LEG)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_RightLeg", scale);
+        hitCollider[static_cast<int>(HitColName::L_LEG)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_LeftLeg", scale);
+    }
+
+    //攻撃判定
+    {
+        DirectX::XMFLOAT4X4 world{};
+        DirectX::XMStoreFloat4x4(&world, swordModel->GetTransform()->CalcWorldMatrix(scale));
+        //const std::string swordMeshName = "sword_rig_1004:sword_rig_1005:sword_mdl_1005:Sword";
+        const std::string swordMeshName = "sword_rig_1004:sword_rig_1005:sword_mdl_1005:Sword";
+        const DirectX::XMFLOAT3 swordRoot = swordModel->skinned_meshes->JointPosition(swordMeshName, "sword_rig_1004:sword_rig_1005:j_sword",&swordModel->keyframe ,world);//根本
+        const DirectX::XMFLOAT3 swordTip = swordModel->skinned_meshes->JointPosition(swordMeshName, "sword_rig_1004:sword_rig_1005:j_sword_end", &swordModel->keyframe, world);//先端
+     
+        const DirectX::XMFLOAT3 vec = swordTip - swordRoot;
+        float swordLength = Length(vec);
+        const DirectX::XMFLOAT3 vecNormal = Normalize(vec);
+
+        const float collideInterval = swordLength / swordColliderNum;//判定ごとの設置間隔
+
+        for (int i = 0;i < attackCollider.size();++i)
+        {
+            attackCollider[i].position = swordRoot + vecNormal * collideInterval * i;
+        }
     }
 }

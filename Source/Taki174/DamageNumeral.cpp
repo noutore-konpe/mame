@@ -71,7 +71,7 @@ void DamageNumeral::Update(const float elapsedTime)
         // Fˆ—
         {
             // “§‚¯‚Ä‚¢‚­
-            spriteT->SetColorW(lifeTimer_ / LIFE_TIME_);
+            spriteT->SetColorA(lifeTimer_ / LIFE_TIME_);
         }
 
     }

@@ -32,8 +32,6 @@ public:
 
     virtual int GetCurrentState() { return 0; }
 
-    //virtual void UpdateConstants() = 0;
-
 public:
     const TYPE GetType() const { return type; }
     void SetType(const TYPE t) { type = t; }
@@ -41,6 +39,12 @@ public:
     const DirectX::XMFLOAT3& GetVelocity() const { return velocity_; }
     void SetVelocity(const DirectX::XMFLOAT3& velocity) { velocity_ = velocity; }
     void AddVelocity(const DirectX::XMFLOAT3& velocity) { velocity_ += velocity; }
+
+    const DirectX::XMFLOAT3& GetBlowOffVec() const { return blowOffVec_; }
+    void  SetBlowOffVec(const DirectX::XMFLOAT3& blowOffVec) { blowOffVec_ = blowOffVec; }
+
+    const float GetBlowOffForce() const { return blowOffForce_; }
+    void SetBlowOffForce(const float blowOffForce) { blowOffForce_ = blowOffForce; }
 
     const float GetRunTimer() const { return runTimer_; }
     void SetRunTimer(const float runTimer) { runTimer_ = runTimer; }
@@ -60,6 +64,9 @@ public:
     const bool GetIsFlinch() const { return isFlinch_; }
     void SetIsFlinch(const bool isFlinch) { isFlinch_ = isFlinch; }
 
+    const bool GetIsBlowOff() const { return isBlowOff_; }
+    void SetIsBlowOff(const bool isBlowOff) { isBlowOff_ = isBlowOff; }
+
     const bool GetIsWaveEnemy() const { return isWaveEnemy_; }
     void SetIsWaveEnemy(const bool isWaveEnemy) { isWaveEnemy_ = isWaveEnemy; }
 
@@ -70,8 +77,22 @@ public:
     // ひるませる
     void Flinch();
 
+    // 吹っ飛ばす
+    void BlowOff();
+
     // 消去
     void Destroy();
+
+    // 検索する子ノードが存在するか検索する
+    const bool IsExistChildNode(const std::string& findNodeName);
+
+    // 子ノードの数を取得
+    const size_t GetChildNodeCount() const
+    {
+        if (nullptr == behaviorTree_) return 0;
+
+        return behaviorTree_->GetRoot()->GetChildren()->size();
+    }
 
 protected:
     std::unique_ptr<BehaviorTree>   behaviorTree_;
@@ -79,12 +100,15 @@ protected:
     NodeBase*           activeNode_     = nullptr;  // BehaviorTreeのノードを指すだけのポインタなのでdeleteしない
 
     DirectX::XMFLOAT3   velocity_       = {};
+    DirectX::XMFLOAT3   blowOffVec_     = {};       // 吹っ飛ぶ方向ベクトル(未正規化)
+    float               blowOffForce_   = 5.0f;     // 吹っ飛ぶ力
     float               runTimer_       = 0.0f;     // 実行タイマー
     float               animationSpeed_ = 1.0f;     // アニメーション速度
     int                 dropExpCount_   = 5;        // ドロップする経験値の数
     int                 step_           = 0;        // 行動ステップ
     bool                entryStageFlag_ = false;    // ステージに入ったかどうかのフラグ
     bool                isFlinch_       = false;    // ひるみフラグ
+    bool                isBlowOff_      = false;    // 吹っ飛びフラグ
     bool                isWaveEnemy_    = false;    // ウェーブで生成された敵であるか(デストラクタで使用)
 
 private:

@@ -64,12 +64,12 @@ public:
 	const ActionBase::State Run(const float elapsedTime) override;
 };
 
-// €–Ss“®
-class DeathAction : public ActionBase
+// ‚Á”ò‚Ñs“®
+class BlowOffAction : public ActionBase
 {
 public:
 	template <class TemplateAI>
-	DeathAction(TemplateAI* enemy) : ActionBase(enemy) {}
+	BlowOffAction(TemplateAI* enemy) : ActionBase(enemy) {}
 	const ActionBase::State Run(const float elapsedTime) override;
 };
 

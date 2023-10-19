@@ -42,10 +42,9 @@ EnemyAI_1::EnemyAI_1()
 
         // pixelShader Set (Aura)
         ::CreatePsFromCso(graphics.GetDevice(),
-            "./Resources/Shader/EmissiveTextureUVScrollPS.cso",
+            "./Resources/Shader/EnemyPS.cso",
             emissiveTextureUVScroll.GetAddressOf());
     }
-
 
     // BehaviorTree設定
     {
@@ -54,11 +53,12 @@ EnemyAI_1::EnemyAI_1()
 
         // ビヘイビアノード追加
         behaviorTree_->AddNode("", "Root", 0, SelectRule::Priority, nullptr, nullptr);                                                                  // 根っこ
-        behaviorTree_->AddNode("Root", "Flinch",           1, SelectRule::Non, new FlinchJudgment(this),           new FlinchAction(this));             // ひるみ
-        behaviorTree_->AddNode("Root", "EntryStage",       2, SelectRule::Non, new EntryStageJudgment(this),       new EntryStageAction(this));         // ステージ入場
-        behaviorTree_->AddNode("Root", "CloseRangeAttack", 3, SelectRule::Non, new CloseRangeAttackJudgment(this), new CloseRangeAttackAction(this));   // 近距離攻撃
-        behaviorTree_->AddNode("Root", "Pursuit",          4, SelectRule::Non, new PursuitJudgment(this),          new PursuitAction(this));            // 追跡
-        behaviorTree_->AddNode("Root", "Idle",             5, SelectRule::Non, nullptr,                            new IdleAction(this));               // 待機
+        behaviorTree_->AddNode("Root", "BlowOff",          1, SelectRule::Non, new BlowOffJudgment(this),          new BlowOffAction(this));            // 吹っ飛び
+        behaviorTree_->AddNode("Root", "Flinch",           2, SelectRule::Non, new FlinchJudgment(this),           new FlinchAction(this));             // ひるみ
+        behaviorTree_->AddNode("Root", "EntryStage",       3, SelectRule::Non, new EntryStageJudgment(this),       new EntryStageAction(this));         // ステージ入場
+        behaviorTree_->AddNode("Root", "CloseRangeAttack", 4, SelectRule::Non, new CloseRangeAttackJudgment(this), new CloseRangeAttackAction(this));   // 近距離攻撃
+        behaviorTree_->AddNode("Root", "Pursuit",          5, SelectRule::Non, new PursuitJudgment(this),          new PursuitAction(this));            // 追跡
+        behaviorTree_->AddNode("Root", "Idle",             6, SelectRule::Non, nullptr,                            new IdleAction(this));               // 待機
     }
 
     SetType(Enemy::TYPE::Normal);
@@ -130,6 +130,8 @@ void EnemyAI_1::Render(const float& scale, ID3D11PixelShader* /*psShader*/)
     // 剣描画
     sword_->Render(scale, nullptr);
 
+    BaseEnemyAI::ColliderPosUpdate(scale);
+
 }
 
 
@@ -155,7 +157,7 @@ void EnemyAI_1::UpdateConstants()
     // emissive
     {
         // emissiveの強さ
-        SetEmissiveIntensity(1.5f);
+        SetEmissiveIntensity(1.25f);
 
         // emissiveTexture ScrollDirection
         SetEmissiveScrollDirection(DirectX::XMFLOAT2(0.25f, 0.5f));

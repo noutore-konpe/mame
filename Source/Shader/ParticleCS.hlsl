@@ -12,8 +12,10 @@ void main(uint3 dtid : SV_DISPATCHTHREADID)
     //if (p.age > 10.0)
     //{
     //}
-    p.position += p.velocity * deltaTime;
-    p.age += deltaTime;
+    //p.position += p.velocity * deltaTime;
+    //p.age += deltaTime;
+    
+    p.position = p.velocity * p.age * 1.0f;
     
     particleBuffer[id] = p;
 }

@@ -18,6 +18,8 @@ namespace EnemyGolemState
 {
     void DummyState::Initialize()
     {
+        owner->SetCurrentState(static_cast<UINT>(EnemyGolem::StateMachineState::DummyState));
+
         // アニメーション設定
         owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Idle), true);
     }
@@ -821,9 +823,16 @@ namespace EnemyGolemState
                 }
             }
 
+            // 前のステートと同じなら通らない
+            if (oldState == setState)
+            {
+                continue;
+            }
+
             // そのステートが使われていなかったら無限ループを抜ける
             if (!isState[setState])
             {
+                oldState = setState;
                 break;
             }
         }
@@ -844,6 +853,9 @@ namespace EnemyGolemState
             break;
         case static_cast<UINT>(STATE::Roar):
             owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::RoarState));
+            break;
+        case static_cast<UINT>(STATE::Attack2):
+            owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::Attack2State));
             break;
         }
 
@@ -1023,12 +1035,22 @@ namespace EnemyGolemState
     // 初期化
     void Attack2State::Initialize()
     {
+        owner->SetCurrentState(static_cast<UINT>(EnemyGolem::StateMachineState::Attack2State));
+
+        // アニメーション設定
+        owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Attack2), false);
+
+        // 魔法陣生成
+        owner->magicCircleGolemAttack2->GetStateMachine()->ChangeState(static_cast<UINT>(MagicCircleGolemAttack2::StateMachineState::AppearState));
     }
 
     // 更新
     void Attack2State::Update(const float& elapsedTime)
     {
-
+        if (!owner->IsPlayAnimation())
+        {
+            owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::IdleState));
+        }
 
         // 回転処理
         Turn(elapsedTime);

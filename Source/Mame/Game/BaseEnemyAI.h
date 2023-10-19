@@ -12,13 +12,16 @@ public:
     BaseEnemyAI();
     ~BaseEnemyAI() override {}
 
-    void Initialize() override;
-    void Finalize()   override {}
-    void Begin()      override {}
+    void Initialize()   override;
+    void Finalize()     override {}
+    void Begin()        override {}
     void Update(const float& elapsedTime) override;
-    void End()        override {}
+    void End()          override {}
     void Render(const float& scale, ID3D11PixelShader* psShader = nullptr) override;
-    void DrawDebug()  override;
+    void DrawDebug()    override;
+
+    void OnDamaged() override;
+    void OnDead()    override;
 
 public:
     // 目的地点へ移動
@@ -41,6 +44,12 @@ public: // 取得・設定
     const float GetTurnSpeed() const { return turnSpeed_; }
 
     const float GetAttackLength() const { return attackLength_; }
+
+    //当たり判定設定
+    void ColliderInitialize();
+
+    //当たり判定をボーンにくっつける
+    void ColliderPosUpdate(const float& scale);
 
 public:
     void Move(
@@ -76,6 +85,21 @@ private:
     void UpdateHorizontalMove(const float elapsedTime);
 
 protected:
+    enum class HitColName
+    {
+        NECK,
+        HIP,
+        R_LEG,
+        L_LEG,
+        R_LEG_END,
+        L_LEG_END,
+        R_ELBOW,
+        L_ELBOW,
+        R_HAND,
+        L_HAND,
+        END
+    };
+protected:
     std::unique_ptr<Model>          sword_;
 
     ProjectileManager* projectileManager_ = nullptr;
@@ -95,5 +119,7 @@ protected:
 
     bool isGround_          = false;
 
+    float swordColliderNum = 5;
+    float swordColliderRadius = 0.07f;
 };
 

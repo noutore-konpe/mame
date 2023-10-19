@@ -1,6 +1,8 @@
 #pragma once
 #include "State.h"
+#include <vector>
 
+class Enemy;
 class Player;
 namespace PlayerState
 {
@@ -46,14 +48,27 @@ namespace PlayerState
         int combo;//現在の連撃回数
         bool initialize;//コンボ毎の初期化処理フラグ
 
-        bool collisionOn;//判定処理をするか
-
         const float dodgeCanselFrame1 = 10.0f;
         const float dodgeCanselFrame2 = 10.0f;
         const float dodgeCanselFrame3 = 10.0f;
         const float comboCanselFrame1 = 20.0f;
         const float comboCanselFrame2 = 20.0f;
         const float comboCanselFrame3 = 20.0f;
+
+        //１つの攻撃モーションに二回連続でヒットしないように一度攻撃
+        std::vector<Enemy*> hit;
+    };
+
+    //強攻撃
+    class HardAttackState : public State<Player>
+    {
+    public:
+        HardAttackState(Player* player) : State(player, "Hard Attack") {}
+        ~HardAttackState() {}
+
+        void Initialize() override;
+        void Update(const float& elapsedTime) override;
+        void Finalize() override;
     };
 
     //回避
@@ -81,5 +96,49 @@ namespace PlayerState
         void Initialize() override;
         void Update(const float& elapsedTime) override;
         void Finalize() override;
+    };
+
+    //小怯み
+    class SoftStaggerState : public State<Player>
+    {
+    public:
+        SoftStaggerState(Player* player) : State(player, "Soft Stagger") {}
+        ~SoftStaggerState() {}
+
+        void Initialize() override;
+        void Update(const float& elapsedTime) override;
+        void Finalize() override;
+    };
+
+    //大怯み(吹っ飛び)
+    class HardStaggerState : public State<Player>
+    {
+    public:
+        HardStaggerState(Player* player) : State(player, "Hard Stagger") {}
+        ~HardStaggerState() {}
+
+        void Initialize() override;
+        void Update(const float& elapsedTime) override;
+        void Finalize() override;
+    };
+
+    //カウンター
+    class CounterState : public State<Player>
+    {
+    public:
+        CounterState(Player* player) : State(player, "Counter") {}
+        ~CounterState() {}
+
+        void Initialize() override;
+        void Update(const float& elapsedTime) override;
+        void Finalize() override;
+
+    private:
+        bool counterCompleted;//カウンター成立フラグ
+        int state;
+
+        const int startUpFrame = 10;//カウンター受付開始アニメーション
+        const float receptionTime = 0.3f;//カウンター受付時間
+        float timer;
     };
 }

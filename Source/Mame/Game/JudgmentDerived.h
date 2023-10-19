@@ -47,6 +47,15 @@ public:
 	const bool Judgment() override;
 };
 
+// ‚Á”ò‚Ñ”»’èŠÖ”
+class BlowOffJudgment : public JudgmentBase
+{
+public:
+	template <class TemplateAI>
+	BlowOffJudgment(TemplateAI* enemy) : JudgmentBase(enemy) {}
+	const bool Judgment() override;
+};
+
 
 
 // BattleNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è

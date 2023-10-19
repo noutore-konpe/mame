@@ -200,7 +200,7 @@ Character::DamageResult Character::ApplyDamage(float damage, float invincibleTim
     DamageResult result;
 
     //無敵時間か
-    if (this->invincibleTime > 0.0f)
+    if (this->invincibleTime > 0.0f || isInvincible)
     {
         result.hit = false;
         return result;
@@ -235,12 +235,12 @@ Character::DamageResult Character::ApplyDamage(float damage, float invincibleTim
     if (health <= 0)
     {
         OnDead();
+        isDead = true;
     }
     //ダメージ通知
     else
     {
         OnDamaged();
-        isDead = true;
     }
 
     //健康状態が変更した場合はtrueを返す
@@ -259,4 +259,13 @@ bool Character::ApplyHeal(float heal)
     OnHealed();
 
     return true;
+}
+
+void Character::SphereCollider::DebugRender(const DirectX::XMFLOAT4 color)
+{
+#if _DEBUG
+    // デバッグ球体描画
+    DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
+    debugRenderer->DrawSphere(position, radius,color);
+#endif // _DEBUG
 }

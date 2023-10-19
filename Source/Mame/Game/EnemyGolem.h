@@ -38,10 +38,12 @@ public: // 定数
         Death1,             // 死亡1
         Down,               // 怯み倒れ
         DownReturn,         // 怯み起き上がり
+        Attack2,            // 攻撃２
     };
 
     enum class StateMachineState
     {
+        DummyState,         // ダミー
         IdleState,          // 待機
         EntryState,         // 登場
         RoarState,          // 咆哮
@@ -68,17 +70,19 @@ public: // 定数
     };
 
 #ifdef _DEBUG
-    const char* stateName[9] =
+    const char* stateName[11] =
     {
-        "Entry",
-        "Summon",
-        "Roar",
+        "DummyState",
+        "EntryState",
+        "SummonState",
+        "RoarState",
         "Attack1State",
         "ComboAttack1State",
         "DownState",
         "ComboAttack2State",
         "DeathState",
-        "WalkState"
+        "WalkState",
+        "Attack2State",
     };
 #endif // _DEBUG
 
@@ -92,7 +96,7 @@ public:
     void Update(const float& elapsedTime)                       override; // 更新処理
     void End()                                                  override; // 毎フレーム一番最後に呼ばれる
     void Render(const float& scale, ID3D11PixelShader* psShader = nullptr)   override; // 描画処理
-    
+
     void Render(const float& scale, bool shadow, ID3D11PixelShader* psShader = nullptr) override;
     void DrawDebug()                                            override; // デバッグ描画
 
@@ -111,8 +115,30 @@ public:
     // 召喚魔法陣更新処理
     void UpdateSummoningMagicCircle(const float& lengthX, const float& lengthZ, const float& angle);
     // 攻撃魔法陣更新処理
-    void UpdateAttack2MagicCircle(const DirectX::XMFLOAT3& length, const float& angle);
+    void UpdateAttack2MagicCircle(const float& lengthX, const float& lengthZ);
 
+private:
+    enum class ColliderName
+    {
+        HIP,
+        R_LEG,
+        L_LEG,
+        R_LEG_END,
+        L_LEG_END,
+        R_SHOULDER,
+        L_SHOULDER,
+        //R_ELBOW,
+        //L_ELBOW,
+        R_HAND,
+        L_HAND,
+        END
+    };
+
+    //当たり判定設定
+    void ColliderInitialize();
+
+    //当たり判定をボーンにくっつける
+    void ColliderPosUpdate(const float& scale);
 private:
     static int nameNum_;
 

@@ -14,7 +14,7 @@ SamplerState samplerStates[8] : register(s0);
 Texture2D textureMaps[5] : register(t0);
 
 // Žg‚¤‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO
-#define RGB_SHIFT 1
+#define RGB_SHIFT 0
 #define NOISE 0
 #define SCAN_LINE 0
 #define NEBIT 1

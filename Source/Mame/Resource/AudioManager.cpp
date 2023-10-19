@@ -6,7 +6,9 @@ void AudioManager::LoadAudio()
     {
         // BGMì«Ç›çûÇ›
         {
-            //bgm_[static_cast<int>(BGM::Title)           ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/BGM/Title.wav");
+            bgm_[static_cast<int>(BGM::Title) ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/BGM/title0.wav");
+            bgm_[static_cast<int>(BGM::Title1)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/BGM/title1.wav");
+            bgm_[static_cast<int>(BGM::Title2)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/BGM/title2.wav");
         }
 
         // SEì«Ç›çûÇ›
@@ -86,8 +88,8 @@ void AudioManager::StopAllAudio()
     {
         bgm->Stop();
     }
-    for (std::unique_ptr<Audio>& se : se_)
-    {
-        se->Stop();
-    }
+    //for (std::unique_ptr<Audio>& se : se_)
+    //{
+    //    se->Stop();
+    //}
 }

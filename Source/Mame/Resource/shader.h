@@ -182,8 +182,6 @@ public:
     void EntryLight2();
     bool isEntryLight = false;
 
-public://todo:‚Ç‚¤‚É‚©‚µ‚½‚¢
-    void GSSetConstantBuffer();
 
 private:
     DirectX::XMFLOAT3 eye{ 0.0f,0.0f,-10.0f };

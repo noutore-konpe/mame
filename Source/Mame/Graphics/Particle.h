@@ -13,7 +13,7 @@ struct Particle
 {
     DirectX::XMFLOAT4 color{ 1, 1, 1, 1 };
     DirectX::XMFLOAT3 position{ 0, 0, 0 };
-    DirectX::XMFLOAT3 eyeVelocity{ 0, 0, 0 };
+    DirectX::XMFLOAT3 velocity{ 0, 0, 0 };
     float age{};
     int state{};
 };

@@ -1,5 +1,6 @@
 #include "PlayerState.h"
 #include "Player.h"
+#include "PlayerManager.h"
 
 namespace PlayerState
 {
@@ -33,6 +34,7 @@ namespace PlayerState
             owner->ChangeState(Player::STATE::ATTACK_JAB);
         }
     }
+
     void NormalState::Finalize()
     {
     }
@@ -41,7 +43,11 @@ namespace PlayerState
     {
         combo = 0;
         initialize = false;
+        owner->isActiveAttackFrame = true;
+
+        hit.clear();
     }
+
     void JabAttackState::Update(const float& elapsedTime)
     {
         //ì•Ç›çûÇ›èàóù
@@ -57,6 +63,7 @@ namespace PlayerState
                 state = UPDATE_FRAME;
                 owner->PlayAnimation(Player::Animation::Jab_1, false, owner->GetAttackSpeed());
                 owner->GetSword()->PlayAnimation(Player::Animation::Jab_1, false, owner->GetAttackSpeed());
+                hit.clear();//ÉqÉbÉgÇµÇΩìGÇÃèâä˙âª
                 initialize = true;
             }
 
@@ -65,7 +72,7 @@ namespace PlayerState
                 AttackUpdate(dodgeCanselFrame1,comboCanselFrame1);
             }
 
-            
+
             break;
         case 1://2åÇñ⁄
             //èâä˙âªèàóù
@@ -75,6 +82,7 @@ namespace PlayerState
                 state = UPDATE_FRAME;
                 owner->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
                 owner->GetSword()->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
+                hit.clear();//ÉqÉbÉgÇµÇΩìGÇÃèâä˙âª
                 initialize = true;
             }
 
@@ -92,6 +100,7 @@ namespace PlayerState
                 state = UPDATE_FRAME;
                 owner->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
                 owner->GetSword()->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
+                hit.clear();//ÉqÉbÉgÇµÇΩìGÇÃèâä˙âª
                 initialize = true;
             }
 
@@ -108,17 +117,35 @@ namespace PlayerState
         {
             owner->ChangeState(Player::STATE::NORMAL);
         }
+
+        HitCollisionUpdate();
     }
+
     void JabAttackState::Finalize()
     {
         //owner->model->weight = 0.0f;
         owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
+        owner->isActiveAttackFrame = false;
     }
 
     void JabAttackState::HitCollisionUpdate()
     {
-        if (!collisionOn)return;
+        std::vector<Enemy*> hitEnemies;
+        if (PlayerManager::Instance().AttackCollisionPlayerToEnemy(hitEnemies))
+        {
+            for (auto& enemy : hitEnemies)
+            {
+                for (auto& h : hit)
+                {
+                    if (h == enemy)goto skip;//Ç∑Ç≈Ç…àÍìxÉqÉbÉgÇµÇƒÇ¢ÇÈìGÇ»ÇÁèàóùÇµÇ»Ç¢
+                }
+                //àÍìxÇ‡ÉqÉbÉgÇµÇƒÇ¢Ç»Ç¢ìGÇ»ÇÃÇ≈ìoò^Ç∑ÇÈ
+                hit.emplace_back(enemy);
 
+                enemy->ApplyDamage(owner->jabMotionAtkMuls[combo]);
+            skip:;
+            }
+        }
     }
 
     void JabAttackState::AttackUpdate(int dodgeCanselFrame,int comboCanselFrame)
@@ -160,6 +187,15 @@ namespace PlayerState
             }
             break;
         }
+
+        /*if (state < COMBO_AND_DODGE_CANSEL_FRAME)
+        {
+            owner->isActiveAttackFrame = true;
+        }
+        else
+        {
+            owner->isActiveAttackFrame = false;
+        }*/
     }
 
     void AvoidState::Initialize()
@@ -172,7 +208,7 @@ namespace PlayerState
     void AvoidState::Update(const float& elapsedTime)
     {
         //owner->MoveUpdate(elapsedTime);
-        
+
         if (!owner->IsPlayAnimation()/* ||
             Input::Instance().GetGamePad().GetTriggerR() == 0*/)
         {
@@ -197,6 +233,90 @@ namespace PlayerState
     {
     }
     void DieState::Finalize()
+    {
+    }
+
+    void HardAttackState::Initialize()
+    {
+
+    }
+    void HardAttackState::Update(const float& elapsedTime)
+    {
+
+    }
+    void HardAttackState::Finalize()
+    {
+
+    }
+
+    void SoftStaggerState::Initialize()
+    {
+        owner->PlayAnimation(Player::Animation::SoftStagger, false,1.5f);
+        //owner->isInvincible = true;//ñ≥ìG
+        owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
+    }
+    void SoftStaggerState::Update(const float& elapsedTime)
+    {
+        if (!owner->IsPlayAnimation())
+        {
+            owner->ChangeState(Player::STATE::NORMAL);
+        }
+    }
+    void SoftStaggerState::Finalize()
+    {
+        //owner->isInvincible = false;
+    }
+
+    void HardStaggerState::Initialize()
+    {
+    }
+    void HardStaggerState::Update(const float& elapsedTime)
+    {
+    }
+    void HardStaggerState::Finalize()
+    {
+    }
+
+    void CounterState::Initialize()
+    {
+        counterCompleted = false;
+        owner->PlayAnimation(Player::Animation::Counter, false);
+        timer = 0;
+    }
+    void CounterState::Update(const float& elapsedTime)
+    {
+        switch (state)
+        {
+        case 0://ëOåÑÉÇÅ[ÉVÉáÉì
+            if (owner->model->GetCurrentKeyframeIndex() > startUpFrame)
+            {
+                state++;
+            }
+            break;
+
+        case 1://ÉJÉEÉìÉ^Å[éÛïtéûä‘ÅAå„åÑ
+            if (timer < receptionTime)
+            {
+                //îªíËèàóù
+            }
+
+            if (counterCompleted)
+            {
+                owner->PlayAnimation(Player::Animation::CounterAttack,false);
+                state++;
+            }
+
+            timer += elapsedTime;
+            break;
+        case 2:
+            if (!owner->IsPlayAnimation())
+            {
+                owner->ChangeState(Player::STATE::NORMAL);
+            }
+            break;
+        }
+    }
+    void CounterState::Finalize()
     {
     }
 }

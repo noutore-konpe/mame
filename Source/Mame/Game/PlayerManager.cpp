@@ -3,6 +3,8 @@
 
 #include "../../Taki174/FunctionXMFloat3.h"
 
+#include "Collision.h"
+
 // ‰Šú‰»
 void PlayerManager::Initialize()
 {
@@ -89,4 +91,33 @@ void PlayerManager::CollisionPlayerVsEnemy()
         player->SetPosition(positionA + vecAtoB_N * range);
 #endif
     }
+}
+
+bool PlayerManager::AttackCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies)
+{
+    bool hit = false;
+    if (player->isActiveAttackFrame)
+    {
+        for (auto& enemy : EnemyManager::Instance().GetEnemies())
+        {
+            for (auto& atkCollider : player->GetAttackCollider())
+            {
+                for (auto& hitCollider : enemy->GetHitCollider())
+                {
+                    if (Collision::IntersectSphereVsSphere(
+                        atkCollider.position, atkCollider.radius,
+                        hitCollider.position, hitCollider.radius))
+                    {
+                        // ‚Á”ò‚Ô•ûŒüƒxƒNƒgƒ‹(–¢³‹K‰»)‚ð•Û‘¶
+                        const DirectX::XMFLOAT3 vec = enemy->GetPosition() - atkCollider.position;
+                        enemy->SetBlowOffVec(vec);
+
+                        hitEnemies.emplace_back(enemy);
+                        hit = true;
+                    }
+                }
+            }
+        }
+    }
+    return hit;
 }

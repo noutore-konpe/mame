@@ -18,8 +18,12 @@ public: // enum関連
     {
         NORMAL,   // 移動、待機等
         ATTACK_JAB,   // 弱攻撃
+        ATTACK_HARD,   // 強攻撃
         AVOID,   // 回避
         DIE,   // 死亡
+        STAGGER_SOFT,   // 小怯み
+        STAGGER_HARD,   // 大怯み
+        COUNTER,   // カウンター
     };
 
     // アニメーション
@@ -31,10 +35,10 @@ public: // enum関連
         Jab_2,
         //Jab_3,
         Avoid,
-        Non1,       // ※仮埋め
-        Non2,       // ※仮埋め
-        Flinch,     // ひるみ
-        BlowOff,    // 吹っ飛び
+        Counter,
+        CounterAttack,
+        SoftStagger,
+        BlowOff
     };
 
 
@@ -75,6 +79,8 @@ public:
 
     void AttackSteppingUpdate(float elapsedTime);//攻撃間際の踏み込み処理
 
+    void OnDamaged()override;
+    void OnDead()override;
 
     void ChangeState(int newState) { stateMachine->ChangeState(newState); }
 
@@ -131,16 +137,26 @@ public:
 
     std::vector<BaseSkill*>& GetSkillArray() { return skillArray; }
 
-    void SetAcceleration(const float accel) { eyeAcceleration = accel; }
+    void SetAcceleration(const float accel) { acceleration = accel; }
 
     StateMachine<State<Player>>* GetStateMachine() { return stateMachine.get(); }
 
-    void SetVelocity(const DirectX::XMFLOAT3 velo) { eyeVelocity = velo; }
+    void SetVelocity(const DirectX::XMFLOAT3 velo) { velocity = velo; }
 
     Model* GetSword() { return swordModel.get(); }
 
+    void AddExp(const float exp) { curExp += exp; totalExp += exp; }
+    const float GetCurExp() const { return curExp; }
+    const float GetTotalExp() const { return totalExp; }
+    const float GetLevelUpExp() const { return levelUpExp; }
+
+    const int GetLevel() const { return level; }
+
 private:
     void LevelUpdate();
+
+    //地形判定後の座標取得
+    DirectX::XMFLOAT3 CollidedPosition(const DirectX::XMFLOAT3 pos);
 
 public:
     bool isSelectingSkill;//能力の選択演出中かのフラグ
@@ -148,10 +164,12 @@ public:
     static constexpr float InitAcceleration = 10.0f;
 
     float actualRotValue;//回避中、実際に回転させるZ値
+
+    bool isActiveAttackFrame;
 private:
     //----------------------------シェーダー----------------------------------
     Microsoft::WRL::ComPtr<ID3D11PixelShader> playerPS;
-    //----------------------------シェーダー----------------------------------
+    //----------------------------------------------------------------------
 
     //----------------------------カメラ関係----------------------------------
     float cameraRotSpeed = 2.0f;//旋回速度
@@ -160,13 +178,13 @@ private:
     //--------------------------移動-----------------------------------------
     float maxEyeSpeed;
     //float maxDashSpeed = 4.0f;
-    DirectX::XMFLOAT3 eyeVelocity{};
+    DirectX::XMFLOAT3 velocity{};
 
     //カメラの向いている方向を前とした移動方向ベクトル
     DirectX::XMFLOAT3 moveVec;
 
     float deceleration;
-    float eyeAcceleration;
+    float acceleration;
     float dodgeAcceleration = 30.0f;
 
     float rotTimer = 0;
@@ -211,8 +229,11 @@ private:
     const float steppingSpeed = 5.0f;//攻撃間際の踏み込み最高速度
     const float steppingTime = 0.2f;//踏み込み時間
     float steppingTimer = 0;
-    //-----------------------------------------------------------------------
 
+public://getter作るのめんどいだけ
+    float jabMotionAtkMuls[3];
+    //-----------------------------------------------------------------------
+private:
     //----------------------------回避---------------------------------------
     float maxDodgeSpeed;//回避中の移動速度
     //-----------------------------------------------------------------------
@@ -222,8 +243,26 @@ private:
     std::unique_ptr<Model> swordModel;
     //-----------------------------------------------------------------------
 
-    //--------------------------------地形判定？------------------------------------
+    //--------------------------------喰らい、攻撃判定------------------------------------
     //std::unique_ptr<Model> stageDebugSphere;
+
+    enum class HitColName
+    {
+        NECK,
+        HIP,
+        R_LEG,
+        L_LEG,
+        R_ELBOW,
+        L_ELBOW,
+        END
+    };
+
+    float swordScale;//剣の大きさに合わせて判定の大きさも変える
+
+    float swordColliderRadius;//剣の判定の大きさ
+    int swordColliderNum;//判定の数
+
+    void ColliderPosUpdate(const float& scale);//各ジョイントに判定をつける処理
 
     //--------------------------------------------------------------------------------
 

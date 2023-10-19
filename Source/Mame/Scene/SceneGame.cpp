@@ -61,7 +61,9 @@ void SceneGame::CreateResource()
     {
         stageBase = std::make_unique<Stage>();
         stageWall = std::make_unique<Stage>
+            //("./Resources/Model/Stage/hashira.fbx",
             ("./Resources/Model/Stage/stageWall.fbx",
+                //"./Resources/Shader/CharacterPS.cso");
                 "./Resources/Shader/StageWallPS.cso");
     }
 
@@ -81,16 +83,22 @@ void SceneGame::CreateResource()
     // enemy
     {
         EnemyManager& enemyManager = EnemyManager::Instance();
+
         // EnemyGolem* enemyGolem = new EnemyGolem;
         // enemyManager.Register(enemyGolem);
 
-#if 0
+        EnemyGolem* enemyGolem = new EnemyGolem;
+        enemyGolem->Initialize();
+        enemyManager.Register(enemyGolem);
+
+
+#if 1
         // max 6~7
         // EnemyAI_1
         for (int i = 0; i < 2; ++i)
         {
             EnemyAI_1* enemyAI_1 = new EnemyAI_1;
-
+            enemyAI_1->Initialize();
             const XMFLOAT3 setPosition = {
                 ::RandFloat(-10.0f, +10.0f),
                 0.0f,
@@ -104,6 +112,7 @@ void SceneGame::CreateResource()
         for (int i = 0; i < 2; ++i)
         {
             EnemyAI_2* enemyAI_2 = new EnemyAI_2;
+            enemyAI_2->Initialize();
 
             const XMFLOAT3 setPosition = {
                 ::RandFloat(-10.0f, +10.0f),
@@ -118,6 +127,7 @@ void SceneGame::CreateResource()
         for (int i = 0; i < 2; ++i)
         {
             EnemyAI_3* enemyAI_3 = new EnemyAI_3;
+            enemyAI_3->Initialize();
 
             const XMFLOAT3 setPosition = {
                 ::RandFloat(-10.0f, +10.0f),
@@ -131,6 +141,11 @@ void SceneGame::CreateResource()
 #endif
     }
 
+    // sprite
+    {
+        whiteSprite = std::make_unique<Sprite>(graphics.GetDevice(),
+            L"./Resources/Image/Game/white.png");
+    }
 
     // ps Shader
     {
@@ -141,6 +156,10 @@ void SceneGame::CreateResource()
         load_texture_from_file(graphics.GetDevice(),
             L"./Resources/Image/Mask/noise3.png",
             emissiveTexture.GetAddressOf(), &texture2dDesc);
+
+        load_texture_from_file(graphics.GetDevice(),
+            L"./Resources/Image/Particle/circle.png",
+            particleTexture.GetAddressOf(), &texture2dDesc);
 
         //CreatePsFromCso(graphics.GetDevice(),"./Resources/Shader/EmissiveTextureUVScrollPS.cso",emissiveTexture)
     }
@@ -217,11 +236,11 @@ void SceneGame::CreateResource()
 // 初期化
 void SceneGame::Initialize()
 {
-    // カメラ
-    Camera::Instance().Initialize();
-
     // player
     PlayerManager::Instance().Initialize();
+
+    // カメラ
+    Camera::Instance().Initialize();
 
     // item
     ItemManager::Instance().Initialize();
@@ -241,10 +260,13 @@ void SceneGame::Initialize()
     expManager.Initialize();
 
 
+
     //今だけロックオン処理いれとく
     //Camera::Instance().SetLockOnTargetPos(enemyGolem->GetTransform());
 
     isDispCollision_    = false;
+
+    //isDrawCollision_    = false;
 
     //UI
     {
@@ -255,6 +277,11 @@ void SceneGame::Initialize()
         UserInterface::Instance().Initialize();
     }
 
+
+    isParticleInitialize = false; // particle用
+    isWhiteSpriteRender = true;
+    whiteSpriteTimer = 0.0f;
+
     // Wave Initialize
     {
         WaveManager& waveManager = WaveManager::Instance();
@@ -263,7 +290,6 @@ void SceneGame::Initialize()
         static constexpr int startWaveIndex = -1;
         waveManager.InitWave(startWaveIndex);
     }
-
 }
 
 // 終了化
@@ -308,18 +334,20 @@ void SceneGame::Update(const float& elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
 
-    if (gamePad.GetButtonDown() & GamePad::BTN_A)
+    // 最初の白飛びのスプライト
+    UpdateWhiteSprite(elapsedTime);
+
+    if (!isParticleInitialize)
     {
+        isParticleInitialize = false;
         particles->Initialize(Graphics::Instance().GetDeviceContext(), 0);
-    }
+    }    
 
     if (integrateParticles)
     {
         particles->Integrate(Graphics::Instance().GetDeviceContext(), elapsedTime);
     }
 
-    //if (gamePad.GetButtonDown() & GamePad::BTN_B)
-    //    Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
 
 #ifdef _DEBUG
     // Debug用カメラ
@@ -550,7 +578,8 @@ void SceneGame::Render(const float& elapsedTime)
     shader->SetDepthStencileState(static_cast<size_t>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
     shader->SetRasterizerState(static_cast<size_t>(Shader::RASTER_STATE::CULL_NONE));
     shader->SetBlendState(static_cast<size_t>(Shader::BLEND_STATE::ADD));
-    shader->GSSetConstantBuffer();
+    graphics.GetDeviceContext()->GSSetConstantBuffers(1, 1, ConstantBuffer.GetAddressOf());
+    graphics.GetDeviceContext()->PSSetShaderResources(16, 1, particleTexture.GetAddressOf());
     particles->Render(graphics.GetDeviceContext());
 
     // シェーダーエフェクト
@@ -624,7 +653,6 @@ void SceneGame::Render(const float& elapsedTime)
         //bitBlockTransfer->Blit(graphics.GetDeviceContext(), shaderResourceView, 0, _countof(shaderResourceView), colorPS.Get());
     }
 
-
     // BLOOM
     bloomer->Make(graphics.GetDeviceContext(), framebuffers[0]->shaderResourceViews[0].Get());
 
@@ -672,6 +700,10 @@ void SceneGame::Render(const float& elapsedTime)
 
         PlayerManager::Instance().GetPlayer()->SkillImagesRender();
         UserInterface::Instance().Render();
+
+        // ※これより下に何も描画しない
+        if(isWhiteSpriteRender) whiteSprite->Render();
+        // ※これより下に何も描画しない
     }
 
 #ifdef _DEBUG
@@ -709,6 +741,7 @@ void SceneGame::DrawDebug()
 
     if (ImGui::Begin("sceneGame"))
     {
+        Graphics::Instance().GetShader()->DrawDebug();
 
         // デバッグプリミティブ描画
         if (ImGui::Button("drawDebug"))
@@ -742,12 +775,17 @@ void SceneGame::DrawDebug()
 
         ImGui::Separator();
 
+        stageBase->DrawDebug();
+        stageWall->DrawDebug();
+
         plManager.DrawDebug();
 
         ItemManager::Instance().DrawDebug();
 
         particles->DrawDebug();
 
+
+        EnemyManager& enemyManager = EnemyManager::Instance();
         enemyManager.DrawDebug();
 
         // Exp
@@ -838,9 +876,28 @@ void SceneGame::DebugCreateEnemyFromGateway()
 
         // 敵生成(EnemyAI_1)
         EnemyAI_1* enemyAI_1 = new EnemyAI_1();
+        enemyAI_1->Initialize();
         enemyAI_1->GetTransform()->SetPosition(createPos);
         enemyManager.Register(enemyAI_1);
 
     }
 
+}
+
+void SceneGame::UpdateWhiteSprite(const float& elapsedTime)
+{
+    if (isWhiteSpriteRender)
+    {
+        float maxTime = 1.0f;
+        if (whiteSpriteTimer <= maxTime)
+        {
+            float alpha = Easing::InSine(whiteSpriteTimer, maxTime, 0.0f, 1.0f);
+            whiteSprite->GetSpriteTransform()->SetColorA(alpha);
+            whiteSpriteTimer += elapsedTime;
+        }
+        else
+        {
+            isWhiteSpriteRender = false;
+        }
+    }
 }
