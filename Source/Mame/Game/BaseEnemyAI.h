@@ -12,14 +12,16 @@ public:
     BaseEnemyAI();
     ~BaseEnemyAI() override {}
 
-    void Initialize() override;
-    void Finalize()   override {}
-    void Begin()      override {}
+    void Initialize()   override;
+    void Finalize()     override {}
+    void Begin()        override {}
     void Update(const float& elapsedTime) override;
-    void End()        override {}
+    void End()          override {}
     void Render(const float& scale, ID3D11PixelShader* psShader = nullptr) override;
-    void DrawDebug()  override;
+    void DrawDebug()    override;
 
+    void OnDamaged() override;
+    void OnDead()    override;
 
 public:
     // –Ú“I’n“_‚ÖˆÚ“®

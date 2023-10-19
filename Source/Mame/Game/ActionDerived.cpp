@@ -10,6 +10,7 @@
 #include "EnemyManager.h"
 #include "PlayerManager.h"
 #include "ProjectileStraight.h"
+#include "ExperiencePointManager.h"
 
 // ステージエントリー行動
 const ActionBase::State EntryStageAction::Run(const float elapsedTime)
@@ -50,6 +51,21 @@ const ActionBase::State EntryStageAction::Run(const float elapsedTime)
 		[[fallthrough]];
 		//break;
 	case 1:
+
+		// ひるんでいたら終了
+		if (true == owner_->GetIsFlinch())
+		{
+			owner_->SetStep(0);
+			return ActionBase::State::Failed;
+		}
+
+		// 吹っ飛んでいたら終了
+		if (true == owner_->GetIsBlowOff())
+		{
+			owner_->SetStep(0);
+			return ActionBase::State::Failed;
+		}
+
 		// 目標地点へ移動
 		owner_->MoveToTarget(elapsedTime, 1.0);
 
@@ -126,6 +142,20 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 	case 1:
 		// タイマー更新
 		owner_->ElapseRunTimer(elapsedTime);
+
+		// ひるんでいたら終了
+		if (true == owner_->GetIsFlinch())
+		{
+			owner_->SetStep(0);
+			return ActionBase::State::Failed;
+		}
+
+		// 吹っ飛んでいたら終了
+		if (true == owner_->GetIsBlowOff())
+		{
+			owner_->SetStep(0);
+			return ActionBase::State::Failed;
+		}
 
 		//// 待機と歩きのブレンドアニメーションが終わったら
 		//// 待機アニメーションにしておく
@@ -258,6 +288,21 @@ const ActionBase::State PursuitAction::Run(const float elapsedTime)
 		[[fallthrough]];
 		//break;
 	case 1:
+
+		// ひるんでいたら終了
+		if (true == owner_->GetIsFlinch())
+		{
+			owner_->SetStep(0);
+			return ActionBase::State::Failed;
+		}
+
+		// 吹っ飛んでいたら終了
+		if (true == owner_->GetIsBlowOff())
+		{
+			owner_->SetStep(0);
+			return ActionBase::State::Failed;
+		}
+
 		// 目標地点をプレイヤー位置に設定
 		owner_->SetTargetPosition(plManager.GetPlayer()->GetPosition());
 
@@ -327,6 +372,36 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 	case 1:
 		// タイマー更新
 		owner_->ElapseRunTimer(elapsedTime);
+
+		// ひるんでいたら終了
+		if (true == owner_->GetIsFlinch())
+		{
+			owner_->SetStep(0);
+
+			// CRA : 5.Action : 近接攻撃行動実行中フラグを下ろす
+			enmManager.SetIsRunningCRAAction(false);
+
+			// CRA : 6.Action : 近接攻撃行動クールタイマー設定
+			constexpr float craCoolTime = 0.0f;
+			enmManager.SetCRAActionCoolTimer(craCoolTime);
+
+			return ActionBase::State::Failed;
+		}
+
+		// 吹っ飛んでいたら終了
+		if (true == owner_->GetIsBlowOff())
+		{
+			owner_->SetStep(0);
+
+			// CRA : 5.Action : 近接攻撃行動実行中フラグを下ろす
+			enmManager.SetIsRunningCRAAction(false);
+
+			// CRA : 6.Action : 近接攻撃行動クールタイマー設定
+			constexpr float craCoolTime = 0.0f;
+			enmManager.SetCRAActionCoolTimer(craCoolTime);
+
+			return ActionBase::State::Failed;
+		}
 
 		// 回転
 		{
@@ -421,6 +496,20 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 		// タイマー更新
 		owner_->ElapseRunTimer(elapsedTime);
 
+		// ひるんでいたら終了
+		if (true == owner_->GetIsFlinch())
+		{
+			owner_->SetStep(0);
+			return ActionBase::State::Failed;
+		}
+
+		// 吹っ飛んでいたら終了
+		if (true == owner_->GetIsBlowOff())
+		{
+			owner_->SetStep(0);
+			return ActionBase::State::Failed;
+		}
+
 		// 目標地点をプレイヤー位置に設定
 		owner_->SetTargetPosition(plManager.GetPlayer()->GetPosition());
 
@@ -464,7 +553,7 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 
 
 // ひるみ行動
-const ActionBase::State FlinchAction::Run(const float elapsedTime)
+const ActionBase::State FlinchAction::Run(const float /*elapsedTime*/)
 {
 	using Animation = Player::Animation;
 
@@ -480,7 +569,7 @@ const ActionBase::State FlinchAction::Run(const float elapsedTime)
 			Model* sword = owner_->GetSword();
 			if (sword != nullptr)
 			{
-				// こっちは待機アニメーションにしておく
+				// 待機アニメーションにしておく
 				sword->PlayAnimation(Animation::Idle, false, owner_->GetAnimationSpeed());
 			}
 		}
@@ -490,6 +579,14 @@ const ActionBase::State FlinchAction::Run(const float elapsedTime)
 		//break;
 	case 1:
 		//owner_->ElapseRunTimer(elapsedTime);
+
+		// 吹っ飛んでいたら終了
+		if (true == owner_->GetIsBlowOff())
+		{
+			owner_->SetStep(0);
+			owner_->SetIsFlinch(false); // ひるみフラグを下ろす
+			return ActionBase::State::Failed;
+		}
 
 		//// 時間が経過したらひるみを終了
 		//if (owner_->GetRunTimer() <= 0.0f)
@@ -508,6 +605,106 @@ const ActionBase::State FlinchAction::Run(const float elapsedTime)
 	return ActionBase::State::Run;
 }
 
+// 吹っ飛び行動
+const ActionBase::State BlowOffAction::Run(const float elapsedTime)
+{
+	using Animation = Player::Animation;
+	using DirectX::XMFLOAT3;
+	using DirectX::XMFLOAT4;
+
+	XMFLOAT4* modelColor = &owner_->model->color;
+
+	switch (owner_->GetStep())
+	{
+	case 0:
+
+		// 吹っ飛ばす力を速度に設定する
+		const XMFLOAT3 blowOffVecN	= ::XMFloat3Normalize(owner_->GetBlowOffVec());
+		{
+			XMFLOAT3 force	 = {};
+				     force.x = blowOffVecN.x * owner_->GetBlowOffForce();
+				     force.z = blowOffVecN.z * owner_->GetBlowOffForce();
+			owner_->SetVelocity(force);
+		}
+
+		// 吹っ飛ばされた方向を向く
+		owner_->GetTransform()->SetRotationY(::atan2f(-blowOffVecN.x, -blowOffVecN.z));
+
+		// 吹っ飛びアニメーション再生
+		{
+			owner_->PlayAnimation(Animation::BlowOff, false, owner_->GetAnimationSpeed());
+
+			Model* sword = owner_->GetSword();
+			if (sword != nullptr)
+			{
+				// 待機アニメーションにしておく
+				sword->PlayAnimation(Animation::Idle, false, owner_->GetAnimationSpeed());
+			}
+		}
+
+		owner_->SetStep(1);
+		[[fallthrough]];
+		// break;
+	case 1:
+
+		// アニメーション再生中ならbreak
+		if (true == owner_->IsPlayAnimation()) break;
+
+		// 吹っ飛びアニメーションが終わったら
+		{
+			// 死んでいなければそのまま終了
+			if (false == owner_->GetIsDead())
+			{
+				owner_->SetIsBlowOff(false);		// 吹っ飛びフラグOFF
+				owner_->SetStep(0);					// ステップリセット
+				return ActionBase::State::Complete;	// 成功終了
+			}
+
+			// 透明にしていく
+			const float reduceColorW = (-10.0f) * elapsedTime;
+			modelColor->w = (std::max)(0.0f, modelColor->w + reduceColorW);
+
+			// ある程度透明になったら
+			if (modelColor->w <= 0.5f)
+			{
+				// 経験値ドロップ
+				ExperiencePointManager& expManager = ExperiencePointManager::Instance();
+				const XMFLOAT3& pos = owner_->GetPosition();
+				const int		exp = owner_->GetDropExpCount();
+				expManager.CreateExp(pos, exp);
+
+				// 次のステップに移る（経験値を一度だけドロップするようにするため）
+				owner_->SetStep(2);
+				break;
+			}
+
+		}
+
+		break;
+	case 2:
+
+		// 透明にしていく
+		const float reduceColorW = (-1.0f) * elapsedTime;
+		modelColor->w += reduceColorW;
+
+		// モデルが透明になりきったら消去する
+		if (owner_->model->color.w <= 0.0f)
+		{
+			owner_->Destroy();					// 自分を消去
+			owner_->SetIsBlowOff(false);		// 一応吹っ飛びフラグを下ろしておく
+			owner_->SetStep(0);					// ステップリセット
+			return ActionBase::State::Complete;	//　成功終了
+		}
+
+		break;
+	}
+
+	// 位置更新
+	const XMFLOAT3 addPos = owner_->GetVelocity() * elapsedTime;
+	owner_->GetTransform()->AddPosition(addPos);
+
+	return ActionBase::State::Run;
+}
 
 
 
@@ -682,4 +879,3 @@ const ActionBase::State RecoverAction::Run(const float /*elapsedTime*/)
 
 	return ActionBase::State::Run;
 }
-

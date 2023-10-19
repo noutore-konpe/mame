@@ -37,7 +37,8 @@ public: // enum関連
         Avoid,
         Counter,
         CounterAttack,
-        SoftStagger
+        SoftStagger,
+        BlowOff
     };
 
 
@@ -153,7 +154,7 @@ public:
 
 private:
     void LevelUpdate();
-    
+
     //地形判定後の座標取得
     DirectX::XMFLOAT3 CollidedPosition(const DirectX::XMFLOAT3 pos);
 
@@ -257,7 +258,7 @@ private:
     };
 
     float swordScale;//剣の大きさに合わせて判定の大きさも変える
-    
+
     float swordColliderRadius;//剣の判定の大きさ
     int swordColliderNum;//判定の数
 

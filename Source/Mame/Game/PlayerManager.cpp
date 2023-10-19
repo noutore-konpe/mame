@@ -54,27 +54,42 @@ void PlayerManager::DrawDebug()
 
 void PlayerManager::CollisionPlayerVsEnemy()
 {
+    using DirectX::XMFLOAT3;
+
     EnemyManager& enemyManager = EnemyManager::Instance();
 
     const size_t enemyCount = enemyManager.GetEnemyCount();
-    for (size_t a = 0; a < enemyCount; ++a)
+    for (size_t i = 0; i < enemyCount; ++i)
     {
-        Enemy* enemy = EnemyManager::Instance().GetEnemy(a);
+        Enemy* enemy = EnemyManager::Instance().GetEnemy(i);
 
-        const DirectX::XMFLOAT3  positionA = enemy->GetPosition();
-        const DirectX::XMFLOAT3  positionB = player->GetPosition();
-        const float     radiusA = enemy->GetRadius();
-        const float     radiusB = player->GetRadius();
+        // 死んでいたら判定しない
+        if (true == enemy->GetIsDead()) continue;
 
-        const DirectX::XMFLOAT3  vecAtoB = positionB - positionA;
-        const float     lengthSq = XMFloat3LengthSq(vecAtoB);
-        const float     range = radiusA + radiusB;
+        const XMFLOAT3& enmPos    = enemy->GetPosition();
+        const XMFLOAT3& plPos     = player->GetPosition();
 
+        // 敵からプレイヤーに向かうベクトル
+        const XMFLOAT3  vecFromEnemyToPlayer = plPos - enmPos;
+        const float     lengthSq         = ::XMFloat3LengthSq(vecFromEnemyToPlayer);
+
+        const float     enmRadius = enemy->GetRadius();
+        const float     plRadius  = player->GetRadius();
+        const float     range     = enmRadius + plRadius;
 
         if (lengthSq > (range * range)) continue;
 
+#ifdef _DEBUG
+        // 吹っ飛ばし（仮）
+        {
+            // 吹っ飛ぶ方向ベクトル(未正規化)を保存
+            enemy->SetBlowOffVec(-vecFromEnemyToPlayer);
 
-        const DirectX::XMFLOAT3 vecAtoB_N = XMFloat3Normalize(vecAtoB);
+            enemy->ApplyDamage(999999); // 死亡フラグと吹っ飛びフラグを立てる
+        }
+#endif
+
+        const XMFLOAT3 vecN_fromEnemyToPlayer = XMFloat3Normalize(vecFromEnemyToPlayer);
 
         // CRA : 7.Collisition : 近接攻撃中じゃない方の敵を押し出す
 #if 0
@@ -89,7 +104,7 @@ void PlayerManager::CollisionPlayerVsEnemy()
             enemyB->SetPosition(positionA + vecAtoB_N * range);
         }
 #else
-        player->SetPosition(positionA + vecAtoB_N * range);
+        player->SetPosition(enmPos + vecN_fromEnemyToPlayer * range);
 #endif
     }
 }
@@ -109,6 +124,10 @@ bool PlayerManager::AttackCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies
                         atkCollider.position, atkCollider.radius,
                         hitCollider.position, hitCollider.radius))
                     {
+                        // 吹っ飛ぶ方向ベクトル(未正規化)を保存
+                        const DirectX::XMFLOAT3 vec = enemy->GetPosition() - atkCollider.position;
+                        enemy->SetBlowOffVec(vec);
+
                         hitEnemies.emplace_back(enemy);
                         hit = true;
                     }

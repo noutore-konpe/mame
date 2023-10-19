@@ -51,6 +51,8 @@ public:
 		const float elapsedTime
 	);
 
+	const std::unique_ptr<NodeBase>& GetRoot() const { return root_; }
+
 private:
 	// ƒm[ƒh‘Síœ
 	void NodeAllClear(NodeBase* delNode);

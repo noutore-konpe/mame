@@ -29,6 +29,8 @@ public:
 	~NodeBase();
 
 public:
+	std::vector<NodeBase*>* GetChildren() { return &children_; }
+
 	// 名前ゲッター
 	const std::string& GetName() const { return name_; }
 
@@ -84,8 +86,8 @@ private:
 	void ClearChildren();				// 全ての子ノードを消去
 	void ClearChild(NodeBase* node);	// 子ノードを消去
 
-public:
-	std::vector<NodeBase*>			children_;		// 子ノード
+protected:
+	std::vector<NodeBase*>		children_;		// 子ノード
 
 protected:
 	std::string					name_;			// 名前
