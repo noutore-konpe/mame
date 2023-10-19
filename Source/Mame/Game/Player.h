@@ -31,9 +31,10 @@ public: // enumä÷òA
         Jab_2,
         //Jab_3,
         Avoid,
-        Non1,   // Å¶âºñÑÇﬂ
-        Non2,   // Å¶âºñÑÇﬂ
-        Flinch, // Ç–ÇÈÇ›
+        Non1,       // Å¶âºñÑÇﬂ
+        Non2,       // Å¶âºñÑÇﬂ
+        Flinch,     // Ç–ÇÈÇ›
+        BlowOff,    // êÅÇ¡îÚÇ—
     };
 
 

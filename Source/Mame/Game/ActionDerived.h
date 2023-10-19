@@ -62,8 +62,17 @@ public:
 	template <class TemplateAI>
 	FlinchAction(TemplateAI* enemy) : ActionBase(enemy) {}
 	const ActionBase::State Run(const float elapsedTime) override;
-
 };
+
+// €–Ss“®
+class DeathAction : public ActionBase
+{
+public:
+	template <class TemplateAI>
+	DeathAction(TemplateAI* enemy) : ActionBase(enemy) {}
+	const ActionBase::State Run(const float elapsedTime) override;
+};
+
 
 
 // ’ÊíUŒ‚

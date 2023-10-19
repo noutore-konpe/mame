@@ -70,6 +70,9 @@ public:
     // ひるませる
     void Flinch();
 
+    // 消去
+    void Destroy();
+
 protected:
     std::unique_ptr<BehaviorTree>   behaviorTree_;
     std::unique_ptr<BehaviorData>   behaviorData_;  // 主にシーケンスに使う

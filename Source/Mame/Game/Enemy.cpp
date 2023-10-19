@@ -49,3 +49,9 @@ void Enemy::Flinch()
     enmManager.SetIsRunningCRAAction(false);
 
 }
+
+void Enemy::Destroy()
+{
+    // ©•ª‚ğÁ‹
+    EnemyManager::Instance().Remove(this);
+}

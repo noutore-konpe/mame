@@ -10,6 +10,7 @@
 #include "EnemyManager.h"
 #include "PlayerManager.h"
 #include "ProjectileStraight.h"
+#include "ExperiencePointManager.h"
 
 // ステージエントリー行動
 const ActionBase::State EntryStageAction::Run(const float elapsedTime)
@@ -473,7 +474,7 @@ const ActionBase::State FlinchAction::Run(const float elapsedTime)
 			Model* sword = owner_->GetSword();
 			if (sword != nullptr)
 			{
-				// こっちは待機アニメーションにしておく
+				// 待機アニメーションにしておく
 				sword->PlayAnimation(Animation::Idle, false, owner_->GetAnimationSpeed());
 			}
 		}
@@ -501,6 +502,81 @@ const ActionBase::State FlinchAction::Run(const float elapsedTime)
 	return ActionBase::State::Run;
 }
 
+// 死亡行動
+const ActionBase::State DeathAction::Run(const float elapsedTime)
+{
+	using Animation = Player::Animation;
+	using DirectX::XMFLOAT3;
+	using DirectX::XMFLOAT4;
+
+	XMFLOAT4* modelColor = &owner_->model->color;
+
+	switch (owner_->GetStep())
+	{
+	case 0:
+
+		// 吹っ飛びアニメーション再生
+		{
+			owner_->PlayAnimation(Animation::BlowOff, false, owner_->GetAnimationSpeed());
+
+			Model* sword = owner_->GetSword();
+			if (sword != nullptr)
+			{
+				// 待機アニメーションにしておく
+				sword->PlayAnimation(Animation::Idle, false, owner_->GetAnimationSpeed());
+			}
+		}
+
+		owner_->SetStep(1);
+		[[fallthrough]];
+		// break;
+	case 1:
+
+		// アニメーション再生中ならbreak
+		if (true == owner_->IsPlayAnimation()) break;
+
+		// 吹っ飛びアニメーションが終わったらモデルを透過していく
+		{
+			// 透明にしていく
+			const float reduceColorW = (-1.0f) * elapsedTime;
+			modelColor->w = (std::max)(0.0f, modelColor->w - reduceColorW);
+
+			// ある程度透明になったら
+			if (modelColor->w <= 0.5f)
+			{
+				// 経験値ドロップ
+				ExperiencePointManager& expManager = ExperiencePointManager::Instance();
+				const XMFLOAT3& pos = owner_->GetPosition();
+				const int		exp = owner_->GetDropExpCount();
+				expManager.CreateExp(pos, exp);
+
+				// 次のステップに移る（経験値を一度だけドロップするようにするため）
+				owner_->SetStep(2);
+				break;
+			}
+
+		}
+
+		break;
+	case 2:
+
+		// 透明にしていく
+		const float reduceColorW = (-1.0f) * elapsedTime;
+		modelColor->w += reduceColorW;
+
+		// モデルが透明になりきったら消去する
+		if (owner_->model->color.w <= 0.0f)
+		{
+			owner_->Destroy();		// 自分を消去
+			owner_->SetStep(0);		// ステップリセット
+			return ActionBase::State::Complete;	//　成功終了
+		}
+
+		break;
+	}
+
+	return ActionBase::State::Run;
+}
 
 
 
@@ -675,4 +751,3 @@ const ActionBase::State RecoverAction::Run(const float /*elapsedTime*/)
 
 	return ActionBase::State::Run;
 }
-

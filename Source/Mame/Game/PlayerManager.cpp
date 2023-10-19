@@ -71,7 +71,6 @@ void PlayerManager::CollisionPlayerVsEnemy()
 
         if (lengthSq > (range * range)) continue;
 
-
         const DirectX::XMFLOAT3 vecAtoB_N = XMFloat3Normalize(vecAtoB);
 
         // CRA : 7.Collisition : ‹ßÚUŒ‚’†‚¶‚á‚È‚¢•û‚Ì“G‚ğ‰Ÿ‚µo‚·
