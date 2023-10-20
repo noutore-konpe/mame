@@ -17,7 +17,10 @@ void SceneResult::CreateResource()
 
     backSprite = std::make_unique<Sprite>(graphics.GetDevice(),
         L"./Resources/Image/Result/renga.png");
-        //L"./Resources/Image/Game/white.png");
+    
+    emmaSprite = std::make_unique<Sprite>(graphics.GetDevice(),
+        L"./Resources/Image/Title/loading.png");
+
 
     lifeTimeSprite = std::make_unique<Sprite>(graphics.GetDevice(),
         L"./Resources/Image/UI/lifetime.png");
@@ -131,6 +134,7 @@ void SceneResult::Render(const float& elapsedTime)
     shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
     shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
     backSprite->Render(); // ”wŒi
+    emmaSprite->Render();
 
     lifeTimeSprite->Render();
     waveSprite->Render();
@@ -147,6 +151,7 @@ void SceneResult::Render(const float& elapsedTime)
 
 void SceneResult::DrawDebug()
 {
+    emmaSprite->DrawDebug();
     lifeTimeSprite->DrawDebug();
     waveSprite->DrawDebug();
     lvSprite->DrawDebug();
