@@ -82,7 +82,7 @@ void PlayerManager::CollisionPlayerVsEnemy()
 #ifdef _DEBUG
         // 吹っ飛ばし（仮）
         {
-#if 0
+#if 1
             // 敵が死亡したときの吹っ飛び
 
             // 吹っ飛ぶ方向ベクトル(未正規化)と吹っ飛ぶ力の度合いを保存

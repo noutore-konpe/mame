@@ -1,7 +1,7 @@
 #pragma once
 
 #include <DirectXMath.h>
-#include <math.h>
+#include <cmath>
 #include "OperatorXMFloat3.h"
 
 // XMFLOAT3“¯m‚Ì“àÏ‚ğŒvZ

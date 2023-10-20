@@ -89,8 +89,8 @@ public:
     /// <param name="blowOffVec：吹っ飛ばす方向ベクトル(未正規化で可)"></param>
     /// <param name="blowOffForceLevel：吹っ飛ばす力の度合い"></param>
     virtual void BlowOff(
-        const DirectX::XMFLOAT3& blowOffVec,
-        const BLOW_OFF_FORCE_LEVEL& blowOffForceLevel
+        const DirectX::XMFLOAT3& /*blowOffVec*/,
+        const BLOW_OFF_FORCE_LEVEL& /*blowOffForceLevel*/
     ) {}
 
     // 吹っ飛ばす方向ベクトル(未正規化で可)と力の度合いの情報を保存する

@@ -129,8 +129,11 @@ public: // æ“¾Eİ’èŠÖ”
     const bool GetIsDead() const { return isDead; }
     void SetIsDead(const bool dead) { isDead = dead; }
 
-    std::vector<SphereCollider> GetHitCollider() { return hitCollider; }//‹ò‚ç‚¢”»’èæ“¾
-    std::vector<SphereCollider> GetAttackCollider() { return attackCollider; }//UŒ‚”»’èæ“¾
+    std::vector<SphereCollider> GetHitCollider() { return hitCollider; }        //‹ò‚ç‚¢”»’èæ“¾
+    std::vector<SphereCollider> GetAttackCollider() { return attackCollider; }  //UŒ‚”»’èæ“¾
+
+    [[nodiscard]] const SphereCollider GetHitColliderAt(const size_t index) { return hitCollider.at(index); }
+    [[nodiscard]] const SphereCollider GetAttackColliderAt(const size_t index) { return attackCollider.at(index); }
 
 #pragma endregion
 

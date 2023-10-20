@@ -37,6 +37,9 @@ public:
     void Render(const float& scale, ID3D11PixelShader* psShader = nullptr) override; // •`‰æˆ—
     void DrawDebug()                        override; // ImGui—p
 
+    // ’eŠÛ‚Æ“G‚Æ‚ÌÕ“Ëˆ—
+    void CollisionProjectileVsEnemies();
+
 public:
     bool LaunchProjectile(const float& elapsedTime); // ’e¶¬&”­Ë
 

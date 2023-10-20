@@ -1,11 +1,14 @@
 #include "Book.h"
 #include "BookState.h"
 
+#include "../../Taki174/FunctionXMFloat3.h"
 #include "../Graphics/Graphics.h"
 
-#include "PlayerManager.h"
 #include "ProjectileStraight.h"
 #include "ProjectileHorming.h"
+#include "PlayerManager.h"
+#include "EnemyManager.h"
+#include "Collision.h"
 
 int Book::totalNum = 0;
 
@@ -76,6 +79,9 @@ void Book::Update(const float& elapsedTime)
 
     // ƒAƒjƒ[ƒVƒ‡ƒ“XV
     UpdateAnimation(elapsedTime);
+
+    // ’eŠÛ‚Æ“G‚Æ‚ÌÕ“Ëˆ—
+    CollisionProjectileVsEnemies();
 }
 
 // Update‚ÌŒã‚ÉŒÄ‚Î‚ê‚é
@@ -117,6 +123,68 @@ void Book::DrawDebug()
     ImGui::Separator();
 
 #endif // USE_IMGUI
+}
+
+void Book::CollisionProjectileVsEnemies()
+{
+    using DirectX::XMFLOAT3;
+
+    EnemyManager& enmManager = EnemyManager::Instance();
+
+    const size_t projCount = projectileManager.GetProjectileCount();
+    for (size_t projI = 0; projI < projCount; ++projI)
+    {
+        // ’eŠÛæ“¾
+        Projectile* proj = projectileManager.GetProjectile(projI);
+
+        const size_t enmCount = enmManager.GetEnemyCount();
+        for (size_t enmI = 0; enmI < enmCount; ++enmI)
+        {
+            // “Gæ“¾
+            Enemy* enemy = enmManager.GetEnemy(enmI);
+
+            // “G‚ª€‚ñ‚Å‚¢‚½‚çcontinue
+            if (true == enemy->GetIsDead()) continue;
+
+            // Õ“Ëƒtƒ‰ƒO
+            bool isHit = false;
+
+            const size_t enmHitColCount = enemy->GetHitCollider().size();
+            for (size_t hitColI = 0; hitColI < enmHitColCount; ++hitColI)
+            {
+                // “G‚ÌH‚ç‚¢”»’èæ“¾
+                const Character::SphereCollider enmHitCol = enemy->GetHitColliderAt(hitColI);
+
+                const XMFLOAT3& projPos         = proj->GetPosition();
+                const XMFLOAT3& enmHitColPos    = enmHitCol.position;
+                const float     projRadius      = proj->GetRadius();
+                const float     enmHitColRadius = enmHitCol.radius;
+
+                isHit = Collision::IntersectSphereVsSphere(
+                    projPos, projRadius, enmHitColPos, enmHitColRadius
+                );
+
+                // “–‚½‚Á‚Ä‚È‚¯‚ê‚Îcontinue
+                if (false == isHit) continue;
+
+                // “G‚Ì‚Á”ò‚Ñî•ñ‚ğ•Û‘¶
+                const XMFLOAT3 vec = enmHitColPos - projPos;
+                enemy->SaveBlowOffInfo(vec, proj->GetInflictBlowOffForceLevel());
+
+                // “G‚Éƒ_ƒ[ƒW‚ğ—^‚¦‚é
+                enemy->ApplyDamage(proj->GetAttack());
+
+                // ’e‚ğÁ‹‚·‚é
+                proj->Destroy();
+
+                // “–‚½‚Á‚½‚Ì‚Åbreak
+                break;
+            }
+
+            // “–‚½‚Á‚Ä‚¢‚½‚çbreak
+            if (true == isHit) break;
+        }
+    }
 }
 
 // ’e¶¬&”­Ë
