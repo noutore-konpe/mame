@@ -96,7 +96,8 @@ public:
     }
     const DirectX::XMFLOAT3 GetRight()
     {
-        if (activeLockOn && lockOnTarget)
+        if (activeLockOn && lockOnTarget &&
+            lockOnForward.x + lockOnForward.y + lockOnForward.z != 0)
         {
             DirectX::XMVECTOR Right = DirectX::XMVector3Cross(
                 DirectX::XMLoadFloat3(&lockOnForward),
@@ -149,4 +150,6 @@ private:
     float vibrationVolume;//振動量
     float vibrationTime;//振動時間
     float vibrationTimer;//振動時間を測るためのタイマー
+
+    float fov;
 };

@@ -49,12 +49,19 @@ inline void StateMachine<T>::Update(float elapsedTime)
 template<class T>
 inline void StateMachine<T>::DrawDebug()
 {
+    static int state = 0;
     if (ImGui::TreeNode("stateMachine"))
     {
         ImGui::Text(currentState->GetName());
 
         float temp = currentState->GetTimer();
         ImGui::DragFloat("time", &temp);
+
+        ImGui::SliderInt("state", &state,0,statePool.size() - 1);
+        if (ImGui::Button("Set State"))
+        {
+            ChangeState(state);
+        }
 
         ImGui::TreePop();
     }

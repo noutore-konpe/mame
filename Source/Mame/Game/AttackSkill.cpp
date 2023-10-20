@@ -40,6 +40,7 @@ namespace PlayerSkill
 
     void Drain::Assimilate(float power)
     {
+        if (overlap > 0)return;
         float drainAmount = power * drainCoefficient;
         player->ApplyHeal(drainAmount);
     }

@@ -38,7 +38,7 @@ public: // enum関連
         Counter,
         CounterAttack,
         SoftStagger,
-        BlowOff
+        HardStagger,//吹っ飛び、死亡
     };
 
 
@@ -55,6 +55,8 @@ public:
 
     void MoveUpdate(float elapsedTime, float ax, float ay);
     void UpdateVelocity(float elapsedTime, float ax, float ay);
+
+    DamageResult ApplyDamage(float damage, Character* attacker, float invincibleTime = 0)override;
 
     //入力をカメラから見たベクトルに変更しmoveVec変数に入れる関数
     void MoveVecUpdate(float ax, float ay);
@@ -80,7 +82,7 @@ public:
     void AttackSteppingUpdate(float elapsedTime);//攻撃間際の踏み込み処理
 
     void OnDamaged()override;
-    void OnDead()override;
+    void OnDead(DamageResult result)override;
 
     void ChangeState(int newState) { stateMachine->ChangeState(newState); }
 
@@ -100,6 +102,15 @@ public:
 
     void LockOnInitialize();
 
+    void BlownUpdate(float elapsedTime);//吹っ飛び更新処理
+    void Blow(DirectX::XMFLOAT3 blowVec/*吹き飛ぶ方向*/);//吹っ飛しするときに呼ぶ
+private:
+    float blowTime = 1.0f;
+    float blowTimer;
+    float blowSpeed = 9.0f;
+    DirectX::XMFLOAT3 blowVec;
+
+public:
     //入力関数
     static bool InputJabAttack()
     {
@@ -151,6 +162,11 @@ public:
     const float GetLevelUpExp() const { return levelUpExp; }
 
     const int GetLevel() const { return level; }
+
+    //---------------------------スキル-------------------------------
+    PlayerSkill::Drain* GetDrainSkill() { return drainSkill.get(); }
+
+    //-----------------------------------------------------------------
 
 private:
     void LevelUpdate();
@@ -252,6 +268,8 @@ private:
         HIP,
         R_LEG,
         L_LEG,
+        R_LEG_END,
+        L_LEG_END,
         R_ELBOW,
         L_ELBOW,
         END

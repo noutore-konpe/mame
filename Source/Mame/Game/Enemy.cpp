@@ -87,6 +87,6 @@ void Enemy::AttackCollisionOnPlayer(const float damage)
 {
     if (EnemyManager::AttackCollisionPlayerToEnemy(this))
     {
-        PlayerManager::Instance().GetPlayer()->ApplyDamage(damage);
+        PlayerManager::Instance().GetPlayer()->ApplyDamage(damage,this);
     }
 }
