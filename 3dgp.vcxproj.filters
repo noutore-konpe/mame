@@ -518,6 +518,9 @@
     <ClCompile Include="Source\Mame\Game\PlayerResult.cpp">
       <Filter>mamelib\Mame\Game\Result</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\SlowMotionManager.cpp">
+      <Filter>mamelib\Mame\Game\SlowMotion</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -901,6 +904,9 @@
     <ClInclude Include="Source\Mame\Game\PlayerResult.h">
       <Filter>mamelib\Mame\Game\Result</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Game\SlowMotionManager.h">
+      <Filter>mamelib\Mame\Game\SlowMotion</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">
@@ -1120,6 +1126,9 @@
     </Filter>
     <Filter Include="mamelib\Mame\Game\Result">
       <UniqueIdentifier>{b1b665d5-7267-490d-9970-57b5e6745b86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\SlowMotion">
+      <UniqueIdentifier>{7b9021ae-6ff0-4dc3-a406-72abd7bf8aa1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

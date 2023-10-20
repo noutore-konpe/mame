@@ -59,6 +59,9 @@ namespace PlayerState
             //‰Šú‰»ˆ—
             if (!initialize)
             {
+                // “G‚É—^‚¦‚é‚Á”ò‚Ñ—ÍƒŒƒxƒ‹‚ÌÝ’è(ŠeUŒ‚‚ÌŠJŽn‘O‚ÉÝ’è‚·‚é)
+                owner->SetInflictBlowOffForceLevel(BLOW_OFF_FORCE_LEVEL::MIDDLE);
+
                 owner->ResetSteppingTimer();
                 state = UPDATE_FRAME;
                 owner->PlayAnimation(Player::Animation::Jab_1, false, owner->GetAttackSpeed());
@@ -78,6 +81,9 @@ namespace PlayerState
             //‰Šú‰»ˆ—
             if (!initialize)
             {
+                // “G‚É—^‚¦‚é‚Á”ò‚Ñ—ÍƒŒƒxƒ‹‚ÌÝ’è(ŠeUŒ‚‚ÌŠJŽn‘O‚ÉÝ’è‚·‚é)
+                owner->SetInflictBlowOffForceLevel(BLOW_OFF_FORCE_LEVEL::MIDDLE);
+
                 owner->ResetSteppingTimer();
                 state = UPDATE_FRAME;
                 owner->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
@@ -96,6 +102,9 @@ namespace PlayerState
             //‰Šú‰»ˆ—
             if (!initialize)
             {
+                // “G‚É—^‚¦‚é‚Á”ò‚Ñ—ÍƒŒƒxƒ‹‚ÌÝ’è(ŠeUŒ‚‚ÌŠJŽn‘O‚ÉÝ’è‚·‚é)
+                owner->SetInflictBlowOffForceLevel(BLOW_OFF_FORCE_LEVEL::MIDDLE);
+
                 owner->ResetSteppingTimer();
                 state = UPDATE_FRAME;
                 owner->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());

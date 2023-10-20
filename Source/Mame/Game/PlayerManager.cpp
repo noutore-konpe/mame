@@ -143,10 +143,27 @@ void PlayerManager::CollisionPlayerVsEnemy()
 #ifdef _DEBUG
         // 吹っ飛ばし（仮）
         {
-            // 吹っ飛ぶ方向ベクトル(未正規化)を保存
-            enemy->SetBlowOffVec(-vecFromEnemyToPlayer);
+#if 0
+            // 敵が死亡したときの吹っ飛び
 
+<<<<<<< HEAD
             enemy->ApplyDamage(999999, nullptr); // 死亡フラグと吹っ飛びフラグを立てる
+=======
+            // 吹っ飛ぶ方向ベクトル(未正規化)と吹っ飛ぶ力の度合いを保存
+            enemy->SaveBlowOffInfo(
+                -vecFromEnemyToPlayer,
+                BLOW_OFF_FORCE_LEVEL::MIDDLE
+            );
+            enemy->ApplyDamage(999999); // 死亡フラグと吹っ飛びフラグを立てる
+
+#else
+            // 任意の吹っ飛ばし
+            enemy->BlowOff(
+                -vecFromEnemyToPlayer,
+                BLOW_OFF_FORCE_LEVEL::MIDDLE
+            );
+#endif
+
         }
 #endif
 
@@ -185,9 +202,9 @@ bool PlayerManager::AttackCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies
                         atkCollider.position, atkCollider.radius,
                         hitCollider.position, hitCollider.radius))
                     {
-                        // 吹っ飛ぶ方向ベクトル(未正規化)を保存
+                        // 吹っ飛び情報を保存
                         const DirectX::XMFLOAT3 vec = enemy->GetPosition() - atkCollider.position;
-                        enemy->SetBlowOffVec(vec);
+                        enemy->SaveBlowOffInfo(vec, player->GetInflictBlowOffForceLevel());
 
                         hitEnemies.emplace_back(enemy);
                         hit = true;

@@ -172,6 +172,10 @@ public:
     bool isCounter;//カウンター受付時間か？
     bool counterCompleted;//カウンター成立フラグ
 
+    const BLOW_OFF_FORCE_LEVEL& GetInflictBlowOffForceLevel() const { return inflictBlowOffForceLevel_; }
+    void SetInflictBlowOffForceLevel(const BLOW_OFF_FORCE_LEVEL& inflictBlowOffForceLevel) { inflictBlowOffForceLevel_ = inflictBlowOffForceLevel; }
+
+
 private:
     void LevelUpdate();
 
@@ -279,6 +283,10 @@ private:
     void ColliderPosUpdate(const float& scale);//各ジョイントに判定をつける処理
 
     //--------------------------------------------------------------------------------
+
+    // 敵に与える吹っ飛ばす力の度合い（※各攻撃の開始時に設定しておく）
+    BLOW_OFF_FORCE_LEVEL inflictBlowOffForceLevel_ = BLOW_OFF_FORCE_LEVEL::NONE;
+
 
     // アビリティマネージャー(仮)
     AbilityManager abilityManager_ = {};

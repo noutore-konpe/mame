@@ -52,8 +52,8 @@ const ActionBase::State EntryStageAction::Run(const float elapsedTime)
 		//break;
 	case 1:
 
-		// ひるんでいたら終了
-		if (true == owner_->GetIsFlinch())
+		// ひるみ開始フラグが立っていれば終了
+		if (true == owner_->GetFlinchStartFlag())
 		{
 			owner_->SetStep(0);
 			return ActionBase::State::Failed;
@@ -143,8 +143,8 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 		// タイマー更新
 		owner_->ElapseRunTimer(elapsedTime);
 
-		// ひるんでいたら終了
-		if (true == owner_->GetIsFlinch())
+		// ひるみ開始フラグが立っていれば終了
+		if (true == owner_->GetFlinchStartFlag())
 		{
 			owner_->SetStep(0);
 			return ActionBase::State::Failed;
@@ -289,8 +289,8 @@ const ActionBase::State PursuitAction::Run(const float elapsedTime)
 		//break;
 	case 1:
 
-		// ひるんでいたら終了
-		if (true == owner_->GetIsFlinch())
+		// ひるみ開始フラグが立っていれば終了
+		if (true == owner_->GetFlinchStartFlag())
 		{
 			owner_->SetStep(0);
 			return ActionBase::State::Failed;
@@ -373,8 +373,8 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 		// タイマー更新
 		owner_->ElapseRunTimer(elapsedTime);
 
-		// ひるんでいたら終了
-		if (true == owner_->GetIsFlinch())
+		// ひるみ開始フラグが立っていれば終了
+		if (true == owner_->GetFlinchStartFlag())
 		{
 			owner_->SetStep(0);
 
@@ -496,8 +496,8 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 		// タイマー更新
 		owner_->ElapseRunTimer(elapsedTime);
 
-		// ひるんでいたら終了
-		if (true == owner_->GetIsFlinch())
+		// ひるみ開始フラグが立っていれば終了
+		if (true == owner_->GetFlinchStartFlag())
 		{
 			owner_->SetStep(0);
 			return ActionBase::State::Failed;
@@ -562,6 +562,12 @@ const ActionBase::State FlinchAction::Run(const float /*elapsedTime*/)
 	case 0:
 		//owner_->SetRunTimer(1.5f);
 
+		// ひるみ開始フラグを下ろす
+		owner_->SetFlinchStartFlag(false);
+
+		// ひるみ中フラグを立てる
+		owner_->SetIsFlinch(true);
+
 		// ひるみアニメーション再生
 		{
 			owner_->PlayAnimation(Animation::SoftStagger, false, owner_->GetAnimationSpeed());
@@ -579,6 +585,14 @@ const ActionBase::State FlinchAction::Run(const float /*elapsedTime*/)
 		//break;
 	case 1:
 		//owner_->ElapseRunTimer(elapsedTime);
+
+		// ひるみ開始フラグが立っていれば終了
+		if (true == owner_->GetFlinchStartFlag())
+		{
+			owner_->SetStep(0);
+			owner_->SetIsFlinch(false); // ひるみフラグを下ろす
+			return ActionBase::State::Failed;
+		}
 
 		// 吹っ飛んでいたら終了
 		if (true == owner_->GetIsBlowOff())
@@ -619,11 +633,13 @@ const ActionBase::State BlowOffAction::Run(const float elapsedTime)
 	case 0:
 
 		// 吹っ飛ばす力を速度に設定する
-		const XMFLOAT3 blowOffVecN	= ::XMFloat3Normalize(owner_->GetBlowOffVec());
+		const XMFLOAT3 blowOffVecN = ::XMFloat3Normalize(owner_->GetBlowOffVec());
 		{
-			XMFLOAT3 force	 = {};
-				     force.x = blowOffVecN.x * owner_->GetBlowOffForce();
-				     force.z = blowOffVecN.z * owner_->GetBlowOffForce();
+			// 吹っ飛ばす力の配列から吹っ飛ばす力の度合いに対応した吹っ飛ばす力を取得
+			const float blowOffForce = owner_->GetBlowOffForceAt(owner_->GetBlowOffForceLevel());
+			XMFLOAT3 force = {};
+			force.x = blowOffVecN.x * blowOffForce;
+			force.z = blowOffVecN.z * blowOffForce;
 			owner_->SetVelocity(force);
 		}
 
