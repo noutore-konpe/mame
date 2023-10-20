@@ -42,7 +42,6 @@ void Character::Update(const float elapsedTime)
 
     rotValue = 0.0f; //‰ñ“]—ÊƒŠƒZƒbƒg
     if (invincibleTime > 0.0f) invincibleTime -= elapsedTime;
-
 }
 
 // •`‰æˆ—
@@ -231,7 +230,7 @@ Character::DamageResult Character::ApplyDamage(float damage, Character* attacker
     health -= damage;
     if (attacker)
     {
-        result.hitVector = Normalize(attacker->GetTransform()->GetPosition() - GetTransform()->GetPosition());
+        result.hitVector = Normalize(GetTransform()->GetPosition() - attacker->GetTransform()->GetPosition());
     }
     else
     {

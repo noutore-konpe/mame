@@ -698,7 +698,7 @@ void SceneGame::Render(const float& elapsedTime)
         NumeralManager& numeralManager = NumeralManager::Instance();
         numeralManager.Render();
 
-        PlayerManager::Instance().GetPlayer()->SkillImagesRender();
+        PlayerManager::Instance().SkillImagesRender();
         UserInterface::Instance().Render();
 
         // Å¶Ç±ÇÍÇÊÇËâ∫Ç…âΩÇ‡ï`âÊÇµÇ»Ç¢

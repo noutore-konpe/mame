@@ -134,7 +134,7 @@ namespace PlayerState
         void Finalize() override;
 
     private:
-        bool counterCompleted;//カウンター成立フラグ
+        
         int state;
 
         const int startUpFrame = 10;//カウンター受付開始アニメーション

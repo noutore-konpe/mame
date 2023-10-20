@@ -181,6 +181,7 @@ protected:
     float       lockOnHeight    = 1.0f;         // g’·
     float       defence         = 0.0f;         // –hŒä—Í
 
+
     //--------------------------------‹ò‚ç‚¢AUŒ‚”»’è------------------------------------
     std::vector<SphereCollider> hitCollider;
     std::vector<SphereCollider> attackCollider;
