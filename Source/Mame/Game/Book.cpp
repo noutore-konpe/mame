@@ -215,110 +215,93 @@ bool Book::LaunchProjectile(const float& elapsedTime)
 
 void Book::SetTransform(const float& elapsedTime)
 {
-    Transform* playerTransform = PlayerManager::Instance().GetPlayer()->GetTransform();
-    DirectX::XMFLOAT3 playerPos = playerTransform->GetPosition();
+    using DirectX::XMFLOAT3;
+
+    Transform* playerT = PlayerManager::Instance().GetPlayer()->GetTransform();
+
+    // プレイヤーの位置
+    const XMFLOAT3& plPos = playerT->GetPosition();
 
     // プレイヤーの右ベクトル
-    DirectX::XMFLOAT3 playerRightVec = playerTransform->CalcRight();
-    // 長さ調整
-    float length = 0.6f;
-    playerRightVec = { playerRightVec.x * length, playerRightVec.y * length, playerRightVec.z * length };
+    const XMFLOAT3 plRightVecN = playerT->CalcRight();
 
-    // 調整用
-    float playerRightVecY = 1.0f;
+    // 移動量
+    static const float MOVEMENT = 0.6f;
+
+    // プレイヤーの右ベクトル方向に伸びた値(プレイヤーの位置に足す値)
+    const XMFLOAT3 addPlPos = plRightVecN * MOVEMENT;
+
+    // 位置調整値
+    static const float MODIFY_POS_Y = 1.0f; // Y位置調整値
+    static const float MODIFY_POS_X = 0.5f; // X位置調整値
 
     // １フレーム前の位置を保存する
     prevPosition = GetTransform()->GetPosition();
 
+    // この本の位置
+    XMFLOAT3 bookPosition = {};
+
+    // 割り振られた番号によって位置を設定する
     switch (num)
     {
-    case 0: break; // ０個の時は何もしない
     case 1: // プレイヤーの右
         // プレイヤーの右の位置を計算
-        playerRightVec = { playerPos.x + playerRightVec.x, playerPos.y + playerRightVec.y , playerPos.z + playerRightVec.z };
+        bookPosition = plPos + addPlPos;
 
-        // いい感じになるように位置調整
-        playerRightVec.y += playerRightVecY;
+        // いい感じになるようにY位置調整
+        bookPosition.y += MODIFY_POS_Y;
 
         break;
-
     case 2: // プレイヤーの左
         // プレイヤーの左の位置を計算
-        playerRightVec = { playerPos.x - playerRightVec.x, playerPos.y - playerRightVec.y , playerPos.z - playerRightVec.z };
+        bookPosition = plPos - addPlPos;
 
-        // いい感じになるように位置調整
-        playerRightVec.y += playerRightVecY;
+        // いい感じになるようにY位置調整
+        bookPosition.y += MODIFY_POS_Y;
 
         break;
-
     case 3: // プレイヤーの右上
         // プレイヤーの右の位置を計算
-        {
-            float l = 0.5f;
-            playerRightVec = { playerRightVec.x * l, playerRightVec.y * l, playerRightVec.z * l };
-            playerRightVec = { playerPos.x + playerRightVec.x, playerPos.y + playerRightVec.y , playerPos.z + playerRightVec.z };
-        }
+        bookPosition = plPos + (addPlPos * MODIFY_POS_X);
 
-        // いい感じになるように位置調整
-        playerRightVec.y += playerRightVecY + 0.5f;
+        // いい感じになるようにY位置調整
+        bookPosition.y += MODIFY_POS_Y + 0.5f;
 
-    break;
-
+        break;
     case 4: // プレイヤーの左上
         // プレイヤーの左の位置を計算
-        {
-            float l = 0.5f;
-            playerRightVec = { playerRightVec.x * l, playerRightVec.y * l, playerRightVec.z * l };
-            playerRightVec = { playerPos.x - playerRightVec.x, playerPos.y - playerRightVec.y , playerPos.z - playerRightVec.z };
-        }
+        bookPosition = plPos - (addPlPos * MODIFY_POS_X);
 
-        // いい感じになるように位置調整
-        playerRightVec.y += playerRightVecY + 0.5f;
+        // いい感じになるようにY位置調整
+        bookPosition.y += MODIFY_POS_Y + 0.5f;
 
         break;
     }
 
-    // 生成位置
-    float offset = 0.1f;
-
-    createPosition = playerRightVec;
-    createPosition.y = (prevPosition.y > playerRightVec.y - offset - 0.01f) ? prevPosition.y : playerRightVec.y;
-
     // ふわふわする処理
-    {
-        float moveY = isMoveToUp ? 0.3f : -0.3f;
+#if 1
+    // 回転更新
+    circularMotionRotationZ_ += circularMotionAddRotate_ * elapsedTime;
+    if (circularMotionRotationZ_ > 360.0f) { circularMotionRotationZ_ -= 360.0f; }
 
-        createPosition.y += moveY * elapsedTime;
-
-        // 折り返し判定
-        if (isMoveToUp)
-        {   // 上限
-            if (createPosition.y >= playerRightVec.y + offset)
-            {
-                createPosition.y = playerRightVec.y + offset;
-                isMoveToUp = false;
-            }
-        }
-        else
-        {   // 下限
-            if (createPosition.y <= playerRightVec.y - offset)
-            {
-                createPosition.y = playerRightVec.y - offset;
-                isMoveToUp = true;
-            }
-        }
-    }
+    // 上下に移動させる
+    DirectX::XMFLOAT3 circularMotionRotationPos = bookPosition;
+    circularMotionRotationPos.y = bookPosition.y + ::cosf(circularMotionRotationZ_) * circularMotionRadius_;
 
     // 位置設定
+    GetTransform()->SetPosition(circularMotionRotationPos);
+#else
+    // 位置設定
     GetTransform()->SetPosition(createPosition);
+#endif
 
     // 回転値
     DirectX::XMFLOAT4 bookRot = GetTransform()->GetRotation();
-    if (bookRot.x > DirectX::XMConvertToRadians(360.0f))bookRot.x -= DirectX::XMConvertToRadians(360.0f);
-    if (bookRot.x < DirectX::XMConvertToRadians(0.0f))bookRot.x += DirectX::XMConvertToRadians(360.0f);
-    if (bookRot.y > DirectX::XMConvertToRadians(360.0f))bookRot.y -= DirectX::XMConvertToRadians(360.0f);
-    if (bookRot.y < DirectX::XMConvertToRadians(0.0f))bookRot.y += DirectX::XMConvertToRadians(360.0f);
-    if (bookRot.z > DirectX::XMConvertToRadians(360.0f))bookRot.z -= DirectX::XMConvertToRadians(360.0f);
-    if (bookRot.z < DirectX::XMConvertToRadians(0.0f))bookRot.z += DirectX::XMConvertToRadians(360.0f);
+    if (bookRot.x > +::ToRadian(360.0f)) bookRot.x += -ToRadian(360.0f);
+    if (bookRot.x < -::ToRadian(360.0f)) bookRot.x += +ToRadian(360.0f);
+    if (bookRot.y > +::ToRadian(360.0f)) bookRot.y += -ToRadian(360.0f);
+    if (bookRot.y < -::ToRadian(360.0f)) bookRot.y += +ToRadian(360.0f);
+    if (bookRot.z > +::ToRadian(360.0f)) bookRot.z += -ToRadian(360.0f);
+    if (bookRot.z < -::ToRadian(360.0f)) bookRot.z += +ToRadian(360.0f);
     GetTransform()->SetRotation(bookRot);
 }

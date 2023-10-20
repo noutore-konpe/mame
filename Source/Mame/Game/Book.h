@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../../Taki174/Common.h"
 #include "Item.h"
-
 #include "ProjectileManager.h"
 #include "StateMachine.h"
 
@@ -70,5 +70,9 @@ private:
 
     DirectX::XMFLOAT3 createPosition{}; // ¶¬ˆÊ’u
     DirectX::XMFLOAT3 prevPosition{};   // ‚PƒtƒŒ[ƒ€‘O‚ÌˆÊ’u
-    bool isMoveToUp = true;             // ã‚ÉˆÚ“®‚·‚é‚©
+
+    //bool isMoveToUp = true;             // ã‚ÉˆÚ“®‚·‚é‚©
+    float             circularMotionRotationZ_  = 0.0f;               // ‰~‰^“®‰ñ“]’lZ(radian)
+    float             circularMotionRadius_     = 0.1f;              // ‰~‰^“®”¼Œa(ã‰º‚·‚é‹——£‚É‰e‹¿)
+    float             circularMotionAddRotate_  = ::ToRadian(180.0f); // ‰~‰^“®‰ñ“]’l‚É’Ç‰Á‚·‚é‰ñ“](ã‰º‘¬“x‚É‰e‹¿)
 };
