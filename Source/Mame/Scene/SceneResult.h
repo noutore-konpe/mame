@@ -65,6 +65,7 @@ private:
     std::unique_ptr<PlayerResult> player = nullptr;
 
     std::unique_ptr<Sprite> backSprite = nullptr;
+    std::unique_ptr<Sprite> emmaSprite = nullptr;
     
     std::unique_ptr<Sprite> lifeTimeSprite = nullptr;
     std::unique_ptr<Sprite> waveSprite = nullptr;
