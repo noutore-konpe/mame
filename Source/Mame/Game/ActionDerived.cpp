@@ -517,9 +517,21 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 		// 指定のキーフレームになったら弾丸発射
 		if (19 == owner_->model->GetCurrentKeyframeIndex())
 		{
+			// 移動量
+			const float movement = 0.6f;
+
+			// 前方ベクトル
+			const float forwardX = ::sinf(owner_->GetTransform()->GetPositionY());
+			const float forwardZ = ::cosf(owner_->GetTransform()->GetPositionY());
+
+			// 自分の位置から前方方向にmovement量移動した位置
 			const XMFLOAT3 launchPos = {
-				pos.x, (pos.y + 0.4f), pos.z,
+				pos.x + forwardX * movement,
+				pos.y + 0.75f,					// 高さ調整
+				pos.z + forwardZ * movement
 			};
+
+			// 弾丸生成
 			ProjectileStraight* projectile = new ProjectileStraight(owner_->GetProjectileManager());
 			projectile->Launch(vecN, launchPos);
 		}

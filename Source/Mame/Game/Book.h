@@ -73,6 +73,6 @@ private:
 
     //bool isMoveToUp = true;             // ã‚ÉˆÚ“®‚·‚é‚©
     float             circularMotionRotationZ_  = 0.0f;               // ‰~‰^“®‰ñ“]’lZ(radian)
-    float             circularMotionRadius_     = 0.1f;              // ‰~‰^“®”¼Œa(ã‰º‚·‚é‹——£‚É‰e‹¿)
+    float             circularMotionRadius_     = 0.1f;               // ‰~‰^“®”¼Œa(ã‰º‚·‚é‹——£‚É‰e‹¿)
     float             circularMotionAddRotate_  = ::ToRadian(180.0f); // ‰~‰^“®‰ñ“]’l‚É’Ç‰Á‚·‚é‰ñ“](ã‰º‘¬“x‚É‰e‹¿)
 };

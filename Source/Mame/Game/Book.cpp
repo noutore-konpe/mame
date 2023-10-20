@@ -297,11 +297,12 @@ void Book::SetTransform(const float& elapsedTime)
 
     // ‰ñ“]’l
     DirectX::XMFLOAT4 bookRot = GetTransform()->GetRotation();
-    if (bookRot.x > +::ToRadian(360.0f)) bookRot.x += -ToRadian(360.0f);
-    if (bookRot.x < -::ToRadian(360.0f)) bookRot.x += +ToRadian(360.0f);
-    if (bookRot.y > +::ToRadian(360.0f)) bookRot.y += -ToRadian(360.0f);
-    if (bookRot.y < -::ToRadian(360.0f)) bookRot.y += +ToRadian(360.0f);
-    if (bookRot.z > +::ToRadian(360.0f)) bookRot.z += -ToRadian(360.0f);
-    if (bookRot.z < -::ToRadian(360.0f)) bookRot.z += +ToRadian(360.0f);
+    static const float radian360 = ::ToRadian(360.0f);
+    if (bookRot.x > +radian360) bookRot.x += -radian360;
+    if (bookRot.x < -radian360) bookRot.x += +radian360;
+    if (bookRot.y > +radian360) bookRot.y += -radian360;
+    if (bookRot.y < -radian360) bookRot.y += +radian360;
+    if (bookRot.z > +radian360) bookRot.z += -radian360;
+    if (bookRot.z < -radian360) bookRot.z += +radian360;
     GetTransform()->SetRotation(bookRot);
 }
