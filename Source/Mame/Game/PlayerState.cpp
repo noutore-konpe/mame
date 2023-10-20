@@ -142,7 +142,7 @@ namespace PlayerState
                 //ˆê“x‚àƒqƒbƒg‚µ‚Ä‚¢‚È‚¢“G‚È‚Ì‚Å“o˜^‚·‚é
                 hit.emplace_back(enemy);
 
-                enemy->ApplyDamage(owner->jabMotionAtkMuls[combo]);
+                enemy->ApplyDamage(owner->jabMotionAtkMuls[combo],owner);
                 enemy->Flinch();
             skip:;
             }
@@ -229,9 +229,12 @@ namespace PlayerState
 
     void DieState::Initialize()
     {
+        owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
+        owner->PlayAnimation(Player::Animation::HardStagger,false);
     }
     void DieState::Update(const float& elapsedTime)
     {
+        owner->BlownUpdate(elapsedTime);
     }
     void DieState::Finalize()
     {

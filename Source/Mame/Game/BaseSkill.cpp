@@ -10,6 +10,11 @@ void BaseSkill::Render()
     if (overlap > 0)icon->Render();
 }
 
+void BaseSkill::IconRender()
+{
+    icon->Render();
+}
+
 void BaseSkill::DrawDebug()
 {
     if (ImGui::BeginMenu(name.c_str()))

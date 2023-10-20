@@ -5,6 +5,8 @@
 #include "../Scene/SceneGame.h"
 #endif
 
+#include "../Other/MathHelper.h"
+
 // コンストラクタ
 Character::Character()
 {
@@ -195,7 +197,7 @@ void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
         transform->SetRotationY(rotation.y);
 }
 
-Character::DamageResult Character::ApplyDamage(float damage, float invincibleTime)
+Character::DamageResult Character::ApplyDamage(float damage, Character* attacker,float invincibleTime)
 {
     DamageResult result;
 
@@ -227,6 +229,14 @@ Character::DamageResult Character::ApplyDamage(float damage, float invincibleTim
 
     //ダメージ処理
     health -= damage;
+    if (attacker)
+    {
+        result.hitVector = Normalize(attacker->GetTransform()->GetPosition() - GetTransform()->GetPosition());
+    }
+    else
+    {
+        result.hitVector = DirectX::XMFLOAT3(0, 0, 1);
+    }
 
     //無敵時間設定
     this->invincibleTime = invincibleTime;
@@ -234,8 +244,9 @@ Character::DamageResult Character::ApplyDamage(float damage, float invincibleTim
     //死亡通知
     if (health <= 0)
     {
-        OnDead();
+        OnDead(result);
         isDead = true;
+        health = 0;
     }
     //ダメージ通知
     else

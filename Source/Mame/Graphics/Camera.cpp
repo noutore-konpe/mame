@@ -215,10 +215,13 @@ void Camera::TitleSetPerspectiveFov(ID3D11DeviceContext* dc)
     //DirectX::XMVECTOR focus{ DirectX::XMVectorSet(camera.focus.x,camera.focus.y,camera.focus.z,1.0f) };
     DirectX::XMVECTOR up{ DirectX::XMVectorSet(camera.up.x,camera.up.y,camera.up.z,0.0f) };
     V = { DirectX::XMMatrixLookAtLH(eye, focus, up) };
+
+
 }
 
 void Camera::Initialize()
 {
+    fov = DirectX::XMConvertToRadians(45);
     transform.SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 10.0f));
     transform.SetScale(DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
     transform.SetRotation(DirectX::XMFLOAT4(0.0f, DirectX::XMConvertToRadians(180), 0.0f, 0.0f));
@@ -318,7 +321,7 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
     dc->RSGetViewports(&unm_viewports, &viewport);
 
     float aspect_ratio{ viewport.Width / viewport.Height };
-    P = { DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(30),aspect_ratio,0.1f,1000.0f) };
+    P = { DirectX::XMMatrixPerspectiveFovLH(fov,aspect_ratio,0.1f,1000.0f) };
 
     DirectX::XMVECTOR eye;
     DirectX::XMVECTOR focus;
@@ -393,6 +396,9 @@ void Camera::DrawDebug()
 {
     if (ImGui::BeginMenu("Camera"))
     {
+        ImGui::SliderAngle("Fov",&fov);
+        if (fov < DirectX::XMConvertToRadians(6))fov = DirectX::XMConvertToRadians(6);
+
         //ImGui::Begin("Camera");
 
         ImGui::DragFloat("length", &length);

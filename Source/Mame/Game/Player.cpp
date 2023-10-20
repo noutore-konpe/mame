@@ -163,9 +163,16 @@ void Player::Initialize()
     hitCollider[static_cast<int>(HitColName::HIP)].radius = 0.12f;
     hitCollider[static_cast<int>(HitColName::R_LEG)].radius = 0.07f;
     hitCollider[static_cast<int>(HitColName::L_LEG)].radius = 0.07f;
+    hitCollider[static_cast<int>(HitColName::R_LEG_END)].radius = 0.07f;
+    hitCollider[static_cast<int>(HitColName::L_LEG_END)].radius = 0.07f;
     hitCollider[static_cast<int>(HitColName::R_ELBOW)].radius = 0.07f;
     hitCollider[static_cast<int>(HitColName::L_ELBOW)].radius = 0.07f;
     
+    for (auto& collider : hitCollider)
+    {
+        collider.radius *= 1.3f;
+    }
+
     }
 
 // èIóπâª
@@ -553,6 +560,7 @@ void Player::DrawDebug()
         Character::DrawDebug();
 
         stateMachine->DrawDebug();
+        
 
         //ImGui::Checkbox("ShoeCollider",&showCollider);
 
@@ -585,7 +593,7 @@ void Player::DrawDebug()
             ImGui::SliderFloat("Damage", &damage,0.0f,20.0f);
             if (ImGui::Button("Apply Damage"))
             {
-                ApplyDamage(damage);
+                ApplyDamage(damage,nullptr);
             }
 
             ImGui::TreePop();
@@ -949,14 +957,43 @@ void Player::LockOnInitialize()
     }
 }
 
+void Player::BlownUpdate(float elapsedTime)
+{
+    if (blowTimer < 0)
+    {
+        velocity = DirectX::XMFLOAT3(0, 0, 0);
+        return;
+    }
+
+    float blowSpeed = Easing::OutCubic(blowTimer, blowTime, this->blowSpeed, 0.0f);
+    velocity = blowVec * blowSpeed;
+
+    DirectX::XMFLOAT3 movePos = GetTransform()->GetPosition() + velocity * elapsedTime;
+    GetTransform()->SetPosition(CollidedPosition(movePos));
+
+    blowTimer -= elapsedTime;
+}
+
+void Player::Blow(DirectX::XMFLOAT3 blowVec)
+{
+    this->blowVec = Normalize(blowVec);
+    blowTimer = blowTime;
+}
+
 void Player::OnDamaged()
 {
     stateMachine->ChangeState(STAGGER_SOFT);
 }
 
-void Player::OnDead()
+void Player::OnDead(DamageResult result)
 {
     stateMachine->ChangeState(DIE);
+
+    Blow(result.hitVector);
+
+    float length = sqrtf(result.hitVector.x * result.hitVector.x + result.hitVector.z * result.hitVector.z);
+    result.hitVector.z /= length;
+    GetTransform()->SetRotationY(acosf(result.hitVector.z));
 }
 
 void Player::LevelUpdate()
@@ -1012,6 +1049,8 @@ void Player::ColliderPosUpdate(const float& scale)
         //hitCollider[static_cast<int>(HitColName::LEG)].position = GetJointPosition(meshBodyName,"setup_0927:chara_rig_0906:j_Sentar",scale);
         hitCollider[static_cast<int>(HitColName::R_LEG)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_RightLeg", scale);
         hitCollider[static_cast<int>(HitColName::L_LEG)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_LeftLeg", scale);
+        hitCollider[static_cast<int>(HitColName::R_LEG_END)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_RightFoot", scale);
+        hitCollider[static_cast<int>(HitColName::L_LEG_END)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_LeftFoot", scale);
     }
 
     //çUåÇîªíË

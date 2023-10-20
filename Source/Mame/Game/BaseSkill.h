@@ -47,6 +47,8 @@ public:
     }
     virtual void Update(float elapsedTime) {};
     virtual void Render();
+
+    void IconRender();
     
     virtual void DrawDebug();
 

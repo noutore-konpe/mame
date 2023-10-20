@@ -149,4 +149,6 @@ private:
     float vibrationVolume;//振動量
     float vibrationTime;//振動時間
     float vibrationTimer;//振動時間を測るためのタイマー
+
+    float fov;
 };
