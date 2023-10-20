@@ -26,37 +26,13 @@ void Enemy::Render(const float& scale, ID3D11PixelShader* psShader)
     Character::Render(scale, psShader);
 }
 
-
-// ひるませる関数
-void Enemy::Flinch()
+// 吹っ飛ばし情報の保存
+void Enemy::SaveBlowOffInfo(
+    const DirectX::XMFLOAT3& blowOffVec,
+    const BLOW_OFF_FORCE_LEVEL& blowOffForceLevel)
 {
-    // ゴーレムならひるませない
-    if (Enemy::TYPE::Golem == type) return;
-
-    //// 入場中ならひるませない
-    //if (activeNode_ != nullptr && "EntryStage" == activeNode_->GetName()) return;
-
-    isFlinch_ = true;     // ひるみフラグを立てる
-
-    // 連続でひるんだ際にひるみアニメ―ションを
-    // 毎回リセットするために適当なアニメーションを入力しておく
-    PlayAnimation(0, false, animationSpeed_);
-}
-
-// 吹っ飛ばす関数
-void Enemy::BlowOff()
-{
-    // ゴーレムなら吹っ飛ばさない
-    if (Enemy::TYPE::Golem == type) return;
-
-    //// 入場中なら吹っ飛ばさない
-    //if (activeNode_ != nullptr && "EntryStage" == activeNode_->GetName()) return;
-
-    isBlowOff_ = true;     // 吹っ飛びフラグを立てる
-
-    // 連続で吹っ飛んだ際にひるみアニメ―ションを
-    // 毎回リセットするために適当なアニメーションを入力しておく
-    PlayAnimation(0, false, animationSpeed_);
+    blowOffVec_        = blowOffVec;
+    blowOffForceLevel_ = blowOffForceLevel;
 }
 
 void Enemy::Destroy()

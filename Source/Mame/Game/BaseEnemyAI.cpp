@@ -93,7 +93,8 @@ void BaseEnemyAI::OnDamaged()
 
 void BaseEnemyAI::OnDead()
 {
-    BlowOff(); // 吹っ飛ばす
+    // 吹っ飛ばす（事前にSaveBlowOffInfo関数などで吹っ飛び情報を保存しておく必要がある）
+    BlowOff(blowOffVec_, blowOffForceLevel_);
 }
 
 void BaseEnemyAI::ColliderInitialize()
@@ -222,6 +223,39 @@ void BaseEnemyAI::Turn(
     rotation.y += (cross < 0.0f) ? -rot : rot;
 
     GetTransform()->SetRotation(rotation);
+}
+
+
+// ひるませる関数
+void BaseEnemyAI::Flinch()
+{
+    //// 入場中ならひるませない
+    //if (activeNode_ != nullptr && "EntryStage" == activeNode_->GetName()) return;
+
+    flinchStartFlag_ = true;     // ひるみ開始フラグを立てる
+
+    // 連続でひるんだ際にひるみアニメ―ションを
+    // 毎回リセットするために適当なアニメーションを入力しておく
+    PlayAnimation(0, false, animationSpeed_);
+}
+
+// 吹っ飛ばす関数
+void BaseEnemyAI::BlowOff(
+    const DirectX::XMFLOAT3& blowOffVec,
+    const BLOW_OFF_FORCE_LEVEL& blowOffForceLevel)
+{
+    //// 入場中なら吹っ飛ばさない
+    //if (activeNode_ != nullptr && "EntryStage" == activeNode_->GetName()) return;
+
+    // 吹っ飛び情報の保存
+    blowOffVec_         = blowOffVec;
+    blowOffForceLevel_  = blowOffForceLevel;
+
+    isBlowOff_ = true;     // 吹っ飛びフラグを立てる
+
+    // 連続で吹っ飛んだ際にひるみアニメ―ションを
+    // 毎回リセットするために適当なアニメーションを入力しておく
+    PlayAnimation(0, false, animationSpeed_);
 }
 
 

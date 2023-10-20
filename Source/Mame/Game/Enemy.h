@@ -36,15 +36,15 @@ public:
     const TYPE GetType() const { return type; }
     void SetType(const TYPE t) { type = t; }
 
+    const BLOW_OFF_FORCE_LEVEL& GetBlowOffForceLevel() const { return blowOffForceLevel_; }
+    void SetBlowOffForceLevel(const BLOW_OFF_FORCE_LEVEL& blowOffForceLevel) { blowOffForceLevel_ = blowOffForceLevel; }
+
     const DirectX::XMFLOAT3& GetVelocity() const { return velocity_; }
     void SetVelocity(const DirectX::XMFLOAT3& velocity) { velocity_ = velocity; }
     void AddVelocity(const DirectX::XMFLOAT3& velocity) { velocity_ += velocity; }
 
     const DirectX::XMFLOAT3& GetBlowOffVec() const { return blowOffVec_; }
     void  SetBlowOffVec(const DirectX::XMFLOAT3& blowOffVec) { blowOffVec_ = blowOffVec; }
-
-    const float GetBlowOffForce() const { return blowOffForce_; }
-    void SetBlowOffForce(const float blowOffForce) { blowOffForce_ = blowOffForce; }
 
     const float GetRunTimer() const { return runTimer_; }
     void SetRunTimer(const float runTimer) { runTimer_ = runTimer; }
@@ -61,6 +61,9 @@ public:
     const bool GetEntryStageFlag() const { return entryStageFlag_; }
     void SetEntryStageFlag(const bool entryStageFlag) { entryStageFlag_ = entryStageFlag; }
 
+    const bool GetFlinchStartFlag() const { return flinchStartFlag_; }
+    void SetFlinchStartFlag(const bool flinchStartFlag) { flinchStartFlag_ = flinchStartFlag; }
+
     const bool GetIsFlinch() const { return isFlinch_; }
     void SetIsFlinch(const bool isFlinch) { isFlinch_ = isFlinch; }
 
@@ -70,15 +73,33 @@ public:
     const bool GetIsWaveEnemy() const { return isWaveEnemy_; }
     void SetIsWaveEnemy(const bool isWaveEnemy) { isWaveEnemy_ = isWaveEnemy; }
 
+    const float GetBlowOffForceAt(const BLOW_OFF_FORCE_LEVEL& levelIndex) const { return blowOffForce_[static_cast<int>(levelIndex)]; }
+
 public:
     // 実行タイマー経過
     void ElapseRunTimer(const float elapsedTime) { runTimer_ = (std::max)(0.0f, runTimer_ - elapsedTime); }
 
     // ひるませる
-    void Flinch();
+    virtual void Flinch() {}
 
-    // 吹っ飛ばす
-    void BlowOff();
+    /// <summary>
+    /// 吹っ飛ばす
+    ///（※任意で吹っ飛ばしたいときに呼び出す）
+    /// </summary>
+    /// <param name="blowOffVec：吹っ飛ばす方向ベクトル(未正規化で可)"></param>
+    /// <param name="blowOffForceLevel：吹っ飛ばす力の度合い"></param>
+    virtual void BlowOff(
+        const DirectX::XMFLOAT3& blowOffVec,
+        const BLOW_OFF_FORCE_LEVEL& blowOffForceLevel
+    ) {}
+
+    // 吹っ飛ばす方向ベクトル(未正規化で可)と力の度合いの情報を保存する
+    // ※死亡したときの吹っ飛びに使うので
+    // 　プレイヤーの攻撃がヒットする毎に呼び出しておく
+    void SaveBlowOffInfo(
+        const DirectX::XMFLOAT3& blowOffVec,
+        const BLOW_OFF_FORCE_LEVEL& blowOffForceLevel
+    );
 
     // 消去
     void Destroy();
@@ -97,19 +118,32 @@ public:
 protected:
     std::unique_ptr<BehaviorTree>   behaviorTree_;
     std::unique_ptr<BehaviorData>   behaviorData_;  // 主にシーケンスに使う
-    NodeBase*           activeNode_     = nullptr;  // BehaviorTreeのノードを指すだけのポインタなのでdeleteしない
+    NodeBase*            activeNode_        = nullptr; // BehaviorTreeのノードを指すだけのポインタなのでdeleteしない
 
-    DirectX::XMFLOAT3   velocity_       = {};
-    DirectX::XMFLOAT3   blowOffVec_     = {};       // 吹っ飛ぶ方向ベクトル(未正規化)
-    float               blowOffForce_   = 10.0f;    // 吹っ飛ぶ力
-    float               runTimer_       = 0.0f;     // 実行タイマー
-    float               animationSpeed_ = 1.0f;     // アニメーション速度
-    int                 dropExpCount_   = 5;        // ドロップする経験値の数
-    int                 step_           = 0;        // 行動ステップ
-    bool                entryStageFlag_ = false;    // ステージに入ったかどうかのフラグ
-    bool                isFlinch_       = false;    // ひるみフラグ
-    bool                isBlowOff_      = false;    // 吹っ飛びフラグ
-    bool                isWaveEnemy_    = false;    // ウェーブで生成された敵であるか(デストラクタで使用)
+    BLOW_OFF_FORCE_LEVEL blowOffForceLevel_ = BLOW_OFF_FORCE_LEVEL::NONE; // 吹っ飛ぶ力の度合い
+
+    DirectX::XMFLOAT3    velocity_          = {};
+    DirectX::XMFLOAT3    blowOffVec_        = {};      // 吹っ飛ぶ方向ベクトル(未正規化)
+    float                runTimer_          = 0.0f;    // 実行タイマー
+    float                animationSpeed_    = 1.0f;    // アニメーション速度
+    int                  dropExpCount_      = 5;       // ドロップする経験値の数
+    int                  step_              = 0;       // 行動ステップ
+    bool                 entryStageFlag_    = false;   // ステージに入ったかどうかのフラグ
+    bool                 flinchStartFlag_   = false;   // ひるみ開始フラグ(ひるみ中に再度ひるみが入ったとき用に使う)
+    bool                 isFlinch_          = false;   // ひるみ中フラグ
+    bool                 isBlowOff_         = false;   // 吹っ飛び中フラグ
+    bool                 isWaveEnemy_       = false;   // ウェーブで生成された敵であるか(デストラクタで使用)
+
+protected:
+    // 吹っ飛ばす力
+    float blowOffForce_[static_cast<int>(BLOW_OFF_FORCE_LEVEL::COUNT)] = {
+        0.0f,   // BLOW_OFF_FORCE_LEVEL::NONE
+        1.25f,  // BLOW_OFF_FORCE_LEVEL::VERY_LOW
+        2.5f,   // BLOW_OFF_FORCE_LEVEL::LOW
+        5.0f,   // BLOW_OFF_FORCE_LEVEL::MIDDLE
+        10.0f,  // BLOW_OFF_FORCE_LEVEL::HIGH
+        15.0f,  // BLOW_OFF_FORCE_LEVEL::VERY_HIGH
+    };
 
 private:
     TYPE type = TYPE::Normal;

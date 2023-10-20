@@ -2,6 +2,18 @@
 
 #include "../Graphics/Model.h"
 
+// ‚Á”ò‚Î‚·—Í‚Ì“x‡‚¢
+enum class BLOW_OFF_FORCE_LEVEL : int
+{
+    NONE,       // –³‚µ
+    VERY_LOW,   // ‚©‚È‚è’á‚ß
+    LOW,        // ’á‚ß
+    MIDDLE,     // ’†’ö“x
+    HIGH,       // ‹­‚ß
+    VERY_HIGH,  // ‚©‚È‚è‹­‚ß
+    COUNT,      // —v‘f”
+};
+
 class Character
 {
 public:

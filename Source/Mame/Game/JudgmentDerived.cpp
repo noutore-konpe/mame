@@ -128,7 +128,8 @@ const bool LongRangeAttackJudgment::Judgment()
 const bool FlinchJudgment::Judgment()
 {
 	// ‚Ğ‚é‚İƒtƒ‰ƒO‚ª—§‚Á‚Ä‚¢‚È‚¯‚ê‚Îfalse
-	if (false == owner_->GetIsFlinch()) return false;
+	if (false == owner_->GetFlinchStartFlag() &&
+		false == owner_->GetIsFlinch()) return false;
 
 	return true;
 }
