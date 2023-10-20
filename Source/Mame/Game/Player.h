@@ -56,6 +56,8 @@ public:
     void MoveUpdate(float elapsedTime, float ax, float ay);
     void UpdateVelocity(float elapsedTime, float ax, float ay);
 
+    DamageResult ApplyDamage(float damage, Character* attacker, float invincibleTime = 0)override;
+
     //入力をカメラから見たベクトルに変更しmoveVec変数に入れる関数
     void MoveVecUpdate(float ax, float ay);
 
@@ -160,6 +162,11 @@ public:
     const float GetLevelUpExp() const { return levelUpExp; }
 
     const int GetLevel() const { return level; }
+
+    //---------------------------スキル-------------------------------
+    PlayerSkill::Drain* GetDrainSkill() { return drainSkill.get(); }
+
+    //-----------------------------------------------------------------
 
 private:
     void LevelUpdate();

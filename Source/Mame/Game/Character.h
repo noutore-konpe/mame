@@ -135,7 +135,7 @@ public: // ‚»‚Ì‘¼‚ÌŠÖ”
         DirectX::XMFLOAT3 hitVector;
     };
     //–ß‚è’l‚Í—^‚¦‚ç‚ê‚½ƒ_ƒ[ƒW”AŠî–{–³“GŠÔ‚Í‹¯‚İƒ‚[ƒVƒ‡ƒ“‚É‡‚í‚¹‚é‚©‚ç‚±‚±‚Í‚O‚Å‚¢‚¢
-    DamageResult ApplyDamage(float damage,Character* attacker/*UŒ‚‚µ‚Ä‚«‚½“G*/, float invincibleTime = 0);
+    virtual DamageResult ApplyDamage(float damage,Character* attacker/*UŒ‚‚µ‚Ä‚«‚½“G*/, float invincibleTime = 0);
 
     bool ApplyHeal(float heal);
 
