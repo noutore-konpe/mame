@@ -112,6 +112,9 @@ void ExperiencePointManager::CollisionExpVsPlayer(const float /*elapsedTime*/)
     {
         ExperiencePoint* exp = GetExp(i);
 
+        // ‰‰oŽžŠÔ’†‚Ìê‡‚Ícontinue
+        if (exp->GetAttractTimer() > 0.0f) continue;
+
         const XMFLOAT3& expPos    = exp->GetTransform()->GetPosition();
         const float     expRadius = exp->GetRadius();
         XMFLOAT3        plPos     = plManager.GetPlayer()->GetTransform()->GetPosition();

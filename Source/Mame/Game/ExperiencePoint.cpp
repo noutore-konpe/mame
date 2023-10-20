@@ -59,6 +59,9 @@ void ExperiencePoint::Update(const float elapsedTime)
             }
         }
 
+        // 魅せるタイマー更新
+        attractTimer_ = (std::max)(0.0f, attractTimer_ - elapsedTime);
+
     }
 
     PlayerManager& plManager    = PlayerManager::Instance();
@@ -257,6 +260,9 @@ void ExperiencePoint::DrawDebug()
 
 const bool ExperiencePoint::SearchPlayer()
 {
+    // 経験値が出る演出時間中は飛ばす
+    if (attractTimer_ > 0.0f) return false;
+
     using DirectX::XMFLOAT3;
 
     PlayerManager& plManager = PlayerManager::Instance();
