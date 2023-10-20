@@ -4,13 +4,14 @@
 //UŒ‚‚ÉŠÖ‚·‚éƒXƒLƒ‹
 namespace PlayerSkill
 {
+    // ‹zû
     class Drain : public BaseSkill
     {
     public:
         Drain(Player* player) :
             BaseSkill(player, 
-                L"./Resources/Image/Card/sampleCard.png",
-                L"./Resources/Image/Icon/sampleIcon.png",
+                L"./Resources/Image/Card/Ckyusyu.png",
+                L"./Resources/Image/Icon/kyusyu.png",
                 "Drain",BaseSkill::SUPER_RARE) {}
         ~Drain() {}
 
@@ -26,6 +27,7 @@ namespace PlayerSkill
     private:
         float drainCoefficient;//UŒ‚—Í‚©‚ç‹zûHP‚ÌZo‚Ég‚¤ŒW”(d•¡‚·‚é‚½‚Ñ‚É‚±‚ê‚ª‘‚¦‚Ä‚¢‚­)
     };
+
 
     class BlastEnchantment : public BaseSkill
     {

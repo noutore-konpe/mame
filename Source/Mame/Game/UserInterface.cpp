@@ -5,6 +5,7 @@
 #include "../Other/Easing.h"
 
 #include "PlayerManager.h"
+#include "WaveManager.h"
 
 void UserInterface::Initialize()
 {
@@ -138,9 +139,6 @@ void UserInterface::DrawDebug()
             isWaveSlideSprite = true;
             slideState = 0;
         }
-
-        ImGui::SliderInt("Lv", &lv, 0, 1000);
-        ImGui::SliderInt("Wave", &wave, 0, 1000);
 
 
         whiteSprite->DrawDebug();
@@ -411,6 +409,7 @@ void UserInterface::UpdateHpExpGauge()
 
 void UserInterface::RenderWaveSlide()
 {
+    const int wave = WaveManager::Instance().GetCurrentWaveIndex();
     float texSizeX = 60;
     float one = wave % 10 * texSizeX;
     float ten = wave / 10 % 10 * texSizeX;
@@ -534,6 +533,7 @@ void UserInterface::RenderLv()
 
 void UserInterface::RenderWave()
 {
+    const int wave = WaveManager::Instance().GetCurrentWaveIndex();
     float texSizeX = 60;
     float one = wave % 10 * texSizeX;
     float ten = wave / 10 % 10 * texSizeX;
