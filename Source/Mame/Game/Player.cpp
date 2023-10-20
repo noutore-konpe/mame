@@ -753,7 +753,7 @@ void Player::SelectSkillUpdate(float elapsedTime)
             }
             buttonDown = true;
         }
-        else if (ax <= 0.05f && ax >= -0.05f)buttonDown = true;
+        else if (ax >= 0.05f || ax <= -0.05f)buttonDown = true;
         else
         {
             buttonDown = false;
