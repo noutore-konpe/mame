@@ -132,16 +132,16 @@ void Book::CollisionProjectileVsEnemies()
     EnemyManager& enmManager = EnemyManager::Instance();
 
     const size_t projCount = projectileManager.GetProjectileCount();
-    for (size_t projI = 0; projI < projCount; ++projI)
+    for (size_t projIndex = 0; projIndex < projCount; ++projIndex)
     {
         // íeä€éÊìæ
-        Projectile* proj = projectileManager.GetProjectile(projI);
+        Projectile* proj = projectileManager.GetProjectile(projIndex);
 
         const size_t enmCount = enmManager.GetEnemyCount();
-        for (size_t enmI = 0; enmI < enmCount; ++enmI)
+        for (size_t enmIndex = 0; enmIndex < enmCount; ++enmIndex)
         {
             // ìGéÊìæ
-            Enemy* enemy = enmManager.GetEnemy(enmI);
+            Enemy* enemy = enmManager.GetEnemy(enmIndex);
 
             // ìGÇ™éÄÇÒÇ≈Ç¢ÇΩÇÁcontinue
             if (true == enemy->GetIsDead()) continue;
@@ -149,26 +149,26 @@ void Book::CollisionProjectileVsEnemies()
             // è’ìÀÉtÉâÉO
             bool isHit = false;
 
-            const size_t enmHitColCount = enemy->GetHitCollider().size();
-            for (size_t hitColI = 0; hitColI < enmHitColCount; ++hitColI)
+            const size_t enmHitColliderCount = enemy->GetHitColliderCount();
+            for (size_t enmHitColliderIndex = 0; enmHitColliderIndex < enmHitColliderCount; ++enmHitColliderIndex)
             {
                 // ìGÇÃêHÇÁÇ¢îªíËéÊìæ
-                const Character::SphereCollider enmHitCol = enemy->GetHitColliderAt(hitColI);
+                const Character::SphereCollider enmHitCol = enemy->GetHitColliderAt(enmHitColliderIndex);
 
-                const XMFLOAT3& projPos         = proj->GetPosition();
-                const XMFLOAT3& enmHitColPos    = enmHitCol.position;
-                const float     projRadius      = proj->GetRadius();
-                const float     enmHitColRadius = enmHitCol.radius;
+                const XMFLOAT3& projPos              = proj->GetPosition();
+                const XMFLOAT3& enmHitColliderPos    = enmHitCol.position;
+                const float     projRadius           = proj->GetRadius();
+                const float     enmHitColliderRadius = enmHitCol.radius;
 
                 isHit = Collision::IntersectSphereVsSphere(
-                    projPos, projRadius, enmHitColPos, enmHitColRadius
+                    projPos, projRadius, enmHitColliderPos, enmHitColliderRadius
                 );
 
                 // ìñÇΩÇ¡ÇƒÇ»ÇØÇÍÇŒcontinue
                 if (false == isHit) continue;
 
                 // ìGÇÃêÅÇ¡îÚÇ—èÓïÒÇï€ë∂
-                const XMFLOAT3 vec = enmHitColPos - projPos;
+                const XMFLOAT3 vec = enmHitColliderPos - projPos;
                 enemy->SaveBlowOffInfo(vec, proj->GetInflictBlowOffForceLevel());
 
                 // ìGÇ…É_ÉÅÅ[ÉWÇó^Ç¶ÇÈ
