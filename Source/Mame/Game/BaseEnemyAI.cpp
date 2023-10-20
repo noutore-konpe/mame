@@ -93,7 +93,8 @@ void BaseEnemyAI::OnDamaged()
 
 void BaseEnemyAI::OnDead(DamageResult result)
 {
-    BlowOff(); // 吹っ飛ばす
+    // 吹っ飛ばす（事前にSaveBlowOffInfo関数などで吹っ飛び情報を保存しておく必要がある）
+    BlowOff(blowOffVec_, blowOffForceLevel_);
 }
 
 void BaseEnemyAI::ColliderInitialize()
@@ -133,21 +134,21 @@ void BaseEnemyAI::ColliderPosUpdate(const float& scale)
 {
     //喰らい判定
     {
-        const std::string meshBodyName = "ref_P:chara_rig_0906:chara_mdl_1017:pasted__Body";
-        const std::string meshLegName = "ref_P:chara_rig_0906:chara_mdl_1017:pasted__Socks";
-        hitCollider[static_cast<int>(HitColName::NECK)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_Neck", scale);
-        hitCollider[static_cast<int>(HitColName::HIP)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_Hips", scale);
-        hitCollider[static_cast<int>(HitColName::R_ELBOW)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_RightForeArm", scale);
-        hitCollider[static_cast<int>(HitColName::L_ELBOW)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_LeftForeArm", scale);
-        hitCollider[static_cast<int>(HitColName::R_HAND)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_RightHand", scale);
-        hitCollider[static_cast<int>(HitColName::L_HAND)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_LeftHand", scale);
+        const std::string meshBodyName = "ref_P:ref_P:ref_P:pasted__Body";
+        const std::string meshLegName = "ref_P:ref_P:ref_P:pasted__Socks";
+        hitCollider[static_cast<int>(HitColName::NECK)].position = GetJointPosition(meshBodyName, "ref_P:ref_P:j_Neck", scale);
+        hitCollider[static_cast<int>(HitColName::HIP)].position = GetJointPosition(meshBodyName, "ref_P:ref_P:j_Hips", scale);
+        hitCollider[static_cast<int>(HitColName::R_ELBOW)].position = GetJointPosition(meshBodyName, "ref_P:ref_P:j_RightForeArm", scale);
+        hitCollider[static_cast<int>(HitColName::L_ELBOW)].position = GetJointPosition(meshBodyName, "ref_P:ref_P:j_LeftForeArm", scale);
+        hitCollider[static_cast<int>(HitColName::R_HAND)].position = GetJointPosition(meshBodyName, "ref_P:ref_P:j_RightHand", scale);
+        hitCollider[static_cast<int>(HitColName::L_HAND)].position = GetJointPosition(meshBodyName, "ref_P:ref_P:j_LeftHand", scale);
 
 
-        //hitCollider[static_cast<int>(HitColName::LEG)].position = GetJointPosition(meshBodyName,"ref_P:chara_rig_0906:j_Sentar",scale);
-        hitCollider[static_cast<int>(HitColName::R_LEG)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_RightLeg", scale);
-        hitCollider[static_cast<int>(HitColName::L_LEG)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_LeftLeg", scale);
-        hitCollider[static_cast<int>(HitColName::R_LEG_END)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_RightFoot", scale);
-        hitCollider[static_cast<int>(HitColName::L_LEG_END)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_LeftFoot", scale);
+        //hitCollider[static_cast<int>(HitColName::LEG)].position = GetJointPosition(meshBodyName,"ref_P:ref_P:j_Sentar",scale);
+        hitCollider[static_cast<int>(HitColName::R_LEG)].position = GetJointPosition(meshLegName, "ref_P:ref_P:j_RightLeg", scale);
+        hitCollider[static_cast<int>(HitColName::L_LEG)].position = GetJointPosition(meshLegName, "ref_P:ref_P:j_LeftLeg", scale);
+        hitCollider[static_cast<int>(HitColName::R_LEG_END)].position = GetJointPosition(meshLegName, "ref_P:ref_P:j_RightFoot", scale);
+        hitCollider[static_cast<int>(HitColName::L_LEG_END)].position = GetJointPosition(meshLegName, "ref_P:ref_P:j_LeftFoot", scale);
     }
 
     //攻撃判定
@@ -156,9 +157,9 @@ void BaseEnemyAI::ColliderPosUpdate(const float& scale)
         DirectX::XMFLOAT4X4 world{};
         DirectX::XMStoreFloat4x4(&world, sword_->GetTransform()->CalcWorldMatrix(scale));
         //const std::string swordMeshName = "sword_rig_1004:sword_rig_1005:sword_mdl_1005:Sword";
-        const std::string swordMeshName = "sword_rig_1004:sword_rig_1005:sword_mdl_1005:Sword";
-        const DirectX::XMFLOAT3 swordRoot = sword_->skinned_meshes->JointPosition(swordMeshName, "sword_rig_1004:sword_rig_1005:j_sword", &sword_->keyframe, world);//根本
-        const DirectX::XMFLOAT3 swordTip = sword_->skinned_meshes->JointPosition(swordMeshName, "sword_rig_1004:sword_rig_1005:j_sword_end", &sword_->keyframe, world);//先端
+        const std::string swordMeshName = "ref_S:sword_rig_1005:sword_mdl_1005:Sword";
+        const DirectX::XMFLOAT3 swordRoot = sword_->skinned_meshes->JointPosition(swordMeshName, "ref_S:sword_rig_1005:j_sword",&sword_->keyframe ,world);//根本
+        const DirectX::XMFLOAT3 swordTip = sword_->skinned_meshes->JointPosition(swordMeshName, "ref_S:sword_rig_1005:j_sword_end", &sword_->keyframe, world);//先端
 
         const DirectX::XMFLOAT3 vec = swordTip - swordRoot;
         float swordLength = Length(vec);
@@ -222,6 +223,39 @@ void BaseEnemyAI::Turn(
     rotation.y += (cross < 0.0f) ? -rot : rot;
 
     GetTransform()->SetRotation(rotation);
+}
+
+
+// ひるませる関数
+void BaseEnemyAI::Flinch()
+{
+    //// 入場中ならひるませない
+    //if (activeNode_ != nullptr && "EntryStage" == activeNode_->GetName()) return;
+
+    flinchStartFlag_ = true;     // ひるみ開始フラグを立てる
+
+    // 連続でひるんだ際にひるみアニメ―ションを
+    // 毎回リセットするために適当なアニメーションを入力しておく
+    PlayAnimation(0, false, animationSpeed_);
+}
+
+// 吹っ飛ばす関数
+void BaseEnemyAI::BlowOff(
+    const DirectX::XMFLOAT3& blowOffVec,
+    const BLOW_OFF_FORCE_LEVEL& blowOffForceLevel)
+{
+    //// 入場中なら吹っ飛ばさない
+    //if (activeNode_ != nullptr && "EntryStage" == activeNode_->GetName()) return;
+
+    // 吹っ飛び情報の保存
+    blowOffVec_         = blowOffVec;
+    blowOffForceLevel_  = blowOffForceLevel;
+
+    isBlowOff_ = true;     // 吹っ飛びフラグを立てる
+
+    // 連続で吹っ飛んだ際にひるみアニメ―ションを
+    // 毎回リセットするために適当なアニメーションを入力しておく
+    PlayAnimation(0, false, animationSpeed_);
 }
 
 

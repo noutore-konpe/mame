@@ -29,10 +29,9 @@
 #include "../Game/ProjectileHorming.h"
 
 #include "../Game/ExperiencePointManager.h"
-
 #include "../Game/UserInterface.h"
-
 #include "../Game/WaveManager.h"
+#include "../Game/SlowMotionManager.h"
 
 #include "../framework.h"
 
@@ -290,6 +289,10 @@ void SceneGame::Initialize()
         static constexpr int startWaveIndex = -1;
         waveManager.InitWave(startWaveIndex);
     }
+
+    // ExecuteSlowMotion Initialize
+    SlowMotionManager::Instance().Initialize();
+
 }
 
 // 終了化
@@ -332,20 +335,31 @@ void SceneGame::Begin()
 // 更新処理
 void SceneGame::Update(const float& elapsedTime)
 {
+    // スローモーション更新
+    SlowMotionManager& slowMotion = SlowMotionManager::Instance();
+    slowMotion.Update(elapsedTime);
+
+    // スローモーションを適用した経過時間
+    const float slowMotionElapsedTime = {
+        (true == slowMotion.GetSlowMotionFlag())
+        ? elapsedTime * slowMotion.GetCurrentPercentage()
+        : elapsedTime
+    };
+
     GamePad& gamePad = Input::Instance().GetGamePad();
 
     // 最初の白飛びのスプライト
-    UpdateWhiteSprite(elapsedTime);
+    UpdateWhiteSprite(slowMotionElapsedTime);
 
     if (!isParticleInitialize)
     {
         isParticleInitialize = false;
         particles->Initialize(Graphics::Instance().GetDeviceContext(), 0);
-    }    
+    }
 
     if (integrateParticles)
     {
-        particles->Integrate(Graphics::Instance().GetDeviceContext(), elapsedTime);
+        particles->Integrate(Graphics::Instance().GetDeviceContext(), slowMotionElapsedTime);
     }
 
 
@@ -368,7 +382,7 @@ void SceneGame::Update(const float& elapsedTime)
         DirectX::XMFLOAT2 moveVectorFloat2;
         DirectX::XMStoreFloat2(&moveVectorFloat2, moveVector);
 
-        Camera::Instance().UpdateDebug(elapsedTime, moveVectorFloat2);
+        Camera::Instance().UpdateDebug(slowMotionElapsedTime, moveVectorFloat2);
 
         SetCursorPos(posX, posY);
     }
@@ -384,36 +398,36 @@ void SceneGame::Update(const float& elapsedTime)
     }
 
     {
-        Camera::Instance().Update(elapsedTime);
+        Camera::Instance().Update(slowMotionElapsedTime);
     }
 
     // player
-    PlayerManager::Instance().Update(elapsedTime);
+    PlayerManager::Instance().Update(slowMotionElapsedTime);
 
     // item
-    ItemManager::Instance().Update(elapsedTime);
+    ItemManager::Instance().Update(slowMotionElapsedTime);
 
     // enemy
     {
         EnemyManager& enemyManager = EnemyManager::Instance();
-        enemyManager.Update(elapsedTime);
+        enemyManager.Update(slowMotionElapsedTime);
         //enemyAura->Update(elapsedTime);
     }
 
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
-    expManager.Update(elapsedTime);
+    expManager.Update(slowMotionElapsedTime);
 
     // effect
-    EffectManager::Instance().Update(elapsedTime);
+    EffectManager::Instance().Update(slowMotionElapsedTime);
 
     // UI
     {
         // Numeral
         NumeralManager& numeralManager = NumeralManager::Instance();
-        numeralManager.Update(elapsedTime);
+        numeralManager.Update(slowMotionElapsedTime);
 
-        UserInterface::Instance().Update(elapsedTime);
+        UserInterface::Instance().Update(slowMotionElapsedTime);
     }
 
     // Wave Update
@@ -421,7 +435,7 @@ void SceneGame::Update(const float& elapsedTime)
         WaveManager& waveManager = WaveManager::Instance();
 
         // ウェーブ更新
-        waveManager.UpdateWave(elapsedTime);
+        waveManager.UpdateWave(slowMotionElapsedTime);
     }
 
     //カード演出中だけUpdate前にreturn呼んでるから注意！！
@@ -433,7 +447,7 @@ void SceneGame::End()
 }
 
 // 描画処理
-void SceneGame::Render(const float& elapsedTime)
+void SceneGame::Render(const float& /*elapsedTime*/)
 {
     using DirectX::XMFLOAT3;
     using DirectX::XMFLOAT4;
@@ -698,7 +712,7 @@ void SceneGame::Render(const float& elapsedTime)
         NumeralManager& numeralManager = NumeralManager::Instance();
         numeralManager.Render();
 
-        PlayerManager::Instance().GetPlayer()->SkillImagesRender();
+        PlayerManager::Instance().SkillImagesRender();
         UserInterface::Instance().Render();
 
         // ※これより下に何も描画しない
@@ -768,6 +782,24 @@ void SceneGame::DrawDebug()
             const int count = ::RandInt(5, 20);
             ExperiencePointManager::Instance().CreateExp(position, count);
         }
+
+        // スローモーション
+        if (ImGui::Button("Slow Motion"))
+        {
+#if 0
+            const float endTime          = 1.0f;
+            const float targetPercentage = 0.5f;
+            const float easeOutTime      = 0.0f;
+            const float easeInTime       = 1.0f;
+            SlowMotionManager::Instance().ExecuteSlowMotion(
+                endTime, targetPercentage,
+                easeOutTime, easeInTime
+            );
+#else
+            SlowMotionManager::Instance().ExecuteSlowMotion();
+#endif
+        }
+
         ImGui::Separator();
 
         // ゲートから敵を生成する
@@ -808,6 +840,10 @@ void SceneGame::DrawDebug()
             waveManager.DrawDebug();
         }
 
+        // SlowMotion DrawDebug
+        SlowMotionManager::Instance().DrawDebug();
+
+
         ImGui::End();
     }
 
@@ -836,35 +872,38 @@ void SceneGame::DebugCreateEnemyFromGateway()
 
     EnemyManager& enemyManager = EnemyManager::Instance();
 
-    static int           gatewayIndex = -1;    // 敵を出現させるゲートの番号(-1でランダム)
-    static constexpr int gatewayCount = 10;    // ゲートの数
+    static int gatewayIndex = -1;    // 敵を出現させるゲートの番号(-1でランダム)
 
     // 敵を出現させるゲートの指定(-1ならランダムで番号を決める）
     ImGui::SliderInt(
         "gateWayIndex(-1 is RandomSpawn)",
-        &gatewayIndex, -1, (gatewayCount - 1)
+        &gatewayIndex, -1, (GATEWAY_COUNT_ - 1)
     );
 
     // ゲートから敵を生成
     if (ImGui::Button("CreateEnemyFromGateway"))
     {
         // 360度をゲート数分に等分したときの角度
-        static constexpr float angle = 360.0f / static_cast<float>(gatewayCount);
+        static constexpr float angle = 360.0f / static_cast<float>(GATEWAY_COUNT_);
 
         // Y回転値テーブルを作成
-        float rotationY_table[gatewayCount] = {};
-        for (int i = 0; i < gatewayCount; ++i)
+        static float rotationY_table[GATEWAY_COUNT_] = {};      // Y回転値テーブル(static)
+        static bool  createRotationY_TableFlag       = false;   // Y回転値テーブル作成フラグ(static)
+        if (false == createRotationY_TableFlag)
         {
-            rotationY_table[i] = ::ToRadian(angle * static_cast<float>(i));
+            // Y回転値テーブルを作成
+            for (int i = 0; i < SceneGame::GATEWAY_COUNT_; ++i)
+            {
+                rotationY_table[i] = ::ToRadian(angle * static_cast<float>(i));
+            }
+
+            // Y回転値テーブルを作成した(フラグON)
+            createRotationY_TableFlag = true;
         }
 
         // Y回転値を取得
-        const int rotationY_index = {
-            (gatewayIndex != -1)
-            ? gatewayIndex
-            : ::RandInt(0, gatewayCount)
-        };
-        const float rotationY = rotationY_table[rotationY_index];
+        const int   rotationY_index = (gatewayIndex > -1) ? gatewayIndex: ::RandInt(0, GATEWAY_COUNT_);
+        const float rotationY       = rotationY_table[rotationY_index];
 
         // ステージの中心からゲートの奥ぐらいまでの半径
         static constexpr float radius = 35.0f;

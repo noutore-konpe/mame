@@ -59,6 +59,9 @@ namespace PlayerState
             //初期化処理
             if (!initialize)
             {
+                // 敵に与える吹っ飛び力レベルの設定(各攻撃の開始前に設定する)
+                owner->SetInflictBlowOffForceLevel(BLOW_OFF_FORCE_LEVEL::MIDDLE);
+
                 owner->ResetSteppingTimer();
                 state = UPDATE_FRAME;
                 owner->PlayAnimation(Player::Animation::Jab_1, false, owner->GetAttackSpeed());
@@ -78,6 +81,9 @@ namespace PlayerState
             //初期化処理
             if (!initialize)
             {
+                // 敵に与える吹っ飛び力レベルの設定(各攻撃の開始前に設定する)
+                owner->SetInflictBlowOffForceLevel(BLOW_OFF_FORCE_LEVEL::MIDDLE);
+
                 owner->ResetSteppingTimer();
                 state = UPDATE_FRAME;
                 owner->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
@@ -96,6 +102,9 @@ namespace PlayerState
             //初期化処理
             if (!initialize)
             {
+                // 敵に与える吹っ飛び力レベルの設定(各攻撃の開始前に設定する)
+                owner->SetInflictBlowOffForceLevel(BLOW_OFF_FORCE_LEVEL::MIDDLE);
+
                 owner->ResetSteppingTimer();
                 state = UPDATE_FRAME;
                 owner->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
@@ -135,6 +144,7 @@ namespace PlayerState
         {
             for (auto& enemy : hitEnemies)
             {
+                Character::DamageResult result;
                 for (auto& h : hit)
                 {
                     if (h == enemy)goto skip;//すでに一度ヒットしている敵なら処理しない
@@ -142,8 +152,12 @@ namespace PlayerState
                 //一度もヒットしていない敵なので登録する
                 hit.emplace_back(enemy);
 
-                enemy->ApplyDamage(owner->jabMotionAtkMuls[combo],owner);
+                result = enemy->ApplyDamage(owner->jabMotionAtkMuls[combo], owner);
+
                 enemy->Flinch();
+
+                //ダメージ吸収処理
+                PlayerManager::Instance().GetDrainSkill()->Assimilate(result.damage);
             skip:;
             }
         }
@@ -242,11 +256,13 @@ namespace PlayerState
 
     void HardAttackState::Initialize()
     {
-
+        owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
+        owner->PlayAnimation(Player::Animation::HardStagger, false);
+        //owner->GetSword()->PlayAnimation(Player::Animation::HardStagger, false);
     }
     void HardAttackState::Update(const float& elapsedTime)
     {
-
+        owner->BlownUpdate(elapsedTime);
     }
     void HardAttackState::Finalize()
     {
@@ -255,7 +271,8 @@ namespace PlayerState
 
     void SoftStaggerState::Initialize()
     {
-        owner->PlayAnimation(Player::Animation::SoftStagger, false,1.5f);
+        owner->PlayAnimation(Player::Animation::SoftStagger, false,1.8f);
+        owner->GetSword()->PlayAnimation(Player::Animation::SoftStagger, false,1.8f);
         //owner->isInvincible = true;//無敵
         owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
     }
@@ -283,8 +300,9 @@ namespace PlayerState
 
     void CounterState::Initialize()
     {
-        counterCompleted = false;
+        owner->counterCompleted = false;
         owner->PlayAnimation(Player::Animation::Counter, false);
+        owner->GetSword()->PlayAnimation(Player::Animation::Counter, false);
         timer = 0;
     }
     void CounterState::Update(const float& elapsedTime)
@@ -294,19 +312,24 @@ namespace PlayerState
         case 0://前隙モーション
             if (owner->model->GetCurrentKeyframeIndex() > startUpFrame)
             {
+                owner->isCounter = true;
                 state++;
             }
             break;
 
         case 1://カウンター受付時間、後隙
-            if (timer < receptionTime)
+
+            //カウンターの受付時間を越えている場合
+            if (owner->isCounter && timer > receptionTime)
             {
-                //判定処理
+                owner->isCounter = false;
             }
 
-            if (counterCompleted)
+            //カウンター成功処理は
+            if (owner->counterCompleted)
             {
                 owner->PlayAnimation(Player::Animation::CounterAttack,false);
+                owner->GetSword()->PlayAnimation(Player::Animation::CounterAttack, false);
                 state++;
             }
 

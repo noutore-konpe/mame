@@ -5,9 +5,46 @@
 
 #include "Collision.h"
 
+PlayerManager::PlayerManager()
+{
+    
+}
+
 // 初期化
 void PlayerManager::Initialize()
 {
+
+    static bool CallOnce = [&]() {
+        //ドレイン
+        drainSkill = std::make_unique<PlayerSkill::Drain>(player.get());
+        skillArray.emplace_back(drainSkill.get());
+        //移動速度アップ
+        moveSpeedUpSkill = std::make_unique<PlayerSkill::MoveSpeedUp>(player.get());
+        skillArray.emplace_back(moveSpeedUpSkill.get());
+        //攻撃力アップ
+        attackPowerUpSkill = std::make_unique<PlayerSkill::AttackPowerUp>(player.get());
+        skillArray.emplace_back(attackPowerUpSkill.get());
+        //攻撃速度アップ
+        attackSpeedUpSkill = std::make_unique<PlayerSkill::AttackSpeedUp>(player.get());
+        skillArray.emplace_back(attackSpeedUpSkill.get());
+        //本の数増加
+        bookIncreaseSkill = std::make_unique<PlayerSkill::BookIncrease>(player.get());
+        skillArray.emplace_back(bookIncreaseSkill.get());
+        //体力上限アップ
+        maxHitPointUpSkill = std::make_unique<PlayerSkill::MaxHitPointUp>(player.get());
+        skillArray.emplace_back(maxHitPointUpSkill.get());
+        //防御力アップ
+        defenseUpSkill = std::make_unique<PlayerSkill::DefenseUp>(player.get());
+        skillArray.emplace_back(defenseUpSkill.get());
+
+        return true;
+    }();
+
+    for (auto& skill : skillArray)
+    {
+        skill->Initialize();
+    }
+
     player->Initialize();
 }
 
@@ -27,6 +64,11 @@ void PlayerManager::Begin()
 void PlayerManager::Update(const float& elapsedTime)
 {
     player->Update(elapsedTime);
+
+    for (auto& skill : skillArray)
+    {
+        skill->Update(elapsedTime);
+    }
 
     //自機と敵の当たり判定
     CollisionPlayerVsEnemy();
@@ -49,7 +91,26 @@ void PlayerManager::DrawDebug()
 {
 #ifdef USE_IMGUI
     player->DrawDebug();
+
+    for (auto& skill : skillArray)
+    {
+        skill->DrawDebug();
+    }
 #endif // USE_IMGUI
+}
+
+void PlayerManager::SkillImagesRender()
+{
+    int i = 0;
+    float posX = 1220.0f;
+    for (auto& skill : skillArray)
+    {
+        skill->Render();
+        if (skill->GetOverlapNum() == 0)continue;
+        skill->SetIconPos(DirectX::XMFLOAT2(posX, 0));
+        posX -= skill->icon->GetSpriteTransform()->GetSize().x;
+        i++;
+    }
 }
 
 void PlayerManager::CollisionPlayerVsEnemy()
@@ -82,10 +143,27 @@ void PlayerManager::CollisionPlayerVsEnemy()
 #ifdef _DEBUG
         // 吹っ飛ばし（仮）
         {
-            // 吹っ飛ぶ方向ベクトル(未正規化)を保存
-            enemy->SetBlowOffVec(-vecFromEnemyToPlayer);
+#if 0
+            // 敵が死亡したときの吹っ飛び
 
+<<<<<<< HEAD
             enemy->ApplyDamage(999999, nullptr); // 死亡フラグと吹っ飛びフラグを立てる
+=======
+            // 吹っ飛ぶ方向ベクトル(未正規化)と吹っ飛ぶ力の度合いを保存
+            enemy->SaveBlowOffInfo(
+                -vecFromEnemyToPlayer,
+                BLOW_OFF_FORCE_LEVEL::MIDDLE
+            );
+            enemy->ApplyDamage(999999); // 死亡フラグと吹っ飛びフラグを立てる
+
+#else
+            // 任意の吹っ飛ばし
+            enemy->BlowOff(
+                -vecFromEnemyToPlayer,
+                BLOW_OFF_FORCE_LEVEL::MIDDLE
+            );
+#endif
+
         }
 #endif
 
@@ -124,9 +202,9 @@ bool PlayerManager::AttackCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies
                         atkCollider.position, atkCollider.radius,
                         hitCollider.position, hitCollider.radius))
                     {
-                        // 吹っ飛ぶ方向ベクトル(未正規化)を保存
+                        // 吹っ飛び情報を保存
                         const DirectX::XMFLOAT3 vec = enemy->GetPosition() - atkCollider.position;
-                        enemy->SetBlowOffVec(vec);
+                        enemy->SaveBlowOffInfo(vec, player->GetInflictBlowOffForceLevel());
 
                         hitEnemies.emplace_back(enemy);
                         hit = true;

@@ -72,7 +72,15 @@ protected:
     void UpdateSword(const float elapsedTime);
 
 protected:
-    void OnLanding() {}
+    virtual void OnLanding() {}
+
+private:
+    void Flinch() override;
+
+    void BlowOff(
+        const DirectX::XMFLOAT3& blowOffVec,
+        const BLOW_OFF_FORCE_LEVEL& blowOffForceLevel
+    ) override;
 
 private:
     // ‚’¼‘¬—Íˆ—XV

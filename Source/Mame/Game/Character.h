@@ -2,6 +2,18 @@
 
 #include "../Graphics/Model.h"
 
+// 吹っ飛ばす力の度合い
+enum class BLOW_OFF_FORCE_LEVEL : int
+{
+    NONE,       // 無し
+    VERY_LOW,   // かなり低め
+    LOW,        // 低め
+    MIDDLE,     // 中程度
+    HIGH,       // 強め
+    VERY_HIGH,  // かなり強め
+    COUNT,      // 要素数
+};
+
 class Character
 {
 public:
@@ -180,6 +192,7 @@ protected:
 
     float       lockOnHeight    = 1.0f;         // 身長
     float       defence         = 0.0f;         // 防御力
+
 
     //--------------------------------喰らい、攻撃判定------------------------------------
     std::vector<SphereCollider> hitCollider;

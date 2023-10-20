@@ -53,10 +53,11 @@ public:
     void Update(const float elapsedTime) override; // 更新処理
     void End();                                     // 毎フレーム一番最後に呼ばれる
 
-    void MoveUpdate(float elapsedTime, float ax, float ay);
-    void UpdateVelocity(float elapsedTime, float ax, float ay);
 
     DamageResult ApplyDamage(float damage, Character* attacker, float invincibleTime = 0)override;
+
+    void MoveUpdate(float elapsedTime, float ax, float ay);
+    void UpdateVelocity(float elapsedTime, float ax, float ay);
 
     //入力をカメラから見たベクトルに変更しmoveVec変数に入れる関数
     void MoveVecUpdate(float ax, float ay);
@@ -69,7 +70,7 @@ public:
 
     void Render(const float scale, ID3D11PixelShader* psShader = nullptr) override; // 描画処理
 
-    void SkillImagesRender();
+    
 
     void DrawDebug() override;  // ImGui用
 
@@ -146,8 +147,6 @@ public:
     void SetAttackSpeed(const float spd) { attackSpeed = spd; }
     void AddAttackSpeed(const float spd) { attackSpeed += spd; }
 
-    std::vector<BaseSkill*>& GetSkillArray() { return skillArray; }
-
     void SetAcceleration(const float accel) { acceleration = accel; }
 
     StateMachine<State<Player>>* GetStateMachine() { return stateMachine.get(); }
@@ -163,10 +162,19 @@ public:
 
     const int GetLevel() const { return level; }
 
+    
+
     //---------------------------スキル-------------------------------
-    PlayerSkill::Drain* GetDrainSkill() { return drainSkill.get(); }
+   
 
     //-----------------------------------------------------------------
+public:
+    bool isCounter;//カウンター受付時間か？
+    bool counterCompleted;//カウンター成立フラグ
+
+    const BLOW_OFF_FORCE_LEVEL& GetInflictBlowOffForceLevel() const { return inflictBlowOffForceLevel_; }
+    void SetInflictBlowOffForceLevel(const BLOW_OFF_FORCE_LEVEL& inflictBlowOffForceLevel) { inflictBlowOffForceLevel_ = inflictBlowOffForceLevel; }
+
 
 private:
     void LevelUpdate();
@@ -219,15 +227,7 @@ private:
 
 
     //---------------------------スキル-------------------------------
-    std::vector<BaseSkill*> skillArray;
-
-    std::unique_ptr<PlayerSkill::Drain> drainSkill;
-    std::unique_ptr<PlayerSkill::MoveSpeedUp> moveSpeedUpSkill;
-    std::unique_ptr<PlayerSkill::AttackPowerUp> attackPowerUpSkill;
-    std::unique_ptr<PlayerSkill::AttackSpeedUp> attackSpeedUpSkill;
-    std::unique_ptr<PlayerSkill::BookIncrease> bookIncreaseSkill;
-    std::unique_ptr<PlayerSkill::MaxHitPointUp> maxHitPointUpSkill;
-    std::unique_ptr<PlayerSkill::DefenseUp> defenseUpSkill;
+    std::vector<BaseSkill*>* skillArray;
 
     BaseSkill* drawingSkillCards[3];
     int drawDirectionState;//カードドロー演出ステート
@@ -283,6 +283,10 @@ private:
     void ColliderPosUpdate(const float& scale);//各ジョイントに判定をつける処理
 
     //--------------------------------------------------------------------------------
+
+    // 敵に与える吹っ飛ばす力の度合い（※各攻撃の開始時に設定しておく）
+    BLOW_OFF_FORCE_LEVEL inflictBlowOffForceLevel_ = BLOW_OFF_FORCE_LEVEL::NONE;
+
 
     // アビリティマネージャー(仮)
     AbilityManager abilityManager_ = {};
