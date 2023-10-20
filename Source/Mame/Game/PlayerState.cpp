@@ -135,6 +135,7 @@ namespace PlayerState
         {
             for (auto& enemy : hitEnemies)
             {
+                Character::DamageResult result;
                 for (auto& h : hit)
                 {
                     if (h == enemy)goto skip;//‚·‚Å‚Éˆê“xƒqƒbƒg‚µ‚Ä‚¢‚é“G‚È‚çˆ—‚µ‚È‚¢
@@ -142,8 +143,12 @@ namespace PlayerState
                 //ˆê“x‚àƒqƒbƒg‚µ‚Ä‚¢‚È‚¢“G‚È‚Ì‚Å“o˜^‚·‚é
                 hit.emplace_back(enemy);
 
-                enemy->ApplyDamage(owner->jabMotionAtkMuls[combo],owner);
+                result = enemy->ApplyDamage(owner->jabMotionAtkMuls[combo], owner);
+
                 enemy->Flinch();
+
+                //ƒ_ƒ[ƒW‹zûˆ—
+                owner->GetDrainSkill()->Assimilate(result.damage);
             skip:;
             }
         }

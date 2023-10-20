@@ -396,16 +396,6 @@ void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
     }
 }
 
-Character::DamageResult Player::ApplyDamage(float damage, Character* attacker, float invincibleTime)
-{
-    DamageResult result = Character::ApplyDamage(damage,attacker,invincibleTime);
-    if (result.hit)
-    {
-        //hp‹zŽû
-        drainSkill->Assimilate(result.damage);
-    }
-    return result;
-}
 
 void Player::AvoidUpdate(float elapsedTime)
 {

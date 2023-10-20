@@ -9,8 +9,8 @@ namespace PlayerSkill
     public:
         Drain(Player* player) :
             BaseSkill(player, 
-                L"./Resources/Image/Card/sampleCard.png",
-                L"./Resources/Image/Icon/sampleIcon.png",
+                L"./Resources/Image/Card/Ckyusyu.png",
+                L"./Resources/Image/Icon/kyusyu.png",
                 "Drain",BaseSkill::SUPER_RARE) {}
         ~Drain() {}
 

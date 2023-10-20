@@ -6,7 +6,7 @@ namespace PlayerSkill
     void Drain::Initialize()
     {
         //probability = 5;//èoåªämó¶
-        drainCoefficient = 0.1f;
+        drainCoefficient = 0.3f;
     }
 
     void Drain::Update(float elapsedTime)
@@ -35,12 +35,12 @@ namespace PlayerSkill
     {
         overlap++;
         if (overlap <= 1)return;
-        drainCoefficient += 0.1f;
+        drainCoefficient += 0.15f;
     }
 
     void Drain::Assimilate(float power)
     {
-        if (overlap > 0)return;
+        if (overlap <= 0)return;
         float drainAmount = power * drainCoefficient;
         player->ApplyHeal(drainAmount);
     }
