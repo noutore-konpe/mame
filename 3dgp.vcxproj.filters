@@ -503,6 +503,9 @@
     <ClCompile Include="Source\Mame\Game\WaveManager.cpp">
       <Filter>mamelib\Mame\Game\Wave</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\SlowMotionManager.cpp">
+      <Filter>mamelib\Mame\Game\SlowMotion</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -877,6 +880,9 @@
     <ClInclude Include="Source\Mame\Game\WaveManager.h">
       <Filter>mamelib\Mame\Game\Wave</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Game\SlowMotionManager.h">
+      <Filter>mamelib\Mame\Game\SlowMotion</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">
@@ -1093,6 +1099,9 @@
     </Filter>
     <Filter Include="mamelib\Mame\Game\Wave">
       <UniqueIdentifier>{f30bbd6c-e1d9-4dc2-98f5-0e023a8b91ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\SlowMotion">
+      <UniqueIdentifier>{7b9021ae-6ff0-4dc3-a406-72abd7bf8aa1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

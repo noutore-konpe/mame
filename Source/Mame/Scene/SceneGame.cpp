@@ -29,10 +29,9 @@
 #include "../Game/ProjectileHorming.h"
 
 #include "../Game/ExperiencePointManager.h"
-
 #include "../Game/UserInterface.h"
-
 #include "../Game/WaveManager.h"
+#include "../Game/SlowMotionManager.h"
 
 #include "../framework.h"
 
@@ -290,6 +289,10 @@ void SceneGame::Initialize()
         static constexpr int startWaveIndex = -1;
         waveManager.InitWave(startWaveIndex);
     }
+
+    // ExecuteSlowMotion Initialize
+    SlowMotionManager::Instance().Initialize();
+
 }
 
 // 終了化
@@ -332,10 +335,21 @@ void SceneGame::Begin()
 // 更新処理
 void SceneGame::Update(const float& elapsedTime)
 {
+    // スローモーション更新
+    SlowMotionManager& slowMotion = SlowMotionManager::Instance();
+    slowMotion.Update(elapsedTime);
+
+    // スローモーションを適用した経過時間
+    const float slowMotionElapsedTime = {
+        (true == slowMotion.GetSlowMotionFlag())
+        ? elapsedTime * slowMotion.GetCurrentPercentage()
+        : elapsedTime
+    };
+
     GamePad& gamePad = Input::Instance().GetGamePad();
 
     // 最初の白飛びのスプライト
-    UpdateWhiteSprite(elapsedTime);
+    UpdateWhiteSprite(slowMotionElapsedTime);
 
     if (!isParticleInitialize)
     {
@@ -345,7 +359,7 @@ void SceneGame::Update(const float& elapsedTime)
 
     if (integrateParticles)
     {
-        particles->Integrate(Graphics::Instance().GetDeviceContext(), elapsedTime);
+        particles->Integrate(Graphics::Instance().GetDeviceContext(), slowMotionElapsedTime);
     }
 
 
@@ -368,7 +382,7 @@ void SceneGame::Update(const float& elapsedTime)
         DirectX::XMFLOAT2 moveVectorFloat2;
         DirectX::XMStoreFloat2(&moveVectorFloat2, moveVector);
 
-        Camera::Instance().UpdateDebug(elapsedTime, moveVectorFloat2);
+        Camera::Instance().UpdateDebug(slowMotionElapsedTime, moveVectorFloat2);
 
         SetCursorPos(posX, posY);
     }
@@ -384,36 +398,36 @@ void SceneGame::Update(const float& elapsedTime)
     }
 
     {
-        Camera::Instance().Update(elapsedTime);
+        Camera::Instance().Update(slowMotionElapsedTime);
     }
 
     // player
-    PlayerManager::Instance().Update(elapsedTime);
+    PlayerManager::Instance().Update(slowMotionElapsedTime);
 
     // item
-    ItemManager::Instance().Update(elapsedTime);
+    ItemManager::Instance().Update(slowMotionElapsedTime);
 
     // enemy
     {
         EnemyManager& enemyManager = EnemyManager::Instance();
-        enemyManager.Update(elapsedTime);
+        enemyManager.Update(slowMotionElapsedTime);
         //enemyAura->Update(elapsedTime);
     }
 
     // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
-    expManager.Update(elapsedTime);
+    expManager.Update(slowMotionElapsedTime);
 
     // effect
-    EffectManager::Instance().Update(elapsedTime);
+    EffectManager::Instance().Update(slowMotionElapsedTime);
 
     // UI
     {
         // Numeral
         NumeralManager& numeralManager = NumeralManager::Instance();
-        numeralManager.Update(elapsedTime);
+        numeralManager.Update(slowMotionElapsedTime);
 
-        UserInterface::Instance().Update(elapsedTime);
+        UserInterface::Instance().Update(slowMotionElapsedTime);
     }
 
     // Wave Update
@@ -421,7 +435,7 @@ void SceneGame::Update(const float& elapsedTime)
         WaveManager& waveManager = WaveManager::Instance();
 
         // ウェーブ更新
-        waveManager.UpdateWave(elapsedTime);
+        waveManager.UpdateWave(slowMotionElapsedTime);
     }
 
     //カード演出中だけUpdate前にreturn呼んでるから注意！！
@@ -433,7 +447,7 @@ void SceneGame::End()
 }
 
 // 描画処理
-void SceneGame::Render(const float& elapsedTime)
+void SceneGame::Render(const float& /*elapsedTime*/)
 {
     using DirectX::XMFLOAT3;
     using DirectX::XMFLOAT4;
@@ -768,6 +782,24 @@ void SceneGame::DrawDebug()
             const int count = ::RandInt(5, 20);
             ExperiencePointManager::Instance().CreateExp(position, count);
         }
+
+        // スローモーション
+        if (ImGui::Button("Slow Motion"))
+        {
+#if 0
+            const float endTime          = 1.0f;
+            const float targetPercentage = 0.5f;
+            const float easeOutTime      = 0.0f;
+            const float easeInTime       = 1.0f;
+            SlowMotionManager::Instance().ExecuteSlowMotion(
+                endTime, targetPercentage,
+                easeOutTime, easeInTime
+            );
+#else
+            SlowMotionManager::Instance().ExecuteSlowMotion();
+#endif
+        }
+
         ImGui::Separator();
 
         // ゲートから敵を生成する
@@ -807,6 +839,10 @@ void SceneGame::DrawDebug()
             // ウェーブデバッグ描画
             waveManager.DrawDebug();
         }
+
+        // SlowMotion DrawDebug
+        SlowMotionManager::Instance().DrawDebug();
+
 
         ImGui::End();
     }
