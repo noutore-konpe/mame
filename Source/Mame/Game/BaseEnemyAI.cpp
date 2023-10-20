@@ -91,7 +91,7 @@ void BaseEnemyAI::OnDamaged()
     Flinch(); // Ç–ÇÈÇ‹ÇπÇÈ
 }
 
-void BaseEnemyAI::OnDead()
+void BaseEnemyAI::OnDead(DamageResult result)
 {
     BlowOff(); // êÅÇ¡îÚÇŒÇ∑
 }

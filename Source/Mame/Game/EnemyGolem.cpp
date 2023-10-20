@@ -90,7 +90,7 @@ void EnemyGolem::Initialize()
     // アニメーション再生
     Character::PlayAnimation(static_cast<UINT>(Animation::Idle), true);
 
-    currentState = static_cast<UINT>(StateMachineState::IdleState);
+    currentState = static_cast<UINT>(StateMachineState::EntryState);
 
     // ステージに入場済み扱いにする
     entryStageFlag_ = true;
