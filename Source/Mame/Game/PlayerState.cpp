@@ -33,6 +33,8 @@ namespace PlayerState
         {
             owner->ChangeState(Player::STATE::ATTACK_JAB);
         }
+        
+        owner->ActiveCounter();
     }
 
     void NormalState::Finalize()
@@ -73,6 +75,8 @@ namespace PlayerState
             //更新処理(次のコンボへの遷移もしている)
             {
                 AttackUpdate(dodgeCanselFrame1,comboCanselFrame1);
+
+                
             }
 
 
@@ -190,6 +194,12 @@ namespace PlayerState
             if (owner->InputAvoid())//回避キャンセル
             {
                 owner->ChangeState(Player::STATE::AVOID);
+            }
+
+            if (combo < 2)
+            {
+                //カウンター派生
+                owner->ActiveCounter();
             }
 
             else if (owner->InputJabAttack())//コンボ続行

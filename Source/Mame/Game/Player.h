@@ -105,6 +105,8 @@ public:
 
     void BlownUpdate(float elapsedTime);//吹っ飛び更新処理
     void Blow(DirectX::XMFLOAT3 blowVec/*吹き飛ぶ方向*/);//吹っ飛しするときに呼ぶ
+
+    void ActiveCounter();
 private:
     float blowTime = 1.0f;
     float blowTimer;
@@ -138,6 +140,11 @@ public:
         return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_RIGHT_THUMB);
     }
 
+    static bool InputCounter()
+    {
+        return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_LEFT_SHOULDER);
+    }
+
     //getter,setter
     void AddMaxSpeed(const float spd) { maxEyeSpeed += spd; }
 
@@ -162,7 +169,7 @@ public:
 
     const int GetLevel() const { return level; }
 
-    
+    AbilityManager* GetAbilityManager() { return &abilityManager_; }
 
     //---------------------------スキル-------------------------------
    

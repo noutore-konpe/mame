@@ -28,7 +28,7 @@ namespace PlayerSkill
         float drainCoefficient;//攻撃力から吸収HPの算出に使う係数(重複するたびにこれが増えていく)
     };
 
-
+    //爆破属性付与（没）
     class BlastEnchantment : public BaseSkill
     {
     public:
@@ -39,8 +39,38 @@ namespace PlayerSkill
                 "Blast Enchantment",
                 BaseSkill::ULTRA_RARE) {}
         ~BlastEnchantment() {}
+    };
 
+    //ブラックホール
+    class BlackHoleSkill : public BaseSkill
+    {
+    public:
+        BlackHoleSkill(Player* player) :
+            BaseSkill(player,
+                L"./Resources/Image/Card/Cblack.png",
+                L"./Resources/Image/Icon/black.png",
+                "BlackHole",
+                BaseSkill::ULTRA_RARE) {}
+        ~BlackHoleSkill() {}
 
+        void Overlaping()override;
+
+        void CreateBlackHole();
+    };
+
+    class CanTripleAttack : public BaseSkill
+    {
+    public:
+        CanTripleAttack(Player* player) :
+            BaseSkill(player,
+                L"./Resources/Image/Card/sampleCard.png",
+                L"./Resources/Image/Icon/sampleIcon.png",
+                "Can Triple Attack",
+                BaseSkill::SUPER_RARE,
+                true) {}
+        ~CanTripleAttack() {}
+
+        void Overlaping()override;
     };
 }
 

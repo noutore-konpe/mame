@@ -218,6 +218,7 @@ void Book::SetTransform(const float& elapsedTime)
 
     // ‚Ó‚í‚Ó‚í‚·‚éˆ—
     {
+        static float timer;
         float moveY = isMoveToUp ? 0.3f : -0.3f;
 
         createPosition.y += moveY * elapsedTime;

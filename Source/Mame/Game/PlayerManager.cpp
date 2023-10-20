@@ -36,6 +36,9 @@ void PlayerManager::Initialize()
         //防御力アップ
         defenseUpSkill = std::make_unique<PlayerSkill::DefenseUp>(player.get());
         skillArray.emplace_back(defenseUpSkill.get());
+        //ブラックホール自動生成
+        blackHoleSkill = std::make_unique<PlayerSkill::BlackHoleSkill>(player.get());
+        skillArray.emplace_back(blackHoleSkill.get());
 
         return true;
     }();

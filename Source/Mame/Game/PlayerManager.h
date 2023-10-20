@@ -47,5 +47,6 @@ private:
     std::unique_ptr<PlayerSkill::BookIncrease> bookIncreaseSkill;
     std::unique_ptr<PlayerSkill::MaxHitPointUp> maxHitPointUpSkill;
     std::unique_ptr<PlayerSkill::DefenseUp> defenseUpSkill;
+    std::unique_ptr<PlayerSkill::BlackHoleSkill> blackHoleSkill;
 };
 

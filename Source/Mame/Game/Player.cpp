@@ -825,6 +825,7 @@ BaseSkill* Player::Lottery()
         {
             //すでに引かれたスキルはスキップ
             if (skill->isSelect)continue;
+            if (skill->isOneSheet)continue;
 
             if (skill->rarity == rarity)
             {
@@ -1007,6 +1008,14 @@ void Player::Blow(DirectX::XMFLOAT3 blowVec)
 {
     this->blowVec = Normalize(blowVec);
     blowTimer = blowTime;
+}
+
+void Player::ActiveCounter()
+{
+    if (InputCounter())
+    {
+        ChangeState(static_cast<float>(STATE::COUNTER));
+    }
 }
 
 void Player::OnDamaged()
