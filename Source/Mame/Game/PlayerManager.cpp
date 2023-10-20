@@ -85,7 +85,7 @@ void PlayerManager::CollisionPlayerVsEnemy()
             // 吹っ飛ぶ方向ベクトル(未正規化)を保存
             enemy->SetBlowOffVec(-vecFromEnemyToPlayer);
 
-            enemy->ApplyDamage(999999); // 死亡フラグと吹っ飛びフラグを立てる
+            enemy->ApplyDamage(999999, nullptr); // 死亡フラグと吹っ飛びフラグを立てる
         }
 #endif
 

@@ -144,6 +144,9 @@ namespace MagicCircleEnemySummonState
                             const DirectX::XMFLOAT3 setPosition = owner->magicCircle[i]->GetTransform()->GetPosition();
                             enemy->SetPosition(setPosition);
                             enemy->SetEntryStageFlag(true); // “üêƒtƒ‰ƒO
+                            enemy->Initialize();
+
+
                             EnemyManager::Instance().Register(enemy);
                         }
 

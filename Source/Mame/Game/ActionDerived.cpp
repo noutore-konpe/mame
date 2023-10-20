@@ -632,7 +632,7 @@ const ActionBase::State BlowOffAction::Run(const float elapsedTime)
 
 		// 吹っ飛びアニメーション再生
 		{
-			owner_->PlayAnimation(Animation::BlowOff, false, owner_->GetAnimationSpeed());
+			owner_->PlayAnimation(Animation::HardStagger, false, owner_->GetAnimationSpeed());
 
 			Model* sword = owner_->GetSword();
 			if (sword != nullptr)

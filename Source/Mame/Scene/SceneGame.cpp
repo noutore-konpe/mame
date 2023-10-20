@@ -82,6 +82,7 @@ void SceneGame::CreateResource()
 
     // enemy
     {
+#if 1
         EnemyManager& enemyManager = EnemyManager::Instance();
 
         // EnemyGolem* enemyGolem = new EnemyGolem;
@@ -92,7 +93,6 @@ void SceneGame::CreateResource()
         enemyManager.Register(enemyGolem);
 
 
-#if 1
         // max 6~7
         // EnemyAI_1
         for (int i = 0; i < 2; ++i)
