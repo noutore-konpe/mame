@@ -56,11 +56,11 @@ const bool CloseRangeAttackJudgment::Judgment()
 	}
 
 	// プレイヤーとのXZ平面での距離判定
-	const XMFLOAT3&	position		= owner_->GetPosition();
-	const XMFLOAT3&	targetPosition	= playerManager.GetPlayer()->GetPosition();
-	const float		vx				= targetPosition.x - position.x;
-	const float		vz				= targetPosition.z - position.z;
-	const float		lengthSq		= (vx * vx + vz * vz);
+	const XMFLOAT3&	pos			= owner_->GetPosition();
+	const XMFLOAT3&	targetPos	= playerManager.GetPlayer()->GetPosition();
+	const float		vx			= targetPos.x - pos.x;
+	const float		vz			= targetPos.z - pos.z;
+	const float		lengthSq	= (vx * vx + vz * vz);
 
 	// 攻撃距離圏外ならfalse
 	const float attackLength = owner_->GetAttackLength();
@@ -75,15 +75,21 @@ const bool CloseRangeAttackJudgment::Judgment()
 	{
 		Enemy* enemy = enemyManager.GetEnemy(i);
 
-		if (enemy != owner_)
-		{
-			const XMFLOAT3&	otherPosition	= enemy->GetPosition();
-			const float		otherVx			= targetPosition.x - otherPosition.x;
-			const float		otherVz			= targetPosition.z - otherPosition.z;
-			const float		otherLengthSq	= (otherVx * otherVx + otherVz * otherVz);
+		// 自分ならconinue(※誤代入防止キャスト)
+		if (static_cast<const Enemy*>(enemy) == owner_) continue;
 
-			if (lengthSq > otherLengthSq) return false;
-		}
+		// 他の敵が子ノードを持っていなければcontinue
+		if (enemy->GetChildNodeCount() <= 0) continue;
+
+		// 他の敵が近接攻撃ノードを持っていなければcontinue
+		if (false == enemy->IsExistChildNode("CloseRangeAttack")) continue;
+
+		const XMFLOAT3&	otherPos		= enemy->GetPosition();
+		const float		otherVx			= targetPos.x - otherPos.x;
+		const float		otherVz			= targetPos.z - otherPos.z;
+		const float		otherLengthSq	= (otherVx * otherVx + otherVz * otherVz);
+
+		if (lengthSq > otherLengthSq) return false;
 	}
 
 	return true;
@@ -124,7 +130,15 @@ const bool FlinchJudgment::Judgment()
 	// ひるみフラグが立っていなければfalse
 	if (false == owner_->GetIsFlinch()) return false;
 
-	// ひるませる
+	return true;
+}
+
+// 吹っ飛び判定関数
+const bool BlowOffJudgment::Judgment()
+{
+	// 吹っ飛びフラグが立っていなければfalse
+	if (false == owner_->GetIsBlowOff()) return false;
+
 	return true;
 }
 

@@ -42,6 +42,10 @@ public:
         const float rowOffset = 25.0f // çsä‘í≤êÆ
     );
 
+    const size_t GetNumeralCount() const { return numerals_.size(); }
+
+    Numeral* GetNumeral(const size_t index) { return numerals_.at(index); }
+
 private:
     std::vector<Numeral*> numerals_ = {};
     std::set<Numeral*>    removes_ = {};

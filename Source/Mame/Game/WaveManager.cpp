@@ -6,6 +6,8 @@
 #include "EnemyAI_3.h"
 #include "EnemyGolem.h"
 
+#include "UserInterface.h"
+
 // ウェーブ設定
 // ※要素数の取得や変更などを行うときにクラス内で定義していると面倒なので外で定義
 
@@ -194,6 +196,9 @@ void WaveManager::UpdateWave(const float elapsedTime)
 
             // 休憩時間に入る(休憩フラグON)
             breakTimeFlag_ = true;
+
+            // waveの表記を出す
+            UserInterface::Instance().SetWaveSlideSprite();
         }
 
     }

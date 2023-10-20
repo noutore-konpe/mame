@@ -72,7 +72,7 @@ namespace PlayerState
                 AttackUpdate(dodgeCanselFrame1,comboCanselFrame1);
             }
 
-            
+
             break;
         case 1://2Œ‚–Ú
             //‰Šú‰»ˆ—
@@ -214,7 +214,7 @@ namespace PlayerState
     void AvoidState::Update(const float& elapsedTime)
     {
         //owner->MoveUpdate(elapsedTime);
-        
+
         if (!owner->IsPlayAnimation()/* ||
             Input::Instance().GetGamePad().GetTriggerR() == 0*/)
         {
@@ -289,7 +289,7 @@ namespace PlayerState
     void CounterState::Initialize()
     {
         counterCompleted = false;
-        owner->PlayAnimation(Player::Animation::Counter, false); 
+        owner->PlayAnimation(Player::Animation::Counter, false);
         timer = 0;
     }
     void CounterState::Update(const float& elapsedTime)

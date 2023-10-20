@@ -19,7 +19,8 @@ void EnemyGolemResult::Initialize()
 {
     // アニメーション再生
     PlayAnimation(static_cast<UINT>(Animation::Walk), true);
-    GetTransform()->SetScaleFactor(0.2f);
+    GetTransform()->SetScaleFactor(0.3f);
+    GetTransform()->SetPosition(DirectX::XMFLOAT3(4.0f, -1.5f, 0.0f));
 }
 
 // 更新

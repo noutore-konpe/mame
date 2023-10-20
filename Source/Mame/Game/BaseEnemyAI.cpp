@@ -86,6 +86,16 @@ void BaseEnemyAI::DrawDebug()
 #endif // USE_IMGUI
 }
 
+void BaseEnemyAI::OnDamaged()
+{
+    Flinch(); // Ç–ÇÈÇ‹ÇπÇÈ
+}
+
+void BaseEnemyAI::OnDead()
+{
+    BlowOff(); // êÅÇ¡îÚÇŒÇ∑
+}
+
 void BaseEnemyAI::ColliderInitialize()
 {
     //èâä˙âª
@@ -158,7 +168,7 @@ void BaseEnemyAI::ColliderPosUpdate(const float& scale)
 
         for (int i = 0; i < attackCollider.size(); ++i)
         {
-            attackCollider[i].position = swordRoot + vecNormal * collideInterval * i;
+            attackCollider[i].position = swordRoot + vecNormal * collideInterval * static_cast<float>(i);
         }
     }
 }

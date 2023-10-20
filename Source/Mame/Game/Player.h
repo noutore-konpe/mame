@@ -168,7 +168,7 @@ public:
 
 private:
     void LevelUpdate();
-    
+
     //’nŒ`”»’èŒã‚ÌÀ•Wæ“¾
     DirectX::XMFLOAT3 CollidedPosition(const DirectX::XMFLOAT3 pos);
 
@@ -274,7 +274,7 @@ private:
     };
 
     float swordScale;//Œ•‚Ì‘å‚«‚³‚É‡‚í‚¹‚Ä”»’è‚Ì‘å‚«‚³‚à•Ï‚¦‚é
-    
+
     float swordColliderRadius;//Œ•‚Ì”»’è‚Ì‘å‚«‚³
     int swordColliderNum;//”»’è‚Ì”
 

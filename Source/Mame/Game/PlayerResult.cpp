@@ -27,7 +27,7 @@ void PlayerResult::Initialize()
     GetTransform()->SetScale(DirectX::XMFLOAT3(scale, scale, scale));
     GetTransform()->SetRotationY(DirectX::XMConvertToRadians(90));
 
-    swordModel->transform.SetScaleFactor(0.7f);
+    swordModel->transform.SetScaleFactor(1.0f);
     swordModel->PlayAnimation(0, true);
     PlayAnimation(0, true);
 }
@@ -49,10 +49,10 @@ void PlayerResult::Update(const float elapsedTime)
 }
 
 // •`‰æ
-void PlayerResult::Render(const float scale, ID3D11PixelShader* psShader)
+void PlayerResult::Render(const float scale, ID3D11PixelShader* psShader, bool isSowrd)
 {
     model->Render(scale, loadPS.Get());
-    swordModel->Render(scale, loadPS.Get());
+    if(isSowrd) swordModel->Render(scale, loadPS.Get());
 }
 
 void PlayerResult::DrawDebug()

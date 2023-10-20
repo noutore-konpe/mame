@@ -2,10 +2,10 @@
 
 #include "../../Taki174/Common.h"
 #include "../../Taki174/FunctionXMFloat3.h"
+#include "../../Taki174/NumeralManager.h"
 #include "../Scene/SceneGame.h"
-#include "../Game/Collision.h"
-
-#include "../Game/PlayerManager.h"
+#include "Collision.h"
+#include "PlayerManager.h"
 
 void EnemyManager::Initialize()
 {
@@ -86,6 +86,19 @@ void EnemyManager::Update(const float elapsedTime)
                 if (enemy != projectile->GetParent()) continue;
 
                 projectile->SetParent(nullptr);
+            }
+
+            // 消去される敵が数字表示の親の場合、数字表示の親情報を消去する
+            NumeralManager& numeralManager = NumeralManager::Instance();
+            const size_t numeralCount = numeralManager.GetNumeralCount();
+            for (size_t i = 0; i < numeralCount; ++i)
+            {
+                Numeral* numeral = numeralManager.GetNumeral(i);
+
+                if (nullptr == numeral->GetParent()) continue;
+                if (enemy != numeral->GetParent()) continue;
+
+                numeral->SetParent(nullptr);
             }
 
             // 敵の破棄処理

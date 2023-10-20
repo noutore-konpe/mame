@@ -4,6 +4,7 @@
 //UŒ‚‚ÉŠÖ‚·‚éƒXƒLƒ‹
 namespace PlayerSkill
 {
+    // ‹zû
     class Drain : public BaseSkill
     {
     public:
@@ -26,6 +27,7 @@ namespace PlayerSkill
     private:
         float drainCoefficient;//UŒ‚—Í‚©‚ç‹zûHP‚ÌZo‚Ég‚¤ŒW”(d•¡‚·‚é‚½‚Ñ‚É‚±‚ê‚ª‘‚¦‚Ä‚¢‚­)
     };
+
 
     class BlastEnchantment : public BaseSkill
     {

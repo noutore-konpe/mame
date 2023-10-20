@@ -122,10 +122,12 @@ NodeBase* BehaviorTree::Run(
 // “o˜^‚³‚ê‚½ƒm[ƒh‚ð‘S‚Äíœ‚·‚é
 void BehaviorTree::NodeAllClear(NodeBase* delNode)
 {
-	const size_t count = delNode->children_.size();
+	std::vector<NodeBase*>* children = delNode->GetChildren();
+
+	const size_t count = children->size();
 	if (count > 0)
 	{
-		for (NodeBase* node : delNode->children_)
+		for (NodeBase* node : (*children))
 		{
 			NodeAllClear(node);
 		}
