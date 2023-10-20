@@ -42,8 +42,9 @@ void SlowMotionManager::Update(const float elapsedTime)
         };
 
         // 目標のスローモーションの割合になったら次のステップに移る
-        if (static_cast<const float>(currentPercentage_) == targetPercentage_)
+        if (currentPercentage_ >= targetPercentage_)
         {
+            currentPercentage_ = targetPercentage_;
             nextStep_ = STEP::SLOW_MOTION;  // 次のステップを設定
             step_     = STEP::INIT;         // 初期化処理を経由する
             break;
@@ -55,7 +56,7 @@ void SlowMotionManager::Update(const float elapsedTime)
         timer_ = (std::min)(endTime_, timer_ + elapsedTime);
 
         // スローモーション終了時間になったら次のステップに移る
-        if (static_cast<const float>(timer_) == endTime_)
+        if (timer_ >= endTime_)
         {
             nextStep_ = STEP::EASE_OUT; // 次のステップを設定
             step_     = STEP::INIT;     // 初期化処理を経由する
@@ -75,8 +76,9 @@ void SlowMotionManager::Update(const float elapsedTime)
         };
 
         // スローモーションの割合が戻り切ったらスローモーションを終了する
-        if (1.0f == currentPercentage_)
+        if (currentPercentage_ >= 1.0f)
         {
+            currentPercentage_  = 1.0f;
             nextStep_           = STEP::EASE_IN; // ステップをリセット
             step_               = STEP::INIT;    // 次のステップをリセット
             slowMotionFlag_     = false;         // スローモーションフラグをリセット

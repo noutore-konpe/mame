@@ -29,14 +29,14 @@ public:
     /// <summary>
     /// スローモーション実行
     /// </summary>
-    /// <param name="time:スローモーション時間"></param>
-    /// <param name="percentage:スローモーションの割合(0.0f ~ 1.0f)(値が小さいほどスローになる)"></param>
-    /// <param name="easeOutTime:スローモーションに入るまでの所要時間"></param>
-    /// <param name="easeInTime:スローモーションが終わりきるまでの所要時間"></param>
+    /// <param name="time：スローモーション時間"></param>
+    /// <param name="percentage：スローモーションの割合(0.0f ~ 1.0f)(値が小さいほどスローになる)"></param>
+    /// <param name="easeOutTime：スローモーションに入りきるまでの所要時間"></param>
+    /// <param name="easeInTime：スローモーションが終わりきるまでの所要時間"></param>
     void ExecuteSlowMotion(
         const float time        = 1.5f,
-        const float percentage  = 0.5f,
-        const float easeOutTime = 0.0f,
+        const float percentage  = 0.4f,
+        const float easeOutTime = 0.5f,
         const float easeInTime  = 1.0f
     );
 
