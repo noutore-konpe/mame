@@ -246,17 +246,15 @@ void EnemyManager::CollisionEnemyVsEnemy(const float /*elapsedTime*/)
 {
     using DirectX::XMFLOAT3;
 
-    EnemyManager& enemyManager = EnemyManager::Instance();
-
-    const size_t enemyCount = enemyManager.GetEnemyCount();
+    const size_t enemyCount = GetEnemyCount();
     for (size_t a = 0; a < enemyCount; ++a)
     {
-        Enemy* enemyA = enemyManager.GetEnemy(a);
+        Enemy* enemyA = GetEnemy(a);
 
         // aˆÈ~‚Ì“G‚Æ”»’è‚ðs‚¤iaˆÈ‘O‚Í‚·‚Å‚É”»’èÏ‚Ý‚Ì‚½‚ßj
         for (size_t b = a + 1; b < enemyCount; ++b)
         {
-            Enemy* enemyB = enemyManager.GetEnemy(b);
+            Enemy* enemyB = GetEnemy(b);
 
             const XMFLOAT3& positionA = enemyA->GetPosition();
             const XMFLOAT3& positionB = enemyB->GetPosition();

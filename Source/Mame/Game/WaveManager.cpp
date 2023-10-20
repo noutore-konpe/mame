@@ -65,17 +65,17 @@ WaveEnemySet waveEnemySet10[] = {
 // ウェーブ(※ウェーブ配列に格納する)
 // 引数：ウェーブ名・ウェーブについての備考・WaveEnemySet配列の要素数・WaveEnemySet配列の先頭アドレス
 #pragma region Wave
-Wave wave0_  = { "Wave0",  "None",    static_cast<int>(std::size(waveEnemySet0)),  waveEnemySet0  };
-Wave wave1_  = { "Wave1",  "None",    static_cast<int>(std::size(waveEnemySet1)),  waveEnemySet1  };
-Wave wave2_  = { "Wave2",  "None",    static_cast<int>(std::size(waveEnemySet2)),  waveEnemySet2  };
-Wave wave3_  = { "Wave3",  "None",    static_cast<int>(std::size(waveEnemySet3)),  waveEnemySet3  };
-Wave wave4_  = { "Wave4",  "None",    static_cast<int>(std::size(waveEnemySet4)),  waveEnemySet4  };
-Wave wave5_  = { "Wave5",  "None",    static_cast<int>(std::size(waveEnemySet5)),  waveEnemySet5  };
-Wave wave6_  = { "Wave6",  "None",    static_cast<int>(std::size(waveEnemySet6)),  waveEnemySet6  };
-Wave wave7_  = { "Wave7",  "None",    static_cast<int>(std::size(waveEnemySet7)),  waveEnemySet7  };
-Wave wave8_  = { "Wave8",  "None",    static_cast<int>(std::size(waveEnemySet8)),  waveEnemySet8  };
-Wave wave9_  = { "Wave9",  "None",    static_cast<int>(std::size(waveEnemySet9)),  waveEnemySet9  };
-Wave wave10_ = { "Wave10", "VsGolem", static_cast<int>(std::size(waveEnemySet10)), waveEnemySet10 };
+Wave wave0_  = { "Wave0",  "None",    std::size(waveEnemySet0),  waveEnemySet0  };
+Wave wave1_  = { "Wave1",  "None",    std::size(waveEnemySet1),  waveEnemySet1  };
+Wave wave2_  = { "Wave2",  "None",    std::size(waveEnemySet2),  waveEnemySet2  };
+Wave wave3_  = { "Wave3",  "None",    std::size(waveEnemySet3),  waveEnemySet3  };
+Wave wave4_  = { "Wave4",  "None",    std::size(waveEnemySet4),  waveEnemySet4  };
+Wave wave5_  = { "Wave5",  "None",    std::size(waveEnemySet5),  waveEnemySet5  };
+Wave wave6_  = { "Wave6",  "None",    std::size(waveEnemySet6),  waveEnemySet6  };
+Wave wave7_  = { "Wave7",  "None",    std::size(waveEnemySet7),  waveEnemySet7  };
+Wave wave8_  = { "Wave8",  "None",    std::size(waveEnemySet8),  waveEnemySet8  };
+Wave wave9_  = { "Wave9",  "None",    std::size(waveEnemySet9),  waveEnemySet9  };
+Wave wave10_ = { "Wave10", "VsGolem", std::size(waveEnemySet10), waveEnemySet10 };
 #pragma endregion
 
 
@@ -99,7 +99,7 @@ Wave waves_[] = {
 void WaveManager::InitWave(const int waveIndex)
 {
     // ウェーブの総数とウェーブを取得
-    waveParent_ = { static_cast<int>(std::size(waves_)), waves_ };
+    waveParent_ = { std::size(waves_), waves_ };
 
     // ウェーブタイマー初期化
     waveTimer_  = 0.0f;
@@ -157,10 +157,10 @@ void WaveManager::UpdateWave(const float elapsedTime)
     {
         // 現在のウェーブを取得
         const Wave currentWave = waveParent_.children_[currentWaveIndex_];
-        for (int i = 0; i < currentWave.spawnEnemyCount_; ++i)
+        for (size_t i = 0; i < currentWave.spawnEnemyCount_; ++i)
         {
             // 出現させる敵のパラメータを取得
-            WaveEnemySet* waveEnemy = &currentWave.waveEnemy_[i];
+            WaveEnemySet* waveEnemy = &currentWave.waveEnemySets_[i];
 
             // 生成済みならcontinue
             if (true == waveEnemy->isSpawned_) continue;
@@ -184,7 +184,7 @@ void WaveManager::UpdateWave(const float elapsedTime)
         if (currentWaveIndex_ > waveIndexEnd)
         {
             // ゲームクリア
-            assert("Game Clear");
+            //assert("Game Clear");
         }
         else
         {
@@ -246,14 +246,19 @@ void WaveManager::SpawnEnemy(WaveEnemySet* waveEnemy)
 // すべてのウェーブの敵の生成フラグをリセット
 void WaveManager::ResetWaveEnemySpawnFlag()
 {
-    const int waveCount = waveParent_.waveCount_;
-    for (int waveIndex = 0; waveIndex < waveCount; ++waveIndex)
+    const size_t waveCount = waveParent_.waveCount_;
+    for (size_t waveIndex = 0; waveIndex < waveCount; ++waveIndex)
     {
+        // ウェーブ取得
         Wave* wave = &waveParent_.children_[waveIndex];
-        const int enemyCount = wave->spawnEnemyCount_;
-        for (int enemyIndex = 0; enemyIndex < enemyCount; ++enemyIndex)
+
+        const size_t enemyCount = wave->spawnEnemyCount_;
+        for (size_t enemyIndex = 0; enemyIndex < enemyCount; ++enemyIndex)
         {
-            WaveEnemySet* waveEnemy = &wave->waveEnemy_[enemyIndex];
+            // ウェーブエネミー取得
+            WaveEnemySet* waveEnemy = &wave->waveEnemySets_[enemyIndex];
+
+            // 生成フラグをリセット
             waveEnemy->isSpawned_ = false;
         }
     }

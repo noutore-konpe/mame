@@ -10,24 +10,22 @@
 // 番号に対応するゲートの位置を返す(※-1でランダムなゲート位置を返す)
 inline DirectX::XMFLOAT3 GetGatewayPosition(/*NoConst*/ int gatewayIndex)
 {
-    static constexpr int gatewayCount = 10; // ゲートの数
-
     // ゲート番号超過修正
-    if (gatewayIndex > gatewayCount) gatewayIndex = gatewayCount;
+    if (gatewayIndex > SceneGame::GATEWAY_COUNT_) gatewayIndex = SceneGame::GATEWAY_COUNT_;
+
+    // 360度をゲート数分に等分したときの角度
+    static constexpr float angle = 360.0f / static_cast<float>(SceneGame::GATEWAY_COUNT_);
 
     // 最初の一回だけY回転値テーブルを作成するようにする
     // ※すべてのゲート位置をひとつひとつ手動で設定するのが
     // 　面倒なのでfor文で各ゲート方向を向くY回転値のテーブルを
     // 　作成してゲート位置を設定する
-    static float rotationY_table[gatewayCount] = {};    // Y回転値テーブル(static)
-    static bool  createRotationY_TableFlag     = false; // Y回転値テーブル作成フラグ(static)
+    static float rotationY_table[SceneGame::GATEWAY_COUNT_] = {};    // Y回転値テーブル(static)
+    static bool  createRotationY_TableFlag                  = false; // Y回転値テーブル作成フラグ(static)
     if (false == createRotationY_TableFlag)
     {
-        // 360度をゲート数分に等分したときの角度
-        static constexpr float angle = 360.0f / static_cast<float>(gatewayCount);
-
         // Y回転値テーブルを作成
-        for (int i = 0; i < gatewayCount; ++i)
+        for (int i = 0; i < SceneGame::GATEWAY_COUNT_; ++i)
         {
             rotationY_table[i] = ::ToRadian(angle * static_cast<float>(i));
         }
@@ -37,7 +35,7 @@ inline DirectX::XMFLOAT3 GetGatewayPosition(/*NoConst*/ int gatewayIndex)
     }
 
     // Y回転値を取得
-    const int   rotationY_index = (gatewayIndex > -1) ? gatewayIndex : ::RandInt(0, gatewayCount);
+    const int   rotationY_index = (gatewayIndex > -1) ? gatewayIndex : ::RandInt(0, SceneGame::GATEWAY_COUNT_);
     const float rotationY       = rotationY_table[rotationY_index];
 
     // ステージの中心からゲートの奥ぐらいまでのだいたいの半径(距離)
@@ -84,18 +82,18 @@ struct WaveEnemySet
 // ウェーブ構造体
 struct Wave
 {
-    std::string name_            = "";       // ウェーブの名前
-    std::string note_            = "";       // ウェーブについての備考(ウェーブについて詳しい説明などを殴り書く用)
-    int         spawnEnemyCount_ = 0;        // 出現させる敵の総数(ウェーブエネミー配列の要素数)
-    WaveEnemySet*  waveEnemy_       = nullptr;  // 出現させる敵の構造体ポインタ(パラメータ)
+    std::string    name_             = "";       // ウェーブの名前
+    std::string    note_             = "";       // ウェーブについての備考(ウェーブについて詳しい説明などを殴り書く用)
+    size_t         spawnEnemyCount_  = 0;        // 出現させる敵の総数(ウェーブエネミー配列の要素数)
+    WaveEnemySet*  waveEnemySets_    = nullptr;  // 出現させる敵の構造体ポインタ(パラメータ)
 
 };
 
 // ウェーブペアレント構造体
 struct WaveParent
 {
-    int   waveCount_    = 0;        // ウェーブの総数(ウェーブ配列の要素数)
-    Wave* children_     = nullptr;  // ウェーブ配列のポインタ
+    size_t waveCount_    = 0;        // ウェーブの総数(ウェーブ配列の要素数)
+    Wave*  children_     = nullptr;  // ウェーブ配列のポインタ
 };
 #pragma endregion
 
@@ -139,15 +137,15 @@ public:
 public: // Get・Set Function
 
     // 現在のウェーブ番号を取得
-    const int GetCurrentWaveIndex() const { return currentWaveIndex_; }
+    const size_t GetCurrentWaveIndex() const { return currentWaveIndex_; }
 
     // ウェーブ番号の末尾を取得
-    const int GetWaveIndexEnd() const { return (waveParent_.waveCount_ - 1); }
+    const size_t GetWaveIndexEnd() const { return (waveParent_.waveCount_ - 1); }
 
     // 現在のウェーブの名前を取得
     const std::string& GetCurrentWaveName() const { return waveParent_.children_->name_; }
     // 現在のウェーブが出現させる敵の総数を取得
-    const int GetCurrentWaveEnemyCount() const { return waveParent_.children_->spawnEnemyCount_; }
+    const size_t GetCurrentWaveEnemyCount() const { return waveParent_.children_->spawnEnemyCount_; }
 
 private:
     static constexpr float BREAK_TIME_ = 5.0f; // 現在のウェーブから次のウェーブに移るまでの休憩時間

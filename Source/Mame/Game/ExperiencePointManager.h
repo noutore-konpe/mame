@@ -26,8 +26,9 @@ public:
     void DrawDebug();
 
 public:
-    void CollisionExpVsPlayer(const float elapsedTime);
-    void CollisionExpVsExp(const float elapsedTime);
+    void CollisionExpVsPlayer(const float elapsedTime); // プレイヤーとの衝突処理
+    void CollisionExpVsExp(const float elapsedTime);    // 経験値同士の衝突処理
+    void CollisionExpVsStage(const float elapsedTime);  // ステージとの衝突処理
 
 public:
     void Register(ExperiencePoint* exp);    // 登録
@@ -57,8 +58,8 @@ public:
     {
         CreateExp(
             position, count,
-            DirectX::XMFLOAT3(-forceXZ, 0.0f,    -forceXZ),
-            DirectX::XMFLOAT3(+forceXZ, +forceY, +forceXZ)
+            DirectX::XMFLOAT3(-forceXZ, +forceY * 0.25f, -forceXZ),
+            DirectX::XMFLOAT3(+forceXZ, +forceY,         +forceXZ)
         );
     }
 
