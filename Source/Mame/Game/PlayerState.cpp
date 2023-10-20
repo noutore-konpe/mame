@@ -107,8 +107,8 @@ namespace PlayerState
 
                 owner->ResetSteppingTimer();
                 state = UPDATE_FRAME;
-                owner->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
-                owner->GetSword()->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
+                owner->PlayAnimation(Player::Animation::Jab_3, false, owner->GetAttackSpeed());
+                owner->GetSword()->PlayAnimation(Player::Animation::Jab_3, false, owner->GetAttackSpeed());
                 hit.clear();//ƒqƒbƒg‚µ‚½“G‚Ì‰Šú‰»
                 initialize = true;
             }
@@ -194,11 +194,12 @@ namespace PlayerState
 
             else if (owner->InputJabAttack())//ƒRƒ“ƒ{‘±s
             {
-                combo++;
-                initialize = false;
-
                 //ƒRƒ“ƒ{‚Í‚R˜AŒ‚ˆÈ~‚È‚¢‚Ì‚Å§ŒÀ
-                if (combo > 2)combo = 2;
+                if (combo < 2)
+                {
+                    combo++;
+                    initialize = false;
+                }
             }
             break;
         }

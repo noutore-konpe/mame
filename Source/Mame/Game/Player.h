@@ -33,7 +33,7 @@ public: // enumŠÖ˜A
         Dash,
         Jab_1,
         Jab_2,
-        //Jab_3,
+        Jab_3,
         Avoid,
         Counter,
         CounterAttack,
