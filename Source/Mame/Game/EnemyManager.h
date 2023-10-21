@@ -81,6 +81,9 @@ public:
     const float GetCRAActionCoolTimer() const { return craActionCoolTimer_; }
     void SetCRAActionCoolTimer(const float craActionCoolTime) { craActionCoolTimer_ = craActionCoolTime; }
 
+public:
+    static constexpr float CRA_ACTION_COOL_TIME_ = 0.5f; // 近接攻撃クールタイム
+
 private:
     std::vector<Enemy*> enemies_ = {};
     std::set<Enemy*>    removes_ = {};

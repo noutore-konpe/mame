@@ -382,8 +382,7 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 			enmManager.SetIsRunningCRAAction(false);
 
 			// CRA : 6.Action : 近接攻撃行動クールタイマー設定
-			constexpr float craCoolTime = 0.0f;
-			enmManager.SetCRAActionCoolTimer(craCoolTime);
+			enmManager.SetCRAActionCoolTimer(EnemyManager::CRA_ACTION_COOL_TIME_);
 
 			return ActionBase::State::Failed;
 		}
@@ -397,8 +396,7 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 			enmManager.SetIsRunningCRAAction(false);
 
 			// CRA : 6.Action : 近接攻撃行動クールタイマー設定
-			constexpr float craCoolTime = 0.0f;
-			enmManager.SetCRAActionCoolTimer(craCoolTime);
+			enmManager.SetCRAActionCoolTimer(EnemyManager::CRA_ACTION_COOL_TIME_);
 
 			return ActionBase::State::Failed;
 		}
@@ -421,8 +419,7 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 			enmManager.SetIsRunningCRAAction(false);
 
 			// CRA : 6.Action : 近接攻撃行動クールタイマー設定
-			constexpr float craCoolTime = 0.0f;
-			enmManager.SetCRAActionCoolTimer(craCoolTime);
+			enmManager.SetCRAActionCoolTimer(EnemyManager::CRA_ACTION_COOL_TIME_);
 
 			return ActionBase::State::Complete; // 成功
 		}
@@ -436,8 +433,7 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 			enmManager.SetIsRunningCRAAction(false);
 
 			// CRA : 6.Action : 近接攻撃行動クールタイマー設定
-			constexpr float craCoolTime = 0.0f;
-			enmManager.SetCRAActionCoolTimer(craCoolTime);
+			enmManager.SetCRAActionCoolTimer(EnemyManager::CRA_ACTION_COOL_TIME_);
 
 			return ActionBase::State::Failed; // 失敗
 		}
