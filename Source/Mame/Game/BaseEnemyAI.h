@@ -9,6 +9,22 @@ class ProjectileManager;
 class BaseEnemyAI : public Enemy
 {
 public:
+    enum class HitColName
+    {
+        NECK,
+        HIP,
+        R_LEG,
+        L_LEG,
+        R_LEG_END,
+        L_LEG_END,
+        R_ELBOW,
+        L_ELBOW,
+        R_HAND,
+        L_HAND,
+        END
+    };
+
+public:
     BaseEnemyAI();
     ~BaseEnemyAI() override {}
 
@@ -92,21 +108,6 @@ private:
     // êÖïΩà⁄ìÆçXêVèàóù
     void UpdateHorizontalMove(const float elapsedTime);
 
-protected:
-    enum class HitColName
-    {
-        NECK,
-        HIP,
-        R_LEG,
-        L_LEG,
-        R_LEG_END,
-        L_LEG_END,
-        R_ELBOW,
-        L_ELBOW,
-        R_HAND,
-        L_HAND,
-        END
-    };
 protected:
     std::unique_ptr<Model>          sword_;
 

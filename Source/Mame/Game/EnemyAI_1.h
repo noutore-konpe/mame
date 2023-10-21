@@ -25,7 +25,4 @@ private:
     Microsoft::WRL::ComPtr<ID3D11PixelShader> emissiveTextureUVScroll;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> emissiveTexture;
 
-    // ダメージ数字生成タイマー(仮)
-    float createDmgNumeralTimer_ = 0.0f;
-
 };

@@ -92,28 +92,6 @@ void EnemyAI_1::Initialize()
 void EnemyAI_1::Update(const float& elapsedTime)
 {
     BaseEnemyAI::Update(elapsedTime);
-
-    // ダメージ数字生成タイマー更新処理(仮)
-    createDmgNumeralTimer_ += elapsedTime;
-    if (createDmgNumeralTimer_ >= 1.0f)
-    {
-        Transform* t = GetTransform();
-        DirectX::XMFLOAT3 position = t->GetPosition();
-        position.y += height_; // キャラクターの頭上に設定
-
-        const int               damage    = ::RandInt(0, 999);
-        const DirectX::XMFLOAT2 size      = { 30.0f, 30.0f };
-        const DirectX::XMFLOAT4 color     = { 1.0f, 0.5f, 0.0f, 1.0f };
-        const float             angle     = 0.0f;
-        const float             rowOffset = 35.0f; // 行の間隔調整用
-
-        NumeralManager& numeralManager = NumeralManager::Instance();
-        numeralManager.CreateDamageNumeral(
-            this, damage, position, size, color, angle, rowOffset
-        );
-
-        createDmgNumeralTimer_ = 0.0f;
-    }
 }
 
 

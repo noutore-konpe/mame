@@ -3,7 +3,7 @@
 
 
 // ‹…‚Æ‹…‚ÌŒğ·”»’è
-bool Collision::IntersectSphereVsSphere(
+const bool Collision::IntersectSphereVsSphere(
     const DirectX::XMFLOAT3& positionA, const float radiusA,
     const DirectX::XMFLOAT3& positionB, const float radiusB,
     DirectX::XMFLOAT3* outPosition)
@@ -47,4 +47,19 @@ bool Collision::IntersectSphereVsSphere(
     return true;
 
 #endif
+}
+
+const bool Collision::IntersectSphereVsSphere(
+    const DirectX::XMFLOAT3& positionA, const float radiusA,
+    const DirectX::XMFLOAT3& positionB, const float radiusB)
+{
+    using DirectX::XMFLOAT3;
+
+    const XMFLOAT3 vec      = positionB - positionA;
+    const float    lengthSq = ::XMFloat3LengthSq(vec);
+    const float    range    = radiusA + radiusB;
+
+    if (lengthSq > (range * range)) return false;
+
+    return true;
 }

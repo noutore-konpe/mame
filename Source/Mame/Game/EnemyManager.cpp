@@ -110,6 +110,9 @@ void EnemyManager::Update(const float elapsedTime)
 
     projectileManager_.Update(elapsedTime);
 
+    // 弾丸とプレイヤーの衝突処理
+    CollisionProjectileVsPlayer();
+
     // エネミー同士の衝突処理
     CollisionEnemyVsEnemy(elapsedTime);
 
@@ -241,6 +244,55 @@ void EnemyManager::RenderShadow(const float scale, ID3D11PixelShader* psShader)
     projectileManager_.Render(scale, psShader);
 }
 
+void EnemyManager::CollisionProjectileVsPlayer()
+{
+    using DirectX::XMFLOAT3;
+
+    PlayerManager& plManager = PlayerManager::Instance();
+
+    const size_t projCount = projectileManager_.GetProjectileCount();
+    for (size_t projIndex = 0; projIndex < projCount; ++projIndex)
+    {
+        // 弾丸取得
+        Projectile* proj = projectileManager_.GetProjectile(projIndex);
+
+        // プレイヤー取得
+        const std::unique_ptr<Player>& player = plManager.GetPlayer();
+
+        // プレイヤーが死んでいたらbreak
+        if (true == player->GetIsDead()) break;
+
+        const size_t plHitColliderCount = player->GetHitColliderCount();
+        for (size_t plHitColliderIndex = 0; plHitColliderIndex < plHitColliderCount; ++plHitColliderIndex)
+        {
+            // プレイヤーの食らい判定取得
+            const Character::SphereCollider plHitCollder = player->GetHitColliderAt(plHitColliderIndex);
+
+            const XMFLOAT3& projPos             = proj->GetPosition();
+            const XMFLOAT3& plHitColliderPos    = plHitCollder.position;
+            const float     projRadius          = proj->GetRadius();
+            const float     plHitColliderRadius = plHitCollder.radius;
+
+            // 当たってなければcontinue
+            if (false == Collision::IntersectSphereVsSphere(
+                projPos, projRadius, plHitColliderPos, plHitColliderRadius))
+            {
+                continue;
+            }
+
+            // プレイヤーにダメージを与える
+            player->ApplyDamage(proj->GetAttack());
+
+            // 弾を消去する
+            proj->Destroy();
+
+            // 当たったのでbreak
+            break;
+        }
+
+    }
+
+}
 
 void EnemyManager::CollisionEnemyVsEnemy(const float /*elapsedTime*/)
 {

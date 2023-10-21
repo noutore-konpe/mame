@@ -1,11 +1,14 @@
 #include "Book.h"
 #include "BookState.h"
 
+#include "../../Taki174/FunctionXMFloat3.h"
 #include "../Graphics/Graphics.h"
 
-#include "PlayerManager.h"
 #include "ProjectileStraight.h"
 #include "ProjectileHorming.h"
+#include "PlayerManager.h"
+#include "EnemyManager.h"
+#include "Collision.h"
 
 int Book::totalNum = 0;
 
@@ -76,6 +79,9 @@ void Book::Update(const float& elapsedTime)
 
     // アニメーション更新
     UpdateAnimation(elapsedTime);
+
+    // 弾丸と敵との衝突処理
+    CollisionProjectileVsEnemies();
 }
 
 // Updateの後に呼ばれる
@@ -119,20 +125,123 @@ void Book::DrawDebug()
 #endif // USE_IMGUI
 }
 
-// 弾生成&発射
-bool Book::LaunchProjectile(const float& elapsedTime)
+void Book::CollisionProjectileVsEnemies()
 {
+    using DirectX::XMFLOAT3;
+
+    EnemyManager& enmManager = EnemyManager::Instance();
+
+    const size_t projCount = projectileManager.GetProjectileCount();
+    for (size_t projIndex = 0; projIndex < projCount; ++projIndex)
+    {
+        // 弾丸取得
+        Projectile* proj = projectileManager.GetProjectile(projIndex);
+
+        const size_t enmCount = enmManager.GetEnemyCount();
+        for (size_t enmIndex = 0; enmIndex < enmCount; ++enmIndex)
+        {
+            // 敵取得
+            Enemy* enemy = enmManager.GetEnemy(enmIndex);
+
+            // 敵が死んでいたらcontinue
+            if (true == enemy->GetIsDead()) continue;
+
+            // 衝突フラグ
+            bool isHit = false;
+
+            const size_t enmHitColliderCount = enemy->GetHitColliderCount();
+            for (size_t enmHitColliderIndex = 0; enmHitColliderIndex < enmHitColliderCount; ++enmHitColliderIndex)
+            {
+                // 敵の食らい判定取得
+                const Character::SphereCollider enmHitCol = enemy->GetHitColliderAt(enmHitColliderIndex);
+
+                const XMFLOAT3& projPos              = proj->GetPosition();
+                const XMFLOAT3& enmHitColliderPos    = enmHitCol.position;
+                const float     projRadius           = proj->GetRadius();
+                const float     enmHitColliderRadius = enmHitCol.radius;
+
+                isHit = Collision::IntersectSphereVsSphere(
+                    projPos, projRadius, enmHitColliderPos, enmHitColliderRadius
+                );
+
+                // 当たってなければcontinue
+                if (false == isHit) continue;
+
+                // 敵の吹っ飛び情報を保存
+                const XMFLOAT3 vec = enmHitColliderPos - projPos;
+                enemy->SaveBlowOffInfo(vec, proj->GetInflictBlowOffForceLevel());
+
+                // 敵にダメージを与える
+                enemy->ApplyDamage(proj->GetAttack());
+
+                // 弾を消去する
+                proj->Destroy();
+
+                // 当たったのでbreak
+                break;
+            }
+
+            // 当たっていたらbreak
+            if (true == isHit) break;
+        }
+    }
+}
+
+
+void Book::Turn(
+    const float elapsedTime,
+    float vx,
+    float vz,
+    float turnSpeed /*Degree*/)
+{
+    if (vx == 0.0f && vz == 0.0f) return;
+
+    using DirectX::XMFLOAT3;
+    using DirectX::XMFLOAT4;
+
+    const float length = sqrtf(vx * vx + vz * vz);
+    if (length < 0.005f) return;
+
+    vx /= length;
+    vz /= length;
+
+    XMFLOAT4 rotation = GetTransform()->GetRotation();
+    const float frontX = ::sinf(rotation.y);
+    const float frontZ = ::cosf(rotation.y);
+
+    const float dot = (frontX * vx) + (frontZ * vz);
+
+    // 回転角が微小な場合は回転を行わない
+    const float angle = ::acosf(dot); // ラジアン
+    if (::fabsf(angle) <= 0.01f) return;
+
+    float rot = 1.0f - dot;
+    turnSpeed = ::ToRadian(turnSpeed) * elapsedTime;
+    if (rot > turnSpeed) rot = turnSpeed;
+
+    //左右判定のための外積
+    const float cross = (frontZ * vx) - (frontX * vz);
+
+    rotation.y += (cross < 0.0f) ? -rot : rot;
+
+    GetTransform()->SetRotation(rotation);
+}
+
+
+// 弾生成&発射
+bool Book::LaunchProjectile(const float elapsedTime, const DirectX::XMFLOAT3& vec)
+{
+    using DirectX::XMFLOAT3;
+
     if (launchTimer <= 0.0f)
     {
-        DirectX::XMFLOAT3 bookPosition = GetTransform()->GetPosition();
-        DirectX::XMFLOAT3 bookForward = PlayerManager::Instance().GetPlayer()->GetTransform()->CalcForward();
-
-        float length = 0.3f;
-
-        bookPosition = { bookPosition.x + bookForward.x * length, bookPosition.y + bookForward.y * length, bookPosition.z + bookForward.z * length };
+        const XMFLOAT3 bookPos   = GetTransform()->GetPosition();
+        const XMFLOAT3 vecN      = ::XMFloat3Normalize(vec);
+        const float    length    = 0.3f;
+        const XMFLOAT3 launchPos = bookPos + vecN * length;
 
         ProjectileStraight* projectile = new ProjectileStraight(&projectileManager);
-        projectile->Launch(bookForward, bookPosition);
+        projectile->Launch(vecN, launchPos);
 
         // 発射までの時間を設定
         launchTimer = launchTime;
@@ -147,111 +256,98 @@ bool Book::LaunchProjectile(const float& elapsedTime)
 
 void Book::SetTransform(const float& elapsedTime)
 {
-    Transform* playerTransform = PlayerManager::Instance().GetPlayer()->GetTransform();
-    DirectX::XMFLOAT3 playerPos = playerTransform->GetPosition();
+    using DirectX::XMFLOAT3;
+
+    Transform* playerT = PlayerManager::Instance().GetPlayer()->GetTransform();
+
+    // プレイヤーの位置
+    const XMFLOAT3& plPos = playerT->GetPosition();
 
     // プレイヤーの右ベクトル
-    DirectX::XMFLOAT3 playerRightVec = playerTransform->CalcRight();
-    // 長さ調整
-    float length = 0.6f;
-    playerRightVec = { playerRightVec.x * length, playerRightVec.y * length, playerRightVec.z * length };
+    const XMFLOAT3 plRightVecN = playerT->CalcRight();
 
-    // 調整用
-    float playerRightVecY = 1.0f;
+    // 移動量
+    static const float MOVEMENT = 0.6f;
+
+    // プレイヤーの右ベクトル方向に伸びた値(プレイヤーの位置に足す値)
+    const XMFLOAT3 addPlPos = plRightVecN * MOVEMENT;
+
+    // 位置調整値
+    static const float MODIFY_POS_Y = 1.0f; // Y位置調整値
+    static const float MODIFY_POS_X = 0.5f; // X位置調整値
 
     // １フレーム前の位置を保存する
     prevPosition = GetTransform()->GetPosition();
 
+    // この本の位置
+    XMFLOAT3 bookPosition = {};
+
+    // 割り振られた番号によって位置を設定する
     switch (num)
     {
-    case 0: break; // ０個の時は何もしない
     case 1: // プレイヤーの右
         // プレイヤーの右の位置を計算
-        playerRightVec = { playerPos.x + playerRightVec.x, playerPos.y + playerRightVec.y , playerPos.z + playerRightVec.z };
+        bookPosition = plPos + addPlPos;
 
-        // いい感じになるように位置調整
-        playerRightVec.y += playerRightVecY;
+        // いい感じになるようにY位置調整
+        bookPosition.y += MODIFY_POS_Y;
 
         break;
-
     case 2: // プレイヤーの左
         // プレイヤーの左の位置を計算
-        playerRightVec = { playerPos.x - playerRightVec.x, playerPos.y - playerRightVec.y , playerPos.z - playerRightVec.z };
+        bookPosition = plPos - addPlPos;
 
-        // いい感じになるように位置調整
-        playerRightVec.y += playerRightVecY;
+        // いい感じになるようにY位置調整
+        bookPosition.y += MODIFY_POS_Y;
 
         break;
-
     case 3: // プレイヤーの右上
         // プレイヤーの右の位置を計算
-        {
-            float l = 0.5f;
-            playerRightVec = { playerRightVec.x * l, playerRightVec.y * l, playerRightVec.z * l };
-            playerRightVec = { playerPos.x + playerRightVec.x, playerPos.y + playerRightVec.y , playerPos.z + playerRightVec.z };
-        }
+        bookPosition = plPos + (addPlPos * MODIFY_POS_X);
 
-        // いい感じになるように位置調整
-        playerRightVec.y += playerRightVecY + 0.5f;
+        // いい感じになるようにY位置調整
+        bookPosition.y += MODIFY_POS_Y + 0.5f;
 
-    break;
-
+        break;
     case 4: // プレイヤーの左上
         // プレイヤーの左の位置を計算
-        {
-            float l = 0.5f;
-            playerRightVec = { playerRightVec.x * l, playerRightVec.y * l, playerRightVec.z * l };
-            playerRightVec = { playerPos.x - playerRightVec.x, playerPos.y - playerRightVec.y , playerPos.z - playerRightVec.z };
-        }
+        bookPosition = plPos - (addPlPos * MODIFY_POS_X);
 
-        // いい感じになるように位置調整
-        playerRightVec.y += playerRightVecY + 0.5f;
+        // いい感じになるようにY位置調整
+        bookPosition.y += MODIFY_POS_Y + 0.5f;
 
         break;
     }
-
-    // 生成位置
-    float offset = 0.1f;
-
-    createPosition = playerRightVec;
-    createPosition.y = (prevPosition.y > playerRightVec.y - offset - 0.01f) ? prevPosition.y : playerRightVec.y;
 
     // ふわふわする処理
     {
         static float timer;
-        float moveY = isMoveToUp ? 0.3f : -0.3f;
+        //float moveY = isMoveToUp ? 0.3f : -0.3f;
+#if 1
+    // 回転更新
+        circularMotionRotationZ_ += circularMotionAddRotate_ * elapsedTime;
+        if (circularMotionRotationZ_ > 360.0f) { circularMotionRotationZ_ -= 360.0f; }
 
-        createPosition.y += moveY * elapsedTime;
+        // 上下に移動させる
+        DirectX::XMFLOAT3 circularMotionRotationPos = bookPosition;
+        circularMotionRotationPos.y = bookPosition.y + ::cosf(circularMotionRotationZ_) * circularMotionRadius_;
 
-        // 折り返し判定
-        if (isMoveToUp)
-        {   // 上限
-            if (createPosition.y >= playerRightVec.y + offset)
-            {
-                createPosition.y = playerRightVec.y + offset;
-                isMoveToUp = false;
-            }
-        }
-        else
-        {   // 下限
-            if (createPosition.y <= playerRightVec.y - offset)
-            {
-                createPosition.y = playerRightVec.y - offset;
-                isMoveToUp = true;
-            }
-        }
-    }
-
+        // 位置設定
+        GetTransform()->SetPosition(circularMotionRotationPos);
+#else
     // 位置設定
-    GetTransform()->SetPosition(createPosition);
+        GetTransform()->SetPosition(createPosition);
+#endif
 
-    // 回転値
-    DirectX::XMFLOAT4 bookRot = GetTransform()->GetRotation();
-    if (bookRot.x > DirectX::XMConvertToRadians(360.0f))bookRot.x -= DirectX::XMConvertToRadians(360.0f);
-    if (bookRot.x < DirectX::XMConvertToRadians(0.0f))bookRot.x += DirectX::XMConvertToRadians(360.0f);
-    if (bookRot.y > DirectX::XMConvertToRadians(360.0f))bookRot.y -= DirectX::XMConvertToRadians(360.0f);
-    if (bookRot.y < DirectX::XMConvertToRadians(0.0f))bookRot.y += DirectX::XMConvertToRadians(360.0f);
-    if (bookRot.z > DirectX::XMConvertToRadians(360.0f))bookRot.z -= DirectX::XMConvertToRadians(360.0f);
-    if (bookRot.z < DirectX::XMConvertToRadians(0.0f))bookRot.z += DirectX::XMConvertToRadians(360.0f);
-    GetTransform()->SetRotation(bookRot);
+        // 回転値
+        DirectX::XMFLOAT4 bookRot = GetTransform()->GetRotation();
+        static const float radian360 = ::ToRadian(360.0f);
+        if (bookRot.x > +radian360) bookRot.x += -radian360;
+        if (bookRot.x < -radian360) bookRot.x += +radian360;
+        if (bookRot.y > +radian360) bookRot.y += -radian360;
+        if (bookRot.y < -radian360) bookRot.y += +radian360;
+        if (bookRot.z > +radian360) bookRot.z += -radian360;
+        if (bookRot.z < -radian360) bookRot.z += +radian360;
+        GetTransform()->SetRotation(bookRot);
+    }
 }

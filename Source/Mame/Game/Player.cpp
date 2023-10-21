@@ -1039,6 +1039,7 @@ void Player::OnDead(DamageResult result)
     GetTransform()->SetRotationY(acosf(result.hitVector.z));
 
     PlayerManager::Instance().SetLifeTime(lifeTimer);
+    PlayerManager::Instance().SetLevel(level);
 }
 
 void Player::LevelUpdate()

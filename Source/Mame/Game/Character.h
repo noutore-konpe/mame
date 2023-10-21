@@ -129,8 +129,14 @@ public: // æ“¾Eİ’èŠÖ”
     const bool GetIsDead() const { return isDead; }
     void SetIsDead(const bool dead) { isDead = dead; }
 
-    std::vector<SphereCollider> GetHitCollider() { return hitCollider; }//‹ò‚ç‚¢”»’èæ“¾
-    std::vector<SphereCollider> GetAttackCollider() { return attackCollider; }//UŒ‚”»’èæ“¾
+    std::vector<SphereCollider> GetHitCollider() { return hitCollider; }        //‹ò‚ç‚¢”»’èæ“¾
+    std::vector<SphereCollider> GetAttackCollider() { return attackCollider; }  //UŒ‚”»’èæ“¾
+
+    [[nodiscard]] const size_t GetHitColliderCount() const { return hitCollider.size(); }
+    [[nodiscard]] const size_t GetAttackColliderCount() const { return attackCollider.size(); }
+
+    [[nodiscard]] const SphereCollider GetHitColliderAt(const size_t index) { return hitCollider.at(index); }
+    [[nodiscard]] const SphereCollider GetAttackColliderAt(const size_t index) { return attackCollider.at(index); }
 
 #pragma endregion
 
@@ -150,7 +156,7 @@ public: // ‚»‚Ì‘¼‚ÌŠÖ”
         DirectX::XMFLOAT3 hitVector;
     };
     //–ß‚è’l‚Í—^‚¦‚ç‚ê‚½ƒ_ƒ[ƒW”AŠî–{–³“GŠÔ‚Í‹¯‚İƒ‚[ƒVƒ‡ƒ“‚É‡‚í‚¹‚é‚©‚ç‚±‚±‚Í‚O‚Å‚¢‚¢
-    virtual DamageResult ApplyDamage(float damage,Character* attacker/*UŒ‚‚µ‚Ä‚«‚½“G*/, float invincibleTime = 0);
+    virtual DamageResult ApplyDamage(float damage,Character* attacker = nullptr/*UŒ‚‚µ‚Ä‚«‚½“G*/, float invincibleTime = 0);
 
     bool ApplyHeal(float heal);
 

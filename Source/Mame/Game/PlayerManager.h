@@ -32,6 +32,9 @@ public:
     const float GetLifeTime() const { return lifeTime; }
     void SetLifeTime(const float time) { lifeTime = time; }
 
+    const int GetLevel() const { return level; }
+    void SetLevel(const int lv) { level = lv; }
+
 public: // æ“¾Eİ’è ŠÖ˜A
     std::unique_ptr<Player>& GetPlayer() { return player; }
 
@@ -53,5 +56,6 @@ private:
     std::unique_ptr<PlayerSkill::BlackHoleSkill> blackHoleSkill;
 
     float lifeTime = 10;
+    int level = 0;
 };
 

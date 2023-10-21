@@ -14,6 +14,11 @@ namespace BookState
         void Initialize()                       override;
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
+
+    private:
+        // ¶‚«‚Ä‚¢‚é“G‚ğ’T‚·
+        [[nodiscard]] const bool SearchAliveEnemy();
+
     };
 
     class OpenState : public State<Book>
@@ -52,6 +57,10 @@ namespace BookState
         void Initialize()                       override;
         void Update(const float& elapsedTime)   override;
         void Finalize()                         override;
+
+    private:
+        // ˆê”Ô‹ß‚¢“G‚ğ’T‚·
+        [[nodiscard]] const bool SearchNearEnemy(Enemy** enemy);
 
     private:
         int launchNum = 0;

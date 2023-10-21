@@ -39,7 +39,7 @@ public:
         const DirectX::XMFLOAT2& size = { 30, 30 },
         const DirectX::XMFLOAT4& color = { 1,1,1,1 },
         const float angle = 0.0f,
-        const float rowOffset = 25.0f // НsК╘Т▓Ро
+        const float rowOffset = 40.0f // НsК╘Т▓Ро
     );
 
     const size_t GetNumeralCount() const { return numerals_.size(); }

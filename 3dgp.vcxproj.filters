@@ -286,9 +286,6 @@
     <ClCompile Include="Source\Mame\Game\Player.cpp">
       <Filter>mamelib\Mame\Game\Character\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Game\Stage.cpp">
-      <Filter>mamelib\Mame\Game</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Mame\Game\Item.cpp">
       <Filter>mamelib\Mame\Game\Item</Filter>
     </ClCompile>
@@ -521,7 +518,10 @@
     <ClCompile Include="Source\Mame\Game\SlowMotionManager.cpp">
       <Filter>mamelib\Mame\Game\SlowMotion</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Game\LightManager.cpp" />
+    <ClCompile Include="Source\Mame\Game\LightColorManager.cpp" />
+    <ClCompile Include="Source\Mame\Game\Stage.cpp">
+      <Filter>mamelib\Mame\Game\Stage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -639,9 +639,6 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\Player.h">
       <Filter>mamelib\Mame\Game\Character\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Mame\Game\Stage.h">
-      <Filter>mamelib\Mame\Game</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\Item.h">
       <Filter>mamelib\Mame\Game\Item</Filter>
@@ -908,7 +905,10 @@
     <ClInclude Include="Source\Mame\Game\SlowMotionManager.h">
       <Filter>mamelib\Mame\Game\SlowMotion</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\Game\LightManager.h" />
+    <ClInclude Include="Source\Mame\Game\LightColorManager.h" />
+    <ClInclude Include="Source\Mame\Game\Stage.h">
+      <Filter>mamelib\Mame\Game\Stage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">
@@ -1131,6 +1131,9 @@
     </Filter>
     <Filter Include="mamelib\Mame\Game\SlowMotion">
       <UniqueIdentifier>{7b9021ae-6ff0-4dc3-a406-72abd7bf8aa1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Stage">
+      <UniqueIdentifier>{8c785f1e-5d97-4f26-96dd-c68b8391fb22}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
