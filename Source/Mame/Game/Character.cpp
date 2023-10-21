@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "../../Taki174/NumeralManager.h"
 #include "../Graphics/Graphics.h"
 
 #ifdef _DEBUG
@@ -191,7 +192,7 @@ void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
 
     rotValue = cross < 0.0f ? -_rotSpeed : _rotSpeed;
 
-   
+
         transform->SetRotationY(rotation.y);
 }
 
@@ -209,6 +210,10 @@ Character::DamageResult Character::ApplyDamage(float damage, float invincibleTim
     //防御力の影響
     damage -= defence;
     result.damage = damage;
+
+    // ダメージ表示生成
+    NumeralManager& numeralManager = NumeralManager::Instance();
+    numeralManager.CreateDamageNumeral(this, (damage > 0 ? damage : 0), GetPosition());
 
     //ダメージが０の場合は健康状態を変更する必要がない
     if (damage <= 0)

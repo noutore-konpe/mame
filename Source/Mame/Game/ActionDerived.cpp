@@ -522,14 +522,14 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 			const XMFLOAT3 rightHandPos = owner_->GetHitColliderAt(rightHandColiderlIndex).position;
 
 			// 発射位置が高めなので低めの位置に調整する
-			const float modifyHeight = (-0.1f);
+			const float modifyHeight = (-0.2f);
 
 			// 発射位置が右にずれているので左に位置を調整する
 			const XMFLOAT3 upVecN	  = { 0,1,0 };
 			const XMFLOAT3 leftVecN   = ::XMFloat3Cross(vecN, upVecN);
 			const XMFLOAT3 modifyLeft = leftVecN * 0.15f;
 
-			// 右手の位置に少し調整をかけた発射位置
+			// 右手の位置を発射位置に設定して位置調整する
 			XMFLOAT3 launchPos = rightHandPos;
 			launchPos.y += modifyHeight;		// 高さ調整
 			launchPos	+= modifyLeft;			// 左に位置調整
