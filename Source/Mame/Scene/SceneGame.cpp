@@ -772,7 +772,9 @@ void SceneGame::DrawDebug()
         // ñ{ê∂ê¨
         if (ImGui::Button("createBook"))
         {
-            ItemManager::Instance().Register(new Book());
+            Book* book = new Book();
+            book->Initialize();
+            ItemManager::Instance().Register(book);
         }
 
         // åoå±ílê∂ê¨

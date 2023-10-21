@@ -53,7 +53,7 @@ public:
     bool LaunchProjectile(const float elapsedTime, const DirectX::XMFLOAT3& vec);
 
 public:// æ“¾Eİ’è ŠÖ˜A
-    void SetTransform(const float& elapsedTime);
+    void SetTransform();
 
     // ƒXƒe[ƒgƒ}ƒVƒ“
     StateMachine<State<Book>>* GetStateMachine() const { return stateMachine.get(); }
@@ -61,6 +61,8 @@ public:// æ“¾Eİ’è ŠÖ˜A
     // ’eŠÛ
     void SetLaunchTimer(float time) { launchTimer = time; }
     int GetMaxLaunchNum() { return maxLaunchNum; }
+
+    [[nodiscard]] const float GetSearchEnemyRange() const { return searchEnemyRange_; }
 
 private:
     // ----- §ì‚É•K—v‚Èî•ñ -----
@@ -81,7 +83,9 @@ private:
     DirectX::XMFLOAT3 prevPosition{};   // ‚PƒtƒŒ[ƒ€‘O‚ÌˆÊ’u
 
     //bool isMoveToUp = true;             // ã‚ÉˆÚ“®‚·‚é‚©
-    float             circularMotionRotationZ_  = 0.0f;               // ‰~‰^“®‰ñ“]’lZ(radian)
-    float             circularMotionRadius_     = 0.1f;               // ‰~‰^“®”¼Œa(ã‰º‚·‚é‹——£‚É‰e‹¿)
-    float             circularMotionAddRotate_  = ::ToRadian(180.0f); // ‰~‰^“®‰ñ“]’l‚É’Ç‰Á‚·‚é‰ñ“](ã‰º‘¬“x‚É‰e‹¿)
+    float circularMotionRotationZ_  = 0.0f;               // ‰~‰^“®‰ñ“]’lZ(ƒ‰ƒWƒAƒ“)
+    float circularMotionRadius_     = 0.05f;              // ‰~‰^“®”¼Œa(ã‰º‚·‚é”ÍˆÍ‚É‰e‹¿)
+    float circularMotionAddRotate_  = ::ToRadian(180.0f); // ‰~‰^“®‰ñ“]’l‚É’Ç‰Á‚·‚é‰ñ“](ã‰º‘¬“x‚É‰e‹¿)
+
+    float searchEnemyRange_ = 15.0f;    // “G‚ğõ“G‚Å‚«‚é”ÍˆÍ
 };

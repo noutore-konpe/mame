@@ -51,6 +51,9 @@ Book::~Book()
 void Book::Initialize()
 {
     GetTransform()->SetScaleFactor(3.0f);
+
+    // Transform設定
+    SetTransform();
 }
 
 // 終了化
@@ -68,17 +71,21 @@ void Book::Update(const float& elapsedTime)
 {
     GetTransform()->SetScaleFactor(3.0f);
 
+    // 円運動Z回転値更新(ふわふわ処理更新)
+    circularMotionRotationZ_ += circularMotionAddRotate_ * elapsedTime;
+    if (circularMotionRotationZ_ > 360.0f) { circularMotionRotationZ_ -= 360.0f; }
+
+    // Transform設定
+    SetTransform();
+
     // ステートマシン更新
     GetStateMachine()->Update(elapsedTime);
 
-    // Transform設定
-    SetTransform(elapsedTime);
+    // アニメーション更新
+    UpdateAnimation(elapsedTime);
 
     // 弾丸更新処理
     projectileManager.Update(elapsedTime);
-
-    // アニメーション更新
-    UpdateAnimation(elapsedTime);
 
     // 弾丸と敵との衝突処理
     CollisionProjectileVsEnemies();
@@ -200,7 +207,7 @@ void Book::Turn(
     using DirectX::XMFLOAT4;
 
     const float length = sqrtf(vx * vx + vz * vz);
-    if (length < 0.005f) return;
+    //if (length < 0.001f) return;
 
     vx /= length;
     vz /= length;
@@ -233,6 +240,7 @@ bool Book::LaunchProjectile(const float elapsedTime, const DirectX::XMFLOAT3& ve
 {
     using DirectX::XMFLOAT3;
 
+    launchTimer -= elapsedTime;
     if (launchTimer <= 0.0f)
     {
         const XMFLOAT3 bookPos   = GetTransform()->GetPosition();
@@ -248,13 +256,12 @@ bool Book::LaunchProjectile(const float elapsedTime, const DirectX::XMFLOAT3& ve
 
         return true; // 発射した
     }
-    launchTimer -= elapsedTime;
 
     return false; // 発射してない
 }
 
 
-void Book::SetTransform(const float& elapsedTime)
+void Book::SetTransform()
 {
     using DirectX::XMFLOAT3;
 
@@ -277,7 +284,7 @@ void Book::SetTransform(const float& elapsedTime)
     static const float MODIFY_POS_X = 0.5f; // X位置調整値
 
     // １フレーム前の位置を保存する
-    prevPosition = GetTransform()->GetPosition();
+    //prevPosition = GetTransform()->GetPosition();
 
     // この本の位置
     XMFLOAT3 bookPosition = {};
@@ -321,29 +328,26 @@ void Book::SetTransform(const float& elapsedTime)
 
     // ふわふわする処理
 #if 1
-    // 回転更新
-    circularMotionRotationZ_ += circularMotionAddRotate_ * elapsedTime;
-    if (circularMotionRotationZ_ > 360.0f) { circularMotionRotationZ_ -= 360.0f; }
-
     // 上下に移動させる
-    DirectX::XMFLOAT3 circularMotionRotationPos = bookPosition;
-    circularMotionRotationPos.y = bookPosition.y + ::cosf(circularMotionRotationZ_) * circularMotionRadius_;
+    DirectX::XMFLOAT3 floatingModifyPos = bookPosition;
+    floatingModifyPos.y = bookPosition.y + ::cosf(circularMotionRotationZ_) * circularMotionRadius_;
 
     // 位置設定
-    GetTransform()->SetPosition(circularMotionRotationPos);
+    GetTransform()->SetPosition(floatingModifyPos);
 #else
     // 位置設定
-    GetTransform()->SetPosition(createPosition);
+    GetTransform()->SetPosition(bookPosition);
 #endif
 
-    // 回転値
+     回転値
     DirectX::XMFLOAT4 bookRot = GetTransform()->GetRotation();
-    static const float radian360 = ::ToRadian(360.0f);
-    if (bookRot.x > +radian360) bookRot.x += -radian360;
-    if (bookRot.x < -radian360) bookRot.x += +radian360;
-    if (bookRot.y > +radian360) bookRot.y += -radian360;
-    if (bookRot.y < -radian360) bookRot.y += +radian360;
-    if (bookRot.z > +radian360) bookRot.z += -radian360;
-    if (bookRot.z < -radian360) bookRot.z += +radian360;
+    const float radian360 = ::ToRadian(360.0f);
+    if      (bookRot.x > +radian360) bookRot.x += -radian360;
+    else if (bookRot.x < -radian360) bookRot.x += +radian360;
+    if      (bookRot.y > +radian360) bookRot.y += -radian360;
+    else if (bookRot.y < -radian360) bookRot.y += +radian360;
+    if      (bookRot.z > +radian360) bookRot.z += -radian360;
+    else if (bookRot.z < -radian360) bookRot.z += +radian360;
     GetTransform()->SetRotation(bookRot);
+
 }
