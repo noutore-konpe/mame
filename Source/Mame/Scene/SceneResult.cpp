@@ -160,12 +160,12 @@ void SceneResult::Render(const float& elapsedTime)
     waveSprite->Render();
     lvSprite->Render();
 
-    RenderSkill();
-    RenderSkillX();
-    RenderSkillNum();
+    RenderSkill();      // スキルアイコン
+    RenderSkillX();     // スキルx
+    RenderSkillNum();   // スキルの獲得数
 
-    //RenderEnemyKillX();   // キル数のx
-    //RenderEnemyKillNum(); // キル数の数字
+    RenderEnemyKillX();   // キル数のx
+    RenderEnemyKillNum(); // キル数の数字
 
 
     // モデル描画
@@ -199,7 +199,8 @@ void SceneResult::DrawDebug()
     if (ImGui::Button("slide"))
     {
         isSlide = true;
-        numSprite->GetSpriteTransform()->SetColorA(0.0f);
+        KillX.alpha = 0.0f;
+        killNum.alpha = 0.0f;
     }
 
     backSprite->DrawDebug();
@@ -246,10 +247,8 @@ void SceneResult::UpdateEnemyKillNumAndx(const float& elapsedTime)
         float subMaxTime = 0.7f;
         if (KillX.easingTimer <= maxTime)
         {
-            float alpha = Easing::InSine(KillX.easingTimer, maxTime, 1.0f, 0.0f);
+            KillX.alpha = Easing::InSine(KillX.easingTimer, maxTime, 1.0f, 0.0f);
             KillX.addPosX = Easing::InSine(KillX.easingTimer, maxTime, 0.0f, -80.0f);
-
-            xSprite->GetSpriteTransform()->SetColorA(alpha);
 
             KillX.easingTimer += elapsedTime;
         }
@@ -263,10 +262,9 @@ void SceneResult::UpdateEnemyKillNumAndx(const float& elapsedTime)
         {
             if (killNum.easingTimer <= subMaxTime)
             {
-                float alpha = Easing::InQuint(killNum.easingTimer, subMaxTime, 1.0f, 0.0f);
+                killNum.alpha = Easing::InQuint(killNum.easingTimer, subMaxTime, 1.0f, 0.0f);
                 killNum.addPosX = Easing::InSine(killNum.easingTimer, subMaxTime, 0.0f, -80.0f);
 
-                numSprite->GetSpriteTransform()->SetColorA(alpha);
 
                 killNum.easingTimer += elapsedTime;
             }
@@ -308,6 +306,7 @@ void SceneResult::RenderSkill()
 void SceneResult::RenderSkillX()
 {
     xSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(32, 32));
+    xSprite->GetSpriteTransform()->SetColorA(skillX.alpha);
 
     int iconNum = 0;
     std::vector<BaseSkill*> skillArray = PlayerManager::Instance().GetSkillArray();
@@ -331,6 +330,7 @@ void SceneResult::RenderSkillNum()
 {
     numSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(30, 50));
     numSprite->GetSpriteTransform()->SetTexSize(DirectX::XMFLOAT2(60, 100));
+    numSprite->GetSpriteTransform()->SetColorA(skillNum.alpha);
 
     int iconNum = 0;
     std::vector<BaseSkill*> skillArray = PlayerManager::Instance().GetSkillArray();
@@ -341,13 +341,17 @@ void SceneResult::RenderSkillNum()
 #else
         if (skill->GetOverlapNum() <= 0) continue;
 #endif
-
-
+        numSprite->GetSpriteTransform()->SetPosY(skillNumPos[iconNum].y);
+        float posX = skillNumPos[iconNum].x;
+        RenderNum(skill->GetOverlapNum(), posX, posX + 20.0f, posX + 40.0f, posX + 60.0f);
+        
+        ++iconNum;
     }
 }
 
 void SceneResult::RenderEnemyKillX()
 {
+    xSprite->GetSpriteTransform()->SetColorA(KillX.alpha);
     xSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(32, 32));
     xSprite->GetSpriteTransform()->SetPosY(665);
     xSprite->GetSpriteTransform()->SetPosX(180 + KillX.addPosX);
@@ -370,6 +374,7 @@ void SceneResult::RenderEnemyKillNum()
     numSprite->GetSpriteTransform()->SetPosY(615);
     numSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(60, 100));
     numSprite->GetSpriteTransform()->SetTexSize(DirectX::XMFLOAT2(60, 100));
+    numSprite->GetSpriteTransform()->SetColorA(killNum.alpha);
 
     RenderNum(ene1, 210 + killNum.addPosX, 260 + killNum.addPosX, 310 + killNum.addPosX, 360 + killNum.addPosX);
     RenderNum(ene2, 490 + killNum.addPosX, 540 + killNum.addPosX, 590 + killNum.addPosX, 640 + killNum.addPosX);

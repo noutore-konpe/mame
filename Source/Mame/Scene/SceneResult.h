@@ -138,6 +138,7 @@ private:
     {
         float addPosX = 0.0f;
         float easingTimer = 0.0f;
+        float alpha = 1.0f;
     };
 
     SlideStruct skillX;
