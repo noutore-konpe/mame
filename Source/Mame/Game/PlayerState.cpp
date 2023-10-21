@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "PlayerManager.h"
 #include "SlowMotionManager.h"
+#include "LightColorManager.h"
 
 namespace PlayerState
 {
@@ -349,13 +350,27 @@ namespace PlayerState
                 //スローモーション
                 SlowMotionManager::Instance().ExecuteSlowMotion(0.1f,0.7f,0.05f,0.3f);
 
+                //画面演出
+                auto& lcManager = LightColorManager::Instance();
+                lcManager.GradualChangeColor(LightColorManager::ColorType::GROUND,DirectX::XMFLOAT3(0.2f,0.2f,1), 0.3f);
+                lcManager.GradualChangeColor(LightColorManager::ColorType::SKY,DirectX::XMFLOAT3(0.2f,0.2f,1), 0.3f);
+                lcManager.ChangeVignetteValue(0.1f, 0.3f);
+                Camera::Instance().ScreenVibrate(0.1f, 0.1f);
+                Input::Instance().GetGamePad().Vibration(0.2f,0.3f);
                 state++;
             }
 
             timer += elapsedTime;
             break;
         case 2:
-            
+            if (!owner->IsPlayAnimation())
+            {
+                auto& lcManager = LightColorManager::Instance();
+                lcManager.AllRestoreColor(5.0f);
+                lcManager.RestoreVignetteValue(5.0f);
+            }
+
+
             break;
         }
 
