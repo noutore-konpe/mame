@@ -1,6 +1,7 @@
 #include "PlayerState.h"
 #include "Player.h"
 #include "PlayerManager.h"
+#include "SlowMotionManager.h"
 
 namespace PlayerState
 {
@@ -33,6 +34,8 @@ namespace PlayerState
         {
             owner->ChangeState(Player::STATE::ATTACK_JAB);
         }
+        
+        owner->ActiveCounter();
     }
 
     void NormalState::Finalize()
@@ -73,6 +76,8 @@ namespace PlayerState
             //更新処理(次のコンボへの遷移もしている)
             {
                 AttackUpdate(dodgeCanselFrame1,comboCanselFrame1);
+
+                
             }
 
 
@@ -107,8 +112,8 @@ namespace PlayerState
 
                 owner->ResetSteppingTimer();
                 state = UPDATE_FRAME;
-                owner->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
-                owner->GetSword()->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
+                owner->PlayAnimation(Player::Animation::Jab_3, false, owner->GetAttackSpeed());
+                owner->GetSword()->PlayAnimation(Player::Animation::Jab_3, false, owner->GetAttackSpeed());
                 hit.clear();//ヒットした敵の初期化
                 initialize = true;
             }
@@ -191,15 +196,23 @@ namespace PlayerState
             {
                 owner->ChangeState(Player::STATE::AVOID);
             }
-
             else if (owner->InputJabAttack())//コンボ続行
             {
-                combo++;
-                initialize = false;
-
                 //コンボは３連撃以降ないので制限
-                if (combo > 2)combo = 2;
+                if (combo < 2)
+                {
+                    combo++;
+                    initialize = false;
+                }
             }
+
+            if (combo < 2)
+            {
+                //カウンター派生
+                owner->ActiveCounter();
+            }
+
+            
             break;
         }
 
@@ -300,6 +313,7 @@ namespace PlayerState
 
     void CounterState::Initialize()
     {
+        state = 0;
         owner->counterCompleted = false;
         owner->PlayAnimation(Player::Animation::Counter, false);
         owner->GetSword()->PlayAnimation(Player::Animation::Counter, false);
@@ -325,25 +339,33 @@ namespace PlayerState
                 owner->isCounter = false;
             }
 
-            //カウンター成功処理は
+            //カウンター成功処理
             if (owner->counterCompleted)
             {
+                owner->isInvincible = true;
                 owner->PlayAnimation(Player::Animation::CounterAttack,false);
                 owner->GetSword()->PlayAnimation(Player::Animation::CounterAttack, false);
+
+                //スローモーション
+                SlowMotionManager::Instance().ExecuteSlowMotion(0.1f,0.7f,0.05f,0.3f);
+
                 state++;
             }
 
             timer += elapsedTime;
             break;
         case 2:
-            if (!owner->IsPlayAnimation())
-            {
-                owner->ChangeState(Player::STATE::NORMAL);
-            }
+            
             break;
+        }
+
+        if (!owner->IsPlayAnimation())
+        {
+            owner->ChangeState(Player::STATE::NORMAL);
         }
     }
     void CounterState::Finalize()
     {
+        owner->isInvincible = false;
     }
 }

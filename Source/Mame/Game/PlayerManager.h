@@ -29,6 +29,9 @@ public:
 
     bool AttackCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies);
 
+    const float GetLifeTime() const { return lifeTime; }
+    void SetLifeTime(const float time) { lifeTime = time; }
+
 public: // æ“¾Eİ’è ŠÖ˜A
     std::unique_ptr<Player>& GetPlayer() { return player; }
 
@@ -47,5 +50,8 @@ private:
     std::unique_ptr<PlayerSkill::BookIncrease> bookIncreaseSkill;
     std::unique_ptr<PlayerSkill::MaxHitPointUp> maxHitPointUpSkill;
     std::unique_ptr<PlayerSkill::DefenseUp> defenseUpSkill;
+    std::unique_ptr<PlayerSkill::BlackHoleSkill> blackHoleSkill;
+
+    float lifeTime = 10;
 };
 

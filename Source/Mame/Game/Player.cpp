@@ -146,8 +146,10 @@ void Player::Initialize()
     {
         collider.radius *= 1.3f;
     }
+    
 
-    }
+    lifeTimer = 0;
+}
 
 // 終了化
 void Player::Finalize()
@@ -195,7 +197,7 @@ void Player::Update(const float elapsedTime)
     // アビリティマネージャー更新(仮)
     abilityManager_.Update(elapsedTime);
 
-   
+    lifeTimer += elapsedTime;
 
 }
 
@@ -221,6 +223,7 @@ Character::DamageResult Player::ApplyDamage(float damage, Character* attacker, f
         result.damage = damage;
         result.hit = true;
         counterCompleted = true;
+        return result;
     }
 
     //無敵時間か
@@ -753,7 +756,7 @@ void Player::SelectSkillUpdate(float elapsedTime)
             }
             buttonDown = true;
         }
-        else if (ax <= 0.05f && ax >= -0.05f)buttonDown = true;
+        else if (ax >= 0.05f || ax <= -0.05f)buttonDown = true;
         else
         {
             buttonDown = false;
@@ -825,6 +828,7 @@ BaseSkill* Player::Lottery()
         {
             //すでに引かれたスキルはスキップ
             if (skill->isSelect)continue;
+            if (skill->isOneSheet)continue;
 
             if (skill->rarity == rarity)
             {
@@ -1009,9 +1013,19 @@ void Player::Blow(DirectX::XMFLOAT3 blowVec)
     blowTimer = blowTime;
 }
 
+void Player::ActiveCounter()
+{
+    if (InputCounter())
+    {
+        ChangeState(static_cast<float>(STATE::COUNTER));
+    }
+}
+
 void Player::OnDamaged()
 {
     stateMachine->ChangeState(STAGGER_SOFT);
+
+    
 }
 
 void Player::OnDead(DamageResult result)
@@ -1023,6 +1037,8 @@ void Player::OnDead(DamageResult result)
     float length = sqrtf(result.hitVector.x * result.hitVector.x + result.hitVector.z * result.hitVector.z);
     result.hitVector.z /= length;
     GetTransform()->SetRotationY(acosf(result.hitVector.z));
+
+    PlayerManager::Instance().SetLifeTime(lifeTimer);
 }
 
 void Player::LevelUpdate()

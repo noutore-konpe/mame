@@ -1,5 +1,6 @@
 #include "AttackSkill.h"
 #include "Player.h"
+#include "BlackHole.h"
 
 namespace PlayerSkill
 {
@@ -43,5 +44,22 @@ namespace PlayerSkill
         if (overlap <= 0)return;
         float drainAmount = power * drainCoefficient;
         player->ApplyHeal(drainAmount);
+    }
+
+    void BlackHoleSkill::Overlaping()
+    {
+        overlap++;
+        if (overlap <= 1)return;
+    }
+    void BlackHoleSkill::CreateBlackHole()
+    {
+        BlackHole* blackHole = new BlackHole(player->GetAbilityManager());
+        blackHole->Initialize();
+        player->GetAbilityManager()->Register(blackHole);
+    }
+    void CanTripleAttack::Overlaping()
+    {
+        overlap++;
+        if (overlap <= 1)return;
     }
 }

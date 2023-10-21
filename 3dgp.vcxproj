@@ -236,6 +236,7 @@
     <ClCompile Include="Source\Mame\Game\Item.cpp" />
     <ClCompile Include="Source\Mame\Game\ItemManager.cpp" />
     <ClCompile Include="Source\Mame\Game\JudgmentDerived.cpp" />
+    <ClCompile Include="Source\Mame\Game\LightManager.cpp" />
     <ClCompile Include="Source\Mame\Game\LoadingPlayer.cpp" />
     <ClCompile Include="Source\Mame\Game\MagicCircle.cpp" />
     <ClCompile Include="Source\Mame\Game\MagicCircleEnemySummon.cpp" />
@@ -353,6 +354,7 @@
     <ClInclude Include="Source\Mame\Game\ItemManager.h" />
     <ClInclude Include="Source\Mame\Game\JudgmentBase.h" />
     <ClInclude Include="Source\Mame\Game\JudgmentDerived.h" />
+    <ClInclude Include="Source\Mame\Game\LightManager.h" />
     <ClInclude Include="Source\Mame\Game\LoadingPlayer.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircle.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircleEnemySummon.h" />

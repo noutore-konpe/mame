@@ -23,7 +23,7 @@ Book::Book()
 
         GetStateMachine()->RegisterState(new BookState::IdleState(this));
         GetStateMachine()->RegisterState(new BookState::OpenState(this));
-        GetStateMachine()->RegisterState(new BookState::JabAttackState(this));
+        GetStateMachine()->RegisterState(new BookState::AttackState(this));
         GetStateMachine()->RegisterState(new BookState::CloseState(this));
 
         GetStateMachine()->SetState(static_cast<UINT>(StateMachineState::Idle));
@@ -218,6 +218,7 @@ void Book::SetTransform(const float& elapsedTime)
 
     // ‚Ó‚í‚Ó‚í‚·‚éˆ—
     {
+        static float timer;
         float moveY = isMoveToUp ? 0.3f : -0.3f;
 
         createPosition.y += moveY * elapsedTime;

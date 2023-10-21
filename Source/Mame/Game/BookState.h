@@ -43,11 +43,11 @@ namespace BookState
         bool isOpen = false;
     };
 
-    class JabAttackState : public State<Book>
+    class AttackState : public State<Book>
     {
     public:
-        JabAttackState(Book* book) : State(book, "book") {}
-        ~JabAttackState() {}
+        AttackState(Book* book) : State(book, "book") {}
+        ~AttackState() {}
 
         void Initialize()                       override;
         void Update(const float& elapsedTime)   override;
@@ -70,5 +70,16 @@ namespace BookState
 
     private:
         bool isClose = false;
+    };
+
+    class CounterAttackState : public State<Book>
+    {
+    public:
+        CounterAttackState(Book* book) : State(book, "book") {}
+        ~CounterAttackState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
     };
 }
