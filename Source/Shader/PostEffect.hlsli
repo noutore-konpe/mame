@@ -5,10 +5,12 @@ cbuffer POST_EFFECT_CONSTANT : register(b13)
     float4 noiseColor;
     float noiseTimer;
     float scanLineTimer;
-    float shakeTimer;
     
     float bokehAperture;
     float bokehFocus;    
+    
+    float vignetteValue;
+    float3 dummydummy;
 };
 
 

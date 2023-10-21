@@ -40,9 +40,28 @@ public:
         void SetPos(const DirectX::XMFLOAT2 p) { pos = p; }
         void SetPosX(const float posX) { pos.x = posX; }
         void SetPosY(const float posY) { pos.y = posY; }
+        // 引数の位置を画像の中心として、画像の位置を設定する
+        void SetSpriteCenterPos(DirectX::XMFLOAT2 p)
+        {
+            p.x -= GetSizeX() / 2;
+            p.y -= GetSizeY() / 2;
+            pos = p;
+        }
+        // 第二引数の位置を中心位置として、画像の位置を設定する
+        void SetSpriteAtAnyCenterPos(DirectX::XMFLOAT2 p, DirectX::XMFLOAT2 center)
+        {
+            p.x -= center.x;
+            p.y -= center.y;
+            pos = p;
+        }
         void SetSize(const DirectX::XMFLOAT2 s) { size = s; }
         void SetSizeX(const float x) { size.x = x; }
         void SetSizeY(const float y) { size.y = y; }
+        void SetSizeXY(const float s)
+        {
+            size.x = s;
+            size.y = s;
+        }
         void SetColor(const DirectX::XMFLOAT4 c) { color = c; }
         void SetColorR(const float r) { color.x = r; }
         void SetColorG(const float g) { color.y = g; }
