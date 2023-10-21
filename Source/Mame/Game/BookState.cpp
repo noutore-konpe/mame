@@ -301,13 +301,6 @@ namespace BookState
             // Ž€‚ñ‚Å‚¢‚½‚çcontinue;
             if (true == otherEnemy->GetIsDead()) continue;
 
-            // ‚Ü‚¾‰½‚à“ü‚Á‚Ä‚¢‚È‚¯‚ê‚Î‚±‚Ì“G‚ð‘ã“ü‚·‚é
-            if (nullptr == (*enemy))
-            {
-                (*enemy) = otherEnemy;
-                continue;
-            }
-
             // ‘O‰ñ‚Ì–{‚Æ“G‚Æ‚Ì‹——£(“ñæ)‚æ‚è‹ß‚¯‚ê‚Î‚±‚Ì“G‚ð‘ã“ü‚·‚é
             const XMFLOAT3 bookPos  = owner->GetTransform()->GetPosition();
             const XMFLOAT3 otherPos = otherEnemy->GetPosition();
@@ -316,7 +309,8 @@ namespace BookState
             const float    lengthSq = ::XMFloat3LengthSq(vec);
             if (lengthSq < oldLengthSq)
             {
-                (*enemy) = otherEnemy;
+                (*enemy)    = otherEnemy;
+                oldLengthSq = lengthSq;
             }
 
         }
