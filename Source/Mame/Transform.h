@@ -48,6 +48,9 @@ public:
 
 	DirectX::XMFLOAT3 GetScale()const { return scale; }
 	DirectX::XMFLOAT4 GetRotation()const { return rotation; }
+	[[nodiscard]] const float GetRotationX() const { return rotation.x; }
+	[[nodiscard]] const float GetRotationY() const { return rotation.y; }
+	[[nodiscard]] const float GetRotationZ() const { return rotation.z; }
 
 	void SetPosition(const DirectX::XMFLOAT3& pos) { position = pos; }
 	void SetPositionX(const float& posX) { position.x = posX; }

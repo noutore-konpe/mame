@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../../Taki174/Common.h"
 #include "Item.h"
-
 #include "ProjectileManager.h"
 #include "StateMachine.h"
 
@@ -37,8 +37,20 @@ public:
     void Render(const float& scale, ID3D11PixelShader* psShader = nullptr) override; // •`‰æˆ—
     void DrawDebug()                        override; // ImGui—p
 
+    // ’eŠÛ‚Æ“G‚Æ‚ÌÕ“Ëˆ—
+    void CollisionProjectileVsEnemies();
+
 public:
-    bool LaunchProjectile(const float& elapsedTime); // ’e¶¬&”­Ë
+    // XZ‰ñ“]
+    void Turn(
+        const float elapsedTime,
+        const float vx,
+        const float vz,
+        const float turnSpeed /*Degree*/
+    );
+
+    // ’e¶¬&”­Ë
+    bool LaunchProjectile(const float elapsedTime, const DirectX::XMFLOAT3& vec);
 
 public:// æ“¾Eİ’è ŠÖ˜A
     void SetTransform(const float& elapsedTime);
@@ -67,5 +79,9 @@ private:
 
     DirectX::XMFLOAT3 createPosition{}; // ¶¬ˆÊ’u
     DirectX::XMFLOAT3 prevPosition{};   // ‚PƒtƒŒ[ƒ€‘O‚ÌˆÊ’u
-    bool isMoveToUp = true;             // ã‚ÉˆÚ“®‚·‚é‚©
+
+    //bool isMoveToUp = true;             // ã‚ÉˆÚ“®‚·‚é‚©
+    float             circularMotionRotationZ_  = 0.0f;               // ‰~‰^“®‰ñ“]’lZ(radian)
+    float             circularMotionRadius_     = 0.1f;               // ‰~‰^“®”¼Œa(ã‰º‚·‚é‹——£‚É‰e‹¿)
+    float             circularMotionAddRotate_  = ::ToRadian(180.0f); // ‰~‰^“®‰ñ“]’l‚É’Ç‰Á‚·‚é‰ñ“](ã‰º‘¬“x‚É‰e‹¿)
 };

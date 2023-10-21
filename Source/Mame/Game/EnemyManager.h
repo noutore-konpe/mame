@@ -30,6 +30,10 @@ public:
 
     void RenderShadow(const float scale, ID3D11PixelShader* psShader = nullptr);
 
+    // 弾丸とプレイヤーの衝突処理
+    void CollisionProjectileVsPlayer();
+
+    // 敵同士の衝突処理
     void CollisionEnemyVsEnemy(const float elapsedTime);
 
     // 敵とステージとの衝突処理

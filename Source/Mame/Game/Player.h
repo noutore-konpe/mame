@@ -54,7 +54,7 @@ public:
     void End();                                     // –ˆƒtƒŒ[ƒ€ˆê”ÔÅŒã‚ÉŒÄ‚Î‚ê‚é
 
 
-    DamageResult ApplyDamage(float damage, Character* attacker, float invincibleTime = 0)override;
+    DamageResult ApplyDamage(float damage, Character* attacker = nullptr, float invincibleTime = 0)override;
 
     void MoveUpdate(float elapsedTime, float ax, float ay);
     void UpdateVelocity(float elapsedTime, float ax, float ay);

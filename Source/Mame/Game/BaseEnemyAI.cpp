@@ -214,7 +214,7 @@ void BaseEnemyAI::Turn(
     if (::fabsf(angle) <= 0.01f) return;
 
     float rot = 1.0f - dot;
-    turnSpeed = ToRadian(turnSpeed) * elapsedTime;
+    turnSpeed = ::ToRadian(turnSpeed) * elapsedTime;
     if (rot > turnSpeed) rot = turnSpeed;
 
     //¶‰E”»’è‚Ì‚½‚ß‚ÌŠOÏ

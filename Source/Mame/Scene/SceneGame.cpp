@@ -32,6 +32,7 @@
 #include "../Game/UserInterface.h"
 #include "../Game/WaveManager.h"
 #include "../Game/SlowMotionManager.h"
+#include "../Game/LightColorManager.h"
 
 #include "../framework.h"
 
@@ -81,7 +82,7 @@ void SceneGame::CreateResource()
 
     // enemy
     {
-#if 0
+#if 1
         EnemyManager& enemyManager = EnemyManager::Instance();
 
         // EnemyGolem* enemyGolem = new EnemyGolem;
@@ -241,6 +242,9 @@ void SceneGame::Initialize()
     // カメラ
     Camera::Instance().Initialize();
 
+    //ライト、ビネット
+    LightColorManager::Instance().Initialize();
+
     // item
     ItemManager::Instance().Initialize();
 
@@ -345,6 +349,9 @@ void SceneGame::Update(const float& elapsedTime)
         ? elapsedTime * slowMotion.GetCurrentPercentage()
         : elapsedTime
     };
+
+    //ライト、ビネット更新
+    LightColorManager::Instance().Update(elapsedTime);
 
     GamePad& gamePad = Input::Instance().GetGamePad();
 
@@ -843,6 +850,8 @@ void SceneGame::DrawDebug()
         // SlowMotion DrawDebug
         SlowMotionManager::Instance().DrawDebug();
 
+
+        LightColorManager::Instance().DrawDebug();
 
         ImGui::End();
     }
