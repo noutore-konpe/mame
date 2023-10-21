@@ -14,6 +14,25 @@
 class SceneResult : public Mame::Scene::BaseScene
 {
 private:// íËêî
+    enum class STATE
+    {
+        Initialize,
+        LifeTime,
+        Wave,
+        Lv,
+        Icon,
+        Enemy,
+        EnemyKill,
+        Max,
+    };
+
+    float lifeTimePos[4] =
+    {
+        300,
+        350,
+        450,
+        500,
+    };
 
     static const int iconMax = 15;
 
@@ -90,7 +109,15 @@ public:
     void DrawDebug()    override;
 
 private:
+    void UpdateLifeTimeNum(const float& elapsedTime);
+    void UpdateWave(const float& elapsedTime);
+    void UpdateLv(const float& elapsedTime);
+    void UpdateIcon(const float& elapsedTime);
     void UpdateEnemyKillNumAndx(const float& elapsedTime);
+
+    void RenderLifeTime();
+    void RenderWave();
+    void RenderLv();
 
     void RenderSkill();
     void RenderSkillX();
@@ -115,8 +142,7 @@ private:
 
     std::unique_ptr<Sprite> backSprite = nullptr;
     std::unique_ptr<Sprite> emmaSprite = nullptr;
-
-    
+       
     
     std::unique_ptr<Sprite> lifeTimeSprite = nullptr;
     std::unique_ptr<Sprite> waveSprite = nullptr;
@@ -124,6 +150,8 @@ private:
 
     std::unique_ptr<Sprite> xSprite = nullptr;
     std::unique_ptr<Sprite> numSprite = nullptr;
+
+    std::unique_ptr<Sprite> chonchonSprite = nullptr;
 
     struct EnemyResult
     {
@@ -138,14 +166,23 @@ private:
     {
         float addPosX = 0.0f;
         float easingTimer = 0.0f;
-        float alpha = 1.0f;
+        float alpha = 0.0f;
     };
 
+    SlideStruct lifeTimer;      // lifeTimerÇÃï∂éö
+    SlideStruct lifeTimerNum;   // lifeTimerÇÃêîéö
+    SlideStruct wave;       // waveÇÃï∂éö
+    SlideStruct waveNum;    // waveÇÃêîéö
     SlideStruct skillX;
     SlideStruct skillNum;
     SlideStruct KillX;
     SlideStruct killNum;
+
     bool isSlide = false;
+    bool isLifeTimer = false;
+    bool isWave = false;
+    bool isLv = false;
+    bool isIconUpdateEnd = false;
 
     struct IconStruct
     {
@@ -154,7 +191,7 @@ private:
         bool isDisplay = false;     // ï\é¶Ç∑ÇÈÇ©
     }iconStruct[iconMax];
 
-
+    int resultState = 0;
 
 private:
     Microsoft::WRL::ComPtr<ID3D11PixelShader> finalPassPS;

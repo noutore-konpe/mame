@@ -11,6 +11,7 @@
 #include "../Game/EnemyManager.h"
 
 #include "../Game//PlayerManager.h"
+#include "../Game/WaveManager.h"
 
 // リソース生成
 void SceneResult::CreateResource()
@@ -37,6 +38,8 @@ void SceneResult::CreateResource()
     numSprite = std::make_unique<Sprite>(graphics.GetDevice(),
         L"./Resources/Image/UI/numbers.png");
 
+    chonchonSprite = std::make_unique<Sprite>(graphics.GetDevice(),
+        L"./Resources/Image/UI/chonchon.png");
 
     enemyGolem = std::make_unique<EnemyGolemResult>();
     player = std::make_unique<PlayerResult>();
@@ -96,6 +99,13 @@ void SceneResult::Initialize()
     PlayerManager::Instance().Initialize();
 #endif
 
+    isIconUpdateEnd = false;
+    isLifeTimer = false;
+    isWave = false;
+    isLv = false;
+    
+
+    resultState = static_cast<UINT>(STATE::Initialize);
 }
 
 void SceneResult::Finalize()
@@ -111,28 +121,46 @@ void SceneResult::Update(const float& elapsedTime)
     enemyGolem->Update(elapsedTime);
     player->Update(elapsedTime);
 
-    float maxTime = 0.5f;
-    float firstSize = 300.0f;
-    float finalSize = 100.0f;
-    for (int i = 0; i < iconMax; ++i)
+    switch (resultState)
     {
-        if (iconStruct[i].isDisplay)
+    case static_cast<UINT>(STATE::Initialize):
+        isLifeTimer = true;
+        resultState = static_cast<UINT>(STATE::LifeTime);
+        break;
+    case static_cast<UINT>(STATE::LifeTime):
+        UpdateLifeTimeNum(elapsedTime);
+        if (!isLifeTimer)
         {
-            if (iconStruct[i].easingTimer <= maxTime)
-            {
-                iconStruct[i].scale = Easing::InSine(iconStruct[i].easingTimer, maxTime, finalSize, firstSize);
-
-                iconStruct[i].easingTimer += elapsedTime;
-            }
-            else
-            {
-                int next = i + 1;
-                if (next != iconMax)
-                {
-                    iconStruct[next].isDisplay = true;
-                }
-            }
+            isWave = true;
+            resultState = static_cast<UINT>(STATE::Wave);
         }
+        break;
+    case static_cast<UINT>(STATE::Wave):
+        UpdateWave(elapsedTime);
+        if (!isWave)
+        {
+            isLv = true;
+            resultState = static_cast<UINT>(STATE::Lv);
+        }
+        break;
+    case static_cast<UINT>(STATE::Lv):
+        UpdateLv(elapsedTime);
+        if (!isLv)
+        {
+            resultState = static_cast<UINT>(STATE::Icon);
+        }
+        break;
+    case static_cast<UINT>(STATE::Icon):
+        UpdateIcon(elapsedTime);
+        if (isIconUpdateEnd)
+        {
+            resultState = static_cast<UINT>(STATE::Enemy);
+        }
+        break;
+    case static_cast<UINT>(STATE::Enemy):
+        break;
+    case static_cast<UINT>(STATE::EnemyKill):
+        break;
     }
 
     // 敵のキル数とx
@@ -156,14 +184,20 @@ void SceneResult::Render(const float& elapsedTime)
     backSprite->Render(); // 背景
     //emmaSprite->Render();
 
-    lifeTimeSprite->Render();
-    waveSprite->Render();
+    
+    
     lvSprite->Render();
+
+    numSprite->Render();
+
+    RenderLifeTime(); // lifetime
+    RenderWave();
+    RenderLv();
 
     RenderSkill();      // スキルアイコン
     RenderSkillX();     // スキルx
     RenderSkillNum();   // スキルの獲得数
-
+    
     RenderEnemyKillX();   // キル数のx
     RenderEnemyKillNum(); // キル数の数字
 
@@ -185,6 +219,8 @@ void SceneResult::DrawDebug()
         iconStruct[0].isDisplay = true;
     }
 
+    chonchonSprite->DrawDebug();
+
     xSprite->DrawDebug();
     numSprite->DrawDebug();
 
@@ -201,6 +237,13 @@ void SceneResult::DrawDebug()
         isSlide = true;
         KillX.alpha = 0.0f;
         killNum.alpha = 0.0f;
+    }
+
+    if (ImGui::Button("isLifeTimer"))
+    {
+        isLifeTimer = true;
+        lifeTimer.alpha = 0.0f;
+        lifeTimerNum.alpha = 0.0f;
     }
 
     backSprite->DrawDebug();
@@ -239,6 +282,125 @@ void SceneResult::DrawDebug()
     }
 }
 
+void SceneResult::UpdateLifeTimeNum(const float& elapsedTime)
+{
+    if (isLifeTimer)
+    {
+        float maxTime = 1.0f;
+        float subMaxTime = 0.7f;
+        if (lifeTimer.easingTimer <= maxTime)
+        {
+            lifeTimer.alpha = Easing::InSine(lifeTimer.easingTimer, maxTime, 1.0f, 0.0f);
+            lifeTimer.addPosX = Easing::InSine(lifeTimer.easingTimer, maxTime, 0.0f, -80.0f);
+
+            lifeTimer.easingTimer += elapsedTime;
+        }
+        else
+        {
+            lifeTimer.alpha = 1.0f;
+            lifeTimer.addPosX = 0.0f;
+        }
+
+        if (lifeTimer.easingTimer >= maxTime / 2)
+        {
+            if (lifeTimerNum.easingTimer <= subMaxTime)
+            {
+                lifeTimerNum.alpha = Easing::InQuint(lifeTimerNum.easingTimer, subMaxTime, 1.0f, 0.0f);
+                lifeTimerNum.addPosX = Easing::InSine(lifeTimerNum.easingTimer, subMaxTime, 0.0f, -80.0f);
+
+
+                lifeTimerNum.easingTimer += elapsedTime;
+            }
+            else
+            {
+                lifeTimerNum.alpha = 1.0f;
+                lifeTimerNum.addPosX = 0.0f;
+                lifeTimerNum.easingTimer = 0.0f;
+
+                lifeTimer.easingTimer = 0.0f;
+                isLifeTimer = false;
+            }
+        }
+    }
+}
+
+void SceneResult::UpdateWave(const float& elapsedTime)
+{
+    if (isWave)
+    {
+        float maxTime = 1.0f;
+        float subMaxTime = 0.7f;
+        if (wave.easingTimer <= maxTime)
+        {
+            wave.alpha = Easing::InSine(wave.easingTimer, maxTime, 1.0f, 0.0f);
+            wave.addPosX = Easing::InSine(wave.easingTimer, maxTime, 0.0f, -80.0f);
+
+            wave.easingTimer += elapsedTime;
+        }
+        else
+        {
+            wave.alpha = 1.0f;
+            wave.addPosX = 0.0f;
+        }
+
+        if (wave.easingTimer >= maxTime / 2)
+        {
+            if (waveNum.easingTimer <= subMaxTime)
+            {
+                waveNum.alpha = Easing::InQuint(waveNum.easingTimer, subMaxTime, 1.0f, 0.0f);
+                waveNum.addPosX = Easing::InSine(waveNum.easingTimer, subMaxTime, 0.0f, -80.0f);
+
+
+                waveNum.easingTimer += elapsedTime;
+            }
+            else
+            {
+                waveNum.alpha = 1.0f;
+                waveNum.addPosX = 0.0f;
+                waveNum.easingTimer = 0.0f;
+
+                wave.easingTimer = 0.0f;
+                isWave = false;
+            }
+        }
+    }
+}
+
+void SceneResult::UpdateLv(const float& elapsedTime)
+{
+}
+
+void SceneResult::UpdateIcon(const float& elapsedTime)
+{
+    float maxTime = 0.5f;
+    float firstSize = 300.0f;
+    float finalSize = 100.0f;
+    for (int i = 0; i < iconMax; ++i)
+    {
+        if (iconStruct[i].isDisplay)
+        {
+            if (iconStruct[i].easingTimer <= maxTime)
+            {
+                iconStruct[i].scale = Easing::InSine(iconStruct[i].easingTimer, maxTime, finalSize, firstSize);
+
+                iconStruct[i].easingTimer += elapsedTime;
+            }
+            else
+            {
+                int next = i + 1;
+                if (next != iconMax)
+                {
+                    iconStruct[next].isDisplay = true;
+                }
+                else
+                {
+                    isIconUpdateEnd = true;
+                }
+            }
+        }
+    }
+}
+
 void SceneResult::UpdateEnemyKillNumAndx(const float& elapsedTime)
 {
     if (isSlide)
@@ -254,8 +416,8 @@ void SceneResult::UpdateEnemyKillNumAndx(const float& elapsedTime)
         }
         else
         {
+            KillX.alpha = 1.0f;
             KillX.addPosX = 0.0f;
-            xSprite->GetSpriteTransform()->SetColorA(1.0f);
         }
 
         if (KillX.easingTimer >= maxTime / 2)
@@ -270,15 +432,89 @@ void SceneResult::UpdateEnemyKillNumAndx(const float& elapsedTime)
             }
             else
             {
+                killNum.alpha = 1.0f;
                 killNum.addPosX = 0.0f;
                 killNum.easingTimer = 0.0f;
-                numSprite->GetSpriteTransform()->SetColorA(1.0f);
 
                 KillX.easingTimer = 0.0f;
                 isSlide = false;
             }
         }
     }
+}
+
+void SceneResult::RenderLifeTime()
+{
+    lifeTimeSprite->GetSpriteTransform()->SetPosX(10 + lifeTimer.addPosX);
+    lifeTimeSprite->GetSpriteTransform()->SetPosY(180);
+    lifeTimeSprite->GetSpriteTransform()->SetColorA(lifeTimer.alpha);
+    lifeTimeSprite->Render();
+
+    int lifetime = PlayerManager::Instance().GetLifeTime();
+    int minutes = lifetime / 60; // 分
+    int seconds = lifetime % 60; // 秒
+
+    numSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(60, 100));
+    numSprite->GetSpriteTransform()->SetTexSize(DirectX::XMFLOAT2(60, 100));
+
+    numSprite->GetSpriteTransform()->SetColorA(lifeTimerNum.alpha);
+
+    int texSizeX = 60;
+    int first  = minutes / 10 % 10 * texSizeX;  // 1桁目
+    int second = minutes % 10 * texSizeX;       // 2桁目
+    
+    numSprite->GetSpriteTransform()->SetPosY(160.0f);
+
+    numSprite->GetSpriteTransform()->SetPosX(lifeTimePos[0] + lifeTimerNum.addPosX);
+    numSprite->GetSpriteTransform()->SetTexPosX(first);
+    numSprite->Render();
+    numSprite->GetSpriteTransform()->SetPosX(lifeTimePos[1] + lifeTimerNum.addPosX);
+    numSprite->GetSpriteTransform()->SetTexPosX(second);
+    numSprite->Render();
+
+    first  = seconds / 10 % 10 * texSizeX;  // 1桁目
+    second = seconds % 10 * texSizeX;       // 2桁目
+
+    numSprite->GetSpriteTransform()->SetPosX(lifeTimePos[2] + lifeTimerNum.addPosX);
+    numSprite->GetSpriteTransform()->SetTexPosX(first);
+    numSprite->Render();
+    numSprite->GetSpriteTransform()->SetPosX(lifeTimePos[3] + lifeTimerNum.addPosX);
+    numSprite->GetSpriteTransform()->SetTexPosX(second);
+    numSprite->Render();
+
+    chonchonSprite->GetSpriteTransform()->SetPosX(410 + lifeTimerNum.addPosX);
+    chonchonSprite->GetSpriteTransform()->SetPosY(190);
+    chonchonSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(42, 42));
+    chonchonSprite->GetSpriteTransform()->SetColorA(lifeTimerNum.alpha);
+    chonchonSprite->Render();
+}
+
+void SceneResult::RenderWave()
+{
+    waveSprite->GetSpriteTransform()->SetPosX(70 + wave.addPosX);
+    waveSprite->GetSpriteTransform()->SetPosY(300);
+    waveSprite->GetSpriteTransform()->SetColorA(wave.alpha);
+    waveSprite->Render();
+    
+    int waveIndex = WaveManager::Instance().GetCurrentWaveIndex();
+    
+    numSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(60, 100));
+    numSprite->GetSpriteTransform()->SetTexSize(DirectX::XMFLOAT2(60, 100));
+    numSprite->GetSpriteTransform()->SetColorA(waveNum.alpha);
+
+    numSprite->GetSpriteTransform()->SetPosY(280);
+    RenderNum(waveIndex, 300 + waveNum.addPosX, 350 + waveNum.addPosX, 400 + waveNum.addPosX, 450 + waveNum.addPosX);
+}
+
+void SceneResult::RenderLv()
+{
+    //int lvIndex = PlayerManager::Instance().GetPlayer()->GetLevel();
+
+    numSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(60, 100));
+    numSprite->GetSpriteTransform()->SetTexSize(DirectX::XMFLOAT2(60, 100));
+
+    numSprite->GetSpriteTransform()->SetPosY(400);
+    numSprite->GetSpriteTransform()->SetPosX(300);
 }
 
 void SceneResult::RenderSkill()
