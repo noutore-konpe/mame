@@ -14,7 +14,7 @@ PlayerResult::PlayerResult()
         "./Resources/Model/Character/Sword_Motion.fbx");
 
     CreatePsFromCso(graphics.GetDevice(),
-        "./Resources/Shader/LoadingPS.cso",
+        "./Resources/Shader/ResultPS.cso",
         loadPS.GetAddressOf());
 }
 

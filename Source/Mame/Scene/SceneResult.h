@@ -21,6 +21,7 @@ private:// ’è”
         Wave,
         Lv,
         Icon,
+        IconNum,
         Enemy,
         EnemyKill,
         Max,
@@ -113,6 +114,8 @@ private:
     void UpdateWave(const float& elapsedTime);
     void UpdateLv(const float& elapsedTime);
     void UpdateIcon(const float& elapsedTime);
+    void UpdateIconNum(const float& elapsedTime);
+    void UpdateEnemy(const float& elapsedTime);
     void UpdateEnemyKillNumAndx(const float& elapsedTime);
 
     void RenderLifeTime();
@@ -159,7 +162,7 @@ private:
         DirectX::XMFLOAT3 scale = {};
         DirectX::XMFLOAT3 rotate = {};
         DirectX::XMFLOAT4 color = {};
-    }enemyResult[3];
+    }enemyResult[3], golemResult;
 
 
     struct SlideStruct
@@ -173,16 +176,21 @@ private:
     SlideStruct lifeTimerNum;   // lifeTimer‚Ì”š
     SlideStruct wave;       // wave‚Ì•¶š
     SlideStruct waveNum;    // wave‚Ì”š
+    SlideStruct lv;         // lv‚Ì•¶š
+    SlideStruct lvNum;      // lv‚Ì”š
     SlideStruct skillX;
     SlideStruct skillNum;
     SlideStruct KillX;
     SlideStruct killNum;
+    SlideStruct enemy;
 
     bool isSlide = false;
     bool isLifeTimer = false;
     bool isWave = false;
     bool isLv = false;
     bool isIconUpdateEnd = false;
+    bool isIconNum = false;
+    bool isEnemy = false;
 
     struct IconStruct
     {
@@ -198,7 +206,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11Buffer> resultConstantBuffer;
     struct ResultConstants
     {
-        DirectX::XMFLOAT4 color{ 0.3f, 0.3f, 0.3f ,1.0f };
+        DirectX::XMFLOAT4 color{ 0.3f, 0.3f, 0.3f ,0.0f };
     }resultConstants;
 };
 

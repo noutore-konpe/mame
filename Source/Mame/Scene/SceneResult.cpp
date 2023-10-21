@@ -65,7 +65,11 @@ void SceneResult::Initialize()
     backSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(1280, 720));
     backSprite->GetSpriteTransform()->SetTexPos(DirectX::XMFLOAT2(40, 320));
     backSprite->GetSpriteTransform()->SetTexSize(DirectX::XMFLOAT2(470, 340));
-    backSprite->GetSpriteTransform()->SetColor(DirectX::XMFLOAT4(0.42f, 0.42f, 0.42f, 1.0f));
+    //backSprite->GetSpriteTransform()->SetColor(DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
+    backSprite->GetSpriteTransform()->SetColor(DirectX::XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f));
+    //backSprite->GetSpriteTransform()->SetColor(DirectX::XMFLOAT4(0.42f, 0.42f, 0.42f, 1.0f));
+
+    emmaSprite->GetSpriteTransform()->SetColor(DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 
     lifeTimeSprite->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(10, 180));
     lifeTimeSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(256, 64));
@@ -77,15 +81,16 @@ void SceneResult::Initialize()
     enemyGolem->Initialize();
     player->Initialize();
 
+    golemResult.color = { 0.7f, 0.7f, 0.7f , 0.0f };
     enemyResult[0].position = {  1.5f, -1.5f, 0.0f };
     enemyResult[1].position = { -0.6f, -1.5f, 0.0f };
     enemyResult[2].position = { -2.7f, -1.5f, 0.0f };
     enemyResult[0].scale = { 0.4f, 0.4f, 0.4f };
     enemyResult[1].scale = { 0.6f, 0.6f, 0.6f };
     enemyResult[2].scale = { 0.4f, 0.4f, 0.4f };
-    enemyResult[0].color = { 0.11f, 0.56f, 1.00f, 1.0f };
-    enemyResult[1].color = { 0.0f, 0.0f, 1.0f, 1.0f };
-    enemyResult[2].color = { 0.00f, 0.80f, 0.81f, 1.0f };
+    enemyResult[0].color = { 0.11f, 0.56f, 1.00f, 0.0f };
+    enemyResult[1].color = { 0.0f, 0.0f, 1.0f, 0.0f };
+    enemyResult[2].color = { 0.00f, 0.80f, 0.81f, 0.0f };
 
     // 変数初期化
     for (int i = 0; i < iconMax; ++i)
@@ -95,14 +100,17 @@ void SceneResult::Initialize()
         iconStruct[i].isDisplay = false;
     }
 
-#ifdef _DEBUG
     PlayerManager::Instance().Initialize();
+#ifdef _DEBUG
 #endif
 
     isIconUpdateEnd = false;
     isLifeTimer = false;
     isWave = false;
     isLv = false;
+    isIconUpdateEnd = false;
+    isIconNum = false;
+    isEnemy = false;
     
 
     resultState = static_cast<UINT>(STATE::Initialize);
@@ -147,6 +155,7 @@ void SceneResult::Update(const float& elapsedTime)
         UpdateLv(elapsedTime);
         if (!isLv)
         {
+            iconStruct[0].isDisplay = true;
             resultState = static_cast<UINT>(STATE::Icon);
         }
         break;
@@ -154,17 +163,30 @@ void SceneResult::Update(const float& elapsedTime)
         UpdateIcon(elapsedTime);
         if (isIconUpdateEnd)
         {
+            isIconNum = true;
+            resultState = static_cast<UINT>(STATE::IconNum);
+        }
+        break;
+    case static_cast<UINT>(STATE::IconNum):
+        UpdateIconNum(elapsedTime);
+        if (!isIconNum)
+        {
+            isEnemy = true;
             resultState = static_cast<UINT>(STATE::Enemy);
         }
         break;
     case static_cast<UINT>(STATE::Enemy):
+        UpdateEnemy(elapsedTime);
+        if (!isEnemy)
+        {
+            isSlide = true;
+            resultState = static_cast<UINT>(STATE::EnemyKill);
+        }
         break;
     case static_cast<UINT>(STATE::EnemyKill):
+        UpdateEnemyKillNumAndx(elapsedTime);    
         break;
     }
-
-    // 敵のキル数とx
-    UpdateEnemyKillNumAndx(elapsedTime);    
 }
 
 void SceneResult::End()
@@ -182,14 +204,10 @@ void SceneResult::Render(const float& elapsedTime)
     shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
     shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
     backSprite->Render(); // 背景
-    //emmaSprite->Render();
+    emmaSprite->Render();
 
     
     
-    lvSprite->Render();
-
-    numSprite->Render();
-
     RenderLifeTime(); // lifetime
     RenderWave();
     RenderLv();
@@ -219,67 +237,9 @@ void SceneResult::DrawDebug()
         iconStruct[0].isDisplay = true;
     }
 
-    chonchonSprite->DrawDebug();
-
-    xSprite->DrawDebug();
-    numSprite->DrawDebug();
-
     emmaSprite->DrawDebug();
-    lifeTimeSprite->DrawDebug();
-    waveSprite->DrawDebug();
-    lvSprite->DrawDebug();
     
-
-    ImGui::DragFloat("killXAddPosX", &KillX.addPosX);
-    ImGui::DragFloat("killNumAddPosX", &killNum.addPosX);
-    if (ImGui::Button("slide"))
-    {
-        isSlide = true;
-        KillX.alpha = 0.0f;
-        killNum.alpha = 0.0f;
-    }
-
-    if (ImGui::Button("isLifeTimer"))
-    {
-        isLifeTimer = true;
-        lifeTimer.alpha = 0.0f;
-        lifeTimerNum.alpha = 0.0f;
-    }
-
     backSprite->DrawDebug();
-
-    ImGui::ColorEdit4("golemColor", &resultConstants.color.x);
-
-    ImGui::Begin("golem");
-    enemyGolem->DrawDebug();
-    ImGui::End();
-
-    ImGui::Begin("player");
-    player->DrawDebug();
-    ImGui::End();
-
-    if (ImGui::BeginMenu("zako"))
-    {
-        ImGui::Begin("enemy0");
-        ImGui::DragFloat3("position", &enemyResult[0].position.x);
-        ImGui::DragFloat3("scale", &enemyResult[0].scale.x);
-        ImGui::ColorEdit4("color", &enemyResult[0].color.x);
-        ImGui::End();
-
-        ImGui::Begin("enemy1");
-        ImGui::DragFloat3("position", &enemyResult[1].position.x);
-        ImGui::DragFloat3("scale", &enemyResult[1].scale.x);
-        ImGui::ColorEdit4("color", &enemyResult[1].color.x);
-        ImGui::End();
-
-        ImGui::Begin("enemy2");
-        ImGui::DragFloat3("position", &enemyResult[2].position.x);
-        ImGui::DragFloat3("scale", &enemyResult[2].scale.x);
-        ImGui::ColorEdit4("color", &enemyResult[2].color.x);
-        ImGui::End();
-
-        ImGui::EndMenu();
-    }
 }
 
 void SceneResult::UpdateLifeTimeNum(const float& elapsedTime)
@@ -368,10 +328,60 @@ void SceneResult::UpdateWave(const float& elapsedTime)
 
 void SceneResult::UpdateLv(const float& elapsedTime)
 {
+    if (isLv)
+    {
+        float maxTime = 1.0f;
+        float subMaxTime = 0.7f;
+        if (lv.easingTimer <= maxTime)
+        {
+            lv.alpha = Easing::InSine(lv.easingTimer, maxTime, 1.0f, 0.0f);
+            lv.addPosX = Easing::InSine(lv.easingTimer, maxTime, 0.0f, -80.0f);
+
+            lv.easingTimer += elapsedTime;
+        }
+        else
+        {
+            lv.alpha = 1.0f;
+            lv.addPosX = 0.0f;
+        }
+
+        if (lv.easingTimer >= maxTime / 2)
+        {
+            if (lvNum.easingTimer <= subMaxTime)
+            {
+                lvNum.alpha = Easing::InQuint(lvNum.easingTimer, subMaxTime, 1.0f, 0.0f);
+                lvNum.addPosX = Easing::InSine(lvNum.easingTimer, subMaxTime, 0.0f, -80.0f);
+
+
+                lvNum.easingTimer += elapsedTime;
+            }
+            else
+            {
+                lvNum.alpha = 1.0f;
+                lvNum.addPosX = 0.0f;
+                lvNum.easingTimer = 0.0f;
+
+                lv.easingTimer = 0.0f;
+                isLv = false;
+            }
+        }
+    }
 }
 
 void SceneResult::UpdateIcon(const float& elapsedTime)
 {
+    int iconNum = 0;
+    std::vector<BaseSkill*> skillArray = PlayerManager::Instance().GetSkillArray();
+    for (auto& skill : skillArray)
+    {
+        ++iconNum;
+    }
+
+    if (iconStruct[iconNum + 1].isDisplay)
+    {
+        isIconUpdateEnd = true;
+    }
+
     float maxTime = 0.5f;
     float firstSize = 300.0f;
     float finalSize = 100.0f;
@@ -392,11 +402,79 @@ void SceneResult::UpdateIcon(const float& elapsedTime)
                 {
                     iconStruct[next].isDisplay = true;
                 }
-                else
-                {
-                    isIconUpdateEnd = true;
-                }
             }
+        }
+    }
+}
+
+void SceneResult::UpdateIconNum(const float& elapsedTime)
+{
+    if (isIconNum)
+    {
+        float maxTime = 1.0f;
+        float subMaxTime = 0.7f;
+        if (skillX.easingTimer <= maxTime)
+        {
+            skillX.alpha = Easing::InSine(skillX.easingTimer, maxTime, 1.0f, 0.0f);
+            skillX.addPosX = Easing::InSine(skillX.easingTimer, maxTime, 0.0f, -60.0f);
+
+            skillX.easingTimer += elapsedTime;
+        }
+        else
+        {
+            skillX.alpha = 1.0f;
+            skillX.addPosX = 0.0f;
+        }
+
+        if (skillX.easingTimer >= maxTime / 2)
+        {
+            if (skillNum.easingTimer <= subMaxTime)
+            {
+                skillNum.alpha = Easing::InQuint(skillNum.easingTimer, subMaxTime, 1.0f, 0.0f);
+                skillNum.addPosX = Easing::InSine(skillNum.easingTimer, subMaxTime, 0.0f, -60.0f);
+
+
+                skillNum.easingTimer += elapsedTime;
+            }
+            else
+            {
+                skillNum.alpha = 1.0f;
+                skillNum.addPosX = 0.0f;
+                skillNum.easingTimer = 0.0f;
+
+                skillX.easingTimer = 0.0f;
+                isIconNum = false;
+            }
+        }
+    }
+}
+
+void SceneResult::UpdateEnemy(const float& elapsedTime)
+{
+    if (isEnemy)
+    {
+        float maxTime = 1.0f;
+        if (enemy.easingTimer <= maxTime)
+        {
+            float alpha = Easing::InSine(enemy.easingTimer, maxTime, 1.0f, 0.0f);
+
+            golemResult.color.w = alpha;
+            for (int i = 0; i < 3; ++i)
+            {
+                enemyResult[i].color.w = alpha;
+            }
+
+            enemy.easingTimer += elapsedTime;
+        }
+        else
+        {
+            golemResult.color.w = 1.0f;
+            for (int i = 0; i < 3; ++i)
+            {
+                enemyResult[i].color.w = 1.0f;
+            }
+
+            isEnemy = false;
         }
     }
 }
@@ -508,13 +586,19 @@ void SceneResult::RenderWave()
 
 void SceneResult::RenderLv()
 {
-    //int lvIndex = PlayerManager::Instance().GetPlayer()->GetLevel();
+    lvSprite->GetSpriteTransform()->SetPosX(65 + lv.addPosX);
+    lvSprite->GetSpriteTransform()->SetPosY(420);
+    lvSprite->GetSpriteTransform()->SetColorA(lv.alpha);
+    lvSprite->Render();
+
+    int lvIndex = PlayerManager::Instance().GetLevel();
 
     numSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(60, 100));
     numSprite->GetSpriteTransform()->SetTexSize(DirectX::XMFLOAT2(60, 100));
+    numSprite->GetSpriteTransform()->SetColorA(lvNum.alpha);
 
     numSprite->GetSpriteTransform()->SetPosY(400);
-    numSprite->GetSpriteTransform()->SetPosX(300);
+    RenderNum(lvIndex, 300 + lvNum.addPosX, 350 + lvNum.addPosX, 400 + lvNum.addPosX, 450 + lvNum.addPosX);
 }
 
 void SceneResult::RenderSkill()
@@ -526,7 +610,7 @@ void SceneResult::RenderSkill()
         // スキルを取ってなければ戻る
 #ifdef _DEBUG
 #else
-        if (skill->GetOverlapNum() <= 0) continue;
+        //if (skill->GetOverlapNum() <= 0) continue;
 #endif
 
         skill->icon->GetSpriteTransform()->SetSpriteCenterPos(iconPos[iconNum]);
@@ -551,7 +635,7 @@ void SceneResult::RenderSkillX()
         // スキルを取ってなければ戻る
 #ifdef _DEBUG
 #else
-        if (skill->GetOverlapNum() <= 0) continue;
+        //if (skill->GetOverlapNum() <= 0) continue;
 #endif
 
         xSprite->GetSpriteTransform()->SetPosX(skillXPos[iconNum].x + skillX.addPosX);
@@ -575,7 +659,7 @@ void SceneResult::RenderSkillNum()
         // スキルを取ってなければ戻る
 #ifdef _DEBUG
 #else
-        if (skill->GetOverlapNum() <= 0) continue;
+        //if (skill->GetOverlapNum() <= 0) continue;
 #endif
         numSprite->GetSpriteTransform()->SetPosY(skillNumPos[iconNum].y);
         float posX = skillNumPos[iconNum].x;
@@ -675,8 +759,8 @@ void SceneResult::RenderEnemyModel()
     Graphics& graphics = Graphics::Instance();
     Shader* shader = graphics.GetShader();
 
-    shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::NONE));
-    resultConstants.color = { 0.7f, 0.7f, 0.7f ,1.0f };
+    shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
+    resultConstants.color = golemResult.color;
     graphics.GetDeviceContext()->UpdateSubresource(resultConstantBuffer.Get(), 0, 0, &resultConstants, 0, 0);
     graphics.GetDeviceContext()->PSSetConstantBuffers(5, 1, resultConstantBuffer.GetAddressOf());
     enemyGolem->Render(0.01f);
