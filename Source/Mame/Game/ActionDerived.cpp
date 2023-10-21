@@ -515,21 +515,24 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 		owner_->Turn(elapsedTime, vec.x, vec.z, owner_->GetTurnSpeed());
 
 		// 指定のキーフレームになったら弾丸発射
-		if (19 == owner_->model->GetCurrentKeyframeIndex())
+		if (23 == owner_->model->GetCurrentKeyframeIndex())
 		{
-			// 移動量
-			const float movement = 0.6f;
+			// 右手の位置を取得
+			const int rightHandColiderlIndex = static_cast<int>(BaseEnemyAI::HitColName::R_HAND);
+			const XMFLOAT3 rightHandPos = owner_->GetHitColliderAt(rightHandColiderlIndex).position;
 
-			// 前方ベクトル
-			const float forwardX = ::sinf(owner_->GetTransform()->GetPositionY());
-			const float forwardZ = ::cosf(owner_->GetTransform()->GetPositionY());
+			// 発射位置が高めなので低めの位置に調整する
+			const float modifyHeight = (-0.1f);
 
-			// 自分の位置から前方方向にmovement量移動した位置
-			const XMFLOAT3 launchPos = {
-				pos.x + forwardX * movement,
-				pos.y + 0.75f,					// 高さ調整
-				pos.z + forwardZ * movement
-			};
+			// 発射位置が右にずれているので左に位置を調整する
+			const XMFLOAT3 upVecN	  = { 0,1,0 };
+			const XMFLOAT3 leftVecN   = ::XMFloat3Cross(vecN, upVecN);
+			const XMFLOAT3 modifyLeft = leftVecN * 0.15f;
+
+			// 右手の位置に少し調整をかけた発射位置
+			XMFLOAT3 launchPos = rightHandPos;
+			launchPos.y += modifyHeight;		// 高さ調整
+			launchPos	+= modifyLeft;			// 左に位置調整
 
 			// 弾丸生成
 			ProjectileStraight* projectile = new ProjectileStraight(owner_->GetProjectileManager());
