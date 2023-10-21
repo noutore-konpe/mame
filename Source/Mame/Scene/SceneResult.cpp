@@ -10,6 +10,8 @@
 
 #include "../Game/EnemyManager.h"
 
+#include "../Game//PlayerManager.h"
+
 // リソース生成
 void SceneResult::CreateResource()
 {
@@ -35,26 +37,6 @@ void SceneResult::CreateResource()
     numSprite = std::make_unique<Sprite>(graphics.GetDevice(),
         L"./Resources/Image/UI/numbers.png");
 
-    iconSprite[static_cast<UINT>(Ability::Absorption)] = std::make_unique<Sprite>
-        (graphics.GetDevice(), L"./Resources/Image/Icon/sampleIcon.png");
-    iconSprite[static_cast<UINT>(Ability::AttackSpeed)] = std::make_unique<Sprite>
-        (graphics.GetDevice(), L"./Resources/Image/Icon/sampleIcon.png");
-    iconSprite[static_cast<UINT>(Ability::Defense)] = std::make_unique<Sprite>
-        (graphics.GetDevice(), L"./Resources/Image/Icon/sampleIcon.png");
-    iconSprite[static_cast<UINT>(Ability::Power)] = std::make_unique<Sprite>
-        (graphics.GetDevice(), L"./Resources/Image/Icon/sampleIcon.png");
-    iconSprite[static_cast<UINT>(Ability::Book)] = std::make_unique<Sprite>
-        (graphics.GetDevice(), L"./Resources/Image/Icon/sampleIcon.png");
-    iconSprite[static_cast<UINT>(Ability::Homing)] = std::make_unique<Sprite>
-        (graphics.GetDevice(), L"./Resources/Image/Icon/sampleIcon.png");
-    iconSprite[static_cast<UINT>(Ability::Poison)] = std::make_unique<Sprite>
-        (graphics.GetDevice(), L"./Resources/Image/Icon/sampleIcon.png");
-    iconSprite[static_cast<UINT>(Ability::BlackHole)] = std::make_unique<Sprite>
-        (graphics.GetDevice(), L"./Resources/Image/Icon/sampleIcon.png");
-    iconSprite[static_cast<UINT>(Ability::HpUp)] = std::make_unique<Sprite>
-        (graphics.GetDevice(), L"./Resources/Image/Icon/sampleIcon.png");
-    iconSprite[static_cast<UINT>(Ability::MoveSpeed)] = std::make_unique<Sprite>
-        (graphics.GetDevice(), L"./Resources/Image/Icon/sampleIcon.png");
 
     enemyGolem = std::make_unique<EnemyGolemResult>();
     player = std::make_unique<PlayerResult>();
@@ -82,11 +64,12 @@ void SceneResult::Initialize()
     backSprite->GetSpriteTransform()->SetTexSize(DirectX::XMFLOAT2(470, 340));
     backSprite->GetSpriteTransform()->SetColor(DirectX::XMFLOAT4(0.42f, 0.42f, 0.42f, 1.0f));
 
-    for (int i = 0; i < static_cast<UINT>(Ability::Max); ++i)
-    {
-        iconSprite[i]->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(128, 128));
-    }
-
+    lifeTimeSprite->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(10, 180));
+    lifeTimeSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(256, 64));
+    waveSprite->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(70, 300));
+    waveSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(128, 64));
+    lvSprite->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(65, 420));
+    lvSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(128, 64));
 
     enemyGolem->Initialize();
     player->Initialize();
@@ -100,6 +83,19 @@ void SceneResult::Initialize()
     enemyResult[0].color = { 0.11f, 0.56f, 1.00f, 1.0f };
     enemyResult[1].color = { 0.0f, 0.0f, 1.0f, 1.0f };
     enemyResult[2].color = { 0.00f, 0.80f, 0.81f, 1.0f };
+
+    // 変数初期化
+    for (int i = 0; i < iconMax; ++i)
+    {
+        iconStruct[i].easingTimer = 0.0f;
+        iconStruct[i].scale = 0.0f;
+        iconStruct[i].isDisplay = false;
+    }
+
+#ifdef _DEBUG
+    PlayerManager::Instance().Initialize();
+#endif
+
 }
 
 void SceneResult::Finalize()
@@ -114,6 +110,30 @@ void SceneResult::Update(const float& elapsedTime)
 {
     enemyGolem->Update(elapsedTime);
     player->Update(elapsedTime);
+
+    float maxTime = 0.5f;
+    float firstSize = 300.0f;
+    float finalSize = 100.0f;
+    for (int i = 0; i < iconMax; ++i)
+    {
+        if (iconStruct[i].isDisplay)
+        {
+            if (iconStruct[i].easingTimer <= maxTime)
+            {
+                iconStruct[i].scale = Easing::InSine(iconStruct[i].easingTimer, maxTime, finalSize, firstSize);
+
+                iconStruct[i].easingTimer += elapsedTime;
+            }
+            else
+            {
+                int next = i + 1;
+                if (next != iconMax)
+                {
+                    iconStruct[next].isDisplay = true;
+                }
+            }
+        }
+    }
 
     // 敵のキル数とx
     UpdateEnemyKillNumAndx(elapsedTime);    
@@ -134,16 +154,19 @@ void SceneResult::Render(const float& elapsedTime)
     shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
     shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
     backSprite->Render(); // 背景
-    emmaSprite->Render();
+    //emmaSprite->Render();
 
     lifeTimeSprite->Render();
     waveSprite->Render();
     lvSprite->Render();
 
-    RenderEnemyKillX();   // キル数のx
-    RenderEnemyKillNum(); // キル数の数字
+    RenderSkill();
+    RenderSkillX();
+    RenderSkillNum();
 
-    iconSprite[static_cast<UINT>(Ability::Absorption)]->Render();
+    //RenderEnemyKillX();   // キル数のx
+    //RenderEnemyKillNum(); // キル数の数字
+
 
     // モデル描画
     RenderEnemyModel();   // 敵のモデル
@@ -151,12 +174,25 @@ void SceneResult::Render(const float& elapsedTime)
 
 void SceneResult::DrawDebug()
 {
+    if (ImGui::Button("icon"))
+    {
+        for (int i = 0; i < iconMax; ++i)
+        {
+            iconStruct[i].easingTimer = 0.0f;
+            iconStruct[i].scale = 0.0f;
+            iconStruct[i].isDisplay = false;
+        }
+        iconStruct[0].isDisplay = true;
+    }
+
+    xSprite->DrawDebug();
+    numSprite->DrawDebug();
+
     emmaSprite->DrawDebug();
     lifeTimeSprite->DrawDebug();
     waveSprite->DrawDebug();
     lvSprite->DrawDebug();
     
-    iconSprite[static_cast<UINT>(Ability::Absorption)]->DrawDebug();
 
     ImGui::DragFloat("killXAddPosX", &KillX.addPosX);
     ImGui::DragFloat("killNumAddPosX", &killNum.addPosX);
@@ -244,6 +280,69 @@ void SceneResult::UpdateEnemyKillNumAndx(const float& elapsedTime)
                 isSlide = false;
             }
         }
+    }
+}
+
+void SceneResult::RenderSkill()
+{
+    int iconNum = 0;
+    std::vector<BaseSkill*> skillArray = PlayerManager::Instance().GetSkillArray();
+    for (auto& skill : skillArray)
+    {
+        // スキルを取ってなければ戻る
+#ifdef _DEBUG
+#else
+        if (skill->GetOverlapNum() <= 0) continue;
+#endif
+
+        skill->icon->GetSpriteTransform()->SetSpriteCenterPos(iconPos[iconNum]);
+        skill->icon->GetSpriteTransform()->SetSizeXY(iconStruct[iconNum].scale);
+        if (iconStruct[iconNum].isDisplay)
+        {
+            skill->icon->Render();
+        }
+        ++iconNum;
+    }
+}
+
+void SceneResult::RenderSkillX()
+{
+    xSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(32, 32));
+
+    int iconNum = 0;
+    std::vector<BaseSkill*> skillArray = PlayerManager::Instance().GetSkillArray();
+    for (auto& skill : skillArray)
+    {
+        // スキルを取ってなければ戻る
+#ifdef _DEBUG
+#else
+        if (skill->GetOverlapNum() <= 0) continue;
+#endif
+
+        xSprite->GetSpriteTransform()->SetPosX(skillXPos[iconNum].x + skillX.addPosX);
+        xSprite->GetSpriteTransform()->SetPosY(skillXPos[iconNum].y);
+        xSprite->Render();
+
+        ++iconNum;
+    }
+}
+
+void SceneResult::RenderSkillNum()
+{
+    numSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(30, 50));
+    numSprite->GetSpriteTransform()->SetTexSize(DirectX::XMFLOAT2(60, 100));
+
+    int iconNum = 0;
+    std::vector<BaseSkill*> skillArray = PlayerManager::Instance().GetSkillArray();
+    for (auto& skill : skillArray)
+    {
+        // スキルを取ってなければ戻る
+#ifdef _DEBUG
+#else
+        if (skill->GetOverlapNum() <= 0) continue;
+#endif
+
+
     }
 }
 

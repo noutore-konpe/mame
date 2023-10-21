@@ -17,7 +17,7 @@ Texture2D textureMaps[5] : register(t0);
 #define RGB_SHIFT 1
 #define NOISE 0
 #define SCAN_LINE 0
-#define NEBIT 1
+#define VIGNETTE 1
 #define SHAKE 0
 
 float3 reinhardToneMapping(float3 color)
@@ -172,14 +172,14 @@ float4 main(VS_OUT psIn) : SV_TARGET
     color.rgb = applyBokeh(textureMaps[0], aspect, depthNdc, psIn.texcoord, bokehAperture, bokehFocus, 0.1);
 #endif
     
-        // nebit
+    // vignette
     {
-#if NEBIT
+#if VIGNETTE
         float2 samplePoint = psIn.texcoord;
         float vignette = length(float2(0.5, 0.5) - psIn.texcoord);
-        vignette = clamp(vignette - 0.2, 0, 1);
+        vignette = clamp(vignette - vignetteValue, 0, 1);
         color.rgb -= vignette;
-#endif // NEBIT
+#endif // VIGNETTE
     }
     
     float3 fragmentColor = color.rgb + bloom.rgb + fog.rgb;

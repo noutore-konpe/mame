@@ -585,6 +585,8 @@ void Shader::DrawDebug()
         ImGui::DragFloat("bokeh_aperture", &postEffectConstants.bokehAperture, 0.001f, 0.0f, 1.0f, "%.3f");
         ImGui::DragFloat("bokeh_focus", &postEffectConstants.bokehFocus, 0.001f, 0.0f, 1.0f, "%.3f");
 
+        ImGui::SliderFloat("vignetteValue", &postEffectConstants.vignetteValue, 0.0f, 1.0f);
+
         ImGui::TreePop();
     }
 

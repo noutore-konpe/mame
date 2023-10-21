@@ -13,20 +13,66 @@
 
 class SceneResult : public Mame::Scene::BaseScene
 {
-public:// 定数
-    enum class Ability
+private:// 定数
+
+    static const int iconMax = 15;
+
+    // アイコン画像の位置
+    DirectX::XMFLOAT2 iconPos[iconMax] =
     {
-        Absorption,     // 吸収
-        AttackSpeed,    // 攻撃スピード
-        Defense,        // 防御力
-        Power,          // 攻撃力
-        Book,           // 本
-        Homing,         // ホーミング
-        Poison,         // 毒
-        BlackHole,      // ブラックホール
-        HpUp,           // Hp上昇
-        MoveSpeed,      // 移動速度
-        Max,            // 最大
+        {  670, 150 }, 
+        {  780, 150 }, 
+        {  890, 150 }, 
+        { 1000, 150 }, 
+        { 1110, 150 },  // 5
+        {  670, 300 },
+        {  780, 300 },
+        {  890, 300 },
+        { 1000, 300 },
+        { 1110, 300 },  // 10
+        {  670, 450 },
+        {  780, 450 },
+        {  890, 450 },
+        { 1000, 450 },
+        { 1110, 450 },  // 15
+    };
+
+    DirectX::XMFLOAT2 skillXPos[iconMax] =
+    {
+        {  620, 220 },
+        {  730, 220 },
+        {  840, 220 },
+        {  950, 220 },
+        { 1060, 220 }, // 5
+        {  620, 370 },
+        {  730, 370 },
+        {  840, 370 },
+        {  950, 370 },
+        { 1060, 370 }, // 10
+        {  620, 520 },
+        {  730, 520 },
+        {  840, 520 },
+        {  950, 520 },
+        { 1060, 520 }, // 15
+    };
+
+    DirectX::XMFLOAT2 skillNumPos[iconMax] =
+    {
+        {  650, 205 },
+        {  760, 205 },
+        {  870, 205 },
+        {  980, 205 },
+        { 1090, 205 }, // 5
+        {  650, 355 },
+        {  760, 355 },
+        {  870, 355 },
+        {  980, 355 },
+        { 1090, 355 }, // 10
+        {  650, 505 },
+        {  760, 505 },
+        {  870, 505 },
+        {  980, 505 },
+        { 1090, 505 }, // 15
     };
 
 public:
@@ -46,6 +92,9 @@ public:
 private:
     void UpdateEnemyKillNumAndx(const float& elapsedTime);
 
+    void RenderSkill();
+    void RenderSkillX();
+    void RenderSkillNum();
     void RenderEnemyKillX();
     void RenderEnemyKillNum();
     /// <summary>
@@ -66,6 +115,8 @@ private:
 
     std::unique_ptr<Sprite> backSprite = nullptr;
     std::unique_ptr<Sprite> emmaSprite = nullptr;
+
+    
     
     std::unique_ptr<Sprite> lifeTimeSprite = nullptr;
     std::unique_ptr<Sprite> waveSprite = nullptr;
@@ -73,8 +124,6 @@ private:
 
     std::unique_ptr<Sprite> xSprite = nullptr;
     std::unique_ptr<Sprite> numSprite = nullptr;
-
-    std::unique_ptr<Sprite> iconSprite[static_cast<UINT>(Ability::Max)];
 
     struct EnemyResult
     {
@@ -91,9 +140,20 @@ private:
         float easingTimer = 0.0f;
     };
 
+    SlideStruct skillX;
+    SlideStruct skillNum;
     SlideStruct KillX;
     SlideStruct killNum;
     bool isSlide = false;
+
+    struct IconStruct
+    {
+        float easingTimer = 0.0f;   // easing用タイマー
+        float scale = 0.0f;
+        bool isDisplay = false;     // 表示するか
+    }iconStruct[iconMax];
+
+
 
 private:
     Microsoft::WRL::ComPtr<ID3D11PixelShader> finalPassPS;

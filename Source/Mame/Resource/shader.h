@@ -148,6 +148,8 @@ public:
         float bokehAperture = 0.018f;
         float bokehFocus = 0.824f;
 
+        float vignetteValue = 0.2f;
+        DirectX::XMFLOAT3 dummy;
     }postEffectConstants;
 
 public:
