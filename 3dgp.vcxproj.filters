@@ -521,6 +521,7 @@
     <ClCompile Include="Source\Mame\Game\SlowMotionManager.cpp">
       <Filter>mamelib\Mame\Game\SlowMotion</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\LightManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -907,6 +908,7 @@
     <ClInclude Include="Source\Mame\Game\SlowMotionManager.h">
       <Filter>mamelib\Mame\Game\SlowMotion</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Game\LightManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">

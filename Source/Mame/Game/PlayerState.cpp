@@ -1,6 +1,7 @@
 #include "PlayerState.h"
 #include "Player.h"
 #include "PlayerManager.h"
+#include "SlowMotionManager.h"
 
 namespace PlayerState
 {
@@ -195,13 +196,6 @@ namespace PlayerState
             {
                 owner->ChangeState(Player::STATE::AVOID);
             }
-
-            if (combo < 2)
-            {
-                //カウンター派生
-                owner->ActiveCounter();
-            }
-
             else if (owner->InputJabAttack())//コンボ続行
             {
                 //コンボは３連撃以降ないので制限
@@ -211,6 +205,14 @@ namespace PlayerState
                     initialize = false;
                 }
             }
+
+            if (combo < 2)
+            {
+                //カウンター派生
+                owner->ActiveCounter();
+            }
+
+            
             break;
         }
 
@@ -311,6 +313,7 @@ namespace PlayerState
 
     void CounterState::Initialize()
     {
+        state = 0;
         owner->counterCompleted = false;
         owner->PlayAnimation(Player::Animation::Counter, false);
         owner->GetSword()->PlayAnimation(Player::Animation::Counter, false);
@@ -336,25 +339,33 @@ namespace PlayerState
                 owner->isCounter = false;
             }
 
-            //カウンター成功処理は
+            //カウンター成功処理
             if (owner->counterCompleted)
             {
+                owner->isInvincible = true;
                 owner->PlayAnimation(Player::Animation::CounterAttack,false);
                 owner->GetSword()->PlayAnimation(Player::Animation::CounterAttack, false);
+
+                //スローモーション
+                SlowMotionManager::Instance().ExecuteSlowMotion(0.1f,0.7f,0.05f,0.3f);
+
                 state++;
             }
 
             timer += elapsedTime;
             break;
         case 2:
-            if (!owner->IsPlayAnimation())
-            {
-                owner->ChangeState(Player::STATE::NORMAL);
-            }
+            
             break;
+        }
+
+        if (!owner->IsPlayAnimation())
+        {
+            owner->ChangeState(Player::STATE::NORMAL);
         }
     }
     void CounterState::Finalize()
     {
+        owner->isInvincible = false;
     }
 }

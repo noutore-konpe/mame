@@ -113,6 +113,8 @@ private:
     float blowSpeed = 9.0f;
     DirectX::XMFLOAT3 blowVec;
 
+
+
 public:
     //入力関数
     static bool InputJabAttack()
@@ -170,6 +172,8 @@ public:
     const int GetLevel() const { return level; }
 
     AbilityManager* GetAbilityManager() { return &abilityManager_; }
+
+    const float GetLifeTimer() { return lifeTimer; };
 
     //---------------------------スキル-------------------------------
    
@@ -298,5 +302,8 @@ private:
     // アビリティマネージャー(仮)
     AbilityManager abilityManager_ = {};
 
+
+    //生存時間
+    float lifeTimer;
 };
 

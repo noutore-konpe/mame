@@ -161,7 +161,7 @@ namespace BookState
 namespace BookState
 {
     // 初期化
-    void JabAttackState::Initialize()
+    void AttackState::Initialize()
     {
         // アニメーションを設定(ページぺらぺら)
         owner->PlayAnimation(static_cast<UINT>(Book::Animation::TurnThePage), true);
@@ -177,7 +177,7 @@ namespace BookState
     }
 
     // 更新処理
-    void JabAttackState::Update(const float& elapsedTime)
+    void AttackState::Update(const float& elapsedTime)
     {
         // 回転値
         {
@@ -220,7 +220,7 @@ namespace BookState
     }
 
     // 終了化
-    void JabAttackState::Finalize()
+    void AttackState::Finalize()
     {
     }
 }
@@ -273,5 +273,30 @@ namespace BookState
     // 終了化
     void CloseState::Finalize()
     {
+    }
+}
+
+//CounterState
+namespace BookState
+{
+    void CounterAttackState::Initialize()
+    {
+        if (owner->model->GetCurrentAnimationIndex() ==
+            static_cast<int>(Book::Animation::Closed))
+        {
+            owner->PlayAnimation(static_cast<UINT>(Book::Animation::Open), false);
+        }
+    }
+    void CounterAttackState::Update(const float& elapsedTime)
+    {
+        //開いた状態を維持
+        if (!owner->IsPlayAnimation())
+        {
+            owner->PlayAnimation(static_cast<int>(Book::Animation::Opened), true);
+        }
+    }
+    void CounterAttackState::Finalize()
+    {
+
     }
 }
