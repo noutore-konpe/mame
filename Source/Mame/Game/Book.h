@@ -41,7 +41,16 @@ public:
     void CollisionProjectileVsEnemies();
 
 public:
-    bool LaunchProjectile(const float& elapsedTime); // ’e¶¬&”­Ë
+    // XZ‰ñ“]
+    void Turn(
+        const float elapsedTime,
+        const float vx,
+        const float vz,
+        const float turnSpeed /*Degree*/
+    );
+
+    // ’e¶¬&”­Ë
+    bool LaunchProjectile(const float elapsedTime, const DirectX::XMFLOAT3& vec);
 
 public:// æ“¾Eİ’è ŠÖ˜A
     void SetTransform(const float& elapsedTime);

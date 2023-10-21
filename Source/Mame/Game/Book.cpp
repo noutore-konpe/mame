@@ -187,20 +187,61 @@ void Book::CollisionProjectileVsEnemies()
     }
 }
 
-// ’e¶¬&”­Ë
-bool Book::LaunchProjectile(const float& elapsedTime)
+
+void Book::Turn(
+    const float elapsedTime,
+    float vx,
+    float vz,
+    float turnSpeed /*Degree*/)
 {
+    if (vx == 0.0f && vz == 0.0f) return;
+
+    using DirectX::XMFLOAT3;
+    using DirectX::XMFLOAT4;
+
+    const float length = sqrtf(vx * vx + vz * vz);
+    if (length < 0.005f) return;
+
+    vx /= length;
+    vz /= length;
+
+    XMFLOAT4 rotation = GetTransform()->GetRotation();
+    const float frontX = ::sinf(rotation.y);
+    const float frontZ = ::cosf(rotation.y);
+
+    const float dot = (frontX * vx) + (frontZ * vz);
+
+    // ‰ñ“]Šp‚ª”÷¬‚Èê‡‚Í‰ñ“]‚ğs‚í‚È‚¢
+    const float angle = ::acosf(dot); // ƒ‰ƒWƒAƒ“
+    if (::fabsf(angle) <= 0.01f) return;
+
+    float rot = 1.0f - dot;
+    turnSpeed = ::ToRadian(turnSpeed) * elapsedTime;
+    if (rot > turnSpeed) rot = turnSpeed;
+
+    //¶‰E”»’è‚Ì‚½‚ß‚ÌŠOÏ
+    const float cross = (frontZ * vx) - (frontX * vz);
+
+    rotation.y += (cross < 0.0f) ? -rot : rot;
+
+    GetTransform()->SetRotation(rotation);
+}
+
+
+// ’e¶¬&”­Ë
+bool Book::LaunchProjectile(const float elapsedTime, const DirectX::XMFLOAT3& vec)
+{
+    using DirectX::XMFLOAT3;
+
     if (launchTimer <= 0.0f)
     {
-        DirectX::XMFLOAT3 bookPosition = GetTransform()->GetPosition();
-        DirectX::XMFLOAT3 bookForward = PlayerManager::Instance().GetPlayer()->GetTransform()->CalcForward();
-
-        float length = 0.3f;
-
-        bookPosition = { bookPosition.x + bookForward.x * length, bookPosition.y + bookForward.y * length, bookPosition.z + bookForward.z * length };
+        const XMFLOAT3 bookPos   = GetTransform()->GetPosition();
+        const XMFLOAT3 vecN      = ::XMFloat3Normalize(vec);
+        const float    length    = 0.3f;
+        const XMFLOAT3 launchPos = bookPos + vecN * length;
 
         ProjectileStraight* projectile = new ProjectileStraight(&projectileManager);
-        projectile->Launch(bookForward, bookPosition);
+        projectile->Launch(vecN, launchPos);
 
         // ”­Ë‚Ü‚Å‚ÌŠÔ‚ğİ’è
         launchTimer = launchTime;
