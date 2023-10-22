@@ -2,6 +2,7 @@
 
 #include "SceneManager.h"
 #include "SceneTitle.h"
+#include "SceneLoading.h"
 
 #include "../Graphics/Graphics.h"
 
@@ -12,6 +13,8 @@
 
 #include "../Game//PlayerManager.h"
 #include "../Game/WaveManager.h"
+
+#include "../framework.h"
 
 // リソース生成
 void SceneResult::CreateResource()
@@ -24,6 +27,8 @@ void SceneResult::CreateResource()
     emmaSprite = std::make_unique<Sprite>(graphics.GetDevice(),
         L"./Resources/Image/Title/loading.png");
 
+    resultSprite = std::make_unique<Sprite>(graphics.GetDevice(),
+        L"./Resources/Image/UI/Result.png");
 
     lifeTimeSprite = std::make_unique<Sprite>(graphics.GetDevice(),
         L"./Resources/Image/UI/lifetime.png");
@@ -58,10 +63,27 @@ void SceneResult::CreateResource()
     desc.StructureByteStride = 0;
     hr = graphics.GetDevice()->CreateBuffer(&desc, nullptr, resultConstantBuffer.GetAddressOf());
     _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+    // 定数バッファー
+    {
+        D3D11_BUFFER_DESC bufferDesc{};
+        bufferDesc.ByteWidth = sizeof(Shader::SceneConstants);
+        bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        bufferDesc.CPUAccessFlags = 0;
+        bufferDesc.MiscFlags = 0;
+        bufferDesc.StructureByteStride = 0;
+        // SceneConstants
+        hr = graphics.GetDevice()->CreateBuffer(&bufferDesc, nullptr,
+            ConstantBuffer.GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+    }
 }
 
 void SceneResult::Initialize()
 {
+    Camera::Instance().ResultInitialize();
+
     backSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(1280, 720));
     backSprite->GetSpriteTransform()->SetTexPos(DirectX::XMFLOAT2(40, 320));
     backSprite->GetSpriteTransform()->SetTexSize(DirectX::XMFLOAT2(470, 340));
@@ -100,9 +122,6 @@ void SceneResult::Initialize()
         iconStruct[i].isDisplay = false;
     }
 
-    PlayerManager::Instance().Initialize();
-#ifdef _DEBUG
-#endif
 
     isIconUpdateEnd = false;
     isLifeTimer = false;
@@ -118,6 +137,14 @@ void SceneResult::Initialize()
 
 void SceneResult::Finalize()
 {
+    //生存時間をリセット
+    PlayerManager::Instance().SetLifeTime(0.0f);
+
+    //プレイヤーのレベルをリセット
+    PlayerManager::Instance().SetLevel(0);
+
+    // キルした敵の数をリセット
+    EnemyManager::Instance().ResetKillNum();
 }
 
 void SceneResult::Begin()
@@ -126,6 +153,14 @@ void SceneResult::Begin()
 
 void SceneResult::Update(const float& elapsedTime)
 {
+#ifdef _DEBUG
+    if (GetAsyncKeyState('P') & 0x01)
+    {
+        Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
+        return;
+    }
+#endif
+
     enemyGolem->Update(elapsedTime);
     player->Update(elapsedTime);
 
@@ -200,13 +235,29 @@ void SceneResult::Render(const float& elapsedTime)
 
     Mame::Scene::BaseScene::RenderInitialize();
 
+    Camera& camera = Camera::Instance();
+    Camera::Instance().TitleSetPerspectiveFov(graphics.GetDeviceContext());
+
+    Shader::SceneConstants sceneConstants{};
+    DirectX::XMStoreFloat4x4(&sceneConstants.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
+    sceneConstants.lightDirection = shader->GetViewPosition();
+    sceneConstants.cameraPosition = shader->GetViewCamera();
+
+    DirectX::XMStoreFloat4x4(&sceneConstants.inverseProjection, DirectX::XMMatrixInverse(NULL, camera.GetProjectionMatrix()));
+    DirectX::XMStoreFloat4x4(&sceneConstants.inverseViewProjection, DirectX::XMMatrixInverse(NULL, camera.GetViewMatrix() * camera.GetProjectionMatrix()));
+    sceneConstants.time = framework::tictoc.time_stamp();
+
+    graphics.GetDeviceContext()->UpdateSubresource(ConstantBuffer.Get(), 0, 0, &sceneConstants, 0, 0);
+    graphics.GetDeviceContext()->VSSetConstantBuffers(1, 1, ConstantBuffer.GetAddressOf());
+    graphics.GetDeviceContext()->PSSetConstantBuffers(1, 1, ConstantBuffer.GetAddressOf());
+
     // スプライト描画
     shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
     shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
     backSprite->Render(); // 背景
     emmaSprite->Render();
 
-    
+    resultSprite->Render();
     
     RenderLifeTime(); // lifetime
     RenderWave();
@@ -226,6 +277,8 @@ void SceneResult::Render(const float& elapsedTime)
 
 void SceneResult::DrawDebug()
 {
+    Camera::Instance().DrawDebug();
+
     if (ImGui::Button("icon"))
     {
         for (int i = 0; i < iconMax; ++i)
@@ -236,6 +289,8 @@ void SceneResult::DrawDebug()
         }
         iconStruct[0].isDisplay = true;
     }
+
+    resultSprite->DrawDebug();
 
     emmaSprite->DrawDebug();
     
@@ -374,7 +429,14 @@ void SceneResult::UpdateIcon(const float& elapsedTime)
     std::vector<BaseSkill*> skillArray = PlayerManager::Instance().GetSkillArray();
     for (auto& skill : skillArray)
     {
-        ++iconNum;
+        if(skill->GetOverlapNum()>0)
+            ++iconNum;
+    }
+
+    if (iconNum == 0)
+    {
+        isIconUpdateEnd = true;
+        return;
     }
 
     if (iconStruct[iconNum + 1].isDisplay)
@@ -610,7 +672,7 @@ void SceneResult::RenderSkill()
         // スキルを取ってなければ戻る
 #ifdef _DEBUG
 #else
-        //if (skill->GetOverlapNum() <= 0) continue;
+        if (skill->GetOverlapNum() <= 0) continue;
 #endif
 
         skill->icon->GetSpriteTransform()->SetSpriteCenterPos(iconPos[iconNum]);
@@ -635,7 +697,7 @@ void SceneResult::RenderSkillX()
         // スキルを取ってなければ戻る
 #ifdef _DEBUG
 #else
-        //if (skill->GetOverlapNum() <= 0) continue;
+        if (skill->GetOverlapNum() <= 0) continue;
 #endif
 
         xSprite->GetSpriteTransform()->SetPosX(skillXPos[iconNum].x + skillX.addPosX);
@@ -659,7 +721,7 @@ void SceneResult::RenderSkillNum()
         // スキルを取ってなければ戻る
 #ifdef _DEBUG
 #else
-        //if (skill->GetOverlapNum() <= 0) continue;
+        if (skill->GetOverlapNum() <= 0) continue;
 #endif
         numSprite->GetSpriteTransform()->SetPosY(skillNumPos[iconNum].y);
         float posX = skillNumPos[iconNum].x;
@@ -686,8 +748,8 @@ void SceneResult::RenderEnemyKillX()
 
 void SceneResult::RenderEnemyKillNum()
 {
-    int ene1 = 5678;//EnemyManager::Instance().GetEnemy1KillNum();
-    int ene2 = 1234;//EnemyManager::Instance().GetEnemy2KillNum();
+    int ene1 = EnemyManager::Instance().GetEnemy1KillNum();
+    int ene2 = EnemyManager::Instance().GetEnemy2KillNum();
     int ene3 = EnemyManager::Instance().GetEnemy3KillNum();
     int eneG = EnemyManager::Instance().GetEnemyGolemKillNum();
 
@@ -696,10 +758,10 @@ void SceneResult::RenderEnemyKillNum()
     numSprite->GetSpriteTransform()->SetTexSize(DirectX::XMFLOAT2(60, 100));
     numSprite->GetSpriteTransform()->SetColorA(killNum.alpha);
 
-    RenderNum(ene1, 210 + killNum.addPosX, 260 + killNum.addPosX, 310 + killNum.addPosX, 360 + killNum.addPosX);
-    RenderNum(ene2, 490 + killNum.addPosX, 540 + killNum.addPosX, 590 + killNum.addPosX, 640 + killNum.addPosX);
-    RenderNum(ene3, 780 + killNum.addPosX, 830 + killNum.addPosX, 880 + killNum.addPosX, 930 + killNum.addPosX);
-    RenderNum(eneG, 1055 + killNum.addPosX, 1105 + killNum.addPosX, 1155 + killNum.addPosX, 1205 + killNum.addPosX);
+    RenderNum(eneG, 210 + killNum.addPosX, 260 + killNum.addPosX, 310 + killNum.addPosX, 360 + killNum.addPosX);
+    RenderNum(ene1, 490 + killNum.addPosX, 540 + killNum.addPosX, 590 + killNum.addPosX, 640 + killNum.addPosX);
+    RenderNum(ene2, 780 + killNum.addPosX, 830 + killNum.addPosX, 880 + killNum.addPosX, 930 + killNum.addPosX);
+    RenderNum(ene3, 1055 + killNum.addPosX, 1105 + killNum.addPosX, 1155 + killNum.addPosX, 1205 + killNum.addPosX);
 }
 
 void SceneResult::RenderNum(const int who, const float firstPosX, const float secondPosX, const float thirdPosX, const float fourthPosX)

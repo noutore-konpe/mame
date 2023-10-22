@@ -172,7 +172,8 @@ float3 CalcLightFromDirectionLight(PSIn psIn)
     // ŠgU”½ËŒõ‚ğ³‹K‰»‚·‚é
     diffuseDirection /= 3.1415926f;
     
-    return diffuseDirection + specularDirection;
+    return diffuseDirection;
+    //return diffuseDirection + specularDirection;
 }
 
 //float3 ClacLightFromDirectionLight

@@ -8,6 +8,8 @@
 
 #include "../Scene/SceneGame.h"
 
+#include "EnemyManager.h"
+
 int EnemyGolem::nameNum_;
 
 
@@ -67,6 +69,8 @@ EnemyGolem::EnemyGolem()
 // デストラクタ
 EnemyGolem::~EnemyGolem()
 {
+    if (isDead)
+        EnemyManager::Instance().AddEnemyGolemKillNum();
 }
 
 // 初期化
@@ -271,6 +275,11 @@ void EnemyGolem::DrawDebug()
 
 void EnemyGolem::UpdateConstants()
 {
+}
+
+void EnemyGolem::OnDead(DamageResult result)
+{
+    GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::DeathState));
 }
 
 void EnemyGolem::SubRender()

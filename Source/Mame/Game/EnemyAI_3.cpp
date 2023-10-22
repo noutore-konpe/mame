@@ -6,6 +6,8 @@
 #include "../Game/ActionDerived.h"
 #include "../Game/JudgmentDerived.h"
 
+#include "../Game/EnemyManager.h"
+
 int EnemyAI_3::nameNum_ = 0;
 
 // コンストラクタ
@@ -61,6 +63,8 @@ EnemyAI_3::EnemyAI_3()
 EnemyAI_3::~EnemyAI_3()
 {
     --nameNum_;
+    if (isDead)
+        EnemyManager::Instance().AddEnemy3KillNum();
 }
 
 // 初期化

@@ -140,28 +140,28 @@ private:
     void RenderEnemyModel();
 
 private:
-    std::unique_ptr<EnemyGolemResult> enemyGolem = nullptr;
-    std::unique_ptr<PlayerResult> player = nullptr;
+    std::unique_ptr<EnemyGolemResult> enemyGolem    = nullptr;
+    std::unique_ptr<PlayerResult> player            = nullptr;
 
-    std::unique_ptr<Sprite> backSprite = nullptr;
-    std::unique_ptr<Sprite> emmaSprite = nullptr;
+    std::unique_ptr<Sprite> backSprite      = nullptr;
+    std::unique_ptr<Sprite> emmaSprite      = nullptr;
+    std::unique_ptr<Sprite> resultSprite    = nullptr;
        
-    
-    std::unique_ptr<Sprite> lifeTimeSprite = nullptr;
-    std::unique_ptr<Sprite> waveSprite = nullptr;
-    std::unique_ptr<Sprite> lvSprite = nullptr;
+    std::unique_ptr<Sprite> lifeTimeSprite  = nullptr;
+    std::unique_ptr<Sprite> waveSprite      = nullptr;
+    std::unique_ptr<Sprite> lvSprite        = nullptr;
 
-    std::unique_ptr<Sprite> xSprite = nullptr;
-    std::unique_ptr<Sprite> numSprite = nullptr;
+    std::unique_ptr<Sprite> xSprite         = nullptr;
+    std::unique_ptr<Sprite> numSprite       = nullptr;
 
-    std::unique_ptr<Sprite> chonchonSprite = nullptr;
+    std::unique_ptr<Sprite> chonchonSprite  = nullptr;
 
     struct EnemyResult
     {
-        DirectX::XMFLOAT3 position = {};
-        DirectX::XMFLOAT3 scale = {};
-        DirectX::XMFLOAT3 rotate = {};
-        DirectX::XMFLOAT4 color = {};
+        DirectX::XMFLOAT3 position  = {};
+        DirectX::XMFLOAT3 scale     = {};
+        DirectX::XMFLOAT3 rotate    = {};
+        DirectX::XMFLOAT4 color     = {};
     }enemyResult[3], golemResult;
 
 
@@ -184,13 +184,13 @@ private:
     SlideStruct killNum;
     SlideStruct enemy;
 
-    bool isSlide = false;
-    bool isLifeTimer = false;
-    bool isWave = false;
-    bool isLv = false;
-    bool isIconUpdateEnd = false;
-    bool isIconNum = false;
-    bool isEnemy = false;
+    bool isSlide            = false;
+    bool isLifeTimer        = false;
+    bool isWave             = false;
+    bool isLv               = false;
+    bool isIconUpdateEnd    = false;
+    bool isIconNum          = false;
+    bool isEnemy            = false;
 
     struct IconStruct
     {
@@ -208,5 +208,7 @@ private:
     {
         DirectX::XMFLOAT4 color{ 0.3f, 0.3f, 0.3f ,0.0f };
     }resultConstants;
+
+    Microsoft::WRL::ComPtr<ID3D11Buffer> ConstantBuffer;
 };
 

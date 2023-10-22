@@ -21,10 +21,10 @@ float4 main(PSIn psIn) : SV_TARGET
     color.rgb = pow(color.rgb, GAMMA);
     
     // ディレクションライト
-    float3 directionLight = CalcLightFromDirectionLight(psIn);
+    float3 directionLight = color.rgb * CalcLightFromDirectionLight(psIn);
     
     // 半球ライト
-    float3 hemisphereLight = CalcHemisphereLight(psIn);
+    float3 hemisphereLight = color.rgb * CalcHemisphereLight(psIn);
     
     float3 finalColor = directionLight + hemisphereLight;
     

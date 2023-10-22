@@ -95,6 +95,11 @@ public:
     int GetEnemy3KillNum() { return enemy3KillNum; }
     int GetEnemyGolemKillNum() { return enemyGolemKillNum; }
 
+    void AddEnemy1KillNum() { enemy1KillNum++; }
+    void AddEnemy2KillNum() { enemy2KillNum++; }
+    void AddEnemy3KillNum() { enemy3KillNum++; }
+    void AddEnemyGolemKillNum() { enemyGolemKillNum++; }
+
 private:
     std::vector<Enemy*> enemies_ = {};
     std::set<Enemy*>    removes_ = {};

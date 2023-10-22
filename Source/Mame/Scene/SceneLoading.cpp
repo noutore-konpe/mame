@@ -5,6 +5,7 @@
 
 #include "../Other/Easing.h"
 #include "../Other/misc.h"
+#include "../framework.h"
 
 SceneLoading::SceneLoading(BaseScene* nextScene) :nextScene(nextScene) 
 {
@@ -32,6 +33,21 @@ void SceneLoading::CreateResource()
     hr = Graphics::Instance().GetDevice()->CreateBuffer(&desc, nullptr,
         playerConstant.GetAddressOf());
     _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+    // 定数バッファー
+    {
+        D3D11_BUFFER_DESC bufferDesc{};
+        bufferDesc.ByteWidth = sizeof(Shader::SceneConstants);
+        bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        bufferDesc.CPUAccessFlags = 0;
+        bufferDesc.MiscFlags = 0;
+        bufferDesc.StructureByteStride = 0;
+        // SceneConstants
+        hr = Graphics::Instance().GetDevice()->CreateBuffer(&bufferDesc, nullptr,
+            ConstantBuffer.GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+    }
 }
 
 // 初期化
@@ -114,8 +130,25 @@ void SceneLoading::Render(const float& elapsedTime)
     // 描画の初期化
     {
         Graphics& graphics = Graphics::Instance();
+        Shader* shader = graphics.GetShader();
 
         Mame::Scene::BaseScene::RenderInitialize();
+
+        Camera& camera = Camera::Instance();
+        Camera::Instance().TitleSetPerspectiveFov(graphics.GetDeviceContext());
+
+        Shader::SceneConstants sceneConstants{};
+        DirectX::XMStoreFloat4x4(&sceneConstants.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
+        sceneConstants.lightDirection = shader->GetViewPosition();
+        sceneConstants.cameraPosition = shader->GetViewCamera();
+
+        DirectX::XMStoreFloat4x4(&sceneConstants.inverseProjection, DirectX::XMMatrixInverse(NULL, camera.GetProjectionMatrix()));
+        DirectX::XMStoreFloat4x4(&sceneConstants.inverseViewProjection, DirectX::XMMatrixInverse(NULL, camera.GetViewMatrix() * camera.GetProjectionMatrix()));
+        sceneConstants.time = framework::tictoc.time_stamp();
+
+        graphics.GetDeviceContext()->UpdateSubresource(ConstantBuffer.Get(), 0, 0, &sceneConstants, 0, 0);
+        graphics.GetDeviceContext()->VSSetConstantBuffers(1, 1, ConstantBuffer.GetAddressOf());
+        graphics.GetDeviceContext()->PSSetConstantBuffers(1, 1, ConstantBuffer.GetAddressOf());
 
         graphics.GetDeviceContext()->UpdateSubresource(playerConstant.Get(), 0, 0, &playerConstants, 0, 0);
         graphics.GetDeviceContext()->PSSetConstantBuffers(5, 1, playerConstant.GetAddressOf());

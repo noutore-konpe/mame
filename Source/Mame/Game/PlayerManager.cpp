@@ -48,7 +48,7 @@ void PlayerManager::Initialize()
         skill->Initialize();
     }
 
-    //player->Initialize();
+    player->Initialize();
 }
 
 // I—¹‰»

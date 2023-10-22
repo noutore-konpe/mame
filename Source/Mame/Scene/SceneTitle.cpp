@@ -84,7 +84,6 @@ void SceneTitle::CreateResource()
         hr = graphics.GetDevice()->CreateBuffer(&bufferDesc, nullptr,
             ConstantBuffer.GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
     }
 }
 
@@ -135,8 +134,8 @@ void SceneTitle::Update(const float& elapsedTime)
     if (IsChangeScene(elapsedTime))
     {
         Camera::Instance().TitleInitialize();
-        //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
-        Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneResult));
+        Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneResult));
         return;
     }
 

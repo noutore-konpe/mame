@@ -37,6 +37,9 @@ public:
     void TitleUpdate(const float& elapsedTime);
     void TitleSetPerspectiveFov(ID3D11DeviceContext* dc);
 
+    void ResultInitialize();
+    void ResultSetPerSpectiveFov(ID3D11DeviceContext* dc);
+
     int titleState = 0;
     bool isFocusCenter = false;
     float easingTimer = 0.0f;

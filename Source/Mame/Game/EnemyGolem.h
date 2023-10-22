@@ -102,6 +102,8 @@ public:
 
     void UpdateConstants() override;
 
+    void OnDead(DamageResult result) override;
+
     void SubRender();   // •K—v‚È‚É‚¾‚¯•`‰æ
 
 public:// æ“¾Eİ’è

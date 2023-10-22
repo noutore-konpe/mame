@@ -39,6 +39,7 @@
 #include "SceneManager.h"
 #include "SceneLoading.h"
 #include "SceneTitle.h"
+#include "SceneResult.h"
 
 
 #ifdef _DEBUG
@@ -82,7 +83,7 @@ void SceneGame::CreateResource()
 
     // enemy
     {
-#if 1
+#if 0
         EnemyManager& enemyManager = EnemyManager::Instance();
 
         // EnemyGolem* enemyGolem = new EnemyGolem;
@@ -369,6 +370,14 @@ void SceneGame::Update(const float& elapsedTime)
         particles->Integrate(Graphics::Instance().GetDeviceContext(), slowMotionElapsedTime);
     }
 
+#ifdef _DEBUG
+    if (GetAsyncKeyState('P') & 0x01)
+    {
+        //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneResult);
+        Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneResult));
+        return;
+    }
+#endif
 
 #ifdef _DEBUG
     // DebugópÉJÉÅÉâ
