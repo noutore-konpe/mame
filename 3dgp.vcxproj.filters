@@ -506,6 +506,7 @@
     <ClCompile Include="Source\Mame\Game\Stage.cpp">
       <Filter>mamelib\Mame\Game\Stage</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\TutorialManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -883,6 +884,7 @@
     <ClInclude Include="Source\Mame\Game\Stage.h">
       <Filter>mamelib\Mame\Game\Stage</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Game\TutorialManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">

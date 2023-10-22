@@ -27,6 +27,8 @@
 
 #include "../Game/UserInterface.h"
 
+#include "../Game/TutorialManager.h"
+
 #include "../framework.h"
 
 #include "SceneManager.h"
@@ -120,6 +122,9 @@ void SceneTutorial::Initialize()
     expManager.Initialize();
 
     UserInterface::Instance().Initialize();
+
+    // チュートリアル初期化
+    TutorialManager::Instance().Initialize();
 }
 
 void SceneTutorial::Finalize()
@@ -142,6 +147,20 @@ void SceneTutorial::Begin()
 
 void SceneTutorial::Update(const float& elapsedTime)
 {
+    TutorialManager& tutorialManager = TutorialManager::Instance();
+
+    // チュートリアルマネージャー更新
+    {
+        // チュートリアル更新
+        const bool tutorialExecuteFlag = tutorialManager.Update(elapsedTime);
+
+        // チュートリアル実行中フラグがfalseならチュートリアルを終了する
+        if (false == tutorialExecuteFlag)
+        {
+            // 終了
+        }
+    }
+
 }
 
 void SceneTutorial::End()
@@ -327,6 +346,12 @@ void SceneTutorial::Render(const float& elapsedTime)
     {
         PlayerManager::Instance().GetPlayer()->SkillImagesRender();
         UserInterface::Instance().Render();
+    }
+
+    // 2D描画
+    {
+        // チュートリアルスプライト描画
+        TutorialManager::Instance().Render();
     }
 }
 
