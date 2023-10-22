@@ -86,9 +86,9 @@ void LightColorManager::ChangeColorUpdate(int type,float elapsedTime)
     {
         colorData[type].changeTimer += elapsedTime;
 
-        if (colorData->changeTimer >= 1.0f)
+        if (colorData->changeTimer >= colorData[type].changeTimer)
         {
-            colorData->changeTimer = 1.0f;
+            colorData->changeTimer = colorData[type].changeTimer;
         }
 
         //色変更中
@@ -96,7 +96,7 @@ void LightColorManager::ChangeColorUpdate(int type,float elapsedTime)
         colorData[type].baseColor->y = Easing::OutCubic(colorData[type].changeTimer, colorData[type].changeTime, colorData[type].holdColor.y, colorData[type].baseColor->y);
         colorData[type].baseColor->z = Easing::OutCubic(colorData[type].changeTimer, colorData[type].changeTime, colorData[type].holdColor.z, colorData[type].baseColor->z);
 
-        if (colorData->changeTimer >= 1.0f)
+        if (colorData[type].changeTimer >= colorData[type].changeTime)
         {
             colorData[type].isChangingColor = false;
         }
@@ -106,6 +106,26 @@ void LightColorManager::ChangeColorUpdate(int type,float elapsedTime)
         //変更完了　または　変更なし
 
 
+    }
+}
+
+void LightColorManager::UpdateVignette(float elapsedTime)
+{
+    if (isChangingVignette)
+    {
+        vignetteTimer += elapsedTime;
+
+        if (vignetteTimer >= vignetteTime)
+        {
+            vignetteTimer = vignetteTime;
+        }
+
+        *vignetteValue = Easing::OutCubic(vignetteTimer, vignetteTime,holdVignette,resultVignette);
+
+        if (vignetteTimer >= vignetteTime)
+        {
+            isChangingVignette = false;
+        }
     }
 }
 
@@ -145,8 +165,20 @@ void LightColorManager::AllRestoreColor(const float changeTime)
 
 void LightColorManager::ChangeVignetteValue(float vignetteValue, const float time)
 {
-    
+    resultVignette = vignetteValue;
+    holdVignette = vignetteValue;
 
     vignetteTime = time;
     vignetteTimer = 0;
+    isChangingVignette = true;
+}
+
+void LightColorManager::RestoreVignetteValue(const float time)
+{
+    resultVignette = initVignette;
+    holdVignette = *vignetteValue;
+
+    vignetteTime = time;
+    vignetteTimer = 0;
+    isChangingVignette = true;
 }

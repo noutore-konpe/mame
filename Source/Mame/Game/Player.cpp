@@ -1023,7 +1023,7 @@ void Player::ActiveCounter()
 
 void Player::OnDamaged()
 {
-    stateMachine->ChangeState(STAGGER_SOFT);
+    //stateMachine->ChangeState(STAGGER_SOFT);
 
     
 }

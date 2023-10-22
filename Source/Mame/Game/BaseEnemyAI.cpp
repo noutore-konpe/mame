@@ -103,7 +103,7 @@ void BaseEnemyAI::ColliderInitialize()
     if (hitCollider.size() == 0)
     {
         swordColliderNum = 5;
-        swordColliderRadius = 0.12f;
+        swordColliderRadius = 0.18f;
         if (sword_ != nullptr)
         {
             for (int i = 0; i < swordColliderNum; i++)

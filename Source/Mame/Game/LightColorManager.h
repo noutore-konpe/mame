@@ -26,6 +26,7 @@ public:
     void DrawDebug();
 
     void ChangeColorUpdate(int type,float elapsedTime);
+    void UpdateVignette(float elapsedTime);
 
     void GradualChangeColor(int type,DirectX::XMFLOAT3 changeColor,const float changeTime);//指定の種類の色を徐々に変化させる
     void RestoreColor(int type,const float changeTime);//指定の種類の色をもとに戻す
@@ -34,6 +35,7 @@ public:
     void AllRestoreColor(const float changeTime);//全ての種類の色をもとに戻す
 
     void ChangeVignetteValue(float vignetteValue,const float time);
+    void RestoreVignetteValue(const float time);
 
     const bool GetIsChangingColor(int type) const { return colorData[type].isChangingColor; }
 
@@ -65,6 +67,7 @@ private:
     float vignetteTimer;
     float vignetteTime;
     float initVignette;
+    float holdVignette;
     float resultVignette;
 };
 
