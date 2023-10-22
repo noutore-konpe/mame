@@ -6,6 +6,7 @@
 #include "../Scene/SceneGame.h"
 #include "ExperiencePointManager.h"
 #include "PlayerManager.h"
+#include "../Resource/texture.h"
 
 int ExperiencePoint::nameNum_ = 0;
 
@@ -17,6 +18,16 @@ ExperiencePoint::ExperiencePoint()
         graphics.GetDevice(),
         "./Resources/Model/cube.fbx"
     );
+
+    D3D11_TEXTURE2D_DESC texture2dDesc;
+    ::load_texture_from_file(graphics.GetDevice(),
+        L"./Resources/Image/Mask/noise3.png",
+        emissiveTexture.GetAddressOf(),
+        &texture2dDesc);
+
+    ::CreatePsFromCso(graphics.GetDevice(),
+        "./Resources/Shader/ExpModelPS.cso",
+        expModelPS.GetAddressOf());
 
     SetName("Exp_" + std::to_string(nameNum_++));
 }
@@ -229,7 +240,12 @@ void ExperiencePoint::Render(const float scale, ID3D11PixelShader* psShader)
         static_cast<int>(Shader::RASTER_STATE::SOLID)
     );
 
-    model_->Render(scale, psShader);
+    Graphics::Instance().GetDeviceContext()->PSSetShaderResources(16, 1, emissiveTexture.GetAddressOf());
+
+    //定数バッファー更新
+    UpdateConstants();
+
+    model_->Render(scale, expModelPS.Get());
 
     // 当たり判定球描画
 #ifdef _DEBUG
@@ -255,6 +271,13 @@ void ExperiencePoint::DrawDebug()
     ImGui::Separator();
 
 #endif // USE_IMGUI
+}
+
+void ExperiencePoint::UpdateConstants()
+{
+    SetEmissiveIntensity(3.0f);
+    SetEmissiveScrollDirection(DirectX::XMFLOAT2(0.25f, 0.5f));
+    SetEmissiveColor(DirectX::XMFLOAT4(1.0f, 1.0f, 0.3f, 1.0f));
 }
 
 

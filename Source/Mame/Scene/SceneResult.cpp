@@ -439,15 +439,16 @@ void SceneResult::UpdateIcon(const float& elapsedTime)
         return;
     }
 
-    if (iconStruct[iconNum + 1].isDisplay)
+    if (iconStruct[iconNum].isDisplay)
     {
         isIconUpdateEnd = true;
+        return;
     }
 
     float maxTime = 0.5f;
     float firstSize = 300.0f;
     float finalSize = 100.0f;
-    for (int i = 0; i < iconMax; ++i)
+    for (int i = 0; i < iconNum; ++i)
     {
         if (iconStruct[i].isDisplay)
         {

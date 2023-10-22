@@ -80,18 +80,23 @@ void SceneGame::CreateResource()
         //ItemManager::Instance().Register(new MagicCircle());
     }
 
-
     // enemy
     {
 #if 0
+
+    EnemyManager& enemyManager = EnemyManager::Instance();
+    EnemyGolem* enemyGolem = new EnemyGolem;
+    enemyGolem->Initialize();
+    enemyGolem->SetHealth(20);
+    enemyManager.Register(enemyGolem);
         EnemyManager& enemyManager = EnemyManager::Instance();
+        EnemyGolem* enemyGolem = new EnemyGolem;
+        enemyGolem->Initialize();
+        enemyManager.Register(enemyGolem);
 
         // EnemyGolem* enemyGolem = new EnemyGolem;
         // enemyManager.Register(enemyGolem);
 
-        EnemyGolem* enemyGolem = new EnemyGolem;
-        enemyGolem->Initialize();
-        enemyManager.Register(enemyGolem);
 
 
         // max 6~7
@@ -156,7 +161,10 @@ void SceneGame::CreateResource()
         D3D11_TEXTURE2D_DESC texture2dDesc;
         load_texture_from_file(graphics.GetDevice(),
             L"./Resources/Image/Mask/noise3.png",
-            emissiveTexture.GetAddressOf(), &texture2dDesc);
+            emissiveTexture[0].GetAddressOf(), &texture2dDesc);
+        load_texture_from_file(graphics.GetDevice(),
+            L"./Resources/Image/Mask/noise10.png",
+            emissiveTexture[1].GetAddressOf(), &texture2dDesc);
 
         load_texture_from_file(graphics.GetDevice(),
             L"./Resources/Image/Particle/circle.png",
@@ -370,13 +378,13 @@ void SceneGame::Update(const float& elapsedTime)
         particles->Integrate(Graphics::Instance().GetDeviceContext(), slowMotionElapsedTime);
     }
 
-#ifdef _DEBUG
     if (GetAsyncKeyState('P') & 0x01)
     {
         //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneResult);
         Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneResult));
         return;
     }
+#ifdef _DEBUG
 #endif
 
 #ifdef _DEBUG
@@ -565,9 +573,15 @@ void SceneGame::Render(const float& /*elapsedTime*/)
         shader->Begin(graphics.GetDeviceContext(), rc);
     }
 
-
-    // EMISSIVE
-    graphics.GetDeviceContext()->PSSetShaderResources(16, 1, emissiveTexture.GetAddressOf());
+    {
+        // EMISSIVE
+        ID3D11ShaderResourceView* shaderResourceViews[] =
+        {
+            emissiveTexture[0].Get(),
+            emissiveTexture[1].Get(),
+        };
+        graphics.GetDeviceContext()->PSSetShaderResources(16, _countof(shaderResourceViews), shaderResourceViews);
+    }
 
     // SHADOW : bind shadow map at slot 8
     graphics.GetDeviceContext()->PSSetShaderResources(8, 1, shadow.shadowMap->shaderResourceView.GetAddressOf());
@@ -789,7 +803,9 @@ void SceneGame::DrawDebug()
         // ñ{ê∂ê¨
         if (ImGui::Button("createBook"))
         {
-            ItemManager::Instance().Register(new Book());
+            Book* book = new Book();
+            book->Initialize();
+            ItemManager::Instance().Register(book);
         }
 
         // åoå±ílê∂ê¨

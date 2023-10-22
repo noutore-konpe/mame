@@ -220,8 +220,8 @@ private:
     D3D11_TEXTURE2D_DESC texture2dDesc;
 
     Microsoft::WRL::ComPtr<ID3D11Buffer> dissolveConstantBuffer = nullptr;
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> maskTexture[20] = {};
-    D3D11_TEXTURE2D_DESC maskTexture2dDesc[20] = {};
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> maskTexture;
+    D3D11_TEXTURE2D_DESC maskTexture2dDesc{};
 
     struct DissolveConstants
     {

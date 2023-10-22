@@ -93,7 +93,7 @@ private: // GPU—p’è”E•Ï”
     bool integrateParticles = true;
 
     // EMISSIVE
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> emissiveTexture;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> emissiveTexture[2];
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> particleTexture;
 
     // PostEffect

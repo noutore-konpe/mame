@@ -54,7 +54,7 @@ EnemyGolem::EnemyGolem()
         GetStateMachine()->RegisterState(new EnemyGolemState::WalkState(this));
         GetStateMachine()->RegisterState(new EnemyGolemState::Attack2State(this));
 
-        GetStateMachine()->SetState(static_cast<UINT>(StateMachineState::DummyState));
+        GetStateMachine()->SetState(static_cast<UINT>(StateMachineState::EntryState));
     }
 
     SetType(Enemy::TYPE::Golem);
@@ -92,7 +92,7 @@ void EnemyGolem::Initialize()
     //GetTransform()->SetPositionY(10.0f);
 
     // アニメーション再生
-    Character::PlayAnimation(static_cast<UINT>(Animation::Idle), true);
+    Character::PlayAnimation(static_cast<UINT>(Animation::Landing), true);
 
     currentState = static_cast<UINT>(StateMachineState::EntryState);
 
@@ -119,6 +119,9 @@ void EnemyGolem::Begin()
 // 更新処理
 void EnemyGolem::Update(const float& elapsedTime)
 {
+    // ステートマシン更新
+    GetStateMachine()->Update(elapsedTime);
+
     Enemy::Update(elapsedTime);
 
     magicCircleGolem->Update(elapsedTime);
@@ -135,9 +138,6 @@ void EnemyGolem::Update(const float& elapsedTime)
 
     UpdateSummoningMagicCircle(4.0f, 3.0f, DirectX::XMConvertToRadians(45));
     UpdateAttack2MagicCircle(2.0f, 3.5f);
-
-    // ステートマシン更新
-    GetStateMachine()->Update(elapsedTime);
 
     // アニメーション更新
     Character::UpdateAnimation(elapsedTime);
@@ -475,15 +475,15 @@ void EnemyGolem::ColliderInitialize()
 
 void EnemyGolem::ColliderPosUpdate(const float& scale)
 {
-    hitCollider[static_cast<int>(ColliderName::HIP)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface11", "golem_setup_1004:golem_rig_1005:j_Spine", scale);
-    hitCollider[static_cast<int>(ColliderName::R_SHOULDER)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface6", "golem_setup_1004:golem_rig_1005:j_RightArm", scale);
-    hitCollider[static_cast<int>(ColliderName::L_SHOULDER)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface5", "golem_setup_1004:golem_rig_1005:j_LeftArm", scale);
-    hitCollider[static_cast<int>(ColliderName::R_HAND)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface3", "golem_setup_1004:golem_rig_1005:j_RightHand", scale);
-    hitCollider[static_cast<int>(ColliderName::L_HAND)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface1", "golem_setup_1004:golem_rig_1005:j_LeftHand", scale);
-    hitCollider[static_cast<int>(ColliderName::R_LEG)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface11", "golem_setup_1004:golem_rig_1005:j_RightUptLeg", scale);
-    hitCollider[static_cast<int>(ColliderName::L_LEG)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface11", "golem_setup_1004:golem_rig_1005:j_LeftUptLeg", scale);
-    hitCollider[static_cast<int>(ColliderName::R_LEG_END)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface9", "golem_setup_1004:golem_rig_1005:j_RighttLeg", scale);
-    hitCollider[static_cast<int>(ColliderName::L_LEG_END)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface8", "golem_setup_1004:golem_rig_1005:j_LefttLeg", scale);
+    hitCollider[static_cast<int>(ColliderName::HIP)].position           = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface11", "golem_setup_1004:golem_rig_1005:j_Spine", scale);
+    hitCollider[static_cast<int>(ColliderName::R_SHOULDER)].position    = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface6", "golem_setup_1004:golem_rig_1005:j_RightArm", scale);
+    hitCollider[static_cast<int>(ColliderName::L_SHOULDER)].position    = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface5", "golem_setup_1004:golem_rig_1005:j_LeftArm", scale);
+    hitCollider[static_cast<int>(ColliderName::R_HAND)].position        = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface3", "golem_setup_1004:golem_rig_1005:j_RightHand", scale);
+    hitCollider[static_cast<int>(ColliderName::L_HAND)].position        = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface1", "golem_setup_1004:golem_rig_1005:j_LeftHand", scale);
+    hitCollider[static_cast<int>(ColliderName::R_LEG)].position         = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface11", "golem_setup_1004:golem_rig_1005:j_RightUptLeg", scale);
+    hitCollider[static_cast<int>(ColliderName::L_LEG)].position         = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface11", "golem_setup_1004:golem_rig_1005:j_LeftUptLeg", scale);
+    hitCollider[static_cast<int>(ColliderName::R_LEG_END)].position     = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface9", "golem_setup_1004:golem_rig_1005:j_RighttLeg", scale);
+    hitCollider[static_cast<int>(ColliderName::L_LEG_END)].position     = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface8", "golem_setup_1004:golem_rig_1005:j_LefttLeg", scale);
 
     for (int i = 0; i < static_cast<int>(ColliderName::END); i++)
     {
