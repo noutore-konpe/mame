@@ -378,13 +378,13 @@ void SceneGame::Update(const float& elapsedTime)
         particles->Integrate(Graphics::Instance().GetDeviceContext(), slowMotionElapsedTime);
     }
 
+#ifdef _DEBUG
     if (GetAsyncKeyState('P') & 0x01)
     {
         //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneResult);
         Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneResult));
         return;
     }
-#ifdef _DEBUG
 #endif
 
 #ifdef _DEBUG
