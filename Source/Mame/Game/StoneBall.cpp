@@ -3,6 +3,9 @@
 #include "../Graphics/Graphics.h"
 #include "../Resource/texture.h"
 
+#include "PlayerManager.h"
+#include "Collision.h"
+
 // コンストラクタ
 StoneBall::StoneBall()
 {
@@ -37,6 +40,18 @@ void StoneBall::Finalize()
 
 void StoneBall::Update(const float& elapsedTime)
 {
+    for (auto& hitCollider : PlayerManager::Instance().GetPlayer()->GetHitCollider())
+    {
+        if (Collision::IntersectSphereVsSphere(
+            GetTransform()->GetPosition(),
+            radius,
+            hitCollider.position,
+            hitCollider.radius
+        ))
+        {
+            PlayerManager::Instance().GetPlayer()->ApplyDamage(damage);
+        }
+    }
 }
 
 void StoneBall::Render(const float& scale, ID3D11PixelShader* psShader)
@@ -51,6 +66,9 @@ void StoneBall::DrawDebug()
     ImGui::Begin("StoneBall");
 
     model->DrawDebug();
+
+    DebugRenderer* debug = Graphics::Instance().GetDebugRenderer();
+    debug->DrawSphere(GetTransform()->GetPosition(), radius, { 1.0f,0.0f,0.0f,1.0f });
 
     ImGui::End();
 }

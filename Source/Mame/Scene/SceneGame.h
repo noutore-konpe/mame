@@ -58,6 +58,8 @@ private: // •Ï”“™X
     bool isWhiteSpriteRender = false;
     float whiteSpriteTimer = 0.0f;
 
+    std::unique_ptr<EnemyGolem> enemyGolem;
+
 private: // GPU—p’è”E•Ï”
     std::unique_ptr<FrameBuffer> framebuffers[3];
     std::unique_ptr<FullscreenQuad> bitBlockTransfer;

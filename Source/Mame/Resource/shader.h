@@ -145,8 +145,8 @@ public:
         float noiseTimer = 0.0f;
         float scanLineTimer = 0.0f;
         
-        float bokehAperture = 0.018f;
-        float bokehFocus = 0.824f;
+        float bokehAperture = 0.0f;
+        float bokehFocus = 0.3f;
 
         float vignetteValue = 0.2f;
         DirectX::XMFLOAT3 dummy;

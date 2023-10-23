@@ -58,6 +58,9 @@ void SceneGame::CreateResource()
 
     Graphics& graphics = Graphics::Instance();
 
+    // ロード用のダミー
+    enemyGolem = std::make_unique<EnemyGolem>();
+
     // stage
     {
         stageBase = std::make_unique<Stage>();

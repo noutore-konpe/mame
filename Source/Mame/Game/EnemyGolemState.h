@@ -44,7 +44,8 @@ namespace EnemyGolemState
 
     private:
         float landingTimer = 0.0f;
-        float maxTime = 0.7f;
+        float maxTime = 2.0f;
+        //float maxTime = 0.7f;
 
         float timer = 0.0f;
         float shakeTime = 2.0f;
@@ -78,8 +79,8 @@ namespace EnemyGolemState
         float bokehTimer0 = 0.0f;
         float bokehTimer1 = 0.0f;
 
-        float maxBokehTime0 = 0.5f;
-        float maxBokehTime1 = 0.5f;
+        float maxBokehTime0 = 1.0f;
+        float maxBokehTime1 = 1.0f;
 
         // ゲームパッド振動強さ
         float gamePadVibPower = 0.5f;
@@ -291,6 +292,9 @@ namespace EnemyGolemState
         float cameraShakeTimer = 0;
         bool isCameraShake = false;
         float maxTimer = 0.2f;
+
+        float deathTimer = 0.0f;
+        bool isDestroy = false;
     };
 
     // 歩き
@@ -341,5 +345,41 @@ namespace EnemyGolemState
     {
     public:
         DelayState(EnemyGolem* enemyGolem) : State(enemyGolem, "DelayState") {}
+        ~DelayState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+    private:
+        float delayTimer = 0.0f;
+        float maxDelay = 2.0f;
+    };
+
+    class EyeEmissiveDownState : public State<EnemyGolem>
+    {
+    public:
+        EyeEmissiveDownState(EnemyGolem* enemyGolem) :State(enemyGolem, "EyeEmissiveDownState") {}
+        ~EyeEmissiveDownState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+        
+    private:
+        float timer = 0.0f;
+    };
+
+    class EyeEmissiveUpState : public State<EnemyGolem>
+    {
+    public:
+        EyeEmissiveUpState(EnemyGolem* enemyGolem) :State(enemyGolem, "EyeEmissiveUpState") {}
+        ~EyeEmissiveUpState() {}
+
+        void Initialize()                       override;
+        void Update(const float& elapsedTime)   override;
+        void Finalize()                         override;
+
+    private:
+        float timer = 0.0f;
     };
 };

@@ -57,6 +57,9 @@ public: // ’è”
         DeathState,         // €–S
         WalkState,          // •à‚«
         Attack2State,       // UŒ‚‚Q
+        DelayState,
+        EyeEmissiveDown,
+        EyeEmissiveUp,
     };
 
     const DirectX::XMFLOAT4 magicCircleColor[10] =
@@ -113,6 +116,11 @@ public:// æ“¾Eİ’è
     void SetCurrentState(int state) { currentState = state; }
     int GetCurrentState() { return currentState; }
 
+    void SetEyeEmissiveColor(DirectX::XMFLOAT4 c) { eyeConstants.emissiveColor = c; }
+    DirectX::XMFLOAT4 GetEyeEmissiveColor() { return eyeConstants.emissiveColor; }
+    void SetEyeEmissiveIntensity(float intensity) { eyeConstants.emissiveIntensity = intensity; }
+    float GetEyeEmissiveIntensity() { return eyeConstants.emissiveIntensity; }
+
 public:
     // ¢Š«–‚–@wXVˆ—
     void UpdateSummoningMagicCircle(const float& lengthX, const float& lengthZ, const float& angle);
@@ -156,6 +164,19 @@ private:
     std::unique_ptr<StateMachine<State<EnemyGolem>>> stateMachine = nullptr;
 
     Microsoft::WRL::ComPtr<ID3D11PixelShader> golemPS;
+
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> golemEmissive;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> eyeEmissive;
+
+    Microsoft::WRL::ComPtr<ID3D11Buffer> eyeConstantBuffer;
+    struct EyeConstants
+    {
+        DirectX::XMFLOAT4 emissiveColor{ 1.0f,0.0f,0.0f,1.0f };
+        float emissiveIntensity = 2.0f;
+        DirectX::XMFLOAT3 temp;
+    }eyeConstants;
+
+    DirectX::XMFLOAT4 golemColor{ 1,1,1,1 };
 
     int currentState = 0;
 
