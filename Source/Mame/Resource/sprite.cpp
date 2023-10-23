@@ -98,7 +98,7 @@ Sprite::Sprite(ID3D11Device* device, const wchar_t* filename, const char* psFile
         if (isDissolve)
         {
             load_texture_from_file(graphics.GetDevice(),
-                L"./Resources/Image/Mask/mask.png",
+                L"./Resources/Image/Mask/noise.png",
                 maskTexture.GetAddressOf(), &maskTexture2dDesc);
         }
     }

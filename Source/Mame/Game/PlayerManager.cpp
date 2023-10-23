@@ -108,6 +108,22 @@ void PlayerManager::SkillImagesRender()
     float posX = 1220.0f;
     for (auto& skill : skillArray)
     {
+        skill->card->GetSpriteDissolve()->SetEdgeThreshold(0.0f);
+        skill->Render();
+        if (skill->GetOverlapNum() == 0)continue;
+        skill->SetIconPos(DirectX::XMFLOAT2(posX, 0));
+        posX -= skill->icon->GetSpriteTransform()->GetSize().x;
+        i++;
+    }
+}
+
+void PlayerManager::SkillImagesBloomRender()
+{
+    int i = 0;
+    float posX = 1220.0f;
+    for (auto& skill : skillArray)
+    {
+        skill->card->GetSpriteDissolve()->SetEdgeThreshold(0.1f);
         skill->Render();
         if (skill->GetOverlapNum() == 0)continue;
         skill->SetIconPos(DirectX::XMFLOAT2(posX, 0));

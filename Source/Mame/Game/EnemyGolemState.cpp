@@ -200,7 +200,8 @@ namespace EnemyGolemState
 
     void RoarState::Finalize()
     {
-
+        Shader* shader = Graphics::Instance().GetShader();
+        shader->postEffectConstants.bokehFocus = 0.0f;
     }
 }
 
@@ -874,6 +875,8 @@ namespace EnemyGolemState
     // 初期化
     void DeathState::Initialize()
     {
+        owner->SetCurrentState(static_cast<UINT>(EnemyGolem::StateMachineState::DeathState));
+
         // アニメーション設定
         owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Death0), false ,0.7f);
 

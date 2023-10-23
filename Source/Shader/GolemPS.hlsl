@@ -10,11 +10,9 @@ Texture2D textureMaps[4] : register(t0);
 Texture2D maskTexture : register(t15);
 
 float4 main(PSIn psIn) : SV_TARGET
-{    
+{
     float4 color = textureMaps[0].Sample(samplerStates[POINT], psIn.texcoord) * psIn.color;
     float alpha = color.a;
-    
-    float maskValue = maskTexture.Sample(samplerStates[POINT], psIn.texcoord).r;
     
     // ÉKÉìÉ}ï‚ê≥
     const float GAMMA = 2.2;
@@ -34,5 +32,6 @@ float4 main(PSIn psIn) : SV_TARGET
     finalColor.z += 0.2f;
     
     return float4(max(0, finalColor), alpha) * psIn.color;
-
+	
+	return float4(1.0f, 1.0f, 1.0f, 1.0f);
 }
