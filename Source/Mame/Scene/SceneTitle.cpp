@@ -316,7 +316,7 @@ void SceneTitle::DrawDebug()
 {
     Graphics& graphics = Graphics::Instance();
     Shader* shader = graphics.GetShader();
-    
+
     // ƒ‰ƒCƒg‚Æ‚©
     shader->DrawDebug();
 

@@ -94,6 +94,8 @@ public:
     int GetEnemy2KillNum() { return enemy2KillNum; }
     int GetEnemy3KillNum() { return enemy3KillNum; }
     int GetEnemyGolemKillNum() { return enemyGolemKillNum; }
+public:
+    static constexpr float CRA_ACTION_COOL_TIME_ = 0.5f; // 近接攻撃クールタイム
 
 private:
     std::vector<Enemy*> enemies_ = {};

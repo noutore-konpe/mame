@@ -31,12 +31,13 @@ namespace BookState
             owner->GetTransform()->SetRotation(bookRot);
         }
 
-        // 待機時間が終わったらOpenステートへ
+        // 待機時間が終わったら
         if (GetTimer() < 0.0f)
         {
             // 生きている敵が見つからなかったらreturn
             if (false == SearchAliveEnemy()) return;
 
+            // Openステートへ
             owner->GetStateMachine()->ChangeState(static_cast<UINT>(Book::StateMachineState::Open));
         }
     }
@@ -49,6 +50,8 @@ namespace BookState
     // 生きている敵を探す
     const bool IdleState::SearchAliveEnemy()
     {
+        using DirectX::XMFLOAT3;
+
         // 生きている敵を探す
         EnemyManager& enemyManager = EnemyManager::Instance();
         const size_t  enemyCount   = enemyManager.GetEnemyCount();
@@ -59,6 +62,14 @@ namespace BookState
 
             // 死んでいたらcontinue;
             if (true == enemy->GetIsDead()) continue;
+
+            const XMFLOAT3& bookPos  = owner->GetTransform()->GetPosition();
+            const XMFLOAT3& enemyPos = enemy->GetPosition();
+            const float     lengthSq = ::XMFloat3LengthSq(enemyPos - bookPos);
+
+            // 本の索敵範囲外ならcontinue
+            const float searchEnemyRangeSq = owner->GetSearchEnemyRange() * owner->GetSearchEnemyRange();
+            if (lengthSq > searchEnemyRangeSq) continue;
 
             // 見つかった
             return true;
@@ -210,18 +221,48 @@ namespace BookState
     {
         using DirectX::XMFLOAT3;
 
-        // タイマー更新
-        SubtractTime(elapsedTime);
+        // 弾を撃ち切ったらCloseステートへ遷移する
+        if (false == isLaunch)
+        {
+            // タイマー更新
+            SubtractTime(elapsedTime);
+
+            // タイマーが終了していたらCloseステートへ遷移する
+            if (GetTimer() <= 0.0f)
+            {
+                owner->GetStateMachine()->ChangeState(static_cast<UINT>(Book::StateMachineState::Close));
+                return;
+            }
+
+            // 以降の処理を飛ばす
+            return;
+        }
 
         // 一番近い敵を探す
         Enemy* enemy = nullptr;
         const bool isFoundEnemy = SearchNearEnemy(&enemy);
 
-        // 敵が見つからなかったらCloseステートへ遷移する
+        // 敵が見つからなかったら
         if (false == isFoundEnemy)
         {
-            owner->GetStateMachine()->ChangeState(static_cast<UINT>(Book::StateMachineState::Close));
+            // タイマー更新
+            SubtractTime(elapsedTime);
+
+            // タイマーが終了していたらCloseステートへ遷移する
+            if (GetTimer() <= 0.0f)
+            {
+                owner->GetStateMachine()->ChangeState(static_cast<UINT>(Book::StateMachineState::Close));
+                return;
+            }
+
+            // 以降の処理を飛ばす
             return;
+        }
+        // 敵を見つけていたら
+        else
+        {
+            // 見つかなかった時に少し間を開けてCloseステートへ遷移するようにする
+            SetTimer(0.25f);
         }
 
         // 敵に向かうベクトルを取得
@@ -243,35 +284,21 @@ namespace BookState
             owner->Turn(elapsedTime, vec.x, vec.z, turnSpeed); // Degree
         }
 
-        // 発射できるか
-        if (isLaunch)
+        // 弾発射処理
+        if (true == owner->LaunchProjectile(elapsedTime, vec))
         {
-            // 弾発射処理
-            if (owner->LaunchProjectile(elapsedTime, vec))
-            {
-                ++launchNum;
-            }
-
-            // バグが起きないようにここで仮に設定
-            SetTimer(10.0f);
+            ++launchNum;
         }
-        //else
-        //{
-        //    SubtractTime(elapsedTime);
-        //}
 
-        // 一回で発射できる最大数に達した
-        if (owner->GetMaxLaunchNum() <= launchNum && isLaunch)
+        // 一回で発射できる最大数に達したら発射フラグをOFFにする
+        if (launchNum >= owner->GetMaxLaunchNum())
         {
             isLaunch = false;
-            SetTimer(1.0f);
+
+            // 少し間を開けてからCloseステートへ遷移するようにする
+            SetTimer(0.25f);
         }
 
-        // Closeステートへ
-        if (GetTimer() < 0.0f && !isLaunch)
-        {
-            owner->GetStateMachine()->ChangeState(static_cast<UINT>(Book::StateMachineState::Close));
-        }
     }
 
     // 終了化
@@ -301,22 +328,19 @@ namespace BookState
             // 死んでいたらcontinue;
             if (true == otherEnemy->GetIsDead()) continue;
 
-            // まだ何も入っていなければこの敵を代入する
-            if (nullptr == (*enemy))
-            {
-                (*enemy) = otherEnemy;
-                continue;
-            }
+            const XMFLOAT3& bookPos  = owner->GetTransform()->GetPosition();
+            const XMFLOAT3& otherPos = otherEnemy->GetPosition();
+            const float     lengthSq = ::XMFloat3LengthSq(otherPos - bookPos);
+
+            // 本の索敵範囲外ならcontinue
+            const float searchEnemyRangeSq = owner->GetSearchEnemyRange() * owner->GetSearchEnemyRange();
+            if (lengthSq > searchEnemyRangeSq) continue;
 
             // 前回の本と敵との距離(二乗)より近ければこの敵を代入する
-            const XMFLOAT3 bookPos  = owner->GetTransform()->GetPosition();
-            const XMFLOAT3 otherPos = otherEnemy->GetPosition();
-                  XMFLOAT3 vec      = otherPos - bookPos;
-                           vec.y    = 0.0f; // 高さは無視する
-            const float    lengthSq = ::XMFloat3LengthSq(vec);
             if (lengthSq < oldLengthSq)
             {
-                (*enemy) = otherEnemy;
+                (*enemy)    = otherEnemy;
+                oldLengthSq = lengthSq;
             }
 
         }

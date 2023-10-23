@@ -339,6 +339,19 @@ void SceneGame::Begin()
 // 更新処理
 void SceneGame::Update(const float& elapsedTime)
 {
+    GamePad& gamePad = Input::Instance().GetGamePad();
+
+    // 最初の白飛びのスプライト
+    UpdateWhiteSprite(elapsedTime);
+
+    //カード演出中はほかの処理を更新しない
+    Player* player = PlayerManager::Instance().GetPlayer().get();
+    if (player->isSelectingSkill)
+    {
+        player->SelectSkillUpdate(elapsedTime);
+        return;
+    }
+
     // スローモーション更新
     SlowMotionManager& slowMotion = SlowMotionManager::Instance();
     slowMotion.Update(elapsedTime);
@@ -352,8 +365,6 @@ void SceneGame::Update(const float& elapsedTime)
 
     //ライト、ビネット更新
     LightColorManager::Instance().Update(elapsedTime);
-
-    GamePad& gamePad = Input::Instance().GetGamePad();
 
     // 最初の白飛びのスプライト
     UpdateWhiteSprite(slowMotionElapsedTime);
@@ -394,15 +405,6 @@ void SceneGame::Update(const float& elapsedTime)
         SetCursorPos(posX, posY);
     }
 #endif // _DEBUG
-
-    //カード演出中はほかの処理を更新しない
-    auto* player = PlayerManager::Instance().GetPlayer().get();
-    if (player->isSelectingSkill)
-    {
-        player->SelectSkillUpdate(elapsedTime);
-
-        return;
-    }
 
     {
         Camera::Instance().Update(slowMotionElapsedTime);
@@ -779,7 +781,9 @@ void SceneGame::DrawDebug()
         // 本生成
         if (ImGui::Button("createBook"))
         {
-            ItemManager::Instance().Register(new Book());
+            Book* book = new Book();
+            book->Initialize();
+            ItemManager::Instance().Register(book);
         }
 
         // 経験値生成

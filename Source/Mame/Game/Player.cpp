@@ -75,7 +75,7 @@ void Player::Initialize()
     Character::Initialize();
 
     // 待機アニメーションに設定してる
-    //Character::PlayAnimation(2, true);
+    Character::PlayAnimation(0, true);
 
 
     //カメラがプレイヤーを追いかけるよう設定
@@ -151,6 +151,7 @@ void Player::Initialize()
     
 
     lifeTimer = 0;
+
 }
 
 // 終了化

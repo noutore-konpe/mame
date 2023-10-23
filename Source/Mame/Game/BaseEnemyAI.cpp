@@ -18,7 +18,7 @@ void BaseEnemyAI::Initialize()
 
     //ジョイント位置取得するために適当なアニメーション再生
     //※アニメーションを流しとかないとkeyframeに情報が入らないからジョイント位置がとれない
-    PlayAnimation(0,true);
+    PlayAnimation(0, true);
 
     ColliderInitialize();
 }

@@ -526,6 +526,9 @@
     <ClCompile Include="Source\Mame\Game\UserInterface.cpp">
       <Filter>mamelib\Mame\Game</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\TutorialManager.cpp">
+      <Filter>mamelib\Mame\Game\Tutorial</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -917,6 +920,9 @@
     <ClInclude Include="Source\Mame\Game\UserInterface.h">
       <Filter>mamelib\Mame\Game</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Game\TutorialManager.h">
+      <Filter>mamelib\Mame\Game\Tutorial</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">
@@ -1142,6 +1148,9 @@
     </Filter>
     <Filter Include="mamelib\Mame\Game\Stage">
       <UniqueIdentifier>{8c785f1e-5d97-4f26-96dd-c68b8391fb22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Tutorial">
+      <UniqueIdentifier>{006e22f0-b01c-416d-88df-1d7247ec3c1a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
