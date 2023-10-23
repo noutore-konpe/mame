@@ -724,8 +724,7 @@ void Player::SelectSkillUpdate(float elapsedTime)
             }
             buttonDown = true;
         }
-        else if (ax >= 0.05f || ax <= -0.05f)buttonDown = true;
-        else
+        else if (ax <= 0.3f && ax >= -0.3f)
         {
             buttonDown = false;
         }
@@ -935,7 +934,7 @@ void Player::LockOnUpdate()
     {
         if(ChangeLockOnTarget(ax))buttonDown = true;
     }
-    if (ax <= 0.1f && ax >= -0.1f)
+    if (ax <= 0.3f && ax >= -0.3f)
     {
         buttonDown = false;
     }
