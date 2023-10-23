@@ -335,4 +335,11 @@ namespace EnemyGolemState
     private:
         float rotateSpeed = 100.0f; // 回転速度
     };
+
+    // 攻撃ディレイ
+    class DelayState : public State<EnemyGolem>
+    {
+    public:
+        DelayState(EnemyGolem* enemyGolem) : State(enemyGolem, "DelayState") {}
+    };
 };

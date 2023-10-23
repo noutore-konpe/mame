@@ -121,7 +121,7 @@ void EnemyAI_2::Render(const float& scale, ID3D11PixelShader* /*psShader*/)
     BaseEnemyAI::Render(scale, emissiveTextureUVScroll.Get());
 
     // Œ••`‰æ
-    sword_->Render(scale, nullptr);
+    sword_->Render(scale, emissiveTextureUVScroll.Get());
 
     ColliderPosUpdate(scale);
 }

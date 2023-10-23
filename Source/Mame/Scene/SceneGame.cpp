@@ -84,15 +84,15 @@ void SceneGame::CreateResource()
     {
 #if 0
 
-    EnemyManager& enemyManager = EnemyManager::Instance();
-    EnemyGolem* enemyGolem = new EnemyGolem;
-    enemyGolem->Initialize();
-    enemyGolem->SetHealth(20);
-    enemyManager.Register(enemyGolem);
         EnemyManager& enemyManager = EnemyManager::Instance();
-        EnemyGolem* enemyGolem = new EnemyGolem;
-        enemyGolem->Initialize();
-        enemyManager.Register(enemyGolem);
+    //EnemyGolem* enemyGolem = new EnemyGolem;
+    //enemyGolem->Initialize();
+    //enemyGolem->SetHealth(20);
+    //enemyManager.Register(enemyGolem);
+    //    EnemyManager& enemyManager = EnemyManager::Instance();
+    //    EnemyGolem* enemyGolem = new EnemyGolem;
+    //    enemyGolem->Initialize();
+    //    enemyManager.Register(enemyGolem);
 
         // EnemyGolem* enemyGolem = new EnemyGolem;
         // enemyManager.Register(enemyGolem);
@@ -389,13 +389,13 @@ void SceneGame::Update(const float& elapsedTime)
         particles->Integrate(Graphics::Instance().GetDeviceContext(), slowMotionElapsedTime);
     }
 
-#ifdef _DEBUG
     if (GetAsyncKeyState('P') & 0x01)
     {
         //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneResult);
         Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneResult));
         return;
     }
+#ifdef _DEBUG
 #endif
 
 #ifdef _DEBUG
@@ -671,6 +671,13 @@ void SceneGame::Render(const float& /*elapsedTime*/)
         NumeralManager& numeralManager = NumeralManager::Instance();
         numeralManager.Render();
 
+        // ƒXƒLƒ‹‘I‘ğ’†
+        auto* player = PlayerManager::Instance().GetPlayer().get();
+        if (player->isSelectingSkill)
+        {
+            PlayerManager::Instance().SkillImagesBloomRender();
+        }
+
         UserInterface::Instance().BloomRender();
     }
 
@@ -745,8 +752,8 @@ void SceneGame::Render(const float& /*elapsedTime*/)
         NumeralManager& numeralManager = NumeralManager::Instance();
         numeralManager.Render();
 
-        PlayerManager::Instance().SkillImagesRender();
         UserInterface::Instance().Render();
+        PlayerManager::Instance().SkillImagesRender();
 
         // ¦‚±‚ê‚æ‚è‰º‚É‰½‚à•`‰æ‚µ‚È‚¢
         if(isWhiteSpriteRender) whiteSprite->Render();

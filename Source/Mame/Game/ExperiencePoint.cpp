@@ -41,7 +41,7 @@ ExperiencePoint::~ExperiencePoint()
 
 void ExperiencePoint::Initialize()
 {
-    GetTransform()->SetScaleFactor(0.25f);
+    GetTransform()->SetScaleFactor(0.1f);
 
     step_ = STEP::FALL_INIT;
 }

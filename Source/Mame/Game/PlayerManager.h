@@ -24,6 +24,7 @@ public:
     void DrawDebug();                                                   // デバッグ描画
 
     void SkillImagesRender();
+    void SkillImagesBloomRender();
 
     void CollisionPlayerVsEnemy();
 

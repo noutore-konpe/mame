@@ -104,8 +104,8 @@ public:
         float dissolveValue = 0.0f;         // ディゾルブ適応量
         float dissolveBlackValue = 0.0f;    // 黒色
 
-        float edgeThreshold = 0.2f; // 縁の閾値
-        DirectX::XMFLOAT4 edgeColor = { 0.0f, 1.0f, 0.0f, 1.0f }; // 縁の色
+        float edgeThreshold = 0.1f; // 縁の閾値
+        DirectX::XMFLOAT4 edgeColor = { 1.0f, 1.0f, 0.0f, 1.0f }; // 縁の色
 
         float delay = 0.4f;
         int dissolveType = 0;
