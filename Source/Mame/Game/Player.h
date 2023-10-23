@@ -169,10 +169,19 @@ public:
 
     Model* GetSword() { return swordModel.get(); }
 
+    
     void AddExp(const float exp) { curExp += exp; totalExp += exp; }
     const float GetCurExp() const { return curExp; }
     const float GetTotalExp() const { return totalExp; }
     const float GetLevelUpExp() const { return levelUpExp; }
+
+    void ApplyExp(const float exp)
+    {
+        AddExp(exp);
+        auto pos = GetTransform()->GetPosition();
+        pos.y += 0.7f;
+        expEffect->Play(pos,DirectX::XMFLOAT3(1,1,1),DirectX::XMFLOAT4(1.0f,1.0f,1.0f,0.4f));//エフェクト再生
+    }
 
     const int GetLevel() const { return level; }
 
@@ -194,7 +203,6 @@ public:
     void SetInflictBlowOffForceLevel(const BLOW_OFF_FORCE_LEVEL& inflictBlowOffForceLevel) { inflictBlowOffForceLevel_ = inflictBlowOffForceLevel; }
 
 
-private:
     void LevelUpdate();
 
     //地形判定後の座標取得
@@ -315,6 +323,8 @@ private:
 
     //---------------------------------Effect---------------------------------------------
     std::unique_ptr<Effect> laserEffect;
+    std::unique_ptr<Effect> expEffect;
+    Effekseer::Handle expHandle;
     //------------------------------------------------------------------------------------
 };
 

@@ -5,7 +5,5 @@ cbuffer RESULT_CONSTANTS : register(b5)
 
 float4 main() : SV_TARGET
 {
-    float alpha = max(0, color.r);
-    
-    return float4(color.rgb, alpha);
+    return color;
 }

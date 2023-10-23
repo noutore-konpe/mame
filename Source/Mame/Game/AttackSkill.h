@@ -56,6 +56,15 @@ namespace PlayerSkill
         void Overlaping()override;
 
         void CreateBlackHole();
+
+        void Update(float elapsedTime);
+
+    private:
+        float coolTime = 30.0f;
+        float coolTimer;
+        const float coolTimeDecrease = 3.0f;
+
+        DirectX::XMFLOAT3 createPos;
     };
 
     class CanTripleAttack : public BaseSkill

@@ -99,24 +99,7 @@ Sprite::Sprite(ID3D11Device* device, const wchar_t* filename, const char* psFile
         {
             load_texture_from_file(graphics.GetDevice(),
                 L"./Resources/Image/Mask/mask.png",
-                //L"./Resources/Image/Mask/dissolve_animation.png",
-                maskTexture[0].GetAddressOf(), &maskTexture2dDesc[0]);
-            load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/Mask/dissolve_animation2.png",
-                maskTexture[1].GetAddressOf(), &maskTexture2dDesc[1]);
-
-            load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/Mask/noise.png",
-                maskTexture[2].GetAddressOf(), &maskTexture2dDesc[2]);
-            load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/Mask/noise1.png",
-                maskTexture[3].GetAddressOf(), &maskTexture2dDesc[3]);
-            load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/Mask/noise2.png",
-                maskTexture[4].GetAddressOf(), &maskTexture2dDesc[4]);
-            load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/Mask/noise3.png",
-                maskTexture[5].GetAddressOf(), &maskTexture2dDesc[5]);
-            load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/Mask/noise4.png",
-                maskTexture[6].GetAddressOf(), &maskTexture2dDesc[6]);
-
-            load_texture_from_file(graphics.GetDevice(), L"./Resources/Image/Mask/noise10.png",
-                maskTexture[7].GetAddressOf(), &maskTexture2dDesc[7]);
+                maskTexture.GetAddressOf(), &maskTexture2dDesc);
         }
     }
 
@@ -262,7 +245,7 @@ void Sprite::Render()
     if (isDissolve)
     {
         graphics.GetDeviceContext()->PSSetShaderResources(1, 1,
-            maskTexture[spriteDissolve.GetMaskTextureValue()].GetAddressOf());
+            maskTexture.GetAddressOf());
         // 定数バッファの更新
         {
             DissolveConstants dissolve{};

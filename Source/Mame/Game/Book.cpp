@@ -331,6 +331,10 @@ void Book::SetTransform()
         static float timer;
         //float moveY = isMoveToUp ? 0.3f : -0.3f;
 #if 1
+    //// ‰ñ“]XV
+    //circularMotionRotationZ_ += circularMotionAddRotate_ * elapsedTime;
+    //if (circularMotionRotationZ_ > 360.0f) { circularMotionRotationZ_ -= 360.0f; }
+
 
     // ã‰º‚ÉˆÚ“®‚³‚¹‚é
         DirectX::XMFLOAT3 floatingModifyPos = bookPosition;
@@ -353,5 +357,6 @@ void Book::SetTransform()
         if (bookRot.z > +radian360) bookRot.z += -radian360;
         else if (bookRot.z < -radian360) bookRot.z += +radian360;
         GetTransform()->SetRotation(bookRot);
+
     }
 }

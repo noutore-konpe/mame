@@ -42,6 +42,9 @@ public:
     virtual void Render(const float scale, ID3D11PixelShader* psShader);
     virtual void DrawDebug();
 
+    void UpdateConstants();
+
+
 public:
     Transform* GetTransform() { return model_->GetTransform(); }
 
@@ -66,6 +69,10 @@ private:
     void UpdateHorizontalVelocity(const float elapsedFrame);
     void UpdateHorizontalMove(const float elapsedTime);
 
+    void SetEmissiveIntensity(float intensity) { model_->skinned_meshes->data.emissiveIntensity = intensity; }
+    void SetEmissiveScrollDirection(DirectX::XMFLOAT2 scroll) { model_->skinned_meshes->data.emissiveScrollDirection = scroll; }
+    void SetEmissiveColor(DirectX::XMFLOAT4 color) { model_->skinned_meshes->data.emissiveColor = color; }
+
 private:
     static int nameNum_;
 
@@ -88,5 +95,7 @@ private:
     bool                isGround_       = false;
     bool                isMoveToPlayer_ = false;
 
+    Microsoft::WRL::ComPtr<ID3D11PixelShader> expModelPS;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> emissiveTexture;
 };
 

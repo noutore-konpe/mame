@@ -60,6 +60,7 @@ Player::Player()
     }
 
     laserEffect = std::make_unique<Effect>("./Resources/Effect/laser.efk");
+    expEffect = std::make_unique<Effect>("./Resources/Effect/getExp.efk");
 }
 
 // デストラクタ
@@ -149,6 +150,7 @@ void Player::Initialize()
         collider.radius *= 1.3f;
     }
     
+    skillArray = &PlayerManager::Instance().GetSkillArray();
 
     lifeTimer = 0;
 
@@ -195,12 +197,18 @@ void Player::Update(const float elapsedTime)
 
     LevelUpdate();
 
-    skillArray = &PlayerManager::Instance().GetSkillArray();
+    
+    for (auto& skill : *skillArray)
+    {
+        skill->Update(elapsedTime);
+    }
 
     // アビリティマネージャー更新(仮)
     abilityManager_.Update(elapsedTime);
 
     lifeTimer += elapsedTime;
+
+   
 }
 
 // Updateの後に呼ばれる
@@ -823,6 +831,8 @@ bool Player::ChangeLockOnTarget(float ax)
 {
     if (!(ax > 0.5f || ax < -0.5))return false;
     auto& camera = Camera::Instance();
+
+    if (camera.GetLockOnTarget() == nullptr)return false;
     DirectX::XMFLOAT3 curLockOnTargetPos = camera.GetLockOnTarget()->GetPosition();
 
     //外積にプレイヤーから片側にいる敵のみ取得

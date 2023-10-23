@@ -17,6 +17,8 @@ WaveEnemySet waveEnemySet0[] = {
     WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), 1.0f, 5),
 };
 WaveEnemySet waveEnemySet1[] = {
+
+    WaveEnemySet(1.0f, "EnemyGolem", SceneGame::stageCenter, 5.0f, 10),
     WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), 1.0f, 5),
     WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), 1.0f, 5),
 };

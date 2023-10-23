@@ -9,6 +9,8 @@
 #include "ActionDerived.h"
 #include "JudgmentDerived.h"
 
+#include "EnemyManager.h"
+
 int EnemyAI_1::nameNum_ = 0;
 
 // コンストラクタ
@@ -72,6 +74,8 @@ EnemyAI_1::EnemyAI_1()
 EnemyAI_1::~EnemyAI_1()
 {
     --nameNum_;
+    if (isDead)
+        EnemyManager::Instance().AddEnemy1KillNum();
 }
 
 

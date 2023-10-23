@@ -44,5 +44,7 @@ private:
 
     bool isChangeScene = false;
     float easingTimer = 0.0f;
+
+    Microsoft::WRL::ComPtr<ID3D11Buffer> ConstantBuffer;
 };
 

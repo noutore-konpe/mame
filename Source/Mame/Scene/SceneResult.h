@@ -14,6 +14,26 @@
 class SceneResult : public Mame::Scene::BaseScene
 {
 private:// íËêî
+    enum class STATE
+    {
+        Initialize,
+        LifeTime,
+        Wave,
+        Lv,
+        Icon,
+        IconNum,
+        Enemy,
+        EnemyKill,
+        Max,
+    };
+
+    float lifeTimePos[4] =
+    {
+        300,
+        350,
+        450,
+        500,
+    };
 
     static const int iconMax = 15;
 
@@ -90,7 +110,17 @@ public:
     void DrawDebug()    override;
 
 private:
+    void UpdateLifeTimeNum(const float& elapsedTime);
+    void UpdateWave(const float& elapsedTime);
+    void UpdateLv(const float& elapsedTime);
+    void UpdateIcon(const float& elapsedTime);
+    void UpdateIconNum(const float& elapsedTime);
+    void UpdateEnemy(const float& elapsedTime);
     void UpdateEnemyKillNumAndx(const float& elapsedTime);
+
+    void RenderLifeTime();
+    void RenderWave();
+    void RenderLv();
 
     void RenderSkill();
     void RenderSkillX();
@@ -110,41 +140,57 @@ private:
     void RenderEnemyModel();
 
 private:
-    std::unique_ptr<EnemyGolemResult> enemyGolem = nullptr;
-    std::unique_ptr<PlayerResult> player = nullptr;
+    std::unique_ptr<EnemyGolemResult> enemyGolem    = nullptr;
+    std::unique_ptr<PlayerResult> player            = nullptr;
 
-    std::unique_ptr<Sprite> backSprite = nullptr;
-    std::unique_ptr<Sprite> emmaSprite = nullptr;
+    std::unique_ptr<Sprite> backSprite      = nullptr;
+    std::unique_ptr<Sprite> emmaSprite      = nullptr;
+    std::unique_ptr<Sprite> resultSprite    = nullptr;
+       
+    std::unique_ptr<Sprite> lifeTimeSprite  = nullptr;
+    std::unique_ptr<Sprite> waveSprite      = nullptr;
+    std::unique_ptr<Sprite> lvSprite        = nullptr;
 
-    
-    
-    std::unique_ptr<Sprite> lifeTimeSprite = nullptr;
-    std::unique_ptr<Sprite> waveSprite = nullptr;
-    std::unique_ptr<Sprite> lvSprite = nullptr;
+    std::unique_ptr<Sprite> xSprite         = nullptr;
+    std::unique_ptr<Sprite> numSprite       = nullptr;
 
-    std::unique_ptr<Sprite> xSprite = nullptr;
-    std::unique_ptr<Sprite> numSprite = nullptr;
+    std::unique_ptr<Sprite> chonchonSprite  = nullptr;
 
     struct EnemyResult
     {
-        DirectX::XMFLOAT3 position = {};
-        DirectX::XMFLOAT3 scale = {};
-        DirectX::XMFLOAT3 rotate = {};
-        DirectX::XMFLOAT4 color = {};
-    }enemyResult[3];
+        DirectX::XMFLOAT3 position  = {};
+        DirectX::XMFLOAT3 scale     = {};
+        DirectX::XMFLOAT3 rotate    = {};
+        DirectX::XMFLOAT4 color     = {};
+    }enemyResult[3], golemResult;
 
 
     struct SlideStruct
     {
         float addPosX = 0.0f;
         float easingTimer = 0.0f;
+        float alpha = 0.0f;
     };
 
+    SlideStruct lifeTimer;      // lifeTimerÇÃï∂éö
+    SlideStruct lifeTimerNum;   // lifeTimerÇÃêîéö
+    SlideStruct wave;       // waveÇÃï∂éö
+    SlideStruct waveNum;    // waveÇÃêîéö
+    SlideStruct lv;         // lvÇÃï∂éö
+    SlideStruct lvNum;      // lvÇÃêîéö
     SlideStruct skillX;
     SlideStruct skillNum;
     SlideStruct KillX;
     SlideStruct killNum;
-    bool isSlide = false;
+    SlideStruct enemy;
+
+    bool isSlide            = false;
+    bool isLifeTimer        = false;
+    bool isWave             = false;
+    bool isLv               = false;
+    bool isIconUpdateEnd    = false;
+    bool isIconNum          = false;
+    bool isEnemy            = false;
 
     struct IconStruct
     {
@@ -153,14 +199,16 @@ private:
         bool isDisplay = false;     // ï\é¶Ç∑ÇÈÇ©
     }iconStruct[iconMax];
 
-
+    int resultState = 0;
 
 private:
     Microsoft::WRL::ComPtr<ID3D11PixelShader> finalPassPS;
     Microsoft::WRL::ComPtr<ID3D11Buffer> resultConstantBuffer;
     struct ResultConstants
     {
-        DirectX::XMFLOAT4 color{ 0.3f, 0.3f, 0.3f ,1.0f };
+        DirectX::XMFLOAT4 color{ 0.3f, 0.3f, 0.3f ,0.0f };
     }resultConstants;
+
+    Microsoft::WRL::ComPtr<ID3D11Buffer> ConstantBuffer;
 };
 

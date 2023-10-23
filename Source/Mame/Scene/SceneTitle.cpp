@@ -84,7 +84,6 @@ void SceneTitle::CreateResource()
         hr = graphics.GetDevice()->CreateBuffer(&bufferDesc, nullptr,
             ConstantBuffer.GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
     }
 }
 

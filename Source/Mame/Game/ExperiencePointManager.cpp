@@ -127,7 +127,7 @@ void ExperiencePointManager::CollisionExpVsPlayer(const float /*elapsedTime*/)
         {
             Remove(exp);
 
-            PlayerManager::Instance().GetPlayer()->AddExp(5);
+            PlayerManager::Instance().GetPlayer()->ApplyExp(5);
         }
 
     }
