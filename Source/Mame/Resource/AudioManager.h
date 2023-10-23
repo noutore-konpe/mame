@@ -10,14 +10,14 @@
 enum class BGM
 {
     Title,
-    Title1,
-    Title2,
+    GameOver,
     BGM_Max,
 };
 
 enum class SE
 {
-    temp,
+    GolemEntry,
+    GolemRoar,
     SE_Max,
 };
 

@@ -20,6 +20,11 @@ public:
     void SetEmissiveScrollDirection(DirectX::XMFLOAT2 scroll) { model->skinned_meshes->data.emissiveScrollDirection = scroll; }
     void SetEmissiveColor(DirectX::XMFLOAT4 color) { model->skinned_meshes->data.emissiveColor = color; }
 
+    void SetRadius(float r) { radius = r; }
+
+    float radius = 1.0f;
+    float damage = 1.0f;
+
 private:
     Microsoft::WRL::ComPtr<ID3D11PixelShader> stoneBallPS;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> stoneBallTexture;

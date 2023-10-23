@@ -7,7 +7,15 @@
 SamplerState samplerStates[5] : register(s0);
 Texture2D textureMaps[4] : register(t0);
 
-Texture2D maskTexture : register(t15);
+Texture2D golemEmissive : register(t16);
+Texture2D eyeEmissiveTexture : register(t14);
+
+cbuffer EYE_CONSTANTS : register(b7)
+{
+    float4 eyeEmissiveColor;
+    float eyeEmissiveIntensity;
+    float3 eyeDummy;
+}
 
 float4 main(PSIn psIn) : SV_TARGET
 {
@@ -24,6 +32,7 @@ float4 main(PSIn psIn) : SV_TARGET
     // ”¼‹…ƒ‰ƒCƒg
     float3 hemisphereLight = CalcHemisphereLight(psIn);
     
+    //float3 finalColor = directionLight * color.rgb;
     float3 finalColor = directionLight + hemisphereLight * color.rgb;
     
     // “ñŽŸ”½ŽË
@@ -31,7 +40,11 @@ float4 main(PSIn psIn) : SV_TARGET
     finalColor.y += 0.2f;
     finalColor.z += 0.2f;
     
-    return float4(max(0, finalColor), alpha) * psIn.color;
-	
-	return float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float emissive = golemEmissive.Sample(samplerStates[LINEAR], psIn.texcoord).r;
+    finalColor += emissive * emissiveIntensity * emissiveColor.rgb;
+    
+    float eyeEmissive = eyeEmissiveTexture.Sample(samplerStates[LINEAR], psIn.texcoord).r;
+    finalColor += eyeEmissive * eyeEmissiveIntensity * eyeEmissiveColor.rgb;
+    
+    return float4(finalColor, alpha) * psIn.color;
 }
