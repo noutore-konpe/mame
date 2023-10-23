@@ -44,6 +44,13 @@ MagicCircleGolemAttack2::~MagicCircleGolemAttack2()
 // 初期化
 void MagicCircleGolemAttack2::Initialize()
 {
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            stoneBalls[i][j]->Initialize();
+        }
+    }
 }
 
 // 終了化
@@ -56,6 +63,14 @@ void MagicCircleGolemAttack2::Update(const float& elapsedTime)
 {
     // ステートマシン更新
     GetStateMachine()->Update(elapsedTime);
+    
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            stoneBalls[i][j]->Update(elapsedTime);
+        }
+    }
 }
 
 // 描画

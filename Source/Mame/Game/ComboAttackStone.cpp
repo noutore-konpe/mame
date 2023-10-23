@@ -43,6 +43,8 @@ void ComboAttackStone::Update(const float& elapsedTime)
 {
     // ステートマシン更新
     GetStateMachine()->Update(elapsedTime);
+
+    stoneBall->Update(elapsedTime);
 }
 
 // 描画

@@ -4,6 +4,9 @@
 #include "SlowMotionManager.h"
 #include "LightColorManager.h"
 
+#include "../Scene/SceneManager.h"
+#include "../Scene/SceneResult.h"
+
 namespace PlayerState
 {
     void NormalState::Initialize()
@@ -258,12 +261,21 @@ namespace PlayerState
 
     void DieState::Initialize()
     {
+        changeSceneTimer = 0;
+
         owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
         owner->PlayAnimation(Player::Animation::HardStagger,false);
     }
     void DieState::Update(const float& elapsedTime)
     {
         owner->BlownUpdate(elapsedTime);
+
+        //ƒV[ƒ“‘JˆÚ
+        changeSceneTimer += elapsedTime;
+        if (changeSceneTimer > 5.0f)
+        {
+            Mame::Scene::SceneManager::Instance().ChangeScene(new SceneResult);
+        }
     }
     void DieState::Finalize()
     {

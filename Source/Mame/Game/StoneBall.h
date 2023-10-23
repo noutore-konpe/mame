@@ -24,6 +24,8 @@ public:
 
     void SetRadius(float r) { radius = r; }
 
+    void Destroy() { isDestroy = true; }
+
     float radius = 1.0f;
     float damage = 1.0f;
 
@@ -32,5 +34,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> stoneBallTexture;
 
     Enemy* owner;
+
+    bool isDestroy = false;
 };
 
