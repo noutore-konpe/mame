@@ -506,7 +506,9 @@
     <ClCompile Include="Source\Mame\Game\Stage.cpp">
       <Filter>mamelib\Mame\Game\Stage</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Game\TutorialManager.cpp" />
+    <ClCompile Include="Source\Mame\Game\TutorialManager.cpp">
+      <Filter>mamelib\Mame\Game\Tutorial</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -884,7 +886,9 @@
     <ClInclude Include="Source\Mame\Game\Stage.h">
       <Filter>mamelib\Mame\Game\Stage</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\Game\TutorialManager.h" />
+    <ClInclude Include="Source\Mame\Game\TutorialManager.h">
+      <Filter>mamelib\Mame\Game\Tutorial</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">
@@ -1107,6 +1111,9 @@
     </Filter>
     <Filter Include="mamelib\Mame\Game\Stage">
       <UniqueIdentifier>{8c785f1e-5d97-4f26-96dd-c68b8391fb22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Tutorial">
+      <UniqueIdentifier>{006e22f0-b01c-416d-88df-1d7247ec3c1a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

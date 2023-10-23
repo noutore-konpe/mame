@@ -40,7 +40,8 @@ public:
     const bool Update(const float elapsedTime); // true：実行中 false：終了
     void Render();
 
-    const bool MoveNextTutorial();    // 次のチュートリアルに移る(※チュートリアルが最後まで行ったらfalseを返す)
+    // 次のチュートリアルに移る(※チュートリアルが最後まで行ったらfalseを返す)
+    const bool MoveNextTutorial();
 
     // n番目のチュートリアル達成フラグをONにする
     void CompleteTutorialAt(const TUTORIAL& index) { tutorialCompleteFlag_[static_cast<int>(index)]; }

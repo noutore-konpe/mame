@@ -1,5 +1,7 @@
 #include "SceneTutorial.h"
 
+#include "../../Taki174/NumeralManager.h"
+
 #include "../Input/Input.h"
 #include "../Graphics/Graphics.h"
 #include "../Graphics/EffectManager.h"
@@ -29,6 +31,8 @@
 
 #include "../Game/TutorialManager.h"
 
+#include "../Game/SlowMotionManager.h"
+
 #include "../framework.h"
 
 #include "SceneManager.h"
@@ -44,9 +48,10 @@ void SceneTutorial::CreateResource()
 
     // stage
     stageBase = std::make_unique<Stage>();
-    stageWall = std::make_unique<Stage>
-        ("./Resources/Model/Stage/stageWall.fbx",
-            "./Resources/Shader/StageWallPS.cso");
+    stageWall = std::make_unique<Stage>(
+        "./Resources/Model/Stage/stageWall.fbx",
+        "./Resources/Shader/StageWallPS.cso"
+    );
 
     // player
     PlayerManager::Instance().GetPlayer() = std::make_unique<Player>();
@@ -93,6 +98,7 @@ void SceneTutorial::CreateResource()
             ConstantBuffer.GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
+
 }
 
 // 初期化
@@ -147,20 +153,76 @@ void SceneTutorial::Begin()
 
 void SceneTutorial::Update(const float& elapsedTime)
 {
-    TutorialManager& tutorialManager = TutorialManager::Instance();
+    Mame::Scene::SceneManager& sceneManager = Mame::Scene::SceneManager::Instance();
+    TutorialManager&    tutorialManager = TutorialManager::Instance();
+    PlayerManager&      plManager       = PlayerManager::Instance();
+    EnemyManager&       enemyManager    = EnemyManager::Instance();
+    NumeralManager&     numeralManager  = NumeralManager::Instance();
+    UserInterface&      userInterface   = UserInterface::Instance();
+    SlowMotionManager&  slowMotion      = SlowMotionManager::Instance();
+    GamePad&            gamePad         = Input::Instance().GetGamePad();
+
+    //カード演出中はほかの処理を更新しない
+    Player* player = plManager.GetPlayer().get();
+    if (true == player->isSelectingSkill)
+    {
+        player->SelectSkillUpdate(elapsedTime);
+        return;
+    }
+
+    // スローモーション更新
+    slowMotion.Update(elapsedTime);
+
+    // スローモーションを適用した経過時間
+    const float slowMotionElapsedTime = {
+        (true == slowMotion.GetSlowMotionFlag())
+        ? elapsedTime * slowMotion.GetCurrentPercentage()
+        : elapsedTime
+    };
 
     // チュートリアルマネージャー更新
     {
         // チュートリアル更新
-        const bool tutorialExecuteFlag = tutorialManager.Update(elapsedTime);
+        const bool tutorialExecuteFlag = tutorialManager.Update(slowMotionElapsedTime);
 
         // チュートリアル実行中フラグがfalseならチュートリアルを終了する
         if (false == tutorialExecuteFlag)
         {
-            // 終了
+            // ゲームシーンに移る
+            sceneManager.ChangeScene(new SceneLoading(new SceneGame));
+            return;
         }
     }
 
+    // プレイヤー更新
+    plManager.Update(slowMotionElapsedTime);
+
+    // カメラ更新
+    Camera::Instance().Update(slowMotionElapsedTime);
+
+    // アイテム更新
+    ItemManager::Instance().Update(slowMotionElapsedTime);
+
+    // エネミー更新
+    enemyManager.Update(slowMotionElapsedTime);
+
+    // 経験値更新
+    ExperiencePointManager& expManager = ExperiencePointManager::Instance();
+    expManager.Update(slowMotionElapsedTime);
+
+    // エフェクト更新
+    EffectManager::Instance().Update(slowMotionElapsedTime);
+
+    // UI
+    {
+        // 数字表示更新
+        numeralManager.Update(slowMotionElapsedTime);
+
+        // UI更新
+        userInterface.Update(slowMotionElapsedTime);
+    }
+
+    //カード演出中だけUpdate前にreturn呼んでるから注意！！
 }
 
 void SceneTutorial::End()

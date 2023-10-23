@@ -71,7 +71,7 @@ void Player::Initialize()
     Character::Initialize();
 
     // 待機アニメーションに設定してる
-    //Character::PlayAnimation(2, true);
+    Character::PlayAnimation(0, true);
 
 
     //カメラがプレイヤーを追いかけるよう設定
@@ -165,8 +165,8 @@ void Player::Initialize()
     hitCollider[static_cast<int>(HitColName::L_LEG)].radius = 0.07f;
     hitCollider[static_cast<int>(HitColName::R_ELBOW)].radius = 0.07f;
     hitCollider[static_cast<int>(HitColName::L_ELBOW)].radius = 0.07f;
-    
-    }
+
+}
 
 // 終了化
 void Player::Finalize()

@@ -3,9 +3,9 @@
 
 // テキスト画像パスの配列
 static constexpr wchar_t* const TUTORIAL_TEXTS_[static_cast<int>(TUTORIAL::COUNT)] = {
-    L"./Resources/UI/Text0.png",
-    L"./Resources/UI/Text0.png",
-    L"./Resources/UI/Text0.png",
+    L"./Resources/Image/UI/TutorialText/Text0.png",
+    L"./Resources/Image/UI/TutorialText/Text0.png",
+    L"./Resources/Image/UI/TutorialText/Text0.png",
 };
 
 // テキスト位置の配列
@@ -34,13 +34,13 @@ void TutorialManager::Initialize()
         // チェックマーク生成
         checkMark_ = std::make_unique<Sprite>(
             graphics.GetDevice(),
-            L"./Resources/UI/CheckMark.png"
+            L"./Resources/Image/UI/TutorialText/Text0.png"
         );
 
         // テキスト背景生成
         textBackGround_ = std::make_unique<Sprite>(
             graphics.GetDevice(),
-            L"./Resources/UI/TextBackGround.png"
+            L"./Resources/Image/UI/TutorialText/Text0.png"
         );
     }
 
@@ -55,6 +55,7 @@ void TutorialManager::Initialize()
             textParam_.angle_
         );
 
+        // 位置はテキストに依存する
         checkMark_->Initialize(
             text_->GetSpriteTransform()->GetPos(),
             checkMarkParam_.size_,
@@ -64,6 +65,7 @@ void TutorialManager::Initialize()
             checkMarkParam_.angle_
         );
 
+        // 位置はテキストに依存する
         textBackGround_->Initialize(
             text_->GetSpriteTransform()->GetPos(),
             textBackGroundParam_.size_,
@@ -143,6 +145,17 @@ const bool TutorialManager::MoveNextTutorial()
         textParam_.color_,
         textParam_.angle_
     );
+
+    // テキスト位置に依存させる
+    {
+        checkMark_->GetSpriteTransform()->SetPos(
+            text_->GetSpriteTransform()->GetPos()
+        );
+
+        textBackGround_->GetSpriteTransform()->SetPos(
+            text_->GetSpriteTransform()->GetPos()
+        );
+    }
 
     return true;
 }

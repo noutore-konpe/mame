@@ -41,7 +41,6 @@ public:
     );
 
 public:
-    // –ß‚è’l‚Ì”jŠüŒx
     [[nodiscard]] const bool GetSlowMotionFlag() const { return slowMotionFlag_; }
     [[nodiscard]] const float GetCurrentPercentage() const { return currentPercentage_; }
 

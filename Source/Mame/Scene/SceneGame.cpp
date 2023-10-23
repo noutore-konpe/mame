@@ -335,6 +335,19 @@ void SceneGame::Begin()
 // 更新処理
 void SceneGame::Update(const float& elapsedTime)
 {
+    GamePad& gamePad = Input::Instance().GetGamePad();
+
+    // 最初の白飛びのスプライト
+    UpdateWhiteSprite(elapsedTime);
+
+    //カード演出中はほかの処理を更新しない
+    Player* player = PlayerManager::Instance().GetPlayer().get();
+    if (player->isSelectingSkill)
+    {
+        player->SelectSkillUpdate(elapsedTime);
+        return;
+    }
+
     // スローモーション更新
     SlowMotionManager& slowMotion = SlowMotionManager::Instance();
     slowMotion.Update(elapsedTime);
@@ -345,11 +358,6 @@ void SceneGame::Update(const float& elapsedTime)
         ? elapsedTime * slowMotion.GetCurrentPercentage()
         : elapsedTime
     };
-
-    GamePad& gamePad = Input::Instance().GetGamePad();
-
-    // 最初の白飛びのスプライト
-    UpdateWhiteSprite(slowMotionElapsedTime);
 
     if (!isParticleInitialize)
     {
@@ -387,15 +395,6 @@ void SceneGame::Update(const float& elapsedTime)
         SetCursorPos(posX, posY);
     }
 #endif // _DEBUG
-
-    //カード演出中はほかの処理を更新しない
-    auto* player = PlayerManager::Instance().GetPlayer().get();
-    if (player->isSelectingSkill)
-    {
-        player->SelectSkillUpdate(elapsedTime);
-
-        return;
-    }
 
     {
         Camera::Instance().Update(slowMotionElapsedTime);

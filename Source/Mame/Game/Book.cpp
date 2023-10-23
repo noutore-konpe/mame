@@ -339,7 +339,7 @@ void Book::SetTransform()
     GetTransform()->SetPosition(bookPosition);
 #endif
 
-     ‰ñ“]’l
+    // ‰ñ“]’l
     DirectX::XMFLOAT4 bookRot = GetTransform()->GetRotation();
     const float radian360 = ::ToRadian(360.0f);
     if      (bookRot.x > +radian360) bookRot.x += -radian360;
