@@ -10,6 +10,8 @@
 
 #include "AbilityManager.h"
 
+#include "../Graphics/Effect.h"
+
 class Player : public Character
 {
 public: // enum関連
@@ -54,7 +56,7 @@ public:
     void End();                                     // 毎フレーム一番最後に呼ばれる
 
 
-    DamageResult ApplyDamage(float damage, Character* attacker = nullptr, float invincibleTime = 0)override;
+    DamageResult ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, Character* attacker = nullptr, float invincibleTime = 0)override;
 
     void MoveUpdate(float elapsedTime, float ax, float ay);
     void UpdateVelocity(float elapsedTime, float ax, float ay);
@@ -107,6 +109,9 @@ public:
     void Blow(DirectX::XMFLOAT3 blowVec/*吹き飛ぶ方向*/);//吹っ飛しするときに呼ぶ
 
     void ActiveCounter();
+
+    void PlayLaserEffect();
+
 private:
     float blowTime = 1.0f;
     float blowTimer;
@@ -174,6 +179,8 @@ public:
     AbilityManager* GetAbilityManager() { return &abilityManager_; }
 
     const float GetLifeTimer() { return lifeTimer; };
+
+    Effect* GetLaserEffect() { return laserEffect.get(); }
 
     //---------------------------スキル-------------------------------
    
@@ -305,5 +312,9 @@ private:
 
     //生存時間
     float lifeTimer;
+
+    //---------------------------------Effect---------------------------------------------
+    std::unique_ptr<Effect> laserEffect;
+    //------------------------------------------------------------------------------------
 };
 

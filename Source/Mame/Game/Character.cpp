@@ -17,6 +17,8 @@ Character::Character()
 //    debugSqhere = std::make_unique<Model>(graphics.GetDevice(),
 //        "./Resources/Model/Collision/sqhere.fbx");
 //#endif // _DEBUG
+
+    hitEffect = std::make_unique<Effect>("./Resources/Effect/hit.efk");
 }
 
 // 初期化
@@ -197,7 +199,7 @@ void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
         transform->SetRotationY(rotation.y);
 }
 
-Character::DamageResult Character::ApplyDamage(float damage, Character* attacker,float invincibleTime)
+Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLOAT3 hitPosition, Character* attacker,float invincibleTime)
 {
     DamageResult result;
 
@@ -257,6 +259,9 @@ Character::DamageResult Character::ApplyDamage(float damage, Character* attacker
     {
         OnDamaged();
     }
+
+    //エフェクト再生
+    hitEffect->Play(hitPosition);
 
     //健康状態が変更した場合はtrueを返す
     result.hit = true;

@@ -36,6 +36,7 @@ Effekseer::Handle Effect::Play(const DirectX::XMFLOAT3& position, DirectX::XMFLO
 
     Effekseer::Handle handle = effekseerManager->Play(effekseerEffect, position.x, position.y, position.z);
     effekseerManager->SetScale(handle, scale.x, scale.y, scale.z);
+    effekseerManager->SetRotation(handle, Effekseer::Vector3D(0, 1, 0), angle);
 
     // colorê›íË
     {
@@ -79,6 +80,11 @@ void Effect::DrawDebug()
 {
     ImGui::Begin(GetName());
     
+    if (ImGui::Button("Play"))
+    {
+        Play(DirectX::XMFLOAT3(0,0,0));
+    }
+
     ImGui::DragInt("drawTime", &drawTime);
 
     ImGui::DragFloat3("pos", &pos.x);

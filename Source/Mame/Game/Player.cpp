@@ -58,6 +58,8 @@ Player::Player()
             hitCollider.emplace_back(SphereCollider(0.15f));
         }
     }
+
+    laserEffect = std::make_unique<Effect>("./Resources/Effect/laser.efk");
 }
 
 // デストラクタ
@@ -198,7 +200,6 @@ void Player::Update(const float elapsedTime)
     abilityManager_.Update(elapsedTime);
 
     lifeTimer += elapsedTime;
-
 }
 
 // Updateの後に呼ばれる
@@ -206,7 +207,7 @@ void Player::End()
 {
 }
 
-Character::DamageResult Player::ApplyDamage(float damage, Character* attacker, float invincibleTime)
+Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, Character* attacker, float invincibleTime)
 {
     DamageResult result;
 
@@ -223,59 +224,16 @@ Character::DamageResult Player::ApplyDamage(float damage, Character* attacker, f
         result.damage = damage;
         result.hit = true;
         counterCompleted = true;
+
+        if (attacker)
+        {
+            //攻撃した者をひるませる
+            attacker->Flinch();
+        }
         return result;
     }
 
-    //無敵時間か
-    if (this->invincibleTime > 0.0f || isInvincible)
-    {
-        result.hit = false;
-        return result;
-    }
-
-    //防御力の影響
-    damage -= defence;
-    result.damage = damage;
-
-    //ダメージが０の場合は健康状態を変更する必要がない
-    if (damage <= 0)
-    {
-        result.hit = true;
-        result.damage = 0;
-        return result;
-    }
-
-    
-    //ダメージ処理
-    health -= damage;
-    if (attacker)
-    {
-        result.hitVector = Normalize(GetTransform()->GetPosition() - attacker->GetTransform()->GetPosition());
-    }
-    else
-    {
-        result.hitVector = DirectX::XMFLOAT3(0, 0, 1);
-    }
-
-    //無敵時間設定
-    this->invincibleTime = invincibleTime;
-
-    //死亡通知
-    if (health <= 0)
-    {
-        OnDead(result);
-        isDead = true;
-        health = 0;
-    }
-    //ダメージ通知
-    else
-    {
-        OnDamaged();
-    }
-
-    //健康状態が変更した場合はtrueを返す
-    result.hit = true;
-    return result;
+    return Character::ApplyDamage(damage, hitPosition, attacker, invincibleTime);
 }
 
 void Player::MoveUpdate(float elapsedTime,float ax,float ay)
@@ -625,7 +583,7 @@ void Player::DrawDebug()
             ImGui::SliderFloat("Damage", &damage,0.0f,20.0f);
             if (ImGui::Button("Apply Damage"))
             {
-                ApplyDamage(damage,nullptr);
+                ApplyDamage(damage,GetTransform()->GetPosition(), nullptr);
             }
 
             ImGui::TreePop();
@@ -667,6 +625,7 @@ void Player::DrawDebug()
         // アビリティマネージャーデバッグ描画(仮)
         abilityManager_.DrawDebug();
 
+        laserEffect->DrawDebug();
 
         ImGui::EndMenu();
     }
@@ -1019,6 +978,20 @@ void Player::ActiveCounter()
     {
         ChangeState(static_cast<float>(STATE::COUNTER));
     }
+}
+
+void Player::PlayLaserEffect()
+{
+    DirectX::XMFLOAT3 pos = GetTransform()->GetPosition();
+    auto forward = GetTransform()->CalcForward();
+    pos = pos + forward * 0.5f;
+    pos.y += 0.7f;
+    laserEffect->SetPosition(pos);
+    auto r = GetTransform()->GetRotation();
+    //laserEffect->SetRotate(DirectX::XMFLOAT3(r.x,r.y,r.z));
+    laserEffect->angle = r.y - DirectX::XMConvertToRadians(180);
+
+    laserEffect->Play(pos);
 }
 
 void Player::OnDamaged()

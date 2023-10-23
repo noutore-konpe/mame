@@ -484,7 +484,6 @@
     <ClCompile Include="Source\Mame\Game\BlackHole.cpp">
       <Filter>mamelib\Mame\Game\Ability</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Game\UserInterface.cpp" />
     <ClCompile Include="Source\Taki174\TextRenderer.cpp">
       <Filter>mamelib\Taki174</Filter>
     </ClCompile>
@@ -518,9 +517,14 @@
     <ClCompile Include="Source\Mame\Game\SlowMotionManager.cpp">
       <Filter>mamelib\Mame\Game\SlowMotion</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Game\LightColorManager.cpp" />
     <ClCompile Include="Source\Mame\Game\Stage.cpp">
       <Filter>mamelib\Mame\Game\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\LightColorManager.cpp">
+      <Filter>mamelib\Mame\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\UserInterface.cpp">
+      <Filter>mamelib\Mame\Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -871,7 +875,6 @@
     <ClInclude Include="Source\Mame\Game\BlackHole.h">
       <Filter>mamelib\Mame\Game\Ability</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\Game\UserInterface.h" />
     <ClInclude Include="Source\Taki174\TextRenderer.h">
       <Filter>mamelib\Taki174</Filter>
     </ClInclude>
@@ -905,9 +908,14 @@
     <ClInclude Include="Source\Mame\Game\SlowMotionManager.h">
       <Filter>mamelib\Mame\Game\SlowMotion</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\Game\LightColorManager.h" />
     <ClInclude Include="Source\Mame\Game\Stage.h">
       <Filter>mamelib\Mame\Game\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\LightColorManager.h">
+      <Filter>mamelib\Mame\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\UserInterface.h">
+      <Filter>mamelib\Mame\Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

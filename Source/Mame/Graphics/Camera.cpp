@@ -222,6 +222,7 @@ void Camera::TitleSetPerspectiveFov(ID3D11DeviceContext* dc)
 void Camera::Initialize()
 {
     fov = DirectX::XMConvertToRadians(45);
+    initFov = fov;
     transform.SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 10.0f));
     transform.SetScale(DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
     transform.SetRotation(DirectX::XMFLOAT4(0.0f, DirectX::XMConvertToRadians(180), 0.0f, 0.0f));
@@ -230,6 +231,7 @@ void Camera::Initialize()
 
     eyePos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
     focusPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition() + DirectX::XMFLOAT3(0,0,2);
+
 }
 
 void Camera::Update(float elapsedTime)
@@ -244,6 +246,8 @@ void Camera::Update(float elapsedTime)
         EyeMoveDelayUpdate(elapsedTime, PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition());
         FocusMoveDelayUpdate(elapsedTime, PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition() + GetTransform()->CalcForward());
     }
+
+    UpdateFov(elapsedTime);
 }
 
 void Camera::UpdateDebug(const float& elapsedTime, DirectX::XMFLOAT2 moveVector)
@@ -450,6 +454,26 @@ void Camera::DrawDebug()
             ImGui::TreePop();
         }
 
+        static float fov;
+        static float fovTime;
+        if (ImGui::TreeNode("Fov Changer"))
+        {
+            ImGui::SliderAngle("fov",&fov);
+            ImGui::SliderFloat("fovTime", &fovTime, 0.01f, 3.0f);
+
+            if (ImGui::Button("change fov"))
+            {
+                ChangeFov(fov, fovTime);
+            }
+
+            if (ImGui::Button("restore fov"))
+            {
+                RestoreFov(fovTime);
+            }
+
+            ImGui::TreePop();
+        }
+
         // todo : camera
         // デバッグ用にカメラを動かしやすいようにしている
         ImGui::DragFloat("camera_position.x", &camera.eye.x);
@@ -555,4 +579,44 @@ void Camera::ScreenVibrationUpdate(float elapsedTime)
     screenVibrationOffset = vibVec * vibrationVolume;
 
     vibrationTimer -= elapsedTime;
+}
+
+void Camera::UpdateFov(float elapsedTime)
+{
+    if (isChangingFov)
+    {
+        fovTimer += elapsedTime;
+
+        if (fovTimer >= fovTime)
+        {
+            fovTimer = fovTime;
+        }
+
+        fov = Easing::OutCubic(fovTimer, fovTime, resultFov, holdFov);
+
+        if (fovTimer >= fovTime)
+        {
+            isChangingFov = false;
+        }
+    }
+}
+
+void Camera::ChangeFov(float fov,float time)
+{
+    resultFov = fov;
+    holdFov = this->fov;
+
+    fovTime = time;
+    fovTimer = 0;
+    isChangingFov = true;
+}
+
+void Camera::RestoreFov(float time)
+{
+    resultFov = initFov;
+    holdFov = fov;
+
+    fovTime = time;
+    fovTimer = 0;
+    isChangingFov = true;
 }

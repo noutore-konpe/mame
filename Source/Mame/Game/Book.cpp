@@ -172,7 +172,7 @@ void Book::CollisionProjectileVsEnemies()
                 enemy->SaveBlowOffInfo(vec, proj->GetInflictBlowOffForceLevel());
 
                 // “G‚Éƒ_ƒ[ƒW‚ð—^‚¦‚é
-                enemy->ApplyDamage(proj->GetAttack());
+                enemy->ApplyDamage(proj->GetAttack(),enmHitColliderPos);
 
                 // ’e‚ðÁ‹Ž‚·‚é
                 proj->Destroy();

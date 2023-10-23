@@ -40,7 +40,7 @@ public:
     void CollisionEnemyVsStage(const float elapsedTime);
 
     //攻撃判定を取得する関数
-    static bool AttackCollisionPlayerToEnemy(Enemy* my);
+    static bool AttackCollisionPlayerToEnemy(Enemy* my, DirectX::XMFLOAT3& hitPos);
 
     //ACはActive Check コライダーのisActiveがtrueになっている物のみ判定する関数
     static bool ACAttackCollisionPlayerToEnemy(Enemy* my);

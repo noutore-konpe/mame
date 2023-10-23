@@ -145,8 +145,9 @@ namespace PlayerState
 
     void JabAttackState::HitCollisionUpdate()
     {
+        DirectX::XMFLOAT3 hitPos;
         std::vector<Enemy*> hitEnemies;
-        if (PlayerManager::Instance().AttackCollisionPlayerToEnemy(hitEnemies))
+        if (PlayerManager::Instance().AttackCollisionPlayerToEnemy(hitEnemies,hitPos))
         {
             for (auto& enemy : hitEnemies)
             {
@@ -158,7 +159,7 @@ namespace PlayerState
                 //一度もヒットしていない敵なので登録する
                 hit.emplace_back(enemy);
 
-                result = enemy->ApplyDamage(owner->jabMotionAtkMuls[combo], owner);
+                result = enemy->ApplyDamage(owner->jabMotionAtkMuls[combo],hitPos, owner);
 
                 enemy->Flinch();
 
@@ -318,6 +319,9 @@ namespace PlayerState
         owner->counterCompleted = false;
         owner->PlayAnimation(Player::Animation::Counter, false);
         owner->GetSword()->PlayAnimation(Player::Animation::Counter, false);
+
+        owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
+
         timer = 0;
     }
     void CounterState::Update(const float& elapsedTime)
@@ -343,6 +347,7 @@ namespace PlayerState
             //カウンター成功処理
             if (owner->counterCompleted)
             {
+                owner->isCounter = false;
                 owner->isInvincible = true;
                 owner->PlayAnimation(Player::Animation::CounterAttack,false);
                 owner->GetSword()->PlayAnimation(Player::Animation::CounterAttack, false);
@@ -356,7 +361,12 @@ namespace PlayerState
                 lcManager.GradualChangeColor(LightColorManager::ColorType::SKY,DirectX::XMFLOAT3(0.2f,0.2f,1), 0.3f);
                 lcManager.ChangeVignetteValue(0.1f, 0.3f);
                 Camera::Instance().ScreenVibrate(0.1f, 0.1f);
+                Camera::Instance().ChangeFov(DirectX::XMConvertToRadians(30), 0.1f);
                 Input::Instance().GetGamePad().Vibration(0.2f,0.3f);
+
+                //エフェクト
+                PlayerManager::Instance().GetPlayer()->PlayLaserEffect();
+
                 state++;
             }
 
@@ -368,6 +378,7 @@ namespace PlayerState
                 auto& lcManager = LightColorManager::Instance();
                 lcManager.AllRestoreColor(5.0f);
                 lcManager.RestoreVignetteValue(5.0f);
+                Camera::Instance().RestoreFov(3.0f);
             }
 
 
@@ -382,5 +393,6 @@ namespace PlayerState
     void CounterState::Finalize()
     {
         owner->isInvincible = false;
+        owner->isCounter = false;
     }
 }

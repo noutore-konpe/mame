@@ -148,8 +148,30 @@ private:
     //画面振動
     DirectX::XMFLOAT3 screenVibrationOffset{};//振動表現用の座標
     float vibrationVolume;//振動量
-    float vibrationTime;//振動時間
+    float vibrationTime;//振動時間エミッター
     float vibrationTimer;//振動時間を測るためのタイマー
 
+    //視野角
     float fov;
+    bool isChangingFov;
+    float fovTimer;
+    float fovTime;
+    float initFov;
+    float holdFov;
+    float resultFov;
+    
+private:
+    //イージング等の視野角変更更新
+    void UpdateFov(float elapsedTime);
+public:
+    /// <summary>
+    /// 視野角をなめらかに変更する
+    /// </summary>
+    /// <param name="fov">変更後の視野角</param>
+    /// <param name="time">変更に要する時間</param>
+    void ChangeFov(float fov, float time);
+
+    //視野角をもとに戻す
+    void RestoreFov(float time);
+private:
 };

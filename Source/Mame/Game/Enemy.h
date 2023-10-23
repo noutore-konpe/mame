@@ -80,7 +80,7 @@ public:
     void ElapseRunTimer(const float elapsedTime) { runTimer_ = (std::max)(0.0f, runTimer_ - elapsedTime); }
 
     // ‚Ð‚é‚Ü‚¹‚é
-    virtual void Flinch() {}
+    virtual void Flinch()override {}
 
 
 

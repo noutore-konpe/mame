@@ -120,7 +120,7 @@ void LightColorManager::UpdateVignette(float elapsedTime)
             vignetteTimer = vignetteTime;
         }
 
-        *vignetteValue = Easing::OutCubic(vignetteTimer, vignetteTime,holdVignette,resultVignette);
+        *vignetteValue = Easing::OutCubic(vignetteTimer, vignetteTime,resultVignette, holdVignette);
 
         if (vignetteTimer >= vignetteTime)
         {

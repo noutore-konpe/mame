@@ -25,9 +25,11 @@ public:
     void Update(float elapsedTime);
     void DrawDebug();
 
+private:
     void ChangeColorUpdate(int type,float elapsedTime);
     void UpdateVignette(float elapsedTime);
 
+public:
     void GradualChangeColor(int type,DirectX::XMFLOAT3 changeColor,const float changeTime);//指定の種類の色を徐々に変化させる
     void RestoreColor(int type,const float changeTime);//指定の種類の色をもとに戻す
 

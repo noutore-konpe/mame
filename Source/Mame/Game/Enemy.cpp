@@ -61,8 +61,9 @@ const bool Enemy::IsExistChildNode(const std::string& findNodeName)
 
 void Enemy::AttackCollisionOnPlayer(const float damage)
 {
-    if (EnemyManager::AttackCollisionPlayerToEnemy(this))
+    DirectX::XMFLOAT3 pos;
+    if (EnemyManager::AttackCollisionPlayerToEnemy(this,pos))
     {
-        PlayerManager::Instance().GetPlayer()->ApplyDamage(damage,this,0.01f);
+        PlayerManager::Instance().GetPlayer()->ApplyDamage(damage,pos,this,0.01f);
     }
 }

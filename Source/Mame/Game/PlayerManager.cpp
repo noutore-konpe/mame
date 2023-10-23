@@ -155,7 +155,7 @@ void PlayerManager::CollisionPlayerVsEnemy()
                 -vecFromEnemyToPlayer,
                 BLOW_OFF_FORCE_LEVEL::MIDDLE
             );
-            enemy->ApplyDamage(999999); // 死亡フラグと吹っ飛びフラグを立てる
+            enemy->ApplyDamage(999999,enemy->GetTransform()->GetPosition()); // 死亡フラグと吹っ飛びフラグを立てる
 
 #else
             // 任意の吹っ飛ばし
@@ -188,7 +188,7 @@ void PlayerManager::CollisionPlayerVsEnemy()
     }
 }
 
-bool PlayerManager::AttackCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies)
+bool PlayerManager::AttackCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies, DirectX::XMFLOAT3& hitPos)
 {
     bool hit = false;
     if (player->isActiveAttackFrame)
@@ -207,6 +207,7 @@ bool PlayerManager::AttackCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies
                         const DirectX::XMFLOAT3 vec = enemy->GetPosition() - atkCollider.position;
                         enemy->SaveBlowOffInfo(vec, player->GetInflictBlowOffForceLevel());
 
+                        hitPos = hitCollider.position;
                         hitEnemies.emplace_back(enemy);
                         hit = true;
                     }

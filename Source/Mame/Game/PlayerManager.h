@@ -27,7 +27,7 @@ public:
 
     void CollisionPlayerVsEnemy();
 
-    bool AttackCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies);
+    bool AttackCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies, DirectX::XMFLOAT3& hitPos);
 
     const float GetLifeTime() const { return lifeTime; }
     void SetLifeTime(const float time) { lifeTime = time; }
