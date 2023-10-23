@@ -6,8 +6,10 @@
 #include "PlayerManager.h"
 #include "Collision.h"
 
+#include "Enemy.h"
+
 // コンストラクタ
-StoneBall::StoneBall()
+StoneBall::StoneBall(Enemy* owner) : owner(owner)
 {
     Graphics& graphics = Graphics::Instance();
 
@@ -23,10 +25,6 @@ StoneBall::StoneBall()
     CreatePsFromCso(graphics.GetDevice(),
         "./Resources/Shader/EmissiveTextureUVScrollPS.cso",
         stoneBallPS.GetAddressOf());
-}
-
-StoneBall::~StoneBall()
-{
 }
 
 void StoneBall::Initialize()
@@ -49,7 +47,7 @@ void StoneBall::Update(const float& elapsedTime)
             hitCollider.radius
         ))
         {
-            PlayerManager::Instance().GetPlayer()->ApplyDamage(damage);
+            PlayerManager::Instance().GetPlayer()->ApplyDamage(damage,hitCollider.position,owner);
         }
     }
 }

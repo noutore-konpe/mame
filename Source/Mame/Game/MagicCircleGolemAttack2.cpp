@@ -5,7 +5,7 @@
 #include "MagicCircleGolemAttack2State.h"
 
 // コンストラクタ
-MagicCircleGolemAttack2::MagicCircleGolemAttack2()
+MagicCircleGolemAttack2::MagicCircleGolemAttack2(Enemy* owner)
 {
     Graphics& graphics = Graphics::Instance();
 
@@ -20,7 +20,7 @@ MagicCircleGolemAttack2::MagicCircleGolemAttack2()
     {
         for (int j = 0; j < 3; ++j)
         {
-            stoneBalls[i][j] = std::make_unique<StoneBall>();
+            stoneBalls[i][j] = std::make_unique<StoneBall>(owner);
         }
     }
 

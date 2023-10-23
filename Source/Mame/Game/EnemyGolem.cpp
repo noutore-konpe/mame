@@ -58,12 +58,12 @@ EnemyGolem::EnemyGolem()
 
     magicCircleGolem = std::make_unique<MagicCircleGolem>();
     magicCircleEnemySummon = std::make_unique<MagicCircleEnemySummon>();
-    magicCircleGolemAttack2 = std::make_unique<MagicCircleGolemAttack2>();
-    comboAttackStone = std::make_unique<ComboAttackStone>();
+    magicCircleGolemAttack2 = std::make_unique<MagicCircleGolemAttack2>(this);
+    comboAttackStone = std::make_unique<ComboAttackStone>(this);
 
     for (int i = 0; i < 3; ++i)
     {
-        comboAttackStones[i] = std::make_unique<ComboAttackStone>();
+        comboAttackStones[i] = std::make_unique<ComboAttackStone>(this);
     }
 
     // ステートマシン

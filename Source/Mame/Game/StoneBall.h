@@ -1,11 +1,13 @@
 #pragma once
 #include "Stone.h"
 
+class Enemy;
+
 class StoneBall : public Stone
 {
 public:
-    StoneBall();
-    ~StoneBall() override;
+    StoneBall(Enemy* owner);
+    ~StoneBall() override {}
 
     void Initialize() override;
     void Finalize() override;
@@ -28,5 +30,7 @@ public:
 private:
     Microsoft::WRL::ComPtr<ID3D11PixelShader> stoneBallPS;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> stoneBallTexture;
+
+    Enemy* owner;
 };
 
