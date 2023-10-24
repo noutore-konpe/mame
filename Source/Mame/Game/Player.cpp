@@ -147,7 +147,7 @@ void Player::Initialize()
     
     for (auto& collider : hitCollider)
     {
-        collider.radius *= 1.3f;
+        collider.radius *= 1.6f;
     }
     
     skillArray = &PlayerManager::Instance().GetSkillArray();
@@ -173,7 +173,13 @@ void Player::Update(const float elapsedTime)
     if (InputLockOn())
     {
         Camera::Instance().activeLockOn = !Camera::Instance().activeLockOn;
-        if (Camera::Instance().activeLockOn)LockOnInitialize();
+        if (Camera::Instance().activeLockOn)
+        {
+            if (EnemyManager::Instance().GetEnemyCount() >= 1) 
+            {
+                LockOnInitialize();
+            }
+        }
     }
 
     if (Camera::Instance().activeLockOn)
@@ -230,12 +236,15 @@ Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT
     //カウンター受付時間中か
     if (isCounter)
     {
-        result.hitVector = Normalize(attacker->GetTransform()->GetPosition() - GetTransform()->GetPosition());
+        if (attacker)
+        {
+            result.hitVector = Normalize(attacker->GetTransform()->GetPosition() - GetTransform()->GetPosition());
 
-        
-        float length = sqrtf(result.hitVector.x * result.hitVector.x + result.hitVector.z * result.hitVector.z);
-        float rot = result.hitVector.z /= length;
-        GetTransform()->SetRotationY(acosf(rot));
+            float rot = acosf(result.hitVector.z);
+
+            //今回の外積のY成分はhitVector.xなので左右判定はこれを使う
+            GetTransform()->SetRotationY((result.hitVector.x > 0) ? rot : -rot);
+        }
 
         result.damage = damage;
         result.hit = true;
@@ -854,7 +863,7 @@ bool Player::ChangeLockOnTarget(float ax)
     if (!(ax > 0.5f || ax < -0.5))return false;
     auto& camera = Camera::Instance();
 
-    if (camera.GetLockOnTarget() == nullptr)return false;
+    if (camera.GetLockOnTarget() == nullptr || !camera.activeLockOn)return false;
     DirectX::XMFLOAT3 curLockOnTargetPos = camera.GetLockOnTarget()->GetPosition();
 
     //外積にプレイヤーから片側にいる敵のみ取得
@@ -933,9 +942,11 @@ bool Player::ChangeLockOnTarget(float ax)
 
 void Player::LockOnUpdate()
 {
-    if (Camera::Instance().GetLockOnTarget() == nullptr)
+    if (Camera::Instance().GetLockOnTarget() == nullptr || 
+        EnemyManager::Instance().GetEnemyCount() <= 0)
     {
         LockOnInitialize();
+        Camera::Instance().activeLockOn = false;
         return;
     }
 

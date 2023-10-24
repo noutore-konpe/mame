@@ -85,7 +85,7 @@ void SceneGame::CreateResource()
 
     // enemy
     {
-#if 0
+#if 1
 
         EnemyManager& enemyManager = EnemyManager::Instance();
     //EnemyGolem* enemyGolem = new EnemyGolem;

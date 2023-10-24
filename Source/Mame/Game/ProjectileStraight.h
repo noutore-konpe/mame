@@ -7,6 +7,7 @@ class ProjectileStraight : public Projectile
 public:
     ProjectileStraight(
         ProjectileManager* manager,
+        Character* owner,
         const bool isPoison = false
     );
     ~ProjectileStraight() override;

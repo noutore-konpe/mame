@@ -5,8 +5,10 @@
 
 Projectile::Projectile(
     ProjectileManager* manager,
+    Character* owner,
     const bool isPoison)
     : manager_(manager)
+    , owner(owner)
     , isPoison_(isPoison)
 {
     manager->Register(this);

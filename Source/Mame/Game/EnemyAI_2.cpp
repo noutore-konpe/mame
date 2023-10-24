@@ -89,7 +89,7 @@ void EnemyAI_2::Initialize()
     sword_->GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
 
     moveSpeed_      = 2.0f;
-    animationSpeed_ = 0.5f;
+    animationSpeed_ = 0.8f;
 
     sword_->PlayAnimation(0, true); // デフォルトアニメーション再生再生
 

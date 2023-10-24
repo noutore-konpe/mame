@@ -193,6 +193,7 @@ public:
 
     Effect* GetLaserEffect() { return laserEffect.get(); }
 
+    const float GetBasePower() const { return baseAttackPower; }
     //---------------------------ÉXÉLÉã-------------------------------
    
 

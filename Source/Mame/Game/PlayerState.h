@@ -143,5 +143,7 @@ namespace PlayerState
         const int startUpFrame = 2;//カウンター受付開始アニメーション
         const float receptionTime = 0.5f;//カウンター受付時間
         float timer;
+
+        bool cAttack = false;
     };
 }

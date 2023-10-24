@@ -283,7 +283,7 @@ void EnemyManager::CollisionProjectileVsPlayer()
             }
 
             // プレイヤーにダメージを与える
-            player->ApplyDamage(proj->GetAttack(),plHitColliderPos);
+            player->ApplyDamage(proj->GetAttack(),plHitColliderPos,proj->GetOwner());
 
             // 弾を消去する
             proj->Destroy();

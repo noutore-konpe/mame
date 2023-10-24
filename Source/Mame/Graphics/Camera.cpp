@@ -260,7 +260,9 @@ void Camera::Update(float elapsedTime)
 {
     if (activeLockOn && lockOnTarget)
     {
-        EyeMoveDelayUpdate(elapsedTime, PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition());
+        auto pos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
+        pos.y += 1;
+        EyeMoveDelayUpdate(elapsedTime, pos);
         FocusMoveDelayUpdate(elapsedTime, lockOnTarget->GetTransform()->GetPosition());
     }
     else

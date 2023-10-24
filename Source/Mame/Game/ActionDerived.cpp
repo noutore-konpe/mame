@@ -538,7 +538,7 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 			launchPos	+= modifyLeft;			// ¶‚ÉˆÊ’u’²®
 
 			// ’eŠÛ¶¬
-			ProjectileStraight* projectile = new ProjectileStraight(owner_->GetProjectileManager());
+			ProjectileStraight* projectile = new ProjectileStraight(owner_->GetProjectileManager(),owner_);
 			projectile->Launch(vecN, launchPos);
 		}
 

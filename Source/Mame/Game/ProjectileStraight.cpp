@@ -6,9 +6,9 @@
 int ProjectileStraight::nameNum_ = 0;
 
 ProjectileStraight::ProjectileStraight(
-    ProjectileManager* manager, const bool isPoison
+    ProjectileManager* manager,Character* owner, const bool isPoison
 )
-    : Projectile(manager, isPoison)
+    : Projectile(manager,owner, isPoison)
 {
     Graphics& graphics = Graphics::Instance();
 
