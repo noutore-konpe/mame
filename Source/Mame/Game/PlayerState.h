@@ -34,7 +34,7 @@ namespace PlayerState
 
     private:
         void HitCollisionUpdate();//判定処理はPlayerでやった方がいいかも...
-        void AttackUpdate(int dodgeCanselFrame,int comboCanselFrame);
+        void AttackUpdate(float elapsedTime, int dodgeCanselFrame,int comboCanselFrame);
 
     private:
         enum ATTACK_STATE
@@ -54,6 +54,8 @@ namespace PlayerState
         const float comboCanselFrame1 = 20.0f;
         const float comboCanselFrame2 = 20.0f;
         const float comboCanselFrame3 = 20.0f;
+
+        const float activeAttackFrame[3] = {13,13,20};
 
         //１つの攻撃モーションに二回連続でヒットしないように一度攻撃
         std::vector<Enemy*> hit;

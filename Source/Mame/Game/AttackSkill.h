@@ -104,7 +104,7 @@ namespace PlayerSkill
             BaseSkill(player,
                 L"./Resources/Image/Card/sampleCard.png",
                 L"./Resources/Image/Icon/sampleIcon.png",
-                "Can Counter Attack",
+                "Homing",
                 BaseSkill::SUPER_RARE,
                 true) {}
         ~ChangeHomingSkill() {}

@@ -98,7 +98,7 @@ public:
     void OnDamaged()override;
     void OnDead(DamageResult result)override;
 
-    void ChangeState(int newState) { stateMachine->ChangeState(newState); }
+    void ChangeState(int newState);
 
 
     void ResetSteppingTimer() { steppingTimer = 0; }
@@ -123,7 +123,7 @@ public:
 
     void PlayLaserEffect();
 
-    void TurnNearEnemy(float radius);
+    void TurnNearEnemy(float radius,float elapsedTime);
 
 private:
     float blowTime = 1.0f;
@@ -244,6 +244,8 @@ private:
 
     //----------------------------ƒJƒƒ‰ŠÖŒW----------------------------------
     float cameraRotSpeed = 2.0f;//ù‰ñ‘¬“x
+    float cameraRotSpeedMouseX = 0.1f;
+    float cameraRotSpeedMouseY = 0.18f;
     //-----------------------------------------------------------------------
 
     //--------------------------ˆÚ“®-----------------------------------------

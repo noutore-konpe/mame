@@ -57,7 +57,7 @@ namespace PlayerState
     {
         combo = 0;
         initialize = false;
-        owner->isActiveAttackFrame = true;
+        //owner->isActiveAttackFrame = true;
 
         hit.clear();
     }
@@ -65,6 +65,10 @@ namespace PlayerState
     {
         //踏み込み処理
         owner->AttackSteppingUpdate(elapsedTime);
+
+        const float keyframeIndex = owner->model->GetCurrentKeyframeIndex();
+        if (keyframeIndex > activeAttackFrame[combo])owner->isActiveAttackFrame = true;
+        else owner->isActiveAttackFrame = false;
 
         switch (combo)
         {
@@ -85,7 +89,7 @@ namespace PlayerState
 
             //更新処理(次のコンボへの遷移もしている)
             {
-                AttackUpdate(dodgeCanselFrame1,comboCanselFrame1);
+                AttackUpdate(elapsedTime,dodgeCanselFrame1,comboCanselFrame1);
             }
 
 
@@ -107,7 +111,7 @@ namespace PlayerState
 
             //更新処理(次のコンボへの遷移もしている)
             {
-                AttackUpdate(dodgeCanselFrame2, comboCanselFrame2);
+                AttackUpdate(elapsedTime,dodgeCanselFrame2, comboCanselFrame2);
             }
 
             break;
@@ -128,7 +132,7 @@ namespace PlayerState
 
             //更新処理(次のコンボへの遷移もしている)
             {
-                AttackUpdate(dodgeCanselFrame3, comboCanselFrame3);
+                AttackUpdate(elapsedTime,dodgeCanselFrame3, comboCanselFrame3);
             }
 
             break;
@@ -174,9 +178,11 @@ namespace PlayerState
             }
         }
     }
-    void JabAttackState::AttackUpdate(int dodgeCanselFrame,int comboCanselFrame)
+    void JabAttackState::AttackUpdate(float elapsedTime,int dodgeCanselFrame,int comboCanselFrame)
     {
         const float keyframeIndex = owner->model->GetCurrentKeyframeIndex();
+
+        
 
         switch (state)
         {
@@ -185,6 +191,9 @@ namespace PlayerState
             {
                 state++;
             }
+
+            //近くの敵へ回転
+            owner->TurnNearEnemy(2.0f,elapsedTime);
             break;
         case DODGE_CANSEL_FRAME:
             if (owner->InputAvoid())//回避キャンセル
@@ -204,12 +213,20 @@ namespace PlayerState
             }
             else if (owner->InputJabAttack())//コンボ続行
             {
+                //三段目のスキルを持っていないならコンボ継続しない
+                if (combo == 1)
+                {
+                    if (!PlayerManager::Instance().GetTripleAttackSkill()->Active())goto skip;
+                }
+
                 //コンボは３連撃以降ないので制限
                 if (combo < 2)
                 {
                     combo++;
                     initialize = false;
                 }
+
+            skip:;
             }
 
             if (combo < 2)
@@ -315,8 +332,8 @@ namespace PlayerState
     void HardAttackState::Initialize()
     {
         owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
-        owner->PlayAnimation(Player::Animation::HardAttack, false,1.3f);
-        owner->GetSword()->PlayAnimation(Player::Animation::HardAttack, false,1.3f);
+        owner->PlayAnimation(Player::Animation::HardAttack, false, owner->GetAttackSpeed() + 0.2f);
+        owner->GetSword()->PlayAnimation(Player::Animation::HardAttack, false, owner->GetAttackSpeed() + 0.2f);
         owner->ResetSteppingTimer();
         hit.clear();
 
@@ -324,33 +341,50 @@ namespace PlayerState
     }
     void HardAttackState::Update(const float& elapsedTime)
     {
-        //int frameIndex = owner->model->GetCurrentKeyframeIndex();
-        owner->AttackSteppingUpdate(elapsedTime);
+        int keyframeIndex = owner->model->GetCurrentKeyframeIndex();
 
-        DirectX::XMFLOAT3 hitPos;
-        std::vector<Enemy*> hitEnemies;
-        if (PlayerManager::Instance().AttackCollisionPlayerToEnemy(hitEnemies, hitPos))
+        if (keyframeIndex < 10)
         {
-            for (auto& enemy : hitEnemies)
+            owner->TurnNearEnemy(2.0f, elapsedTime);
+        }
+
+        //回避キャンセル
+        if (keyframeIndex > 55)
+        {
+            if (owner->InputAvoid())
             {
-                Character::DamageResult result;
-                for (auto& h : hit)
-                {
-                    if (h == enemy)goto skip;//すでに一度ヒットしている敵なら処理しない
-                }
-                //一度もヒットしていない敵なので登録する
-                hit.emplace_back(enemy);
-
-                result = enemy->ApplyDamage(owner->hardAtkMuls * owner->GetBasePower(), hitPos, owner);
-
-                enemy->Flinch();
-
-                //ダメージ吸収処理
-                PlayerManager::Instance().GetDrainSkill()->Assimilate(result.damage);
-            skip:;
+                owner->ChangeState(Player::STATE::AVOID);
             }
         }
 
+        owner->AttackSteppingUpdate(elapsedTime);
+
+        if (keyframeIndex > 20)
+        {
+            DirectX::XMFLOAT3 hitPos;
+            std::vector<Enemy*> hitEnemies;
+            if (PlayerManager::Instance().AttackCollisionPlayerToEnemy(hitEnemies, hitPos))
+            {
+                for (auto& enemy : hitEnemies)
+                {
+                    Character::DamageResult result;
+                    for (auto& h : hit)
+                    {
+                        if (h == enemy)goto skip;//すでに一度ヒットしている敵なら処理しない
+                    }
+                    //一度もヒットしていない敵なので登録する
+                    hit.emplace_back(enemy);
+
+                    result = enemy->ApplyDamage(owner->hardAtkMuls * owner->GetBasePower(), hitPos, owner);
+
+                    enemy->Flinch();
+
+                    //ダメージ吸収処理
+                    PlayerManager::Instance().GetDrainSkill()->Assimilate(result.damage);
+                skip:;
+                }
+            }
+        }
         if (!owner->IsPlayAnimation())
         {
             owner->ChangeState(Player::STATE::NORMAL);

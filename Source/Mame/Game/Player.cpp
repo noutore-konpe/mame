@@ -47,12 +47,15 @@ Player::Player()
 
     //喰らい判定、攻撃判定セット
     {
-        swordColliderNum = 5;
-        swordColliderRadius = 0.1f;
+        swordColliderNum = 6;
+        swordColliderRadius = 0.17f;
         for (int i = 0; i < swordColliderNum; i++)
         {
             attackCollider.emplace_back(SphereCollider(swordColliderRadius));
         }
+        //腕に付ける用の攻撃判定
+        attackCollider.emplace_back(SphereCollider(0.2f));
+        attackCollider.emplace_back(SphereCollider(0.2f));
 
         for (int i = 0; i < static_cast<int>(HitColName::END); i++)
         {
@@ -133,8 +136,8 @@ void Player::Initialize()
     swordModel->transform.SetScaleFactor(GetTransform()->GetScaleFactor());
 
     //攻撃判定
-    swordColliderNum = 5;
-    swordColliderRadius = 0.1f;
+    swordColliderNum = 6;
+    swordColliderRadius = 0.17f;
     swordScale = 0.7f;
     swordModel->GetTransform()->SetScaleFactor(swordScale);
 
@@ -554,7 +557,8 @@ void Player::ModelRotZUpdate(float elapsedTime)
 void Player::CameraControllerUpdate(float elapsedTime)
 {
     //カメラ挙動（今は回転のみ）
-    auto* cTransform = Camera::Instance().GetTransform();
+    auto& camera = Camera::Instance();
+    auto* cTransform = camera.GetTransform();
 
     GamePad& gamePad = Input::Instance().GetGamePad();
 
@@ -563,6 +567,7 @@ void Player::CameraControllerUpdate(float elapsedTime)
     if (ax)
     {
         cTransform->AddRotationY(cameraRotSpeed * ax * elapsedTime);
+        camera.useMouse = false;
     }
     if (ay)
     {
@@ -570,9 +575,54 @@ void Player::CameraControllerUpdate(float elapsedTime)
         float rotX = cTransform->GetRotation().x;
         rotX = std::clamp(rotX,-0.10f,0.8f);
         cTransform->SetRotationX(rotX);
+        camera.useMouse = false;
     }
 
-    //cTransform->SetRotationX(DirectX::XMConvertToRadians(15.0f));
+    //マウスでのカメラ操作
+    if(camera.useMouse)
+    {
+        static POINT oldCursorPos = {0,0};
+
+        int posX = 1980 / 2;
+        int posY = 1080 / 2;
+
+        POINT pos;
+        GetCursorPos(&pos);
+
+        DirectX::XMFLOAT2 nowPosition{ static_cast<float>(pos.x), static_cast<float>(pos.y) };
+        //DirectX::XMFLOAT2 oldPosition{ static_cast<float>(posX), static_cast<float>(posY) };
+        DirectX::XMFLOAT2 oldPosition{ static_cast<float>(oldCursorPos.x), static_cast<float>(oldCursorPos.y) };
+        DirectX::XMVECTOR nowVector = DirectX::XMLoadFloat2(&nowPosition);
+        DirectX::XMVECTOR oldVector = DirectX::XMLoadFloat2(&oldPosition);
+        DirectX::XMVECTOR moveVector =DirectX::XMVectorSubtract(nowVector, oldVector);
+        DirectX::XMFLOAT2 moveVectorFloat2;
+        DirectX::XMStoreFloat2(&moveVectorFloat2, moveVector);
+
+        //Camera::Instance().UpdateDebug(elapsedTime, moveVectorFloat2);
+
+#ifndef _DEBUG
+        oldCursorPos = {posX,posY};
+        SetCursorPos(posX, posY);
+#else
+        oldCursorPos = pos;
+#endif // _DEBUG
+
+
+        DirectX::XMFLOAT4 rotation = cTransform->GetRotation();
+        rotation.x += moveVectorFloat2.y * cameraRotSpeedMouseX * elapsedTime;
+        rotation.y += moveVectorFloat2.x * cameraRotSpeedMouseY * elapsedTime;
+        cTransform->SetRotationX(rotation.x);
+        cTransform->SetRotationY(rotation.y);
+    }
+    else
+    {
+        if ((Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT) ||
+            ((Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_RIGHT)))
+        {
+            camera.useMouse = true;
+        }
+    }
+    cTransform->SetRotationX(std::clamp(cTransform->GetRotationX(), -0.10f, 0.8f));
 
     Camera::Instance().ScreenVibrationUpdate(elapsedTime);
 }
@@ -633,6 +683,8 @@ void Player::DrawDebug()
         if (ImGui::TreeNode("Camera"))
         {
             ImGui::SliderFloat("RotSpeed", &cameraRotSpeed, 0.01f, 5.0f);
+            ImGui::SliderFloat("MouseRotSpeedX", &cameraRotSpeedMouseX, 0.01f, 5.0f);
+            ImGui::SliderFloat("MouseRotSpeedY", &cameraRotSpeedMouseY, 0.01f, 5.0f);
 
             if (ImGui::Button("R Change LockOn Target"))
             {
@@ -724,12 +776,15 @@ void Player::AttackSteppingUpdate(float elapsedTime)
     DirectX::XMFLOAT3 movePos = velocity * elapsedTime + GetTransform()->GetPosition();
     GetTransform()->SetPosition(CollidedPosition(movePos));
 
-    //回転処理
+    //回転処理(入力がある時のみ)
     GamePad& gamePad = Input::Instance().GetGamePad();
     float ax = gamePad.GetAxisLX();
     float ay = gamePad.GetAxisLY();
-    MoveVecUpdate(ax,ay);
-    Turn(elapsedTime, moveVec.x, moveVec.z, 360.0f);
+    if ((ax >= 0.1f || ax <= -0.1f) || (ay >= 0.1f || ay <= -0.1f))
+    {
+        MoveVecUpdate(ax,ay);
+        Turn(elapsedTime, moveVec.x, moveVec.z, 720.0f);
+    }
 
     steppingTimer += elapsedTime;
 }
@@ -1078,18 +1133,30 @@ void Player::PlayLaserEffect()
     laserEffect->Play(pos);
 }
 
-void Player::TurnNearEnemy(float radius)
+void Player::TurnNearEnemy(float radius,float elapsedTime)
 {
     //最近距離を記憶
     float nearest = FLT_MAX;
+    DirectX::XMFLOAT3 vec;
+
     for (auto& enemy : EnemyManager::Instance().GetEnemies())
     {
         auto ePos = enemy->GetTransform()->GetPosition();
         if (Collision::IntersectSphereVsSphere(ePos,1.0f,GetTransform()->GetPosition(),radius))
         {
             float length = Length(ePos - GetTransform()->GetPosition());
-            if (nearest > length);
+            if (nearest > length)
+            {
+                vec = Normalize(ePos - GetTransform()->GetPosition());
+                nearest = length;
+            }
         }
+    }
+
+    //最近距離に位置する敵が索敵範囲よりも近いなら回転処理をする
+    if (nearest < radius)
+    {
+        Turn(elapsedTime, vec.x, vec.z, 600.0f);
     }
 }
 
@@ -1108,6 +1175,17 @@ void Player::OnDead(DamageResult result)
 
     PlayerManager::Instance().SetLifeTime(lifeTimer);
     PlayerManager::Instance().SetLevel(level);
+}
+
+void Player::ChangeState(int newState)
+{
+#ifndef _DEBUG
+    //カウンタースキルを取得していないなら処理しない
+    if (newState == COUNTER && !PlayerManager::Instance().GetCounterSkill()->Active())return;
+#endif // _DEBUG
+
+
+    stateMachine->ChangeState(newState);
 }
 
 void Player::LevelUpdate()
@@ -1181,9 +1259,13 @@ void Player::ColliderPosUpdate(const float& scale)
 
         const float collideInterval = swordLength / swordColliderNum;//判定ごとの設置間隔
 
-        for (int i = 0;i < attackCollider.size();++i)
+        for (int i = 0;i < attackCollider.size() - 2;++i)
         {
             attackCollider[i].position = swordRoot + vecNormal * collideInterval * i;
         }
+
+        const std::string meshBodyName = "ref_P:ref_P:ref_P:pasted__Body";
+        attackCollider[attackCollider.size() - 2].position = GetJointPosition(meshBodyName, "ref_P:ref_P:j_RightHand", scale);
+        attackCollider[attackCollider.size() - 1].position = GetJointPosition(meshBodyName, "ref_P:ref_P:j_LeftHand", scale);
     }
 }

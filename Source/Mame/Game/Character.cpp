@@ -197,7 +197,7 @@ void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
     rotValue = cross < 0.0f ? -_rotSpeed : _rotSpeed;
 
 
-        transform->SetRotationY(rotation.y);
+    transform->SetRotationY(rotation.y);
 }
 
 Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLOAT3 hitPosition, Character* attacker,float invincibleTime, bool ignoreDefence)

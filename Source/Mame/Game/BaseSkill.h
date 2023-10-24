@@ -57,6 +57,8 @@ public:
 
     const int GetOverlapNum() const { return overlap; }
 
+    const bool Active() const { return overlap > 0; }
+
     void SetPlayer(Player* player) { this->player = player; }
 
     std::unique_ptr<Sprite> card;//ƒJ[ƒh‰æ‘œ

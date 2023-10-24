@@ -98,7 +98,7 @@ inline int StateMachine<T>::GetStateIndex()
             // i番号目のステートをリターン
             return i;
         }
-        ++i
+        ++i;
     }
 
     // ステートが見つからなかったとき
