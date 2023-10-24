@@ -64,7 +64,7 @@ const bool Collision::IntersectSphereVsSphere(
     return true;
 }
 
-const bool Collision::IntersectShrereVsRay(const DirectX::XMFLOAT3& spherePos, const float radius, const DirectX::XMFLOAT3& rayStart, const DirectX::XMFLOAT3& rayDirection, const float length)
+const bool Collision::IntersectSphereVsRay(const DirectX::XMFLOAT3& spherePos, const float radius, const DirectX::XMFLOAT3& rayStart, const DirectX::XMFLOAT3& rayDirection, const float length)
 {
     DirectX::XMFLOAT3 vec = spherePos - rayStart;
 
@@ -89,7 +89,7 @@ const bool Collision::IntersectShrereVsRay(const DirectX::XMFLOAT3& spherePos, c
     return false;
 }
 
-const bool Collision::IntersectShrereVsCapsule(const DirectX::XMFLOAT3& spherePos, const float sphereRadius, const DirectX::XMFLOAT3& capsuleStart, const DirectX::XMFLOAT3& capsuleDirection, const float length, const float capsuleRadius)
+const bool Collision::IntersectSphereVsCapsule(const DirectX::XMFLOAT3& spherePos, const float sphereRadius, const DirectX::XMFLOAT3& capsuleStart, const DirectX::XMFLOAT3& capsuleDirection, const float length, const float capsuleRadius)
 {
     DirectX::XMFLOAT3 vec = spherePos - capsuleStart;
 

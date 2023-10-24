@@ -149,6 +149,14 @@ private:
 
     //当たり判定をボーンにくっつける
     void ColliderPosUpdate(const float& scale);
+
+    /// <summary>
+    /// 指定の部位と攻撃判定
+    /// </summary>
+    /// <param name="index">攻撃判定をしたい部位のenum定数</param>
+    /// <param name="hitPos">攻撃が当たった座標</param>
+    /// <returns></returns>
+    const bool AttackCollisionVsPlayer(ColliderName index, float damage);
 private:
     static int nameNum_;
 

@@ -19,10 +19,10 @@ public:
         END
     };
     //分母を100としたそぞれのレアリティの出現確率
-    static const Probability pCommon = 40;
-    static const Probability pUncommon = 25;
-    static const Probability pRare = 20;
-    static const Probability pSuperRare = 12;
+    static const Probability pCommon = 50;
+    static const Probability pUncommon = 20;
+    static const Probability pRare = 17;
+    static const Probability pSuperRare = 10;
     static const Probability pUltraRare = 3;
 
     BaseSkill(
@@ -42,10 +42,7 @@ public:
     }
     ~BaseSkill() {}
 
-    virtual void Initialize()
-    {
-        overlap = 0;
-    }
+    virtual void Initialize();
     virtual void Update(float elapsedTime) {};
     virtual void Render();
 
@@ -59,6 +56,8 @@ public:
     void SetCardPos(const DirectX::XMFLOAT2 pos) { card->GetSpriteTransform()->SetPos(pos); }
 
     const int GetOverlapNum() const { return overlap; }
+
+    void SetPlayer(Player* player) { this->player = player; }
 
     std::unique_ptr<Sprite> card;//カード画像
     std::unique_ptr<Sprite> icon;//アイコン画像

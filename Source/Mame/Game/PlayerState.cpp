@@ -394,17 +394,19 @@ namespace PlayerState
             //UŒ‚
             if (!cAttack)
             {
-                if (owner->model->GetCurrentKeyframeIndex() > 5)
+                if (owner->model->GetCurrentKeyframeIndex() > 10)
                 {
                     auto shotPos = owner->GetTransform()->GetPosition();
                     shotPos += 0.7f;
+                    Camera::Instance().ScreenVibrate(0.2f, 0.1f);
+                    Input::Instance().GetGamePad().Vibration(0.2f, 0.5f);
 
                     //UŒ‚”»’è
                     for (auto& enemy : EnemyManager::Instance().GetEnemies())
                     {
                         for (auto& collider : enemy->GetHitCollider())
                         {
-                            if (Collision::IntersectShrereVsCapsule(
+                            if (Collision::IntersectSphereVsCapsule(
                             collider.position,collider.radius,
                                 shotPos,owner->GetTransform()->CalcForward(),100,1
                             ))

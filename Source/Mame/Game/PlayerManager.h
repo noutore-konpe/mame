@@ -42,6 +42,7 @@ public: // æ“¾Eİ’è ŠÖ˜A
     std::vector<BaseSkill*>& GetSkillArray() { return skillArray; }
 
     PlayerSkill::Drain* GetDrainSkill() { return drainSkill.get(); }
+    //PlayerSkill::* GetDrainSkill() { return drainSkill.get(); }
     
 private:
     std::unique_ptr<Player> player = nullptr;
@@ -55,6 +56,9 @@ private:
     std::unique_ptr<PlayerSkill::MaxHitPointUp> maxHitPointUpSkill;
     std::unique_ptr<PlayerSkill::DefenseUp> defenseUpSkill;
     std::unique_ptr<PlayerSkill::BlackHoleSkill> blackHoleSkill;
+    std::unique_ptr<PlayerSkill::CanCounterAttack> counterSkill;
+    std::unique_ptr<PlayerSkill::CanTripleAttack> tripleAttackSkill;
+    std::unique_ptr<PlayerSkill::ChangeHomingSkill> homingSkill;
 
     float lifeTime = 10;
     int level = 0;

@@ -19,13 +19,13 @@ public:
     );
 
     //‹…‚Æ’¼ü‚ÌŒğ·”»’è
-    static const bool IntersectShrereVsRay(
+    static const bool IntersectSphereVsRay(
         const DirectX::XMFLOAT3& spherePos, const float radius,
         const DirectX::XMFLOAT3& rayStart, const DirectX::XMFLOAT3& rayDirection, const float length
     );
 
     //‹…‚Æ’¼ü‚ÌŒğ·”»’è
-    static const bool IntersectShrereVsCapsule(
+    static const bool IntersectSphereVsCapsule(
         const DirectX::XMFLOAT3& spherePos, const float sphereRadius,
         const DirectX::XMFLOAT3& capsuleStart, const DirectX::XMFLOAT3& capsuleDirection, 
         const float length, const float capsuleRadius

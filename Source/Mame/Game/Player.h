@@ -55,8 +55,15 @@ public:
     void Update(const float elapsedTime) override; // 更新処理
     void End();                                     // 毎フレーム一番最後に呼ばれる
 
+    enum HitReaction
+    {
+        NONE,
+        SOFT,
+        HARD
+    };
 
-    DamageResult ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, Character* attacker = nullptr, float invincibleTime = 0)override;
+    DamageResult ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition,Character* attacker = nullptr,float invincibleTime = 0, bool ignoreDefence = false)override;
+    DamageResult ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, const HitReaction reaction,Character* attacker = nullptr, float invincibleTime = 0, bool ignoreDefence = false);
 
     void MoveUpdate(float elapsedTime, float ax, float ay);
     void UpdateVelocity(float elapsedTime, float ax, float ay);

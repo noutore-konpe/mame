@@ -94,7 +94,7 @@ namespace PlayerSkill
             BaseSkill(player,
                 L"./Resources/Image/Card/Cbougyo.png",
                 L"./Resources/Image/Icon/bougyo.png",
-                "DefenseUp", BaseSkill::COMMON) {}
+                "DefenseUp", BaseSkill::UNCOMMON) {}
         ~DefenseUp() {}
 
         void Overlaping()override;

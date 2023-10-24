@@ -39,6 +39,15 @@ void PlayerManager::Initialize()
         //ブラックホール自動生成
         blackHoleSkill = std::make_unique<PlayerSkill::BlackHoleSkill>(player.get());
         skillArray.emplace_back(blackHoleSkill.get());
+        //カウンター
+        counterSkill = std::make_unique<PlayerSkill::CanCounterAttack>(player.get());
+        skillArray.emplace_back(counterSkill.get());
+        //3段攻撃
+        tripleAttackSkill = std::make_unique<PlayerSkill::CanTripleAttack>(player.get());
+        skillArray.emplace_back(tripleAttackSkill.get());
+        //ホーミング
+        homingSkill = std::make_unique<PlayerSkill::ChangeHomingSkill>(player.get());
+        skillArray.emplace_back(homingSkill.get());
 
         return true;
     }();

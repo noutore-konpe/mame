@@ -61,6 +61,7 @@ Player::Player()
 
     laserEffect = std::make_unique<Effect>("./Resources/Effect/laser.efk");
     expEffect = std::make_unique<Effect>("./Resources/Effect/getExp.efk");
+    
 }
 
 // デストラクタ
@@ -222,7 +223,7 @@ void Player::End()
 {
 }
 
-Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, Character* attacker, float invincibleTime)
+Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, Character* attacker, float invincibleTime, bool ignoreDefence)
 {
     DamageResult result;
 
@@ -258,7 +259,12 @@ Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT
         return result;
     }
 
-    return Character::ApplyDamage(damage, hitPosition, attacker, invincibleTime);
+    return Character::ApplyDamage(damage, hitPosition, attacker, invincibleTime, ignoreDefence);
+}
+
+Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, const HitReaction reaction, Character* attacker,float invincibleTime, bool ignoreDefence)
+{
+    return Player::ApplyDamage(damage, hitPosition, attacker, invincibleTime, ignoreDefence);
 }
 
 void Player::MoveUpdate(float elapsedTime,float ax,float ay)
@@ -827,7 +833,7 @@ BaseSkill* Player::Lottery()
         {
             //すでに引かれたスキルはスキップ
             if (skill->isSelect)continue;
-            if (skill->isOneSheet)continue;
+            if (skill->isOneSheet && skill->GetOverlapNum() > 0)continue;
 
             if (skill->rarity == rarity)
             {

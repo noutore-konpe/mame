@@ -160,7 +160,8 @@ public: // その他の関数
     virtual DamageResult ApplyDamage(float damage,
         const DirectX::XMFLOAT3 hitPosition,
         Character* attacker = nullptr/*攻撃してきた敵*/, 
-        float invincibleTime = 0);
+        float invincibleTime = 0,
+        bool ignoreDefence = false/*防御無視*/);
 
     bool ApplyHeal(float heal);
 
@@ -214,5 +215,7 @@ protected:
 
     //エフェクト
     std::unique_ptr<Effect> hitEffect;
+    std::unique_ptr<Effect> healEffect;
+
 };
 

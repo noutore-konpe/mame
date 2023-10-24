@@ -19,6 +19,7 @@ Character::Character()
 //#endif // _DEBUG
 
     hitEffect = std::make_unique<Effect>("./Resources/Effect/hit.efk");
+    healEffect = std::make_unique<Effect>("./Resources/Effect/heal.efk");
 }
 
 // ‰Šú‰»
@@ -199,7 +200,7 @@ void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
         transform->SetRotationY(rotation.y);
 }
 
-Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLOAT3 hitPosition, Character* attacker,float invincibleTime)
+Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLOAT3 hitPosition, Character* attacker,float invincibleTime, bool ignoreDefence)
 {
     DamageResult result;
 
@@ -211,7 +212,7 @@ Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLO
     }
 
     //–hŒä—Í‚Ì‰e‹¿
-    damage -= defence;
+    if(!ignoreDefence)damage -= defence;
     result.damage = damage;
 
     // ƒ_ƒ[ƒW•\Ž¦¶¬
@@ -281,6 +282,10 @@ bool Character::ApplyHeal(float heal)
     health += heal;
 
     OnHealed();
+
+    auto ePos = GetTransform()->GetPosition();
+    ePos.y += 0.6f;
+    healEffect->Play(ePos);
 
     return true;
 }

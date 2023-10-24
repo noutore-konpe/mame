@@ -75,9 +75,39 @@ namespace PlayerSkill
                 L"./Resources/Image/Card/sampleCard.png",
                 L"./Resources/Image/Icon/sampleIcon.png",
                 "Can Triple Attack",
-                BaseSkill::SUPER_RARE,
+                BaseSkill::COMMON,
                 true) {}
         ~CanTripleAttack() {}
+
+        void Overlaping()override;
+    };
+
+    class CanCounterAttack : public BaseSkill
+    {
+    public:
+        CanCounterAttack(Player* player) :
+            BaseSkill(player,
+                L"./Resources/Image/Card/sampleCard.png",
+                L"./Resources/Image/Icon/sampleIcon.png",
+                "Can Counter Attack",
+                BaseSkill::COMMON,
+                true) {}
+        ~CanCounterAttack() {}
+
+        void Overlaping()override;
+    };
+
+    class ChangeHomingSkill : public BaseSkill
+    {
+    public:
+        ChangeHomingSkill(Player* player) :
+            BaseSkill(player,
+                L"./Resources/Image/Card/sampleCard.png",
+                L"./Resources/Image/Icon/sampleIcon.png",
+                "Can Counter Attack",
+                BaseSkill::SUPER_RARE,
+                true) {}
+        ~ChangeHomingSkill() {}
 
         void Overlaping()override;
     };
