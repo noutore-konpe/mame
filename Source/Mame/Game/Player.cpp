@@ -15,6 +15,8 @@
 
 #include "UserInterface.h"
 
+#include "PlayerManager.h"
+
 // コンストラクタ
 Player::Player()
 {
@@ -56,6 +58,9 @@ Player::Player()
             hitCollider.emplace_back(SphereCollider(0.15f));
         }
     }
+
+    laserEffect = std::make_unique<Effect>("./Resources/Effect/laser.efk");
+    expEffect = std::make_unique<Effect>("./Resources/Effect/getExp.efk");
 }
 
 // デストラクタ
@@ -117,35 +122,7 @@ void Player::Initialize()
     deceleration = 7.0f;
     acceleration = InitAcceleration;
 
-    //初回時のみスキルの生成と配列挿入をする
-    if (drainSkill == nullptr)
-    {
-        //ドレイン
-        drainSkill = std::make_unique<PlayerSkill::Drain>(this);
-        skillArray.emplace_back(drainSkill.get());
-        //移動速度アップ
-        moveSpeedUpSkill = std::make_unique<PlayerSkill::MoveSpeedUp>(this);
-        skillArray.emplace_back(moveSpeedUpSkill.get());
-        //攻撃力アップ
-        attackPowerUpSkill = std::make_unique<PlayerSkill::AttackPowerUp>(this);
-        skillArray.emplace_back(attackPowerUpSkill.get());
-        //攻撃速度アップ
-        attackSpeedUpSkill = std::make_unique<PlayerSkill::AttackSpeedUp>(this);
-        skillArray.emplace_back(attackSpeedUpSkill.get());
-        //本の数増加
-        bookIncreaseSkill = std::make_unique<PlayerSkill::BookIncrease>(this);
-        skillArray.emplace_back(bookIncreaseSkill.get());
-        //体力上限アップ
-        maxHitPointUpSkill = std::make_unique<PlayerSkill::MaxHitPointUp>(this);
-        skillArray.emplace_back(maxHitPointUpSkill.get());
-        //防御力アップ
-        defenseUpSkill = std::make_unique<PlayerSkill::DefenseUp>(this);
-        skillArray.emplace_back(defenseUpSkill.get());
-    }
-    for (auto& skill : skillArray)
-    {
-        skill->Initialize();
-    }
+    //スキルをマネージャーから取得
     //------------------------------------------------------------------------------------------
 
     LockOnInitialize();
@@ -163,9 +140,23 @@ void Player::Initialize()
     hitCollider[static_cast<int>(HitColName::HIP)].radius = 0.12f;
     hitCollider[static_cast<int>(HitColName::R_LEG)].radius = 0.07f;
     hitCollider[static_cast<int>(HitColName::L_LEG)].radius = 0.07f;
+    hitCollider[static_cast<int>(HitColName::R_LEG_END)].radius = 0.07f;
+    hitCollider[static_cast<int>(HitColName::L_LEG_END)].radius = 0.07f;
     hitCollider[static_cast<int>(HitColName::R_ELBOW)].radius = 0.07f;
     hitCollider[static_cast<int>(HitColName::L_ELBOW)].radius = 0.07f;
+    
+    for (auto& collider : hitCollider)
+    {
+        collider.radius *= 1.3f;
+    }
+    
+    skillArray = &PlayerManager::Instance().GetSkillArray();
 
+    lifeTimer = 0;
+
+
+    // リザルトに飛ばすフラグ
+    isResult = false;
 }
 
 // 終了化
@@ -209,7 +200,8 @@ void Player::Update(const float elapsedTime)
 
     LevelUpdate();
 
-    for (auto& skill : skillArray)
+    
+    for (auto& skill : *skillArray)
     {
         skill->Update(elapsedTime);
     }
@@ -217,13 +209,50 @@ void Player::Update(const float elapsedTime)
     // アビリティマネージャー更新(仮)
     abilityManager_.Update(elapsedTime);
 
-   
+    lifeTimer += elapsedTime;
 
+   
 }
 
 // Updateの後に呼ばれる
 void Player::End()
 {
+}
+
+Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, Character* attacker, float invincibleTime)
+{
+    DamageResult result;
+
+    //死亡している場合は健康状態を変更しない
+    if (health <= 0)
+    {
+        result.hit = true;
+        return result;
+    }
+
+    //カウンター受付時間中か
+    if (isCounter)
+    {
+        result.hitVector = Normalize(attacker->GetTransform()->GetPosition() - GetTransform()->GetPosition());
+
+        
+        float length = sqrtf(result.hitVector.x * result.hitVector.x + result.hitVector.z * result.hitVector.z);
+        float rot = result.hitVector.z /= length;
+        GetTransform()->SetRotationY(acosf(rot));
+
+        result.damage = damage;
+        result.hit = true;
+        counterCompleted = true;
+
+        if (attacker)
+        {
+            //攻撃した者をひるませる
+            attacker->Flinch();
+        }
+        return result;
+    }
+
+    return Character::ApplyDamage(damage, hitPosition, attacker, invincibleTime);
 }
 
 void Player::MoveUpdate(float elapsedTime,float ax,float ay)
@@ -301,6 +330,22 @@ void Player::MoveVecUpdate(float ax,float ay)
         moveVec.x /= length;
         moveVec.z /= length;
     }
+}
+
+DirectX::XMFLOAT2 Player::ConvertToCameraMoveVec(float ax, float ay)
+{
+    auto forward = Camera::Instance().GetForward();
+    auto right = Camera::Instance().GetRight();
+    forward.x *= ay;
+    forward.z *= ay;
+    right.x *= ax;
+    right.z *= ax;
+
+    DirectX::XMFLOAT2 moveVec = { right.x + forward.x,right.z + forward.z };
+    float length = sqrtf(moveVec.x * moveVec.x + moveVec.y * moveVec.y);
+    moveVec.x /= length;
+    moveVec.y /= length;
+    return moveVec;
 }
 
 void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
@@ -388,6 +433,7 @@ void Player::UpdateVelocity(float elapsedTime,float ax,float ay)
         }
     }
 }
+
 
 void Player::AvoidUpdate(float elapsedTime)
 {
@@ -527,20 +573,6 @@ void Player::Render(const float scale, ID3D11PixelShader* psShader)
     ColliderPosUpdate(scale);
 }
 
-void Player::SkillImagesRender()
-{
-    int i = 0;
-    float posX = 1220.0f;
-    for (auto& skill : skillArray)
-    {
-        skill->Render();
-        if (skill->GetOverlapNum() == 0)continue;
-        skill->SetIconPos(DirectX::XMFLOAT2(posX,0));
-        posX -= skill->icon->GetSpriteTransform()->GetSize().x;
-        i++;
-    }
-}
-
 // ImGui用
 void Player::DrawDebug()
 {
@@ -553,6 +585,7 @@ void Player::DrawDebug()
         Character::DrawDebug();
 
         stateMachine->DrawDebug();
+        
 
         //ImGui::Checkbox("ShoeCollider",&showCollider);
 
@@ -585,7 +618,7 @@ void Player::DrawDebug()
             ImGui::SliderFloat("Damage", &damage,0.0f,20.0f);
             if (ImGui::Button("Apply Damage"))
             {
-                ApplyDamage(damage);
+                ApplyDamage(damage,GetTransform()->GetPosition(), nullptr);
             }
 
             ImGui::TreePop();
@@ -603,10 +636,7 @@ void Player::DrawDebug()
             isSelectingSkill = false;
         }
 
-        for (auto& skill : skillArray)
-        {
-            skill->DrawDebug();
-        }
+        
 
         ImGui::End();
 
@@ -630,6 +660,7 @@ void Player::DrawDebug()
         // アビリティマネージャーデバッグ描画(仮)
         abilityManager_.DrawDebug();
 
+        laserEffect->DrawDebug();
 
         ImGui::EndMenu();
     }
@@ -719,8 +750,7 @@ void Player::SelectSkillUpdate(float elapsedTime)
             }
             buttonDown = true;
         }
-        else if (ax)buttonDown = true;
-        else
+        else if (ax <= 0.3f && ax >= -0.3f)
         {
             buttonDown = false;
         }
@@ -787,10 +817,11 @@ BaseSkill* Player::Lottery()
         else if (rarity < (checker += BaseSkill::pUncommon))rarity = BaseSkill::ULTRA_RARE;
 
         //抽選対象のレア度のスキルを格納
-        for (auto& skill : skillArray)
+        for (auto& skill : *skillArray)
         {
             //すでに引かれたスキルはスキップ
             if (skill->isSelect)continue;
+            if (skill->isOneSheet)continue;
 
             if (skill->rarity == rarity)
             {
@@ -809,7 +840,7 @@ BaseSkill* Player::Lottery()
 
 void Player::DrawCards()
 {
-    for (auto& skill : skillArray)
+    for (auto& skill : *skillArray)
     {
         skill->isSelect = false;
     }
@@ -825,6 +856,8 @@ bool Player::ChangeLockOnTarget(float ax)
 {
     if (!(ax > 0.5f || ax < -0.5))return false;
     auto& camera = Camera::Instance();
+
+    if (camera.GetLockOnTarget() == nullptr)return false;
     DirectX::XMFLOAT3 curLockOnTargetPos = camera.GetLockOnTarget()->GetPosition();
 
     //外積にプレイヤーから片側にいる敵のみ取得
@@ -841,6 +874,9 @@ bool Player::ChangeLockOnTarget(float ax)
     for (size_t i = 0; i < enemyManager.GetEnemyCount(); i++)
     {
         auto* enemy = enemyManager.GetEnemy(i);
+
+        if (enemy->isDead)continue;//死んでいるなら処理を飛ばす
+
         DirectX::XMFLOAT3 enemyPos = enemy->GetTransform()->GetPosition();
 
         DirectX::XMFLOAT3 peVec = enemyPos - playerPos;//プレイヤーから敵までのベクトル
@@ -924,7 +960,7 @@ void Player::LockOnUpdate()
     {
         if(ChangeLockOnTarget(ax))buttonDown = true;
     }
-    if (ax <= 0.1f && ax >= -0.1f)
+    if (ax <= 0.3f && ax >= -0.3f)
     {
         buttonDown = false;
     }
@@ -949,21 +985,77 @@ void Player::LockOnInitialize()
     }
 }
 
-void Player::OnDamaged()
+void Player::BlownUpdate(float elapsedTime)
 {
-    stateMachine->ChangeState(STAGGER_SOFT);
+    if (blowTimer < 0)
+    {
+        velocity = DirectX::XMFLOAT3(0, 0, 0);
+        return;
+    }
+
+    float blowSpeed = Easing::OutCubic(blowTimer, blowTime, this->blowSpeed, 0.0f);
+    velocity = blowVec * blowSpeed;
+
+    DirectX::XMFLOAT3 movePos = GetTransform()->GetPosition() + velocity * elapsedTime;
+    GetTransform()->SetPosition(CollidedPosition(movePos));
+
+    blowTimer -= elapsedTime;
 }
 
-void Player::OnDead()
+void Player::Blow(DirectX::XMFLOAT3 blowVec)
+{
+    this->blowVec = Normalize(blowVec);
+    blowTimer = blowTime;
+}
+
+void Player::ActiveCounter()
+{
+    if (InputCounter())
+    {
+        ChangeState(static_cast<float>(STATE::COUNTER));
+    }
+}
+
+void Player::PlayLaserEffect()
+{
+    DirectX::XMFLOAT3 pos = GetTransform()->GetPosition();
+    auto forward = GetTransform()->CalcForward();
+    pos = pos + forward * 0.5f;
+    pos.y += 0.7f;
+    laserEffect->SetPosition(pos);
+    auto r = GetTransform()->GetRotation();
+    //laserEffect->SetRotate(DirectX::XMFLOAT3(r.x,r.y,r.z));
+    laserEffect->angle = r.y - DirectX::XMConvertToRadians(180);
+
+    laserEffect->Play(pos);
+}
+
+void Player::OnDamaged()
+{
+    //stateMachine->ChangeState(STAGGER_SOFT);
+
+    
+}
+
+void Player::OnDead(DamageResult result)
 {
     stateMachine->ChangeState(DIE);
+
+    Blow(result.hitVector);
+
+    float length = sqrtf(result.hitVector.x * result.hitVector.x + result.hitVector.z * result.hitVector.z);
+    result.hitVector.z /= length;
+    GetTransform()->SetRotationY(acosf(result.hitVector.z));
+
+    PlayerManager::Instance().SetLifeTime(lifeTimer);
+    PlayerManager::Instance().SetLevel(level);
 }
 
 void Player::LevelUpdate()
 {
     if(curExp > levelUpExp)
     {
-        for (auto& skill : skillArray)
+        for (auto& skill : *skillArray)
         {
             //カードが映りこまないように適当な座標に飛ばしとく
             skill->card->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(0, 1000));
@@ -1002,26 +1094,27 @@ void Player::ColliderPosUpdate(const float& scale)
 {
     //喰らい判定
     {
-        const std::string meshBodyName = "ref_P:chara_rig_0906:chara_mdl_1017:pasted__Body";
-        const std::string meshLegName = "ref_P:chara_rig_0906:chara_mdl_1017:pasted__Socks";
-        hitCollider[static_cast<int>(HitColName::NECK)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_Neck", scale);
-        hitCollider[static_cast<int>(HitColName::HIP)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_Hips", scale);
-        hitCollider[static_cast<int>(HitColName::R_ELBOW)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_RightForeArm", scale);
-        hitCollider[static_cast<int>(HitColName::L_ELBOW)].position = GetJointPosition(meshBodyName, "ref_P:chara_rig_0906:j_LeftForeArm", scale);
+        const std::string meshBodyName = "ref_P:ref_P:ref_P:pasted__Body";
+        const std::string meshLegName = "ref_P:ref_P:ref_P:pasted__Socks";
+        hitCollider[static_cast<int>(HitColName::NECK)].position = GetJointPosition(meshBodyName, "ref_P:ref_P:j_Neck", scale);
+        hitCollider[static_cast<int>(HitColName::HIP)].position = GetJointPosition(meshBodyName, "ref_P:ref_P:j_Hips", scale);
+        hitCollider[static_cast<int>(HitColName::R_ELBOW)].position = GetJointPosition(meshBodyName, "ref_P:ref_P:j_RightForeArm", scale);
+        hitCollider[static_cast<int>(HitColName::L_ELBOW)].position = GetJointPosition(meshBodyName, "ref_P:ref_P:j_LeftForeArm", scale);
     
         //hitCollider[static_cast<int>(HitColName::LEG)].position = GetJointPosition(meshBodyName,"setup_0927:chara_rig_0906:j_Sentar",scale);
-        hitCollider[static_cast<int>(HitColName::R_LEG)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_RightLeg", scale);
-        hitCollider[static_cast<int>(HitColName::L_LEG)].position = GetJointPosition(meshLegName, "ref_P:chara_rig_0906:j_LeftLeg", scale);
+        hitCollider[static_cast<int>(HitColName::R_LEG)].position = GetJointPosition(meshLegName, "ref_P:ref_P:j_RightLeg", scale);
+        hitCollider[static_cast<int>(HitColName::L_LEG)].position = GetJointPosition(meshLegName, "ref_P:ref_P:j_LeftLeg", scale);
+        hitCollider[static_cast<int>(HitColName::R_LEG_END)].position = GetJointPosition(meshLegName, "ref_P:ref_P:j_RightFoot", scale);
+        hitCollider[static_cast<int>(HitColName::L_LEG_END)].position = GetJointPosition(meshLegName, "ref_P:ref_P:j_LeftFoot", scale);
     }
 
     //攻撃判定
     {
         DirectX::XMFLOAT4X4 world{};
         DirectX::XMStoreFloat4x4(&world, swordModel->GetTransform()->CalcWorldMatrix(scale));
-        //const std::string swordMeshName = "sword_rig_1004:sword_rig_1005:sword_mdl_1005:Sword";
-        const std::string swordMeshName = "sword_rig_1004:sword_rig_1005:sword_mdl_1005:Sword";
-        const DirectX::XMFLOAT3 swordRoot = swordModel->skinned_meshes->JointPosition(swordMeshName, "sword_rig_1004:sword_rig_1005:j_sword",&swordModel->keyframe ,world);//根本
-        const DirectX::XMFLOAT3 swordTip = swordModel->skinned_meshes->JointPosition(swordMeshName, "sword_rig_1004:sword_rig_1005:j_sword_end", &swordModel->keyframe, world);//先端
+        const std::string swordMeshName = "ref_S:sword_rig_1005:sword_mdl_1005:Sword";
+        const DirectX::XMFLOAT3 swordRoot = swordModel->skinned_meshes->JointPosition(swordMeshName, "ref_S:sword_rig_1005:j_sword",&swordModel->keyframe ,world);//根本
+        const DirectX::XMFLOAT3 swordTip = swordModel->skinned_meshes->JointPosition(swordMeshName, "ref_S:sword_rig_1005:j_sword_end", &swordModel->keyframe, world);//先端
      
         const DirectX::XMFLOAT3 vec = swordTip - swordRoot;
         float swordLength = Length(vec);

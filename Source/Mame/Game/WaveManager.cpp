@@ -6,6 +6,8 @@
 #include "EnemyAI_3.h"
 #include "EnemyGolem.h"
 
+#include "UserInterface.h"
+
 // ウェーブ設定
 // ※要素数の取得や変更などを行うときにクラス内で定義していると面倒なので外で定義
 
@@ -21,12 +23,13 @@ namespace Set {
 
 #if _DEBUG
 WaveEnemySet waveEnemySetTest[] = {
-     WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
-     WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
-     WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
-     WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
-     WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
-     WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(1.0f, "EnemyAI_1",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(1.0f, "EnemyAI_1",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(1.0f, "EnemyAI_2",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(1.0f, "EnemyAI_2",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(1.0f, "EnemyAI_3",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(1.0f, "EnemyAI_3",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(1.0f, "EnemyGolem", ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
 };
 #endif
 WaveEnemySet waveEnemySet0[] = {
@@ -81,6 +84,9 @@ WaveEnemySet waveEnemySet10[] = {
 // ウェーブ(※ウェーブ配列に格納する)
 // 引数：ウェーブ名・ウェーブについての備考・WaveEnemySet配列の要素数・WaveEnemySet配列の先頭アドレス
 #pragma region Wave
+#if _DEBUG
+Wave waveTest_ = { "WaveTest", "Test", std::size(waveEnemySetTest),  waveEnemySetTest };
+#endif
 Wave wave0_  = { "Wave0",  "None",    std::size(waveEnemySet0),  waveEnemySet0  };
 Wave wave1_  = { "Wave1",  "None",    std::size(waveEnemySet1),  waveEnemySet1  };
 Wave wave2_  = { "Wave2",  "None",    std::size(waveEnemySet2),  waveEnemySet2  };
@@ -97,6 +103,9 @@ Wave wave10_ = { "Wave10", "VsGolem", std::size(waveEnemySet10), waveEnemySet10 
 
 // ウェーブ配列(※上から順にウェーブが実行される)
 Wave waves_[] = {
+#if _DEBUG
+    waveTest_,
+#endif
     wave0_,
     wave1_,
     wave2_,
@@ -212,6 +221,9 @@ void WaveManager::UpdateWave(const float elapsedTime)
 
             // 休憩時間に入る(休憩フラグON)
             breakTimeFlag_ = true;
+
+            // waveの表記を出す
+            UserInterface::Instance().SetWaveSlideSprite();
         }
 
     }

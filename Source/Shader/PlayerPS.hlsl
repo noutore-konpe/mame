@@ -21,12 +21,32 @@ float4 main(PSIn psIn) : SV_TARGET
     color.rgb = pow(color.rgb, GAMMA);
     
     // ディレクションライト
+#if 1
     float3 directionLight = CalcLightFromDirectionLight(psIn);
+#else
+    float3 N = normalize(psIn.worldNormal.xyz);
+    float3 T = normalize(psIn.worldTangent.xyz);
+    float sigma = psIn.worldTangent.w;
+    T = normalize(T - N * dot(N, T));
+    float3 B = normalize(cross(N, T) * sigma);
+
+    float4 normal = textureMaps[1].Sample(samplerStates[LINEAR], psIn.texcoord);
+    normal = (normal * 2.0) - 1.0;
+    N = normalize((normal.x * T) + (normal.y * B) + (normal.z * N));
+    
+    float3 L = normalize(-lightDirection.xyz);
+    float3 diffuse = color.rgb * max(0, dot(N, L));
+    float3 V = normalize(cameraPosition.xyz - psIn.worldPosition.xyz);
+    float3 specular = pow(max(0, dot(N, normalize(V + L))), 128);
+    
+    //float3 directionLight = diffuse + specular;
+    float3 directionLight = diffuse;
+#endif
     
     // 半球ライト
     float3 hemisphereLight = CalcHemisphereLight(psIn);
     
-    float3 finalColor = directionLight + hemisphereLight;
+    float3 finalColor = directionLight + hemisphereLight * color.rgb;
     
     // 二次反射
     finalColor.x += 0.2f;

@@ -26,7 +26,7 @@ Book::Book()
 
         GetStateMachine()->RegisterState(new BookState::IdleState(this));
         GetStateMachine()->RegisterState(new BookState::OpenState(this));
-        GetStateMachine()->RegisterState(new BookState::JabAttackState(this));
+        GetStateMachine()->RegisterState(new BookState::AttackState(this));
         GetStateMachine()->RegisterState(new BookState::CloseState(this));
 
         GetStateMachine()->SetState(static_cast<UINT>(StateMachineState::Idle));
@@ -179,7 +179,7 @@ void Book::CollisionProjectileVsEnemies()
                 enemy->SaveBlowOffInfo(vec, proj->GetInflictBlowOffForceLevel());
 
                 // “G‚Éƒ_ƒ[ƒW‚ð—^‚¦‚é
-                enemy->ApplyDamage(proj->GetAttack());
+                enemy->ApplyDamage(proj->GetAttack(),enmHitColliderPos);
 
                 // ’e‚ðÁ‹Ž‚·‚é
                 proj->Destroy();
@@ -327,27 +327,36 @@ void Book::SetTransform()
     }
 
     // ‚Ó‚í‚Ó‚í‚·‚éˆ—
+    {
+        static float timer;
+        //float moveY = isMoveToUp ? 0.3f : -0.3f;
 #if 1
-    // ã‰º‚ÉˆÚ“®‚³‚¹‚é
-    DirectX::XMFLOAT3 floatingModifyPos = bookPosition;
-    floatingModifyPos.y = bookPosition.y + ::cosf(circularMotionRotationZ_) * circularMotionRadius_;
+    //// ‰ñ“]XV
+    //circularMotionRotationZ_ += circularMotionAddRotate_ * elapsedTime;
+    //if (circularMotionRotationZ_ > 360.0f) { circularMotionRotationZ_ -= 360.0f; }
 
-    // ˆÊ’uÝ’è
-    GetTransform()->SetPosition(floatingModifyPos);
+
+    // ã‰º‚ÉˆÚ“®‚³‚¹‚é
+        DirectX::XMFLOAT3 floatingModifyPos = bookPosition;
+        floatingModifyPos.y = bookPosition.y + ::cosf(circularMotionRotationZ_) * circularMotionRadius_;
+
+        // ˆÊ’uÝ’è
+        GetTransform()->SetPosition(floatingModifyPos);
 #else
     // ˆÊ’uÝ’è
-    GetTransform()->SetPosition(bookPosition);
+        GetTransform()->SetPosition(bookPosition);
 #endif
 
-    // ‰ñ“]’l
-    DirectX::XMFLOAT4 bookRot = GetTransform()->GetRotation();
-    const float radian360 = ::ToRadian(360.0f);
-    if      (bookRot.x > +radian360) bookRot.x += -radian360;
-    else if (bookRot.x < -radian360) bookRot.x += +radian360;
-    if      (bookRot.y > +radian360) bookRot.y += -radian360;
-    else if (bookRot.y < -radian360) bookRot.y += +radian360;
-    if      (bookRot.z > +radian360) bookRot.z += -radian360;
-    else if (bookRot.z < -radian360) bookRot.z += +radian360;
-    GetTransform()->SetRotation(bookRot);
+        // ‰ñ“]’l
+        DirectX::XMFLOAT4 bookRot = GetTransform()->GetRotation();
+        const float radian360 = ::ToRadian(360.0f);
+        if (bookRot.x > +radian360) bookRot.x += -radian360;
+        else if (bookRot.x < -radian360) bookRot.x += +radian360;
+        if (bookRot.y > +radian360) bookRot.y += -radian360;
+        else if (bookRot.y < -radian360) bookRot.y += +radian360;
+        if (bookRot.z > +radian360) bookRot.z += -radian360;
+        else if (bookRot.z < -radian360) bookRot.z += +radian360;
+        GetTransform()->SetRotation(bookRot);
 
+    }
 }

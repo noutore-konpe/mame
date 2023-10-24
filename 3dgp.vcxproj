@@ -226,6 +226,7 @@
     <ClCompile Include="Source\Mame\Game\EnemyAI_2.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyAI_3.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyAura.cpp" />
+    <ClCompile Include="Source\Mame\Game\EnemyGolemResult.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyGolemState.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemyManager.cpp" />
     <ClCompile Include="Source\Mame\Game\EnemySlime.cpp" />
@@ -236,6 +237,7 @@
     <ClCompile Include="Source\Mame\Game\Item.cpp" />
     <ClCompile Include="Source\Mame\Game\ItemManager.cpp" />
     <ClCompile Include="Source\Mame\Game\JudgmentDerived.cpp" />
+    <ClCompile Include="Source\Mame\Game\LightColorManager.cpp" />
     <ClCompile Include="Source\Mame\Game\LoadingPlayer.cpp" />
     <ClCompile Include="Source\Mame\Game\MagicCircle.cpp" />
     <ClCompile Include="Source\Mame\Game\MagicCircleEnemySummon.cpp" />
@@ -250,6 +252,7 @@
     <ClCompile Include="Source\Mame\Game\ParametricSkill.cpp" />
     <ClCompile Include="Source\Mame\Game\Player.cpp" />
     <ClCompile Include="Source\Mame\Game\PlayerManager.cpp" />
+    <ClCompile Include="Source\Mame\Game\PlayerResult.cpp" />
     <ClCompile Include="Source\Mame\Game\PlayerState.cpp" />
     <ClCompile Include="Source\Mame\Game\Projectile.cpp" />
     <ClCompile Include="Source\Mame\Game\ProjectileHorming.cpp" />
@@ -294,6 +297,7 @@
     <ClCompile Include="Source\Mame\Scene\SceneGame.cpp" />
     <ClCompile Include="Source\Mame\Scene\SceneLoading.cpp" />
     <ClCompile Include="Source\Mame\Scene\SceneManager.cpp" />
+    <ClCompile Include="Source\Mame\Scene\SceneResult.cpp" />
     <ClCompile Include="Source\Mame\Scene\SceneTitle.cpp" />
     <ClCompile Include="Source\Mame\Scene\SceneTutorial.cpp" />
     <ClCompile Include="Source\Mame\Transform.cpp" />
@@ -341,6 +345,7 @@
     <ClInclude Include="Source\Mame\Game\EnemyAI_2.h" />
     <ClInclude Include="Source\Mame\Game\EnemyAI_3.h" />
     <ClInclude Include="Source\Mame\Game\EnemyAura.h" />
+    <ClInclude Include="Source\Mame\Game\EnemyGolemResult.h" />
     <ClInclude Include="Source\Mame\Game\EnemyGolemState.h" />
     <ClInclude Include="Source\Mame\Game\EnemyManager.h" />
     <ClInclude Include="Source\Mame\Game\EnemySlime.h" />
@@ -352,6 +357,7 @@
     <ClInclude Include="Source\Mame\Game\ItemManager.h" />
     <ClInclude Include="Source\Mame\Game\JudgmentBase.h" />
     <ClInclude Include="Source\Mame\Game\JudgmentDerived.h" />
+    <ClInclude Include="Source\Mame\Game\LightColorManager.h" />
     <ClInclude Include="Source\Mame\Game\LoadingPlayer.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircle.h" />
     <ClInclude Include="Source\Mame\Game\MagicCircleEnemySummon.h" />
@@ -366,6 +372,7 @@
     <ClInclude Include="Source\Mame\Game\ParametricSkill.h" />
     <ClInclude Include="Source\Mame\Game\Player.h" />
     <ClInclude Include="Source\Mame\Game\PlayerManager.h" />
+    <ClInclude Include="Source\Mame\Game\PlayerResult.h" />
     <ClInclude Include="Source\Mame\Game\PlayerState.h" />
     <ClInclude Include="Source\Mame\Game\Projectile.h" />
     <ClInclude Include="Source\Mame\Game\ProjectileHorming.h" />
@@ -418,6 +425,7 @@
     <ClInclude Include="Source\Mame\Scene\SceneGame.h" />
     <ClInclude Include="Source\Mame\Scene\SceneLoading.h" />
     <ClInclude Include="Source\Mame\Scene\SceneManager.h" />
+    <ClInclude Include="Source\Mame\Scene\SceneResult.h" />
     <ClInclude Include="Source\Mame\Scene\SceneTitle.h" />
     <ClInclude Include="Source\Mame\Scene\SceneTutorial.h" />
     <ClInclude Include="Source\Mame\Transform.h" />
@@ -498,6 +506,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
+    <FxCompile Include="Source\Shader\ExpModelPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="Source\Shader\FbxModelVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -511,6 +525,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Source\Shader\FinalPassPs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\FinalPassTexturePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -584,6 +604,12 @@
     <FxCompile Include="Source\Shader\gltfModelVs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GolemPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Source\Shader\InstancingPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -664,6 +690,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="Source\Shader\PlayerPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ResultPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>

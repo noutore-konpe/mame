@@ -5,7 +5,7 @@
 #include "MagicCircleGolemAttack2State.h"
 
 // コンストラクタ
-MagicCircleGolemAttack2::MagicCircleGolemAttack2()
+MagicCircleGolemAttack2::MagicCircleGolemAttack2(Enemy* owner)
 {
     Graphics& graphics = Graphics::Instance();
 
@@ -20,7 +20,7 @@ MagicCircleGolemAttack2::MagicCircleGolemAttack2()
     {
         for (int j = 0; j < 3; ++j)
         {
-            stoneBalls[i][j] = std::make_unique<StoneBall>();
+            stoneBalls[i][j] = std::make_unique<StoneBall>(owner);
         }
     }
 
@@ -44,6 +44,13 @@ MagicCircleGolemAttack2::~MagicCircleGolemAttack2()
 // 初期化
 void MagicCircleGolemAttack2::Initialize()
 {
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            stoneBalls[i][j]->Initialize();
+        }
+    }
 }
 
 // 終了化
@@ -56,6 +63,14 @@ void MagicCircleGolemAttack2::Update(const float& elapsedTime)
 {
     // ステートマシン更新
     GetStateMachine()->Update(elapsedTime);
+    
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            stoneBalls[i][j]->Update(elapsedTime);
+        }
+    }
 }
 
 // 描画

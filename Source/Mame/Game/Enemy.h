@@ -80,7 +80,15 @@ public:
     void ElapseRunTimer(const float elapsedTime) { runTimer_ = (std::max)(0.0f, runTimer_ - elapsedTime); }
 
     // ひるませる
-    virtual void Flinch() {}
+    virtual void Flinch()override {}
+
+
+
+    //攻撃判定とダメージ処理 引数は与えるダメージ量
+    void AttackCollisionOnPlayer(const float damage);
+
+    // 吹っ飛ばす
+    void BlowOff();
 
     /// <summary>
     /// 吹っ飛ばす
@@ -114,6 +122,7 @@ public:
 
         return behaviorTree_->GetRoot()->GetChildren()->size();
     }
+
 
 protected:
     std::unique_ptr<BehaviorTree>   behaviorTree_;

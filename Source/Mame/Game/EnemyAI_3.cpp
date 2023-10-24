@@ -6,6 +6,8 @@
 #include "../Game/ActionDerived.h"
 #include "../Game/JudgmentDerived.h"
 
+#include "../Game/EnemyManager.h"
+
 int EnemyAI_3::nameNum_ = 0;
 
 // コンストラクタ
@@ -61,12 +63,17 @@ EnemyAI_3::EnemyAI_3()
 EnemyAI_3::~EnemyAI_3()
 {
     --nameNum_;
+    if (isDead)
+        EnemyManager::Instance().AddEnemy3KillNum();
 }
 
 // 初期化
 void EnemyAI_3::Initialize()
 {
     BaseEnemyAI::Initialize();
+
+    constexpr float scale = 0.7f;
+    this->GetTransform()->SetScale(DirectX::XMFLOAT3(scale, scale, scale));
 
     attackLength_ = 6.0f; // 攻撃が可能な距離をのばす
 

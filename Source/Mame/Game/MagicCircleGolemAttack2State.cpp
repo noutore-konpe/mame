@@ -33,6 +33,15 @@ namespace MagicCircleGolemAttack2State
     // ‰Šú‰»
     void AppearState::Initialize()
     {
+        // Î¶¬
+        for (int i = 0; i < 3; ++i)
+        {
+            for (int j = 0; j < 3; ++j)
+            {
+                owner->stoneBalls[i][j]->Create();
+            }
+        }
+
         // •`‰æ—p
         owner->isAttack2 = true;
 

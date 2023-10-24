@@ -6,6 +6,8 @@
 #include "../Game/ActionDerived.h"
 #include "../Game/JudgmentDerived.h"
 
+#include "EnemyManager.h"
+
 int EnemyAI_2::nameNum_ = 0;
 
 // コンストラクタ
@@ -71,6 +73,8 @@ EnemyAI_2::EnemyAI_2()
 EnemyAI_2::~EnemyAI_2()
 {
     --nameNum_;
+    if(isDead)
+        EnemyManager::Instance().AddEnemy2KillNum();
 }
 
 // 初期化
@@ -80,7 +84,7 @@ void EnemyAI_2::Initialize()
 
     BaseEnemyAI::Initialize();
 
-    constexpr float scale = 1.5f;
+    constexpr float scale = 1.0f;
     this->GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
     sword_->GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
 
@@ -117,7 +121,7 @@ void EnemyAI_2::Render(const float& scale, ID3D11PixelShader* /*psShader*/)
     BaseEnemyAI::Render(scale, emissiveTextureUVScroll.Get());
 
     // 剣描画
-    sword_->Render(scale, nullptr);
+    sword_->Render(scale, emissiveTextureUVScroll.Get());
 
     ColliderPosUpdate(scale);
 }

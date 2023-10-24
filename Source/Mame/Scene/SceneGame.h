@@ -56,7 +56,12 @@ private: // 変数等々
     bool isParticleInitialize = false;
     bool isDebugCamera = false;
     bool isWhiteSpriteRender = false;
+    bool isBlackSpriteRender = false;
     float whiteSpriteTimer = 0.0f;
+    float blackSpriteTimer = 0.0f;
+
+    std::unique_ptr<EnemyGolem> enemyGolem;
+
 
 private: // GPU用定数・変数
     std::unique_ptr<FrameBuffer> framebuffers[3];
@@ -93,7 +98,7 @@ private: // GPU用定数・変数
     bool integrateParticles = true;
 
     // EMISSIVE
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> emissiveTexture;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> emissiveTexture[2];
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> particleTexture;
 
     // PostEffect

@@ -13,6 +13,8 @@
 
 #include "../Input/Input.h"
 
+#include "../Resource/AudioManager.h"
+
 // DummyState
 namespace EnemyGolemState
 {
@@ -38,8 +40,7 @@ namespace EnemyGolemState
 
     void IdleState::Update(const float& elapsedTime)
     {
-        // 歩き
-        owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::WalkState));
+        owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::EyeEmissiveDown));
     }
 
     void IdleState::Finalize()
@@ -58,17 +59,22 @@ namespace EnemyGolemState
         // アニメーション設定
         owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Landing), false);
 
+        owner->SetEyeEmissiveColor(DirectX::XMFLOAT4(0.2f, 0, 1.0f, 1));
+        owner->SetEyeEmissiveIntensity(2.0f);
+
         landingTimer = 0.0f;
 
         timer = 0.0f;
         isCameraShake = false;
+
+        AudioManager::Instance().PlaySE(SE::GolemEntry);
     }
 
     void EntryState::Update(const float& elapsedTime)
     {
         if (landingTimer <= maxTime)
         {
-            float posY = Easing::InQuint(landingTimer, maxTime, 0.0f, 7.0f);
+            float posY = Easing::InQuint(landingTimer, maxTime, 0.0f, 15.0f);
             owner->GetTransform()->SetPositionY(posY);
 
             landingTimer += elapsedTime;
@@ -111,7 +117,7 @@ namespace EnemyGolemState
         owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::RoarUp), false, 0.7f);
 
         Shader* shader = Graphics::Instance().GetShader();
-        shader->postEffectConstants.bokehFocus = 0.0f;
+        shader->postEffectConstants.bokehAperture = 0.0f;
 
         isRoarUp = false;
         isRoarDown = false;
@@ -137,6 +143,8 @@ namespace EnemyGolemState
                 owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::RoarDown), false, 0.6f);
 
                 isRoarUp = true;
+
+                AudioManager::Instance().PlaySE(SE::GolemRoar);
             }
         }
         // 咆哮が終わってなかったら
@@ -152,7 +160,7 @@ namespace EnemyGolemState
                     isBokeh = true;
 
                     // ゲームパッド振動
-                    Input::Instance().GetGamePad().Vibration(1.0f, gamePadVibPower);
+                    Input::Instance().GetGamePad().Vibration(2.0f, gamePadVibPower);
                 }
 
                 animationTimer += elapsedTime;
@@ -169,7 +177,7 @@ namespace EnemyGolemState
         {
             if (bokehTimer0 <= maxBokehTime0)
             {
-                shader->postEffectConstants.bokehFocus = Easing::OutCubic(bokehTimer0, maxBokehTime0, 0.03f, 0.0f);
+                shader->postEffectConstants.bokehAperture = Easing::OutCubic(bokehTimer0, maxBokehTime0, 0.03f, 0.0f);
 
                 bokehTimer0 += elapsedTime;
             }
@@ -177,7 +185,7 @@ namespace EnemyGolemState
             {
                 if (bokehTimer1 <= maxBokehTime1)
                 {
-                    shader->postEffectConstants.bokehFocus = Easing::InCubic(bokehTimer1, maxBokehTime1, 0.0f, 0.03f);
+                    shader->postEffectConstants.bokehAperture = Easing::InCubic(bokehTimer1, maxBokehTime1, 0.0f, 0.03f);
 
                     bokehTimer1 += elapsedTime;
                 }
@@ -191,16 +199,23 @@ namespace EnemyGolemState
                     else
                     {
                         if (!owner->IsPlayAnimation())
+                        {
                             owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::IdleState));
+                        }
                     }
                 }
             }
+        }
+        else
+        {
+            shader->postEffectConstants.bokehAperture = 0.0f;
         }
     }
 
     void RoarState::Finalize()
     {
-
+        Shader* shader = Graphics::Instance().GetShader();
+        shader->postEffectConstants.bokehAperture = 0.0f;
     }
 }
 
@@ -874,6 +889,8 @@ namespace EnemyGolemState
     // 初期化
     void DeathState::Initialize()
     {
+        owner->SetCurrentState(static_cast<UINT>(EnemyGolem::StateMachineState::DeathState));
+
         // アニメーション設定
         owner->PlayAnimation(static_cast<UINT>(EnemyGolem::Animation::Death0), false ,0.7f);
 
@@ -886,6 +903,9 @@ namespace EnemyGolemState
 
         cameraShakeTimer = 0.0f;
         isCameraShake = false;
+
+        deathTimer = 0.0f;
+        isDestroy = false;
     }
 
     // 更新
@@ -922,9 +942,30 @@ namespace EnemyGolemState
             {
                 isCameraShake = true;
                 Camera::Instance().ScreenVibrate(0.10f, 1.5f);
+
+                isDestroy = true;
             }
         }
 
+
+        if (isDestroy)
+        {
+            float maxTime = 2.0f;
+            if (deathTimer <= maxTime)
+            {
+                float alpha = Easing::InSine(deathTimer, maxTime, 0.0f, 1.0f);
+
+                DirectX::XMFLOAT4 c = owner->model->GetModelColor();
+                c.w = alpha;
+                owner->model->SetModelColor(c);
+
+                deathTimer += elapsedTime;
+            }
+            else
+            {
+                owner->Destroy();
+            }
+        }
     }
 
     // 終了化
@@ -948,6 +989,9 @@ namespace EnemyGolemState
             true);
 
         owner->model->weight = 0.0f;
+
+        owner->SetEyeEmissiveColor(DirectX::XMFLOAT4(0.2, 0, 1.0, 0));
+        owner->SetEyeEmissiveIntensity(2.0f);
 
         // 変数初期化
         isChangeState = false;
@@ -1068,5 +1112,102 @@ namespace EnemyGolemState
         DirectX::XMFLOAT3 ownerPos = owner->GetTransform()->GetPosition();
         DirectX::XMFLOAT3 vec = Normalize(playerPos - ownerPos);
         owner->Turn(elapsedTime, vec.x, vec.z, rotateSpeed);
+    }
+}
+
+// DelayState
+namespace EnemyGolemState
+{
+    // 初期化
+    void DelayState::Initialize()
+    {
+        delayTimer = 0.0f;
+
+        maxDelay = rand() % 3 + 0.5f;
+
+        owner->SetEyeEmissiveColor(DirectX::XMFLOAT4(0.2, 0, 0, 0));
+        owner->SetEyeEmissiveIntensity(1.0f);
+    }
+
+    // 更新
+    void DelayState::Update(const float& elapsedTime)
+    {
+        if (delayTimer >= maxDelay)
+        {
+            owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::EyeEmissiveUp));
+        }
+
+        delayTimer += elapsedTime;
+    }
+
+    // 終了
+    void DelayState::Finalize()
+    {
+    }
+}
+
+// EyeEmissiveDownState
+namespace EnemyGolemState
+{
+    void EyeEmissiveDownState::Initialize()
+    {
+        timer = 0.0f;
+    }
+    void EyeEmissiveDownState::Update(const float& elapsedTime)
+    {
+        float maxTime = 0.3f;
+        if (timer <= maxTime)
+        {
+
+            float b = Easing::InSine(timer, maxTime, 0.0f, 1.0f);
+
+            DirectX::XMFLOAT4 color = owner->GetEyeEmissiveColor();
+
+            color.z = b;
+            owner->SetEyeEmissiveColor(color);
+
+            timer += elapsedTime;
+        }
+        else
+        {
+            owner->SetEyeEmissiveColor(DirectX::XMFLOAT4(0.2f, 0, 0, 1));
+            owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::DelayState));
+        }
+    }
+    void EyeEmissiveDownState::Finalize()
+    {
+    }
+}
+
+// EyeEmissiveUpState
+namespace EnemyGolemState
+{
+    void EyeEmissiveUpState::Initialize()
+    {
+        timer = 0.0f;
+    }
+    void EyeEmissiveUpState::Update(const float& elapsedTime)
+    {
+        float maxTime = 0.3f;
+        if (timer <= maxTime)
+        {
+            
+            float b = Easing::InSine(timer, maxTime, 1.0f, 0.0f);
+
+            DirectX::XMFLOAT4 color = owner->GetEyeEmissiveColor();
+            
+            color.z = b;
+            owner->SetEyeEmissiveColor(color);
+
+            timer += elapsedTime;
+        }
+        else
+        {
+            owner->SetEyeEmissiveColor(DirectX::XMFLOAT4(0.2, 0, 1.0f, 1));
+            owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::WalkState));
+        }
+    }
+    void EyeEmissiveUpState::Finalize()
+    {
     }
 }

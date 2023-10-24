@@ -1,6 +1,8 @@
 #include "SceneTitle.h"
 #include "SceneGame.h"
 #include "SceneLoading.h"
+#include "SceneResult.h"
+
 #include "../Mame.h"
 
 #include "../Graphics/Graphics.h"
@@ -82,7 +84,6 @@ void SceneTitle::CreateResource()
         hr = graphics.GetDevice()->CreateBuffer(&bufferDesc, nullptr,
             ConstantBuffer.GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
     }
 }
 
@@ -95,9 +96,9 @@ void SceneTitle::Initialize()
     pressSprite->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(370, 520));
     fadeSprite->GetSpriteTransform()->SetColorA(0.0f);
 
-    //AudioManager::Instance().PlayBGM(BGM::Title, true);
-    AudioManager::Instance().PlayBGM(BGM::Title1, true);
-    //AudioManager::Instance().PlayBGM(BGM::Title2, true);
+    
+    AudioManager::Instance().PlayBGM(BGM::Title, true);
+    
 
     // •Ï”‰Šú‰»
     pressTimer = 0.0f;
@@ -134,6 +135,7 @@ void SceneTitle::Update(const float& elapsedTime)
     {
         Camera::Instance().TitleInitialize();
         Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneResult));
         return;
     }
 

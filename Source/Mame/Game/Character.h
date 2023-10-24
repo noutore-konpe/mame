@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Graphics/Model.h"
+#include "../Graphics/Effect.h"
 
 // 吹っ飛ばす力の度合い
 enum class BLOW_OFF_FORCE_LEVEL : int
@@ -150,23 +151,33 @@ public: // その他の関数
 
     void Turn(float elapsedTime, float vx, float vz, float rotSpeed);
 
-    //ダメージを受けたときに呼ばれる
-    virtual void OnDamaged() {}
-
-    //死亡した時に呼ばれる
-    virtual void OnDead() {}
-
-    virtual void OnHealed() {}
+    
 
     struct DamageResult
     {
         bool hit;
         float damage = 0;
+        DirectX::XMFLOAT3 hitVector;
     };
     //戻り値は与えられたダメージ数、基本無敵時間は怯みモーションに合わせるからここは０でいい
-    DamageResult ApplyDamage(float damage, float invincibleTime = 0);
+    virtual DamageResult ApplyDamage(float damage,
+        const DirectX::XMFLOAT3 hitPosition,
+        Character* attacker = nullptr/*攻撃してきた敵*/, 
+        float invincibleTime = 0);
 
     bool ApplyHeal(float heal);
+
+    //ダメージを受けたときに呼ばれる
+    virtual void OnDamaged() {}
+
+    //死亡した時に呼ばれる
+    virtual void OnDead(DamageResult result) {}
+
+    virtual void OnHealed() {}
+
+    //ひるませる
+    virtual void Flinch() {}
+
 
 #pragma endregion
 
@@ -199,9 +210,13 @@ protected:
     float       lockOnHeight    = 1.0f;         // 身長
     float       defence         = 0.0f;         // 防御力
 
+
     //--------------------------------喰らい、攻撃判定------------------------------------
     std::vector<SphereCollider> hitCollider;
     std::vector<SphereCollider> attackCollider;
     //--------------------------------------------------------------------------------
+
+    //エフェクト
+    std::unique_ptr<Effect> hitEffect;
 };
 

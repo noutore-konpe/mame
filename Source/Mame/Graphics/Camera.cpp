@@ -215,10 +215,36 @@ void Camera::TitleSetPerspectiveFov(ID3D11DeviceContext* dc)
     //DirectX::XMVECTOR focus{ DirectX::XMVectorSet(camera.focus.x,camera.focus.y,camera.focus.z,1.0f) };
     DirectX::XMVECTOR up{ DirectX::XMVectorSet(camera.up.x,camera.up.y,camera.up.z,0.0f) };
     V = { DirectX::XMMatrixLookAtLH(eye, focus, up) };
+
+
+}
+
+void Camera::ResultInitialize()
+{
+    transform.SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 10.0f));
+    transform.SetScale(DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+    transform.SetRotation(DirectX::XMFLOAT4(0.0f, DirectX::XMConvertToRadians(180), 0.0f, 0.0f));
+}
+
+void Camera::ResultSetPerSpectiveFov(ID3D11DeviceContext* dc)
+{
+    D3D11_VIEWPORT viewport{};
+    UINT unm_viewports{ 1 };
+    dc->RSGetViewports(&unm_viewports, &viewport);
+
+    float aspect_ratio{ viewport.Width / viewport.Height };
+    P = { DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(30),aspect_ratio,0.1f,1000.0f) };
+
+    DirectX::XMVECTOR eye = { DirectX::XMVectorSet(camera.eye.x,camera.eye.y,camera.eye.z,1.0f) };
+    DirectX::XMVECTOR focus = { DirectX::XMVectorSet(camera.focus.x,camera.focus.y,camera.focus.z,1.0f) };
+    DirectX::XMVECTOR up = { DirectX::XMVectorSet(camera.up.x,camera.up.y,camera.up.z,0.0f) };
+    V = { DirectX::XMMatrixLookAtLH(eye, focus, up) };
 }
 
 void Camera::Initialize()
 {
+    fov = DirectX::XMConvertToRadians(45);
+    initFov = fov;
     transform.SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 10.0f));
     transform.SetScale(DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
     transform.SetRotation(DirectX::XMFLOAT4(0.0f, DirectX::XMConvertToRadians(180), 0.0f, 0.0f));
@@ -227,6 +253,7 @@ void Camera::Initialize()
 
     eyePos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
     focusPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition() + DirectX::XMFLOAT3(0,0,2);
+
 }
 
 void Camera::Update(float elapsedTime)
@@ -241,6 +268,8 @@ void Camera::Update(float elapsedTime)
         EyeMoveDelayUpdate(elapsedTime, PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition());
         FocusMoveDelayUpdate(elapsedTime, PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition() + GetTransform()->CalcForward());
     }
+
+    UpdateFov(elapsedTime);
 }
 
 void Camera::UpdateDebug(const float& elapsedTime, DirectX::XMFLOAT2 moveVector)
@@ -318,7 +347,7 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
     dc->RSGetViewports(&unm_viewports, &viewport);
 
     float aspect_ratio{ viewport.Width / viewport.Height };
-    P = { DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(30),aspect_ratio,0.1f,1000.0f) };
+    P = { DirectX::XMMatrixPerspectiveFovLH(fov,aspect_ratio,0.1f,1000.0f) };
 
     DirectX::XMVECTOR eye;
     DirectX::XMVECTOR focus;
@@ -393,6 +422,9 @@ void Camera::DrawDebug()
 {
     if (ImGui::BeginMenu("Camera"))
     {
+        ImGui::SliderAngle("Fov",&fov);
+        if (fov < DirectX::XMConvertToRadians(6))fov = DirectX::XMConvertToRadians(6);
+
         //ImGui::Begin("Camera");
 
         ImGui::DragFloat("length", &length);
@@ -441,6 +473,26 @@ void Camera::DrawDebug()
             {
                 ScreenVibrate(vibVolume, vibTime);
             }
+            ImGui::TreePop();
+        }
+
+        static float fov;
+        static float fovTime;
+        if (ImGui::TreeNode("Fov Changer"))
+        {
+            ImGui::SliderAngle("fov",&fov);
+            ImGui::SliderFloat("fovTime", &fovTime, 0.01f, 3.0f);
+
+            if (ImGui::Button("change fov"))
+            {
+                ChangeFov(fov, fovTime);
+            }
+
+            if (ImGui::Button("restore fov"))
+            {
+                RestoreFov(fovTime);
+            }
+
             ImGui::TreePop();
         }
 
@@ -549,4 +601,44 @@ void Camera::ScreenVibrationUpdate(float elapsedTime)
     screenVibrationOffset = vibVec * vibrationVolume;
 
     vibrationTimer -= elapsedTime;
+}
+
+void Camera::UpdateFov(float elapsedTime)
+{
+    if (isChangingFov)
+    {
+        fovTimer += elapsedTime;
+
+        if (fovTimer >= fovTime)
+        {
+            fovTimer = fovTime;
+        }
+
+        fov = Easing::OutCubic(fovTimer, fovTime, resultFov, holdFov);
+
+        if (fovTimer >= fovTime)
+        {
+            isChangingFov = false;
+        }
+    }
+}
+
+void Camera::ChangeFov(float fov,float time)
+{
+    resultFov = fov;
+    holdFov = this->fov;
+
+    fovTime = time;
+    fovTimer = 0;
+    isChangingFov = true;
+}
+
+void Camera::RestoreFov(float time)
+{
+    resultFov = initFov;
+    holdFov = fov;
+
+    fovTime = time;
+    fovTimer = 0;
+    isChangingFov = true;
 }

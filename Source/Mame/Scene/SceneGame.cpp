@@ -32,12 +32,14 @@
 #include "../Game/UserInterface.h"
 #include "../Game/WaveManager.h"
 #include "../Game/SlowMotionManager.h"
+#include "../Game/LightColorManager.h"
 
 #include "../framework.h"
 
 #include "SceneManager.h"
 #include "SceneLoading.h"
 #include "SceneTitle.h"
+#include "SceneResult.h"
 
 
 #ifdef _DEBUG
@@ -55,6 +57,9 @@ void SceneGame::CreateResource()
     using std::make_unique;
 
     Graphics& graphics = Graphics::Instance();
+
+    // ロード用のダミー
+    enemyGolem = std::make_unique<EnemyGolem>();
 
     // stage
     {
@@ -78,20 +83,25 @@ void SceneGame::CreateResource()
         //ItemManager::Instance().Register(new MagicCircle());
     }
 
-
     // enemy
     {
+#if 0
+
         EnemyManager& enemyManager = EnemyManager::Instance();
+    //EnemyGolem* enemyGolem = new EnemyGolem;
+    //enemyGolem->Initialize();
+    //enemyGolem->SetHealth(20);
+    //enemyManager.Register(enemyGolem);
+    //    EnemyManager& enemyManager = EnemyManager::Instance();
+    //    EnemyGolem* enemyGolem = new EnemyGolem;
+    //    enemyGolem->Initialize();
+    //    enemyManager.Register(enemyGolem);
 
         // EnemyGolem* enemyGolem = new EnemyGolem;
         // enemyManager.Register(enemyGolem);
 
-        EnemyGolem* enemyGolem = new EnemyGolem;
-        enemyGolem->Initialize();
-        enemyManager.Register(enemyGolem);
 
 
-#if 1
         // max 6~7
         // EnemyAI_1
         for (int i = 0; i < 2; ++i)
@@ -154,7 +164,10 @@ void SceneGame::CreateResource()
         D3D11_TEXTURE2D_DESC texture2dDesc;
         load_texture_from_file(graphics.GetDevice(),
             L"./Resources/Image/Mask/noise3.png",
-            emissiveTexture.GetAddressOf(), &texture2dDesc);
+            emissiveTexture[0].GetAddressOf(), &texture2dDesc);
+        load_texture_from_file(graphics.GetDevice(),
+            L"./Resources/Image/Mask/noise10.png",
+            emissiveTexture[1].GetAddressOf(), &texture2dDesc);
 
         load_texture_from_file(graphics.GetDevice(),
             L"./Resources/Image/Particle/circle.png",
@@ -241,6 +254,9 @@ void SceneGame::Initialize()
     // カメラ
     Camera::Instance().Initialize();
 
+    //ライト、ビネット
+    LightColorManager::Instance().Initialize();
+
     // item
     ItemManager::Instance().Initialize();
 
@@ -279,7 +295,9 @@ void SceneGame::Initialize()
 
     isParticleInitialize = false; // particle用
     isWhiteSpriteRender = true;
+    isBlackSpriteRender = false;
     whiteSpriteTimer = 0.0f;
+    blackSpriteTimer = 0.0f;
 
     // Wave Initialize
     {
@@ -337,6 +355,28 @@ void SceneGame::Update(const float& elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
 
+    // リザルトに飛ばす
+    if (PlayerManager::Instance().GetPlayer()->GetIsResult())
+    {
+        isBlackSpriteRender = true;
+
+        float maxTime = 2.0f;
+        if (blackSpriteTimer <= maxTime)
+        {
+            float alpha = Easing::InSine(blackSpriteTimer, maxTime, 1.0f, 0.0f);
+
+            whiteSprite->GetSpriteTransform()->SetColor(DirectX::XMFLOAT4(0, 0, 0, alpha));
+
+            blackSpriteTimer += elapsedTime;
+        }
+        else
+        {
+            whiteSprite->GetSpriteTransform()->SetColor(DirectX::XMFLOAT4(0, 0, 0, 1));
+
+            Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneResult));
+        }
+    }
+
     // 最初の白飛びのスプライト
     UpdateWhiteSprite(elapsedTime);
 
@@ -359,6 +399,12 @@ void SceneGame::Update(const float& elapsedTime)
         : elapsedTime
     };
 
+    //ライト、ビネット更新
+    LightColorManager::Instance().Update(elapsedTime);
+
+    // 最初の白飛びのスプライト
+    UpdateWhiteSprite(slowMotionElapsedTime);
+
     if (!isParticleInitialize)
     {
         isParticleInitialize = false;
@@ -370,6 +416,14 @@ void SceneGame::Update(const float& elapsedTime)
         particles->Integrate(Graphics::Instance().GetDeviceContext(), slowMotionElapsedTime);
     }
 
+#ifdef _DEBUG
+    if (GetAsyncKeyState('P') & 0x01)
+    {
+        //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneResult);
+        Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneResult));
+        return;
+    }
+#endif
 
 #ifdef _DEBUG
     // Debug用カメラ
@@ -455,6 +509,7 @@ void SceneGame::Render(const float& /*elapsedTime*/)
     Shader* shader = graphics.GetShader();
 
     Shader::SceneConstants sceneConstants{};
+
 
     float playerScaleFactor = 0.01f;
     float enemyScaleFactor = 0.01f;
@@ -547,9 +602,15 @@ void SceneGame::Render(const float& /*elapsedTime*/)
         shader->Begin(graphics.GetDeviceContext(), rc);
     }
 
-
-    // EMISSIVE
-    graphics.GetDeviceContext()->PSSetShaderResources(16, 1, emissiveTexture.GetAddressOf());
+    {
+        // EMISSIVE
+        ID3D11ShaderResourceView* shaderResourceViews[] =
+        {
+            emissiveTexture[0].Get(),
+            emissiveTexture[1].Get(),
+        };
+        graphics.GetDeviceContext()->PSSetShaderResources(16, _countof(shaderResourceViews), shaderResourceViews);
+    }
 
     // SHADOW : bind shadow map at slot 8
     graphics.GetDeviceContext()->PSSetShaderResources(8, 1, shadow.shadowMap->shaderResourceView.GetAddressOf());
@@ -637,6 +698,13 @@ void SceneGame::Render(const float& /*elapsedTime*/)
         NumeralManager& numeralManager = NumeralManager::Instance();
         numeralManager.Render();
 
+        // スキル選択中
+        auto* player = PlayerManager::Instance().GetPlayer().get();
+        if (player->isSelectingSkill)
+        {
+            PlayerManager::Instance().SkillImagesBloomRender();
+        }
+
         UserInterface::Instance().BloomRender();
     }
 
@@ -711,11 +779,12 @@ void SceneGame::Render(const float& /*elapsedTime*/)
         NumeralManager& numeralManager = NumeralManager::Instance();
         numeralManager.Render();
 
-        PlayerManager::Instance().GetPlayer()->SkillImagesRender();
         UserInterface::Instance().Render();
+        PlayerManager::Instance().SkillImagesRender();
 
         // ※これより下に何も描画しない
         if(isWhiteSpriteRender) whiteSprite->Render();
+        if(isBlackSpriteRender) whiteSprite->Render();
         // ※これより下に何も描画しない
     }
 
@@ -844,6 +913,8 @@ void SceneGame::DrawDebug()
         // SlowMotion DrawDebug
         SlowMotionManager::Instance().DrawDebug();
 
+
+        LightColorManager::Instance().DrawDebug();
 
         ImGui::End();
     }

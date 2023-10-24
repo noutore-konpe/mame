@@ -172,6 +172,18 @@
     <FxCompile Include="Source\Shader\EnemyPS.hlsl">
       <Filter>mamelib\Shader\Fbx</Filter>
     </FxCompile>
+    <FxCompile Include="Source\Shader\ResultPS.hlsl">
+      <Filter>mamelib\Shader\Fbx</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\FinalPassTexturePS.hlsl">
+      <Filter>mamelib\Shader\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ExpModelPS.hlsl">
+      <Filter>mamelib\Shader\Fbx</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GolemPS.hlsl">
+      <Filter>mamelib\Shader\Fbx</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Mame\Scene\BaseScene.cpp">
@@ -478,7 +490,6 @@
     <ClCompile Include="Source\Mame\Game\BlackHole.cpp">
       <Filter>mamelib\Mame\Game\Ability</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mame\Game\UserInterface.cpp" />
     <ClCompile Include="Source\Taki174\TextRenderer.cpp">
       <Filter>mamelib\Taki174</Filter>
     </ClCompile>
@@ -500,11 +511,26 @@
     <ClCompile Include="Source\Mame\Game\WaveManager.cpp">
       <Filter>mamelib\Mame\Game\Wave</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Scene\SceneResult.cpp">
+      <Filter>mamelib\Mame\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyGolemResult.cpp">
+      <Filter>mamelib\Mame\Game\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\PlayerResult.cpp">
+      <Filter>mamelib\Mame\Game\Result</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Mame\Game\SlowMotionManager.cpp">
       <Filter>mamelib\Mame\Game\SlowMotion</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\Stage.cpp">
       <Filter>mamelib\Mame\Game\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\LightColorManager.cpp">
+      <Filter>mamelib\Mame\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mame\Game\UserInterface.cpp">
+      <Filter>mamelib\Mame\Game</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mame\Game\TutorialManager.cpp">
       <Filter>mamelib\Mame\Game\Tutorial</Filter>
@@ -861,7 +887,6 @@
     <ClInclude Include="Source\Mame\Game\BlackHole.h">
       <Filter>mamelib\Mame\Game\Ability</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mame\Game\UserInterface.h" />
     <ClInclude Include="Source\Taki174\TextRenderer.h">
       <Filter>mamelib\Taki174</Filter>
     </ClInclude>
@@ -883,11 +908,26 @@
     <ClInclude Include="Source\Mame\Game\WaveManager.h">
       <Filter>mamelib\Mame\Game\Wave</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mame\Scene\SceneResult.h">
+      <Filter>mamelib\Mame\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyGolemResult.h">
+      <Filter>mamelib\Mame\Game\Result</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\PlayerResult.h">
+      <Filter>mamelib\Mame\Game\Result</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Mame\Game\SlowMotionManager.h">
       <Filter>mamelib\Mame\Game\SlowMotion</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\Stage.h">
       <Filter>mamelib\Mame\Game\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\LightColorManager.h">
+      <Filter>mamelib\Mame\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\UserInterface.h">
+      <Filter>mamelib\Mame\Game</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\TutorialManager.h">
       <Filter>mamelib\Mame\Game\Tutorial</Filter>
@@ -1111,6 +1151,9 @@
     </Filter>
     <Filter Include="mamelib\Mame\Game\Wave">
       <UniqueIdentifier>{f30bbd6c-e1d9-4dc2-98f5-0e023a8b91ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Mame\Game\Result">
+      <UniqueIdentifier>{b1b665d5-7267-490d-9970-57b5e6745b86}</UniqueIdentifier>
     </Filter>
     <Filter Include="mamelib\Mame\Game\SlowMotion">
       <UniqueIdentifier>{7b9021ae-6ff0-4dc3-a406-72abd7bf8aa1}</UniqueIdentifier>

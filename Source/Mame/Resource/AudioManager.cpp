@@ -5,15 +5,15 @@ void AudioManager::LoadAudio()
     // âπäyì«Ç›çûÇ›
     {
         // BGMì«Ç›çûÇ›
-        {
-            bgm_[static_cast<int>(BGM::Title) ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/BGM/title0.wav");
-            bgm_[static_cast<int>(BGM::Title1)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/BGM/title1.wav");
-            bgm_[static_cast<int>(BGM::Title2)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/BGM/title2.wav");
+        {            
+            bgm_[static_cast<int>(BGM::Title)       ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/BGM/title.wav");
+            bgm_[static_cast<int>(BGM::GameOver)    ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/BGM/GameOver.wav");
         }
 
         // SEì«Ç›çûÇ›
         {
-            //se_[static_cast<int>(SE::Select)      ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Select/Select.wav");
+            se_[static_cast<int>(SE::GolemEntry)    ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemEntry.wav");
+            se_[static_cast<int>(SE::GolemRoar)     ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemRoar.wav");
         }
     }
 
@@ -88,8 +88,8 @@ void AudioManager::StopAllAudio()
     {
         bgm->Stop();
     }
-    //for (std::unique_ptr<Audio>& se : se_)
-    //{
-    //    se->Stop();
-    //}
+    for (std::unique_ptr<Audio>& se : se_)
+    {
+        se->Stop();
+    }
 }

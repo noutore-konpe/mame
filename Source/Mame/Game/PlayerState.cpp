@@ -1,6 +1,11 @@
 #include "PlayerState.h"
 #include "Player.h"
 #include "PlayerManager.h"
+#include "SlowMotionManager.h"
+#include "LightColorManager.h"
+
+#include "../Scene/SceneManager.h"
+#include "../Scene/SceneResult.h"
 
 namespace PlayerState
 {
@@ -33,6 +38,8 @@ namespace PlayerState
         {
             owner->ChangeState(Player::STATE::ATTACK_JAB);
         }
+        
+        owner->ActiveCounter();
     }
 
     void NormalState::Finalize()
@@ -73,6 +80,8 @@ namespace PlayerState
             //更新処理(次のコンボへの遷移もしている)
             {
                 AttackUpdate(dodgeCanselFrame1,comboCanselFrame1);
+
+                
             }
 
 
@@ -107,8 +116,8 @@ namespace PlayerState
 
                 owner->ResetSteppingTimer();
                 state = UPDATE_FRAME;
-                owner->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
-                owner->GetSword()->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
+                owner->PlayAnimation(Player::Animation::Jab_3, false, owner->GetAttackSpeed());
+                owner->GetSword()->PlayAnimation(Player::Animation::Jab_3, false, owner->GetAttackSpeed());
                 hit.clear();//ヒットした敵の初期化
                 initialize = true;
             }
@@ -139,11 +148,13 @@ namespace PlayerState
 
     void JabAttackState::HitCollisionUpdate()
     {
+        DirectX::XMFLOAT3 hitPos;
         std::vector<Enemy*> hitEnemies;
-        if (PlayerManager::Instance().AttackCollisionPlayerToEnemy(hitEnemies))
+        if (PlayerManager::Instance().AttackCollisionPlayerToEnemy(hitEnemies,hitPos))
         {
             for (auto& enemy : hitEnemies)
             {
+                Character::DamageResult result;
                 for (auto& h : hit)
                 {
                     if (h == enemy)goto skip;//すでに一度ヒットしている敵なら処理しない
@@ -151,7 +162,12 @@ namespace PlayerState
                 //一度もヒットしていない敵なので登録する
                 hit.emplace_back(enemy);
 
-                enemy->ApplyDamage(owner->jabMotionAtkMuls[combo]);
+                result = enemy->ApplyDamage(owner->jabMotionAtkMuls[combo],hitPos, owner);
+
+                enemy->Flinch();
+
+                //ダメージ吸収処理
+                PlayerManager::Instance().GetDrainSkill()->Assimilate(result.damage);
             skip:;
             }
         }
@@ -185,15 +201,23 @@ namespace PlayerState
             {
                 owner->ChangeState(Player::STATE::AVOID);
             }
-
             else if (owner->InputJabAttack())//コンボ続行
             {
-                combo++;
-                initialize = false;
-
                 //コンボは３連撃以降ないので制限
-                if (combo > 2)combo = 2;
+                if (combo < 2)
+                {
+                    combo++;
+                    initialize = false;
+                }
             }
+
+            if (combo < 2)
+            {
+                //カウンター派生
+                owner->ActiveCounter();
+            }
+
+            
             break;
         }
 
@@ -237,9 +261,22 @@ namespace PlayerState
 
     void DieState::Initialize()
     {
+        changeSceneTimer = 0;
+
+        owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
+        owner->PlayAnimation(Player::Animation::HardStagger,false);
     }
     void DieState::Update(const float& elapsedTime)
     {
+        owner->BlownUpdate(elapsedTime);
+
+        //シーン遷移
+        changeSceneTimer += elapsedTime;
+        if (changeSceneTimer > 3.0f)
+        {
+            // リザルトに飛ばすフラグ（sceneGameで更新する）
+            owner->SetIsResult();
+        }
     }
     void DieState::Finalize()
     {
@@ -247,11 +284,13 @@ namespace PlayerState
 
     void HardAttackState::Initialize()
     {
-
+        owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
+        owner->PlayAnimation(Player::Animation::HardStagger, false);
+        //owner->GetSword()->PlayAnimation(Player::Animation::HardStagger, false);
     }
     void HardAttackState::Update(const float& elapsedTime)
     {
-
+        owner->BlownUpdate(elapsedTime);
     }
     void HardAttackState::Finalize()
     {
@@ -260,7 +299,8 @@ namespace PlayerState
 
     void SoftStaggerState::Initialize()
     {
-        owner->PlayAnimation(Player::Animation::SoftStagger, false,1.5f);
+        owner->PlayAnimation(Player::Animation::SoftStagger, false,1.8f);
+        owner->GetSword()->PlayAnimation(Player::Animation::SoftStagger, false,1.8f);
         //owner->isInvincible = true;//無敵
         owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
     }
@@ -288,8 +328,13 @@ namespace PlayerState
 
     void CounterState::Initialize()
     {
-        counterCompleted = false;
+        state = 0;
+        owner->counterCompleted = false;
         owner->PlayAnimation(Player::Animation::Counter, false);
+        owner->GetSword()->PlayAnimation(Player::Animation::Counter, false);
+
+        owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
+
         timer = 0;
     }
     void CounterState::Update(const float& elapsedTime)
@@ -299,19 +344,42 @@ namespace PlayerState
         case 0://前隙モーション
             if (owner->model->GetCurrentKeyframeIndex() > startUpFrame)
             {
+                owner->isCounter = true;
                 state++;
             }
             break;
 
         case 1://カウンター受付時間、後隙
-            if (timer < receptionTime)
+
+            //カウンターの受付時間を越えている場合
+            if (owner->isCounter && timer > receptionTime)
             {
-                //判定処理
+                owner->isCounter = false;
             }
 
-            if (counterCompleted)
+            //カウンター成功処理
+            if (owner->counterCompleted)
             {
+                owner->isCounter = false;
+                owner->isInvincible = true;
                 owner->PlayAnimation(Player::Animation::CounterAttack,false);
+                owner->GetSword()->PlayAnimation(Player::Animation::CounterAttack, false);
+
+                //スローモーション
+                SlowMotionManager::Instance().ExecuteSlowMotion(0.1f,0.7f,0.05f,0.3f);
+
+                //画面演出
+                auto& lcManager = LightColorManager::Instance();
+                lcManager.GradualChangeColor(LightColorManager::ColorType::GROUND,DirectX::XMFLOAT3(0.2f,0.2f,1), 0.3f);
+                lcManager.GradualChangeColor(LightColorManager::ColorType::SKY,DirectX::XMFLOAT3(0.2f,0.2f,1), 0.3f);
+                lcManager.ChangeVignetteValue(0.1f, 0.3f);
+                Camera::Instance().ScreenVibrate(0.1f, 0.1f);
+                Camera::Instance().ChangeFov(DirectX::XMConvertToRadians(30), 0.1f);
+                Input::Instance().GetGamePad().Vibration(0.2f,0.3f);
+
+                //エフェクト
+                PlayerManager::Instance().GetPlayer()->PlayLaserEffect();
+
                 state++;
             }
 
@@ -320,12 +388,24 @@ namespace PlayerState
         case 2:
             if (!owner->IsPlayAnimation())
             {
-                owner->ChangeState(Player::STATE::NORMAL);
+                auto& lcManager = LightColorManager::Instance();
+                lcManager.AllRestoreColor(5.0f);
+                lcManager.RestoreVignetteValue(5.0f);
+                Camera::Instance().RestoreFov(3.0f);
             }
+
+
             break;
+        }
+
+        if (!owner->IsPlayAnimation())
+        {
+            owner->ChangeState(Player::STATE::NORMAL);
         }
     }
     void CounterState::Finalize()
     {
+        owner->isInvincible = false;
+        owner->isCounter = false;
     }
 }

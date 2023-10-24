@@ -8,6 +8,11 @@
 
 #include "../Scene/SceneGame.h"
 
+#include "EnemyManager.h"
+
+#include "../Resource/texture.h"
+#include "../Other/misc.h"
+
 int EnemyGolem::nameNum_;
 
 
@@ -20,17 +25,49 @@ EnemyGolem::EnemyGolem()
         "./Resources/Model/Character/Enemy/golem.fbx");
 
     CreatePsFromCso(graphics.GetDevice(),
-        "./Resources/Shader/playerPS.cso",
+        "./Resources/Shader/GolemPS.cso",
         golemPS.GetAddressOf());
+
+    D3D11_TEXTURE2D_DESC texture2dDesc;
+    ::load_texture_from_file(graphics.GetDevice(),
+        L"./Resources/Model/Character/Enemy/golem_emissive.png",
+        golemEmissive.GetAddressOf(),
+        &texture2dDesc);
+    ::load_texture_from_file(graphics.GetDevice(),
+        L"./Resources/Model/Character/Enemy/golem_eye_emissive.png",
+        eyeEmissive.GetAddressOf(),
+        &texture2dDesc);
+    ::load_texture_from_file(graphics.GetDevice(),
+        L"./Resources/Model/Character/Enemy/golem_normal.png",
+        golemNormal.GetAddressOf(),
+        &texture2dDesc);
+
+    {
+        HRESULT hr{ S_OK };
+
+        D3D11_BUFFER_DESC bufferDesc{};
+
+        bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        bufferDesc.CPUAccessFlags = 0;
+        bufferDesc.MiscFlags = 0;
+        bufferDesc.StructureByteStride = 0;
+
+        bufferDesc.ByteWidth = sizeof(EyeConstants);
+        // CBParametric
+        hr = graphics.GetDevice()->CreateBuffer(&bufferDesc, nullptr,
+            eyeConstantBuffer.GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+    }
 
     magicCircleGolem = std::make_unique<MagicCircleGolem>();
     magicCircleEnemySummon = std::make_unique<MagicCircleEnemySummon>();
-    magicCircleGolemAttack2 = std::make_unique<MagicCircleGolemAttack2>();
-    comboAttackStone = std::make_unique<ComboAttackStone>();
+    magicCircleGolemAttack2 = std::make_unique<MagicCircleGolemAttack2>(this);
+    comboAttackStone = std::make_unique<ComboAttackStone>(this);
 
     for (int i = 0; i < 3; ++i)
     {
-        comboAttackStones[i] = std::make_unique<ComboAttackStone>();
+        comboAttackStones[i] = std::make_unique<ComboAttackStone>(this);
     }
 
     // ステートマシン
@@ -51,6 +88,9 @@ EnemyGolem::EnemyGolem()
         GetStateMachine()->RegisterState(new EnemyGolemState::DeathState(this));
         GetStateMachine()->RegisterState(new EnemyGolemState::WalkState(this));
         GetStateMachine()->RegisterState(new EnemyGolemState::Attack2State(this));
+        GetStateMachine()->RegisterState(new EnemyGolemState::DelayState(this));
+        GetStateMachine()->RegisterState(new EnemyGolemState::EyeEmissiveDownState(this));
+        GetStateMachine()->RegisterState(new EnemyGolemState::EyeEmissiveUpState(this));
 
         GetStateMachine()->SetState(static_cast<UINT>(StateMachineState::DummyState));
     }
@@ -67,6 +107,8 @@ EnemyGolem::EnemyGolem()
 // デストラクタ
 EnemyGolem::~EnemyGolem()
 {
+    if (isDead)
+        EnemyManager::Instance().AddEnemyGolemKillNum();
 }
 
 // 初期化
@@ -87,10 +129,12 @@ void EnemyGolem::Initialize()
 
     //GetTransform()->SetPositionY(10.0f);
 
-    // アニメーション再生
-    Character::PlayAnimation(static_cast<UINT>(Animation::Idle), true);
+    GetStateMachine()->SetState(static_cast<UINT>(StateMachineState::EntryState));
 
-    currentState = static_cast<UINT>(StateMachineState::IdleState);
+    // アニメーション再生
+    Character::PlayAnimation(static_cast<UINT>(Animation::Landing), true);
+
+    currentState = static_cast<UINT>(StateMachineState::EntryState);
 
     // ステージに入場済み扱いにする
     entryStageFlag_ = true;
@@ -115,6 +159,9 @@ void EnemyGolem::Begin()
 // 更新処理
 void EnemyGolem::Update(const float& elapsedTime)
 {
+    // ステートマシン更新
+    GetStateMachine()->Update(elapsedTime);
+
     Enemy::Update(elapsedTime);
 
     magicCircleGolem->Update(elapsedTime);
@@ -131,9 +178,6 @@ void EnemyGolem::Update(const float& elapsedTime)
 
     UpdateSummoningMagicCircle(4.0f, 3.0f, DirectX::XMConvertToRadians(45));
     UpdateAttack2MagicCircle(2.0f, 3.5f);
-
-    // ステートマシン更新
-    GetStateMachine()->Update(elapsedTime);
 
     // アニメーション更新
     Character::UpdateAnimation(elapsedTime);
@@ -183,7 +227,7 @@ void EnemyGolem::Render(const float& scale, bool shadow, ID3D11PixelShader* psSh
     // 定数バッファー更新
     UpdateConstants();
 
-    Enemy::Render(scale, psShader);
+    model->Render(scale, golemPS.Get());
 }
 
 void EnemyGolem::DrawDebug()
@@ -191,6 +235,14 @@ void EnemyGolem::DrawDebug()
 #ifdef USE_IMGUI
     if (ImGui::BeginMenu(GetName()))
     {
+        ImGui::Begin("golemColor");
+        ImGui::ColorEdit4("c", &golemColor.x);
+        ImGui::End();
+        ImGui::Begin("eye");
+        ImGui::ColorEdit4("eyecolor", &eyeConstants.emissiveColor.x);
+        ImGui::DragFloat("eyeIntensity", &eyeConstants.emissiveIntensity);
+        ImGui::End();
+
         Character::DrawDebug();
 
         model->skinned_meshes->Drawdebug();
@@ -271,6 +323,30 @@ void EnemyGolem::DrawDebug()
 
 void EnemyGolem::UpdateConstants()
 {
+    Graphics& graphics = Graphics::Instance();
+
+    // emissiveの強さ
+    SetEmissiveIntensity(1.0f);
+
+    // color
+    SetEmissiveColor(golemColor);
+    SetEmissiveColor(DirectX::XMFLOAT4(0.7f, 0.0f, 1.0f, 1.0f));
+    ID3D11ShaderResourceView* shaderResourceViews[] =
+    {
+        golemEmissive.Get(),
+        eyeEmissive.Get(),
+    };
+    graphics.GetDeviceContext()->PSSetShaderResources(16, _countof(shaderResourceViews), shaderResourceViews);
+    graphics.GetDeviceContext()->PSSetShaderResources(14, 1, golemNormal.GetAddressOf());
+    
+    graphics.GetDeviceContext()->UpdateSubresource(eyeConstantBuffer.Get(), 0, 0, &eyeConstants, 0, 0);
+    graphics.GetDeviceContext()->PSSetConstantBuffers(7, 1, eyeConstantBuffer.GetAddressOf());
+
+}
+
+void EnemyGolem::OnDead(DamageResult result)
+{
+    GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::DeathState));
 }
 
 void EnemyGolem::SubRender()
@@ -466,15 +542,15 @@ void EnemyGolem::ColliderInitialize()
 
 void EnemyGolem::ColliderPosUpdate(const float& scale)
 {
-    hitCollider[static_cast<int>(ColliderName::HIP)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface11", "golem_setup_1004:golem_rig_1005:j_Spine", scale);
-    hitCollider[static_cast<int>(ColliderName::R_SHOULDER)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface6", "golem_setup_1004:golem_rig_1005:j_RightArm", scale);
-    hitCollider[static_cast<int>(ColliderName::L_SHOULDER)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface5", "golem_setup_1004:golem_rig_1005:j_LeftArm", scale);
-    hitCollider[static_cast<int>(ColliderName::R_HAND)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface3", "golem_setup_1004:golem_rig_1005:j_RightHand", scale);
-    hitCollider[static_cast<int>(ColliderName::L_HAND)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface1", "golem_setup_1004:golem_rig_1005:j_LeftHand", scale);
-    hitCollider[static_cast<int>(ColliderName::R_LEG)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface11", "golem_setup_1004:golem_rig_1005:j_RightUptLeg", scale);
-    hitCollider[static_cast<int>(ColliderName::L_LEG)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface11", "golem_setup_1004:golem_rig_1005:j_LeftUptLeg", scale);
-    hitCollider[static_cast<int>(ColliderName::R_LEG_END)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface9", "golem_setup_1004:golem_rig_1005:j_RighttLeg", scale);
-    hitCollider[static_cast<int>(ColliderName::L_LEG_END)].position = GetJointPosition("golem_setup_1004:golem_rig_1005:golem_mdl_1004:polySurface8", "golem_setup_1004:golem_rig_1005:j_LefttLeg", scale);
+    hitCollider[static_cast<int>(ColliderName::HIP)].position           = GetJointPosition("ref_E:ref_E:golem_mdl_1023:polySurface11", "ref_E:ref_E:j_Spine", scale);
+    hitCollider[static_cast<int>(ColliderName::R_SHOULDER)].position    = GetJointPosition("ref_E:ref_E:golem_mdl_1023:polySurface6",  "ref_E:ref_E:j_RightArm", scale);
+    hitCollider[static_cast<int>(ColliderName::L_SHOULDER)].position    = GetJointPosition("ref_E:ref_E:golem_mdl_1023:polySurface5",  "ref_E:ref_E:j_LeftArm", scale);
+    hitCollider[static_cast<int>(ColliderName::R_HAND)].position        = GetJointPosition("ref_E:ref_E:golem_mdl_1023:polySurface3",  "ref_E:ref_E:j_RightHand", scale);
+    hitCollider[static_cast<int>(ColliderName::L_HAND)].position        = GetJointPosition("ref_E:ref_E:golem_mdl_1023:polySurface1",  "ref_E:ref_E:j_LeftHand", scale);
+    hitCollider[static_cast<int>(ColliderName::R_LEG)].position         = GetJointPosition("ref_E:ref_E:golem_mdl_1023:polySurface11", "ref_E:ref_E:j_RightUptLeg", scale);
+    hitCollider[static_cast<int>(ColliderName::L_LEG)].position         = GetJointPosition("ref_E:ref_E:golem_mdl_1023:polySurface11", "ref_E:ref_E:j_LeftUptLeg", scale);
+    hitCollider[static_cast<int>(ColliderName::R_LEG_END)].position     = GetJointPosition("ref_E:ref_E:golem_mdl_1023:polySurface9",  "ref_E:ref_E:j_RighttLeg", scale);
+    hitCollider[static_cast<int>(ColliderName::L_LEG_END)].position     = GetJointPosition("ref_E:ref_E:golem_mdl_1023:polySurface8",  "ref_E:ref_E:j_LefttLeg", scale);
 
     for (int i = 0; i < static_cast<int>(ColliderName::END); i++)
     {

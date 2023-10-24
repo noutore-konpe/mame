@@ -96,6 +96,9 @@ namespace PlayerState
         void Initialize() override;
         void Update(const float& elapsedTime) override;
         void Finalize() override;
+
+    private:
+        float changeSceneTimer;
     };
 
     //小怯み
@@ -134,11 +137,11 @@ namespace PlayerState
         void Finalize() override;
 
     private:
-        bool counterCompleted;//カウンター成立フラグ
+        
         int state;
 
-        const int startUpFrame = 10;//カウンター受付開始アニメーション
-        const float receptionTime = 0.3f;//カウンター受付時間
+        const int startUpFrame = 2;//カウンター受付開始アニメーション
+        const float receptionTime = 0.5f;//カウンター受付時間
         float timer;
     };
 }

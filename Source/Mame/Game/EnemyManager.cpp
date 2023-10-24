@@ -101,6 +101,8 @@ void EnemyManager::Update(const float elapsedTime)
                 numeral->SetParent(nullptr);
             }
 
+
+
             // “G‚Ì”jŠüˆ—
             SafeDeletePtr(enemy);
         }
@@ -281,7 +283,7 @@ void EnemyManager::CollisionProjectileVsPlayer()
             }
 
             // ƒvƒŒƒCƒ„[‚Éƒ_ƒ[ƒW‚ð—^‚¦‚é
-            player->ApplyDamage(proj->GetAttack());
+            player->ApplyDamage(proj->GetAttack(),plHitColliderPos);
 
             // ’e‚ðÁ‹Ž‚·‚é
             proj->Destroy();
@@ -378,7 +380,7 @@ void EnemyManager::CollisionEnemyVsStage(const float /*elapsedTime*/)
 
 }
 
-bool EnemyManager::AttackCollisionPlayerToEnemy(Enemy* my)
+bool EnemyManager::AttackCollisionPlayerToEnemy(Enemy* my,DirectX::XMFLOAT3& hitPos)
 {
     for (auto& atkCollider : my->GetAttackCollider())
     {
@@ -388,6 +390,7 @@ bool EnemyManager::AttackCollisionPlayerToEnemy(Enemy* my)
                 atkCollider.position, atkCollider.radius,
                 hitCollider.position, hitCollider.radius))
             {
+                hitPos = hitCollider.position;
                 return true;
             }
         }

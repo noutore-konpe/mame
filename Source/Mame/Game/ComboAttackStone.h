@@ -17,7 +17,7 @@ public:// ’è”
     };
 
 public:
-    ComboAttackStone();
+    ComboAttackStone(Enemy* owner);
     ~ComboAttackStone() {}
 
     void Initialize();

@@ -40,10 +40,19 @@ public:
     void CollisionEnemyVsStage(const float elapsedTime);
 
     //攻撃判定を取得する関数
-    static bool AttackCollisionPlayerToEnemy(Enemy* my);
+    static bool AttackCollisionPlayerToEnemy(Enemy* my, DirectX::XMFLOAT3& hitPos);
 
     //ACはActive Check コライダーのisActiveがtrueになっている物のみ判定する関数
     static bool ACAttackCollisionPlayerToEnemy(Enemy* my);
+
+    // キル数をリセットする
+    void ResetKillNum()
+    {
+        enemy1KillNum = 0;
+        enemy2KillNum = 0;
+        enemy3KillNum = 0;
+        enemyGolemKillNum = 0;
+    }
 
 public:
     // エネミー登録
@@ -81,6 +90,16 @@ public:
     const float GetCRAActionCoolTimer() const { return craActionCoolTimer_; }
     void SetCRAActionCoolTimer(const float craActionCoolTime) { craActionCoolTimer_ = craActionCoolTime; }
 
+    int GetEnemy1KillNum() { return enemy1KillNum; }
+    int GetEnemy2KillNum() { return enemy2KillNum; }
+    int GetEnemy3KillNum() { return enemy3KillNum; }
+    int GetEnemyGolemKillNum() { return enemyGolemKillNum; }
+
+    void AddEnemy1KillNum() { enemy1KillNum++; }
+    void AddEnemy2KillNum() { enemy2KillNum++; }
+    void AddEnemy3KillNum() { enemy3KillNum++; }
+    void AddEnemyGolemKillNum() { enemyGolemKillNum++; }
+
 public:
     static constexpr float CRA_ACTION_COOL_TIME_ = 0.5f; // 近接攻撃クールタイム
 
@@ -94,5 +113,9 @@ private:
     float   craActionCoolTimer_ = 0.0f;     // 近接攻撃行動クールタイマー
     bool    isRunningCRAAction_ = false;    // 誰かが近接攻撃行動を実行中か
 
+    int enemy1KillNum = 0;
+    int enemy2KillNum = 0;
+    int enemy3KillNum = 0;
+    int enemyGolemKillNum = 0;
 };
 

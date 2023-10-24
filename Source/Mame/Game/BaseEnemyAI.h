@@ -37,7 +37,7 @@ public:
     void DrawDebug()    override;
 
     void OnDamaged() override;
-    void OnDead()    override;
+    void OnDead(DamageResult result)    override;
 
 public:
     // –Ú“I’n“_‚ÖˆÚ“®

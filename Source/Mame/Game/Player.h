@@ -10,6 +10,8 @@
 
 #include "AbilityManager.h"
 
+#include "../Graphics/Effect.h"
+
 class Player : public Character
 {
 public: // enum関連
@@ -33,12 +35,12 @@ public: // enum関連
         Dash,
         Jab_1,
         Jab_2,
-        //Jab_3,
+        Jab_3,
         Avoid,
         Counter,
         CounterAttack,
         SoftStagger,
-        BlowOff
+        HardStagger,//吹っ飛び、死亡
     };
 
 
@@ -53,11 +55,16 @@ public:
     void Update(const float elapsedTime) override; // 更新処理
     void End();                                     // 毎フレーム一番最後に呼ばれる
 
+
+    DamageResult ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, Character* attacker = nullptr, float invincibleTime = 0)override;
+
     void MoveUpdate(float elapsedTime, float ax, float ay);
     void UpdateVelocity(float elapsedTime, float ax, float ay);
 
     //入力をカメラから見たベクトルに変更しmoveVec変数に入れる関数
     void MoveVecUpdate(float ax, float ay);
+
+    DirectX::XMFLOAT2 ConvertToCameraMoveVec(float ax,float ay);
 
     void AvoidUpdate(float elapsedTime);
 
@@ -67,7 +74,7 @@ public:
 
     void Render(const float scale, ID3D11PixelShader* psShader = nullptr) override; // 描画処理
 
-    void SkillImagesRender();
+    
 
     void DrawDebug() override;  // ImGui用
 
@@ -80,7 +87,7 @@ public:
     void AttackSteppingUpdate(float elapsedTime);//攻撃間際の踏み込み処理
 
     void OnDamaged()override;
-    void OnDead()override;
+    void OnDead(DamageResult result)override;
 
     void ChangeState(int newState) { stateMachine->ChangeState(newState); }
 
@@ -100,6 +107,22 @@ public:
 
     void LockOnInitialize();
 
+    void BlownUpdate(float elapsedTime);//吹っ飛び更新処理
+    void Blow(DirectX::XMFLOAT3 blowVec/*吹き飛ぶ方向*/);//吹っ飛しするときに呼ぶ
+
+    void ActiveCounter();
+
+    void PlayLaserEffect();
+
+private:
+    float blowTime = 1.0f;
+    float blowTimer;
+    float blowSpeed = 9.0f;
+    DirectX::XMFLOAT3 blowVec;
+
+
+
+public:
     //入力関数
     static bool InputJabAttack()
     {
@@ -126,6 +149,11 @@ public:
         return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_RIGHT_THUMB);
     }
 
+    static bool InputCounter()
+    {
+        return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_LEFT_SHOULDER);
+    }
+
     //getter,setter
     void AddMaxSpeed(const float spd) { maxEyeSpeed += spd; }
 
@@ -135,8 +163,6 @@ public:
     void SetAttackSpeed(const float spd) { attackSpeed = spd; }
     void AddAttackSpeed(const float spd) { attackSpeed += spd; }
 
-    std::vector<BaseSkill*>& GetSkillArray() { return skillArray; }
-
     void SetAcceleration(const float accel) { acceleration = accel; }
 
     StateMachine<State<Player>>* GetStateMachine() { return stateMachine.get(); }
@@ -145,17 +171,40 @@ public:
 
     Model* GetSword() { return swordModel.get(); }
 
+    
     void AddExp(const float exp) { curExp += exp; totalExp += exp; }
     const float GetCurExp() const { return curExp; }
     const float GetTotalExp() const { return totalExp; }
     const float GetLevelUpExp() const { return levelUpExp; }
 
+    void ApplyExp(const float exp)
+    {
+        AddExp(exp);
+        auto pos = GetTransform()->GetPosition();
+        pos.y += 0.7f;
+        expEffect->Play(pos,DirectX::XMFLOAT3(1,1,1),DirectX::XMFLOAT4(1.0f,1.0f,1.0f,0.4f));//エフェクト再生
+    }
+
     const int GetLevel() const { return level; }
+
+    AbilityManager* GetAbilityManager() { return &abilityManager_; }
+
+    const float GetLifeTimer() { return lifeTimer; };
+
+    Effect* GetLaserEffect() { return laserEffect.get(); }
+
+    //---------------------------スキル-------------------------------
+   
+
+    //-----------------------------------------------------------------
+public:
+    bool isCounter;//カウンター受付時間か？
+    bool counterCompleted;//カウンター成立フラグ
 
     const BLOW_OFF_FORCE_LEVEL& GetInflictBlowOffForceLevel() const { return inflictBlowOffForceLevel_; }
     void SetInflictBlowOffForceLevel(const BLOW_OFF_FORCE_LEVEL& inflictBlowOffForceLevel) { inflictBlowOffForceLevel_ = inflictBlowOffForceLevel; }
 
-private:
+
     void LevelUpdate();
 
     //地形判定後の座標取得
@@ -206,15 +255,7 @@ private:
 
 
     //---------------------------スキル-------------------------------
-    std::vector<BaseSkill*> skillArray;
-
-    std::unique_ptr<PlayerSkill::Drain> drainSkill;
-    std::unique_ptr<PlayerSkill::MoveSpeedUp> moveSpeedUpSkill;
-    std::unique_ptr<PlayerSkill::AttackPowerUp> attackPowerUpSkill;
-    std::unique_ptr<PlayerSkill::AttackSpeedUp> attackSpeedUpSkill;
-    std::unique_ptr<PlayerSkill::BookIncrease> bookIncreaseSkill;
-    std::unique_ptr<PlayerSkill::MaxHitPointUp> maxHitPointUpSkill;
-    std::unique_ptr<PlayerSkill::DefenseUp> defenseUpSkill;
+    std::vector<BaseSkill*>* skillArray;
 
     BaseSkill* drawingSkillCards[3];
     int drawDirectionState;//カードドロー演出ステート
@@ -255,6 +296,8 @@ private:
         HIP,
         R_LEG,
         L_LEG,
+        R_LEG_END,
+        L_LEG_END,
         R_ELBOW,
         L_ELBOW,
         END
@@ -276,5 +319,22 @@ private:
     // アビリティマネージャー(仮)
     AbilityManager abilityManager_ = {};
 
+
+    //生存時間
+    float lifeTimer;
+
+    //---------------------------------Effect---------------------------------------------
+    std::unique_ptr<Effect> laserEffect;
+    std::unique_ptr<Effect> expEffect;
+    Effekseer::Handle expHandle;
+    //------------------------------------------------------------------------------------
+
+    //--- result ---
+public:
+    void SetIsResult() { isResult = true; }
+    bool GetIsResult() { return isResult; }
+
+private:
+    bool isResult = false;
 };
 

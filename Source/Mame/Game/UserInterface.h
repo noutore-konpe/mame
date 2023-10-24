@@ -36,6 +36,8 @@ public:// 設定・取得
     bool GetLockOnInitialize() { return isLockOnInitialize; }
     void SetLockOnInitialize() { isLockOnInitialize = true; }
 
+    void SetWaveSlideSprite() { isWaveSlideSprite = true; }
+
 private:
     void UpdateLockOnSprite(const float& elapsedTime);
     void UpdateWaveSprite(const float& elapsedTime);
@@ -73,10 +75,5 @@ private:
 
     float hpSpriteSizeX;//サイズの初期値を保持しときたいだけ
     float expSpriteSizeX;
-
-#ifdef _DEBUG
-    int lv = 0;
-    int wave = 0;
-#endif
 };
 

@@ -40,9 +40,28 @@ public:
         void SetPos(const DirectX::XMFLOAT2 p) { pos = p; }
         void SetPosX(const float posX) { pos.x = posX; }
         void SetPosY(const float posY) { pos.y = posY; }
+        // 引数の位置を画像の中心として、画像の位置を設定する
+        void SetSpriteCenterPos(DirectX::XMFLOAT2 p)
+        {
+            p.x -= GetSizeX() / 2;
+            p.y -= GetSizeY() / 2;
+            pos = p;
+        }
+        // 第二引数の位置を中心位置として、画像の位置を設定する
+        void SetSpriteAtAnyCenterPos(DirectX::XMFLOAT2 p, DirectX::XMFLOAT2 center)
+        {
+            p.x -= center.x;
+            p.y -= center.y;
+            pos = p;
+        }
         void SetSize(const DirectX::XMFLOAT2 s) { size = s; }
         void SetSizeX(const float x) { size.x = x; }
         void SetSizeY(const float y) { size.y = y; }
+        void SetSizeXY(const float s)
+        {
+            size.x = s;
+            size.y = s;
+        }
         void SetColor(const DirectX::XMFLOAT4 c) { color = c; }
         void SetColorR(const float r) { color.x = r; }
         void SetColorG(const float g) { color.y = g; }
@@ -85,8 +104,8 @@ public:
         float dissolveValue = 0.0f;         // ディゾルブ適応量
         float dissolveBlackValue = 0.0f;    // 黒色
 
-        float edgeThreshold = 0.2f; // 縁の閾値
-        DirectX::XMFLOAT4 edgeColor = { 0.0f, 1.0f, 0.0f, 1.0f }; // 縁の色
+        float edgeThreshold = 0.1f; // 縁の閾値
+        DirectX::XMFLOAT4 edgeColor = { 1.0f, 1.0f, 0.0f, 1.0f }; // 縁の色
 
         float delay = 0.4f;
         int dissolveType = 0;
@@ -201,8 +220,8 @@ private:
     D3D11_TEXTURE2D_DESC texture2dDesc;
 
     Microsoft::WRL::ComPtr<ID3D11Buffer> dissolveConstantBuffer = nullptr;
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> maskTexture[20] = {};
-    D3D11_TEXTURE2D_DESC maskTexture2dDesc[20] = {};
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> maskTexture;
+    D3D11_TEXTURE2D_DESC maskTexture2dDesc{};
 
     struct DissolveConstants
     {

@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include "EnemyManager.h"
 #include "WaveManager.h"
+#include "PlayerManager.h"
 
 Enemy::~Enemy()
 {
@@ -56,4 +57,13 @@ const bool Enemy::IsExistChildNode(const std::string& findNodeName)
     }
 
     return false;
+}
+
+void Enemy::AttackCollisionOnPlayer(const float damage)
+{
+    DirectX::XMFLOAT3 pos;
+    if (EnemyManager::AttackCollisionPlayerToEnemy(this,pos))
+    {
+        PlayerManager::Instance().GetPlayer()->ApplyDamage(damage,pos,this,0.01f);
+    }
 }

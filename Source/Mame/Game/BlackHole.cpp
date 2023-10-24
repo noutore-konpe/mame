@@ -34,6 +34,9 @@ BlackHole::BlackHole(AbilityManager* abilityManager)
     // 名前設定
     name_ = { "BlackHole : " + std::to_string(nameNum_++) };
 
+    //エフェクト生成
+    blackholeEffect = std::make_unique<Effect>("./Resources/Effect/blackhole.efk");
+
 }
 
 BlackHole::~BlackHole()
@@ -46,12 +49,15 @@ void BlackHole::Initialize()
 {
     magicCircle_->Initialize();
 
+    //エフェクト再生
+    PlayEffect();
 }
 
 void BlackHole::Finalize()
 {
     magicCircle_->Finalize();
 
+    
 }
 
 void BlackHole::Begin()
@@ -100,6 +106,11 @@ void BlackHole::Update(const float elapsedTime)
     // magicCircle_->Update(elapsedTime);
     magicCircle_->GetTransform()->SetPosition(this->GetTransform()->GetPosition());
 
+    //エフェクト再生
+    if (effectPlayTime == 1 && lifeTimer_ < 3.0f)
+    {
+        PlayEffect();
+    }
 }
 
 void BlackHole::End()
@@ -149,4 +160,13 @@ void BlackHole::DrawDebug()
     }
 
 #endif
+}
+
+void BlackHole::PlayEffect()
+{
+    auto pos = GetTransform()->GetPosition();
+    pos.y = 1.5f;
+    blackholeEffect->Play(pos);
+
+    effectPlayTime++;
 }

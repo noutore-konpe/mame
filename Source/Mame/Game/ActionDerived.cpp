@@ -438,6 +438,13 @@ const ActionBase::State CloseRangeAttackAction::Run(const float elapsedTime)
 			return ActionBase::State::Failed; // Ž¸”s
 		}
 
+		//UŒ‚”»’è
+		const int keyframe = owner_->model->GetCurrentKeyframeIndex();
+		if (keyframe > 10 && keyframe < 35)
+		{
+			owner_->AttackCollisionOnPlayer(30.0f);
+		}
+
 		break;
 	}
 
@@ -652,7 +659,7 @@ const ActionBase::State BlowOffAction::Run(const float elapsedTime)
 
 		// ‚Á”ò‚ÑƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
 		{
-			owner_->PlayAnimation(Animation::BlowOff, false, owner_->GetAnimationSpeed());
+			owner_->PlayAnimation(Animation::HardStagger, false, owner_->GetAnimationSpeed());
 
 			Model* sword = owner_->GetSword();
 			if (sword != nullptr)

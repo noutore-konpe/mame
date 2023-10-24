@@ -406,7 +406,7 @@ void SceneTutorial::Render(const float& /*elapsedTime*/)
 
     //ƒuƒ‹[ƒ€–³‚µ
     {
-        PlayerManager::Instance().GetPlayer()->SkillImagesRender();
+        PlayerManager::Instance().SkillImagesRender();
         UserInterface::Instance().Render();
     }
 
