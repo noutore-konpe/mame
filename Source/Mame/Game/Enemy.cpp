@@ -64,6 +64,6 @@ void Enemy::AttackCollisionOnPlayer(const float damage)
     DirectX::XMFLOAT3 pos;
     if (EnemyManager::AttackCollisionPlayerToEnemy(this,pos))
     {
-        PlayerManager::Instance().GetPlayer()->ApplyDamage(damage,pos,this,0.01f);
+        PlayerManager::Instance().GetPlayer()->ApplyDamage(damage,pos,Player::HitReaction::SOFT,this,0.01f);
     }
 }

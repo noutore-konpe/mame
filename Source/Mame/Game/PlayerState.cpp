@@ -42,10 +42,13 @@ namespace PlayerState
         {
             owner->ChangeState(Player::STATE::ATTACK_JAB);
         }
+        else if (owner->InputHardAttack())
+        {
+            owner->ChangeState(Player::STATE::ATTACK_HARD);
+        }
         
         owner->ActiveCounter();
     }
-
     void NormalState::Finalize()
     {
     }
@@ -58,7 +61,6 @@ namespace PlayerState
 
         hit.clear();
     }
-
     void JabAttackState::Update(const float& elapsedTime)
     {
         //ì•Ç›çûÇ›èàóù
@@ -84,8 +86,6 @@ namespace PlayerState
             //çXêVèàóù(éüÇÃÉRÉìÉ{Ç÷ÇÃëJà⁄Ç‡ÇµÇƒÇ¢ÇÈ)
             {
                 AttackUpdate(dodgeCanselFrame1,comboCanselFrame1);
-
-                
             }
 
 
@@ -142,14 +142,12 @@ namespace PlayerState
 
         HitCollisionUpdate();
     }
-
     void JabAttackState::Finalize()
     {
         //owner->model->weight = 0.0f;
         owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
         owner->isActiveAttackFrame = false;
     }
-
     void JabAttackState::HitCollisionUpdate()
     {
         DirectX::XMFLOAT3 hitPos;
@@ -176,7 +174,6 @@ namespace PlayerState
             }
         }
     }
-
     void JabAttackState::AttackUpdate(int dodgeCanselFrame,int comboCanselFrame)
     {
         const float keyframeIndex = owner->model->GetCurrentKeyframeIndex();
@@ -219,9 +216,13 @@ namespace PlayerState
             {
                 //ÉJÉEÉìÉ^Å[îhê∂
                 owner->ActiveCounter();
+
+                if (owner->InputHardAttack())
+                {
+                    owner->ChangeState(Player::STATE::ATTACK_HARD);
+                }
             }
 
-            
             break;
         }
 
@@ -240,11 +241,36 @@ namespace PlayerState
         owner->PlayAnimation(Player::Animation::Avoid,false);
         owner->GetSword()->PlayAnimation(Player::Animation::Avoid,false);
         owner->SetAcceleration(dodgeSpeed);
+        hit.clear();
     }
-
     void AvoidState::Update(const float& elapsedTime)
     {
         //owner->MoveUpdate(elapsedTime);
+
+        //çUåÇîªíË
+        DirectX::XMFLOAT3 hitPos;
+        std::vector<Enemy*> hitEnemies;
+        if (PlayerManager::Instance().HitCollisionPlayerToEnemy(hitEnemies, hitPos))
+        {
+            for (auto& enemy : hitEnemies)
+            {
+                Character::DamageResult result;
+                for (auto& h : hit)
+                {
+                    if (h == enemy)goto skip;//Ç∑Ç≈Ç…àÍìxÉqÉbÉgÇµÇƒÇ¢ÇÈìGÇ»ÇÁèàóùÇµÇ»Ç¢
+                }
+                //àÍìxÇ‡ÉqÉbÉgÇµÇƒÇ¢Ç»Ç¢ìGÇ»ÇÃÇ≈ìoò^Ç∑ÇÈ
+                hit.emplace_back(enemy);
+
+                result = enemy->ApplyDamage(0.1f * owner->GetBasePower(), hitPos, owner);
+
+                enemy->Flinch();
+
+                //É_ÉÅÅ[ÉWãzé˚èàóù
+                PlayerManager::Instance().GetDrainSkill()->Assimilate(result.damage);
+            skip:;
+            }
+        }
 
         if (!owner->IsPlayAnimation()/* ||
             Input::Instance().GetGamePad().GetTriggerR() == 0*/)
@@ -256,7 +282,6 @@ namespace PlayerState
         owner->AvoidUpdate(elapsedTime);
         owner->ModelRotZUpdate(elapsedTime);
     }
-
     void AvoidState::Finalize()
     {
         owner->SetAcceleration(Player::InitAcceleration);
@@ -269,6 +294,7 @@ namespace PlayerState
 
         owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
         owner->PlayAnimation(Player::Animation::HardStagger,false);
+        owner->GetSword()->PlayAnimation(Player::Animation::HardStagger,false);
     }
     void DieState::Update(const float& elapsedTime)
     {
@@ -289,16 +315,50 @@ namespace PlayerState
     void HardAttackState::Initialize()
     {
         owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
-        owner->PlayAnimation(Player::Animation::HardStagger, false);
-        //owner->GetSword()->PlayAnimation(Player::Animation::HardStagger, false);
+        owner->PlayAnimation(Player::Animation::HardAttack, false,1.3f);
+        owner->GetSword()->PlayAnimation(Player::Animation::HardAttack, false,1.3f);
+        owner->ResetSteppingTimer();
+        hit.clear();
+
+        owner->isActiveAttackFrame = true;
     }
     void HardAttackState::Update(const float& elapsedTime)
     {
-        owner->BlownUpdate(elapsedTime);
+        //int frameIndex = owner->model->GetCurrentKeyframeIndex();
+        owner->AttackSteppingUpdate(elapsedTime);
+
+        DirectX::XMFLOAT3 hitPos;
+        std::vector<Enemy*> hitEnemies;
+        if (PlayerManager::Instance().AttackCollisionPlayerToEnemy(hitEnemies, hitPos))
+        {
+            for (auto& enemy : hitEnemies)
+            {
+                Character::DamageResult result;
+                for (auto& h : hit)
+                {
+                    if (h == enemy)goto skip;//Ç∑Ç≈Ç…àÍìxÉqÉbÉgÇµÇƒÇ¢ÇÈìGÇ»ÇÁèàóùÇµÇ»Ç¢
+                }
+                //àÍìxÇ‡ÉqÉbÉgÇµÇƒÇ¢Ç»Ç¢ìGÇ»ÇÃÇ≈ìoò^Ç∑ÇÈ
+                hit.emplace_back(enemy);
+
+                result = enemy->ApplyDamage(owner->hardAtkMuls * owner->GetBasePower(), hitPos, owner);
+
+                enemy->Flinch();
+
+                //É_ÉÅÅ[ÉWãzé˚èàóù
+                PlayerManager::Instance().GetDrainSkill()->Assimilate(result.damage);
+            skip:;
+            }
+        }
+
+        if (!owner->IsPlayAnimation())
+        {
+            owner->ChangeState(Player::STATE::NORMAL);
+        }
     }
     void HardAttackState::Finalize()
     {
-
+        owner->isActiveAttackFrame = false;
     }
 
     void SoftStaggerState::Initialize()
@@ -322,12 +382,36 @@ namespace PlayerState
 
     void HardStaggerState::Initialize()
     {
+        owner->isInvincible = true;
+        state = 0;
+        owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
+        owner->PlayAnimation(Player::Animation::HardStagger, false);
+        owner->GetSword()->PlayAnimation(Player::Animation::HardStagger, false);
     }
     void HardStaggerState::Update(const float& elapsedTime)
     {
+        switch (state)
+        {
+        case 0:
+            owner->BlownUpdate(elapsedTime);
+            if (!owner->IsPlayAnimation())
+            {
+                owner->PlayAnimation(Player::Animation::StandUp,false);
+                owner->GetSword()->PlayAnimation(Player::Animation::StandUp,false);
+                state++;
+            }
+            break;
+        case 1:
+            if (!owner->IsPlayAnimation())
+            {
+                owner->ChangeState(Player::STATE::NORMAL);
+            }
+            break;
+        }
     }
     void HardStaggerState::Finalize()
     {
+        owner->isInvincible = false;
     }
 
     void CounterState::Initialize()
@@ -412,7 +496,8 @@ namespace PlayerState
                                 shotPos,owner->GetTransform()->CalcForward(),100,1
                             ))
                             {
-                                enemy->ApplyDamage(owner->GetBasePower() * 3.5f, collider.position, owner);
+                                enemy->SaveBlowOffInfo(owner->GetTransform()->CalcForward(), BLOW_OFF_FORCE_LEVEL::HIGH);
+                                enemy->ApplyDamage(owner->GetBasePower() * 3.5f, collider.position, owner,0,true);
                                 break;
                             }
                         }

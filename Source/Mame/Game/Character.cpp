@@ -266,8 +266,6 @@ Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLO
         OnDamaged();
     }
 
-    
-
     //健康状態が変更した場合はtrueを返す
     result.hit = true;
     return result;
@@ -280,6 +278,10 @@ bool Character::ApplyHeal(float heal)
     if (health >= maxHealth)return false;
 
     health += heal;
+
+    // ダメージ表示生成
+    NumeralManager& numeralManager = NumeralManager::Instance();
+    numeralManager.CreateDamageNumeral(this, (heal > 0 ? heal : 0), GetPosition(),DirectX::XMFLOAT2(22,30),DirectX::XMFLOAT4(0.2f,1,0.2f,1));
 
     OnHealed();
 

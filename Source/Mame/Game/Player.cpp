@@ -16,6 +16,7 @@
 #include "UserInterface.h"
 
 #include "PlayerManager.h"
+#include "Collision.h"
 
 // コンストラクタ
 Player::Player()
@@ -113,6 +114,7 @@ void Player::Initialize()
     jabMotionAtkMuls[0] = 1.0f;
     jabMotionAtkMuls[1] = 1.2f;
     jabMotionAtkMuls[2] = 2.3f;
+    hardAtkMuls = 2.7f;
 
     health = 400.0f;
     maxHealth = 400.0f;
@@ -267,7 +269,31 @@ Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT
 
 Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, const HitReaction reaction, Character* attacker,float invincibleTime, bool ignoreDefence)
 {
-    return Player::ApplyDamage(damage, hitPosition, attacker, invincibleTime, ignoreDefence);
+    auto result = Player::ApplyDamage(damage, hitPosition, attacker, invincibleTime, ignoreDefence);
+
+    if (counterCompleted)return result;
+
+    //死んでいる 当たっていない ならreturn
+    if (health <= 0 || !result.hit)return result;
+
+    if (result.damage > 0)
+    {
+        switch (reaction)
+        {
+        case HitReaction::NONE:
+            break;
+        case HitReaction::SOFT:
+            ChangeState(STATE::STAGGER_SOFT);
+            break;
+        case HitReaction::HARD:
+           
+            Blow(result.hitVector);
+            ChangeState(STATE::STAGGER_HARD);
+            break;
+        }
+    }
+
+    return result;
 }
 
 void Player::MoveUpdate(float elapsedTime,float ax,float ay)
@@ -1002,12 +1028,12 @@ void Player::LockOnInitialize()
     }
 }
 
-void Player::BlownUpdate(float elapsedTime)
+const bool Player::BlownUpdate(float elapsedTime)
 {
     if (blowTimer < 0)
     {
         velocity = DirectX::XMFLOAT3(0, 0, 0);
-        return;
+        return false;
     }
 
     float blowSpeed = Easing::OutCubic(blowTimer, blowTime, this->blowSpeed, 0.0f);
@@ -1017,11 +1043,16 @@ void Player::BlownUpdate(float elapsedTime)
     GetTransform()->SetPosition(CollidedPosition(movePos));
 
     blowTimer -= elapsedTime;
+
+    return true;
 }
 
 void Player::Blow(DirectX::XMFLOAT3 blowVec)
 {
     this->blowVec = Normalize(blowVec);
+    float rot = acosf(Normalize(-blowVec).z);
+    //今回の外積のY成分はhitVector.xなので左右判定はこれを使う
+    GetTransform()->SetRotationY((blowVec.x > 0) ? -rot : rot);
     blowTimer = blowTime;
 }
 
@@ -1047,6 +1078,21 @@ void Player::PlayLaserEffect()
     laserEffect->Play(pos);
 }
 
+void Player::TurnNearEnemy(float radius)
+{
+    //最近距離を記憶
+    float nearest = FLT_MAX;
+    for (auto& enemy : EnemyManager::Instance().GetEnemies())
+    {
+        auto ePos = enemy->GetTransform()->GetPosition();
+        if (Collision::IntersectSphereVsSphere(ePos,1.0f,GetTransform()->GetPosition(),radius))
+        {
+            float length = Length(ePos - GetTransform()->GetPosition());
+            if (nearest > length);
+        }
+    }
+}
+
 void Player::OnDamaged()
 {
     //stateMachine->ChangeState(STAGGER_SOFT);
@@ -1059,10 +1105,6 @@ void Player::OnDead(DamageResult result)
     stateMachine->ChangeState(DIE);
 
     Blow(result.hitVector);
-
-    float length = sqrtf(result.hitVector.x * result.hitVector.x + result.hitVector.z * result.hitVector.z);
-    result.hitVector.z /= length;
-    GetTransform()->SetRotationY(acosf(result.hitVector.z));
 
     PlayerManager::Instance().SetLifeTime(lifeTimer);
     PlayerManager::Instance().SetLevel(level);

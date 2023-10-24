@@ -69,6 +69,8 @@ namespace PlayerState
         void Initialize() override;
         void Update(const float& elapsedTime) override;
         void Finalize() override;
+    private:
+        std::vector<Enemy*> hit;
     };
 
     //回避
@@ -84,6 +86,7 @@ namespace PlayerState
 
     private:
         float dodgeSpeed  = 20.0f;
+        std::vector<Enemy*> hit;
     };
 
     //死亡
@@ -123,6 +126,8 @@ namespace PlayerState
         void Initialize() override;
         void Update(const float& elapsedTime) override;
         void Finalize() override;
+    private:
+        int state;
     };
 
     //カウンター

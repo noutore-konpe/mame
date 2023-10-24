@@ -51,7 +51,7 @@ void StoneBall::Update(const float& elapsedTime)
         ))
         {
             //TODO:ƒS[ƒŒƒ€@ŠâUŒ‚
-            PlayerManager::Instance().GetPlayer()->ApplyDamage(damage,hitCollider.position,owner);
+            PlayerManager::Instance().GetPlayer()->ApplyDamage(damage,hitCollider.position, Player::HitReaction::HARD,owner);
             
             Input::Instance().GetGamePad().Vibration(0.3f, 0.3f);
 

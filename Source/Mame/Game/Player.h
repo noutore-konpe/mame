@@ -41,6 +41,8 @@ public: // enum関連
         CounterAttack,
         SoftStagger,
         HardStagger,//吹っ飛び、死亡
+        StandUp,
+        HardAttack
     };
 
 
@@ -114,12 +116,14 @@ public:
 
     void LockOnInitialize();
 
-    void BlownUpdate(float elapsedTime);//吹っ飛び更新処理
+    const bool BlownUpdate(float elapsedTime);//吹っ飛び更新処理(吹っ飛び中true)
     void Blow(DirectX::XMFLOAT3 blowVec/*吹き飛ぶ方向*/);//吹っ飛しするときに呼ぶ
 
     void ActiveCounter();
 
     void PlayLaserEffect();
+
+    void TurnNearEnemy(float radius);
 
 private:
     float blowTime = 1.0f;
@@ -133,7 +137,14 @@ public:
     //入力関数
     static bool InputJabAttack()
     {
-        return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X);
+        return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X) ||
+            (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT);
+    }
+
+    static bool InputHardAttack()
+    {
+        return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_Y) ||
+            (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_RIGHT);
     }
 
     static bool InputDash()
@@ -284,6 +295,7 @@ private:
 
 public://getter作るのめんどいだけ
     float jabMotionAtkMuls[3];
+    float hardAtkMuls;
     //-----------------------------------------------------------------------
 private:
     //----------------------------回避---------------------------------------
