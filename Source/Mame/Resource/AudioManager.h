@@ -12,7 +12,9 @@ enum class BGM
     Title,      // タイトルBGM
     Result,     // リザルトBGM
     Death,      // 死亡BGM
-    Game,       // 環境音
+    Enviroment, // 環境音
+    Game,       // Game
+    Golem,      // ゴーレム
     BGM_Max,
 };
 
@@ -21,10 +23,15 @@ enum class SE
     GolemEntry,     // ゴーレム登場
     GolemRoar,      // ゴーレム咆哮
     WaveBegin,      // ウェーブ開始音
-    CardSelect0,     // 能力取った時の音
-    CardSelect1,     // 能力取った時の音
-    CardSelect2,     // 能力取った時の音
+    CardSelect0,    // 能力取った時の音
+    CardSelect1,    // 能力取った時の音
+    CardSelect2,    // 能力取った時の音
     Enter,          // 選択
+    SwordSlash1,    // 攻撃１
+    SwordSlash2,    // 攻撃２
+    SwordSlash3,    // 攻撃３
+    SwordSlash4,    // 攻撃４
+
     SE_Max,
 };
 

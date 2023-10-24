@@ -16,6 +16,8 @@
 #include "../Resource/texture.h"
 #include "../Other/misc.h"
 
+#include "../Resource/AudioManager.h"
+
 int EnemyGolem::nameNum_;
 
 
@@ -111,7 +113,12 @@ EnemyGolem::EnemyGolem()
 EnemyGolem::~EnemyGolem()
 {
     if (isDead)
+    {
         EnemyManager::Instance().AddEnemyGolemKillNum();
+
+        AudioManager::Instance().StopBGM(BGM::Golem);
+        AudioManager::Instance().PlayBGM(BGM::Game);
+    }
 }
 
 // èâä˙âª
@@ -148,6 +155,9 @@ void EnemyGolem::Initialize()
 #ifdef _DEBUG
     currentStateDebug = 0;
 #endif // _DEBUG
+
+    AudioManager::Instance().StopBGM(BGM::Game);
+    AudioManager::Instance().PlayBGM(BGM::Golem);
 }
 
 // èIóπâª

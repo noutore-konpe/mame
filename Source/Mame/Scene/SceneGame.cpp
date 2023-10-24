@@ -248,6 +248,7 @@ void SceneGame::Initialize()
     SlowMotionManager::Instance().Initialize();
 
     // ƒQ[ƒ€BGMÄ¶
+    AudioManager::Instance().PlayBGM(BGM::Enviroment);
     AudioManager::Instance().PlayBGM(BGM::Game);
 }
 
@@ -637,6 +638,8 @@ void SceneGame::Render(const float& /*elapsedTime*/)
         DirectX::XMStoreFloat4x4(&view, camera.GetViewMatrix());
         DirectX::XMStoreFloat4x4(&projection, camera.GetProjectionMatrix());
 
+        //shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
+
         EffectManager::Instance().Render(view, projection);
     }
 
@@ -768,6 +771,8 @@ void SceneGame::DrawDebug()
     PlayerManager&          plManager    = PlayerManager::Instance();
     EnemyManager&           enemyManager = EnemyManager::Instance();
     ExperiencePointManager& expManager   = ExperiencePointManager::Instance();
+
+    
 
     if (ImGui::Begin("sceneGame"))
     {

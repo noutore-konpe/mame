@@ -7,6 +7,8 @@
 
 class ProjectileManager
 {
+
+
 public:
     ProjectileManager();
     ~ProjectileManager();
@@ -28,8 +30,14 @@ public: // æ“¾Eİ’è@ŠÖ˜A
     const size_t GetProjectileCount() const { return projectiles_.size(); } // ’eŠÛ”æ“¾
     Projectile* GetProjectile(const size_t index) { return projectiles_.at(index); } // ’eŠÛæ“¾
 
+    
+
 private:
     std::vector<Projectile*>  projectiles_ = {};
     std::set<Projectile*>     removes_     = {};
+
+    Microsoft::WRL::ComPtr<ID3D11PixelShader> tamaPS[4];
+
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureMaps[2];
 };
 
