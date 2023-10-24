@@ -154,6 +154,9 @@ void Player::Initialize()
 
     lifeTimer = 0;
 
+
+    // リザルトに飛ばすフラグ
+    isResult = false;
 }
 
 // 終了化

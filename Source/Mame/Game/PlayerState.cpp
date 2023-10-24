@@ -272,9 +272,10 @@ namespace PlayerState
 
         //シーン遷移
         changeSceneTimer += elapsedTime;
-        if (changeSceneTimer > 5.0f)
+        if (changeSceneTimer > 3.0f)
         {
-            Mame::Scene::SceneManager::Instance().ChangeScene(new SceneResult);
+            // リザルトに飛ばすフラグ（sceneGameで更新する）
+            owner->SetIsResult();
         }
     }
     void DieState::Finalize()

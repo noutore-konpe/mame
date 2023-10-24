@@ -27,6 +27,9 @@ namespace ComboAttackStoneState
     // 初期化
     void AppearState::Initialize()
     {
+        // 石生成
+        owner->stoneBall->Create();
+
         // 石のサイズ設定
         owner->stoneBall->GetTransform()->SetScale(DirectX::XMFLOAT3(4.0f, 4.0f, 4.0f));
         // 石の色を初期化
@@ -164,12 +167,20 @@ namespace ComboAttackStoneState
         {
             if (!cameraShake)
             {   // カメラ振動
+
+                //----- 石が存在しない -----
+                if (owner->stoneBall->GetIsDestroy())goto skip;
+
                 Camera::Instance().ScreenVibrate(0.05f, 0.8f);
                 cameraShake = true;
 
                 // ゲームパッド振動
                 Input::Instance().GetGamePad().Vibration(0.2f, gamePadVibPower);
             }
+
+            //----- 石が存在しない -----
+            skip:
+            //----- 石が存在しない -----
 
             // ディレイ
             if (delayTimer <= maxDelayTime)

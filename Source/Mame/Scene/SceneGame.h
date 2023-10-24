@@ -56,9 +56,12 @@ private: // •Ï”“™X
     bool isParticleInitialize = false;
     bool isDebugCamera = false;
     bool isWhiteSpriteRender = false;
+    bool isBlackSpriteRender = false;
     float whiteSpriteTimer = 0.0f;
+    float blackSpriteTimer = 0.0f;
 
     std::unique_ptr<EnemyGolem> enemyGolem;
+
 
 private: // GPU—p’è”E•Ï”
     std::unique_ptr<FrameBuffer> framebuffers[3];

@@ -25,6 +25,8 @@ public:
     void SetRadius(float r) { radius = r; }
 
     void Destroy() { isDestroy = true; }
+    void Create() { isDestroy = false; }
+    bool GetIsDestroy() { return isDestroy; }
 
     float radius = 1.0f;
     float damage = 1.0f;
