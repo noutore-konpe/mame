@@ -522,7 +522,7 @@ void EnemyGolem::ColliderInitialize()
     {
         for (int i = 0; i < static_cast<int>(ColliderName::END); i++)
         {
-            attackCollider.emplace_back(SphereCollider(0.3f));
+            attackCollider.emplace_back(SphereCollider(0.8f));
         }
 
         for (int i = 0; i < static_cast<int>(ColliderName::END); i++)

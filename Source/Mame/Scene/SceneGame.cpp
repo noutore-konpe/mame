@@ -92,10 +92,10 @@ void SceneGame::CreateResource()
     //enemyGolem->Initialize();
     //enemyGolem->SetHealth(20);
     //enemyManager.Register(enemyGolem);
-    //    EnemyManager& enemyManager = EnemyManager::Instance();
-    //    EnemyGolem* enemyGolem = new EnemyGolem;
-    //    enemyGolem->Initialize();
-    //    enemyManager.Register(enemyGolem);
+        //EnemyManager& enemyManager = EnemyManager::Instance();
+        EnemyGolem* enemyGolem = new EnemyGolem;
+        enemyGolem->Initialize();
+        enemyManager.Register(enemyGolem);
 
         // EnemyGolem* enemyGolem = new EnemyGolem;
         // enemyManager.Register(enemyGolem);
