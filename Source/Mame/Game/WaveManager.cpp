@@ -23,13 +23,13 @@ namespace Set {
 
 #if _DEBUG
 WaveEnemySet waveEnemySetTest[] = {
-     WaveEnemySet(1.0f, "EnemyAI_1",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
-     WaveEnemySet(1.0f, "EnemyAI_1",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
-     WaveEnemySet(1.0f, "EnemyAI_2",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
-     WaveEnemySet(1.0f, "EnemyAI_2",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
-     WaveEnemySet(1.0f, "EnemyAI_3",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
-     WaveEnemySet(1.0f, "EnemyAI_3",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
-     WaveEnemySet(1.0f, "EnemyGolem", ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyAI_1",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyAI_1",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyAI_2",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyAI_2",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyAI_3",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyAI_3",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyGolem", ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
 };
 #endif
 WaveEnemySet waveEnemySet0[] = {

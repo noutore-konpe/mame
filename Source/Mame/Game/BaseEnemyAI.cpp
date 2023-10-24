@@ -1,10 +1,9 @@
 #include "BaseEnemyAI.h"
 
 #include "../../Taki174/Common.h"
-#include "EnemyManager.h"
 #include "../Other/MathHelper.h"
-
 #include "../Scene/SceneGame.h"
+#include "EnemyManager.h"
 
 BaseEnemyAI::BaseEnemyAI()
 {
