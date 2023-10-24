@@ -104,7 +104,7 @@ Wave wave10_ = { "Wave10", "VsGolem", std::size(waveEnemySet10), waveEnemySet10 
 // ウェーブ配列(※上から順にウェーブが実行される)
 Wave waves_[] = {
 #if _DEBUG
-    waveTest_,
+    //waveTest_,
 #endif
     wave0_,
     wave1_,
