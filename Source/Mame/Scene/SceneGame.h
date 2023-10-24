@@ -74,6 +74,8 @@ private: // GPU—p’è”E•Ï”
     {
         const uint32_t shadowMapWidth = 2048;
         const uint32_t shadowMapHeight = 2048;
+        //const uint32_t shadowMapWidth = 4096;
+        //const uint32_t shadowMapHeight = 4096;
         std::unique_ptr<ShadowMap> shadowMap;
         DirectX::XMFLOAT4 lightViewFocus{ 0,0,0,1 };
         float lightViewDistance = 10.0f;

@@ -416,6 +416,10 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
     //DirectX::XMVECTOR focus{ DirectX::XMVectorSet(camera.focus.x,camera.focus.y,camera.focus.z,1.0f) };
     DirectX::XMVECTOR up{ DirectX::XMVectorSet(camera.up.x,camera.up.y,camera.up.z,0.0f) };
     V = { DirectX::XMMatrixLookAtLH(eye, focus, up) };
+
+    DirectX::XMFLOAT3 cameraPos{};
+    DirectX::XMStoreFloat3(&cameraPos, eye);
+    GetTransform()->SetPosition(cameraPos);
 }
 
 void Camera::DrawDebug()

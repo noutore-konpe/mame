@@ -97,7 +97,7 @@ void SceneTitle::Initialize()
     fadeSprite->GetSpriteTransform()->SetColorA(0.0f);
 
     
-    AudioManager::Instance().PlayBGM(BGM::Title, true);
+    AudioManager::Instance().PlayBGM(BGM::Title);
     
 
     // 変数初期化
@@ -110,6 +110,7 @@ void SceneTitle::Initialize()
 // 終了化
 void SceneTitle::Finalize()
 {
+    // オーディオを止める
     AudioManager::Instance().StopAllBGM();
 }
 
@@ -125,9 +126,36 @@ void SceneTitle::Update(const float& elapsedTime)
 
     Camera::Instance().TitleUpdate(elapsedTime);
 
-    if (gamePad.GetButtonDown() & GamePad::BTN_A)
+    const GamePadButton anyButton =
+        GamePad::BTN_UP
+        | GamePad::BTN_RIGHT
+        | GamePad::BTN_DOWN
+        | GamePad::BTN_LEFT
+        | GamePad::BTN_A
+        | GamePad::BTN_B
+        | GamePad::BTN_X
+        | GamePad::BTN_Y
+        | GamePad::BTN_LEFT_SHOULDER
+        | GamePad::BTN_RIGHT_SHOULDER
+        | GamePad::BTN_LEFT_THUMB
+        | GamePad::BTN_RIGHT_THUMB
+        | GamePad::BTN_LEFT_TRIGGER
+        | GamePad::BTN_RIGHT_TRIGGER;
+
+    const unsigned int anyKey =
+        GetAsyncKeyState('W')
+        | GetAsyncKeyState('A')
+        | GetAsyncKeyState('S')
+        | GetAsyncKeyState('D');
+
+
+    if (!isFade &&
+        ((gamePad.GetButtonDown() & anyButton)
+            || anyKey))
     {
         isFade = true;
+        // 選択音
+        AudioManager::Instance().PlaySE(SE::Enter);
     }
 
     // scene切り替え

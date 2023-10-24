@@ -7,13 +7,20 @@ void AudioManager::LoadAudio()
         // BGM読み込み
         {            
             bgm_[static_cast<int>(BGM::Title)       ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/BGM/title.wav");
-            bgm_[static_cast<int>(BGM::GameOver)    ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/BGM/GameOver.wav");
+            bgm_[static_cast<int>(BGM::Result)      ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/BGM/Result.wav");
+            bgm_[static_cast<int>(BGM::Death)       ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/BGM/Death.wav");
+            bgm_[static_cast<int>(BGM::Game)        ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/BGM/EnviromentalSound.wav");
         }
 
         // SE読み込み
         {
             se_[static_cast<int>(SE::GolemEntry)    ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemEntry.wav");
             se_[static_cast<int>(SE::GolemRoar)     ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemRoar.wav");
+            se_[static_cast<int>(SE::WaveBegin)     ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/WaveBegin.wav");
+            se_[static_cast<int>(SE::CardSelect0)    ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/CardSelect.wav");
+            se_[static_cast<int>(SE::CardSelect1)    ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/CardSelect.wav");
+            se_[static_cast<int>(SE::CardSelect2)    ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/CardSelect.wav");
+            se_[static_cast<int>(SE::Enter)         ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Enter.wav");
         }
     }
 
@@ -63,6 +70,26 @@ std::unique_ptr<Audio>& AudioManager::GetBGM(const BGM& bgmIndex)
 std::unique_ptr<Audio>& AudioManager::GetSE(const SE& seIndex)
 {
     return se_[static_cast<int>(seIndex)];
+}
+
+// カード選択音
+void AudioManager::PlayCardSelectSENum()
+{
+    switch (GetCardSelectSENum())
+    {
+    case 0:
+        PlaySE(SE::CardSelect0);
+        AddCardSelectSENum();
+        break;
+    case 1:
+        PlaySE(SE::CardSelect1);
+        AddCardSelectSENum();
+        break;
+    case 2:
+        PlaySE(SE::CardSelect2);
+        ResetCardSelectSENum();
+        break;
+    }
 }
 
 

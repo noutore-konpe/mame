@@ -7,6 +7,8 @@
 #include "../Scene/SceneManager.h"
 #include "../Scene/SceneResult.h"
 
+#include "../Resource/AudioManager.h"
+
 namespace PlayerState
 {
     void NormalState::Initialize()
@@ -262,6 +264,7 @@ namespace PlayerState
     void DieState::Initialize()
     {
         changeSceneTimer = 0;
+        isPlayBGM = false;
 
         owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
         owner->PlayAnimation(Player::Animation::HardStagger,false);
@@ -270,9 +273,15 @@ namespace PlayerState
     {
         owner->BlownUpdate(elapsedTime);
 
+        if (!isPlayBGM)
+        {// 死亡BGMを流す
+            AudioManager::Instance().PlayBGM(BGM::Death);
+            isPlayBGM = true;
+        }
+
         //シーン遷移
         changeSceneTimer += elapsedTime;
-        if (changeSceneTimer > 3.0f)
+        if (changeSceneTimer > 4.0f)
         {
             // リザルトに飛ばすフラグ（sceneGameで更新する）
             owner->SetIsResult();
