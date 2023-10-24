@@ -54,3 +54,11 @@ inline const int RandInt(const int min, const int max)
 {
     return ::rand() % ((max + 1) - min) + min;
 }
+
+// Enum Class インクリメント（++）
+template <class EnumClassT>
+inline void IncrementEnumClass(EnumClassT* enumClass)
+{
+    const int enumClassInt = static_cast<int>(*enumClass);
+    (*enumClass) = static_cast<EnumClassT>(enumClassInt + 1);
+}
