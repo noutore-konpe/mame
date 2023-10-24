@@ -104,6 +104,8 @@ void PlayerManager::DrawDebug()
 #ifdef USE_IMGUI
     player->DrawDebug();
 
+    ImGui::SliderInt("type", &tamaType, 0, 3);
+
     for (auto& skill : skillArray)
     {
         skill->DrawDebug();

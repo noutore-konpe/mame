@@ -9,15 +9,29 @@
 
 enum class BGM
 {
-    Title,
-    GameOver,
+    Title,      // タイトルBGM
+    Result,     // リザルトBGM
+    Death,      // 死亡BGM
+    Enviroment, // 環境音
+    Game,       // Game
+    Golem,      // ゴーレム
     BGM_Max,
 };
 
 enum class SE
 {
-    GolemEntry,
-    GolemRoar,
+    GolemEntry,     // ゴーレム登場
+    GolemRoar,      // ゴーレム咆哮
+    WaveBegin,      // ウェーブ開始音
+    CardSelect0,    // 能力取った時の音
+    CardSelect1,    // 能力取った時の音
+    CardSelect2,    // 能力取った時の音
+    Enter,          // 選択
+    SwordSlash1,    // 攻撃１
+    SwordSlash2,    // 攻撃２
+    SwordSlash3,    // 攻撃３
+    SwordSlash4,    // 攻撃４
+
     SE_Max,
 };
 
@@ -39,7 +53,7 @@ public:
     // BGM再生
     void PlayBGM(
         const BGM& bgm, 
-        const bool isLoop = false, 
+        const bool isLoop = true, 
         const bool isIgnoreQueue = false
     );    
 
@@ -69,5 +83,15 @@ public:
 private:
     std::unique_ptr<Audio> bgm_[static_cast<int>(BGM::BGM_Max)] = {};
     std::unique_ptr<Audio> se_[static_cast<int>(SE::SE_Max)]    = {};
+
+
+public:// 何回も再生するためにいるやつ
+    void PlayCardSelectSENum();
+
+private:// 何回も再生するためにいるやつ
+    void ResetCardSelectSENum() { cardSelectSENum = 0; }
+    void AddCardSelectSENum() { ++cardSelectSENum; }
+    int GetCardSelectSENum() { return cardSelectSENum; }
+    int cardSelectSENum = 0;
 };
 

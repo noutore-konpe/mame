@@ -16,6 +16,8 @@
 
 #include "../framework.h"
 
+#include "../Resource/AudioManager.h"
+
 // リソース生成
 void SceneResult::CreateResource()
 {
@@ -133,6 +135,9 @@ void SceneResult::Initialize()
     
 
     resultState = static_cast<UINT>(STATE::Initialize);
+
+    // リザルトBGM再生
+    AudioManager::Instance().PlayBGM(BGM::Result);
 }
 
 void SceneResult::Finalize()
@@ -145,6 +150,9 @@ void SceneResult::Finalize()
 
     // キルした敵の数をリセット
     EnemyManager::Instance().ResetKillNum();
+
+    // オーディオを止める
+    AudioManager::Instance().StopAllAudio();
 }
 
 void SceneResult::Begin()

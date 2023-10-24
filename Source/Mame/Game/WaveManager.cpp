@@ -8,6 +8,8 @@
 
 #include "UserInterface.h"
 
+#include "../Resource/AudioManager.h"
+
 // ウェーブ設定
 // ※要素数の取得や変更などを行うときにクラス内で定義していると面倒なので外で定義
 
@@ -224,6 +226,8 @@ void WaveManager::UpdateWave(const float elapsedTime)
 
             // waveの表記を出す
             UserInterface::Instance().SetWaveSlideSprite();
+            // waveの効果音
+            AudioManager::Instance().PlaySE(SE::WaveBegin);
         }
 
     }

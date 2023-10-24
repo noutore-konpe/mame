@@ -3,9 +3,45 @@
 #include "../../Taki174/Common.h"
 #include "../Resource/sprite.h"
 
+#include "../Graphics/Graphics.h"
+
+#include "../Resource/texture.h"
+
+#include "PlayerManager.h"
+
 // コンストラクタ
 ProjectileManager::ProjectileManager()
 {
+    Graphics& graphics = Graphics::Instance();
+
+    CreatePsFromCso(graphics.GetDevice(),
+        "./Resources/Shader/normalTamaPS.cso",
+        tamaPS[0].GetAddressOf());
+
+    CreatePsFromCso(graphics.GetDevice(),
+        "./Resources/Shader/dokuTamaPS.cso",
+        tamaPS[1].GetAddressOf());
+
+    CreatePsFromCso(graphics.GetDevice(),
+        "./Resources/Shader/homingTamaPS.cso",
+        tamaPS[2].GetAddressOf());
+
+    CreatePsFromCso(graphics.GetDevice(),
+        "./Resources/Shader/homingDokuPS.cso",
+        tamaPS[3].GetAddressOf());
+
+
+    D3D11_TEXTURE2D_DESC texture2dDesc;
+    ::load_texture_from_file(graphics.GetDevice(),
+        //L"./Resources/Image/Mask/noise2.png",
+        L"./Resources/Image/Mask/dissolve_animation2.png",
+        textureMaps[0].GetAddressOf(),
+        &texture2dDesc);
+    ::load_texture_from_file(graphics.GetDevice(),
+        //L"./Resources/Image/Mask/noise2.png",
+        L"./Resources/Image/Mask/noise3.png",
+        textureMaps[1].GetAddressOf(),
+        &texture2dDesc);
 }
 
 // デストラクタ
@@ -85,6 +121,13 @@ void ProjectileManager::End()
 // 描画処理
 void ProjectileManager::Render(const float scale, ID3D11PixelShader* psShader)
 {
+    Graphics& graphics = Graphics::Instance();
+
+    graphics.GetDeviceContext()->PSSetShaderResources(12, 1, textureMaps[0].GetAddressOf());
+    graphics.GetDeviceContext()->PSSetShaderResources(13, 1, textureMaps[1].GetAddressOf());
+
+
+
     for (Projectile*& projectile : projectiles_)
     {
         // カメラ外なら描画しない
@@ -92,13 +135,14 @@ void ProjectileManager::Render(const float scale, ID3D11PixelShader* psShader)
         Sprite::ConvertToScreenPos(projectile->GetTransform()->GetPosition(), &isInCamera);
         if (false == isInCamera) { continue; }
 
-        projectile->Render(scale, psShader);
+        projectile->Render(scale, tamaPS[PlayerManager::Instance().GetTamaType()].Get());
     }
 }
 
 // ImGui用
 void ProjectileManager::DrawDebug()
 {
+
     for (Projectile*& projectile : projectiles_)
     {
         projectile->DrawDebug();

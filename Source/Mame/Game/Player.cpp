@@ -18,6 +18,9 @@
 #include "PlayerManager.h"
 #include "Collision.h"
 
+#include "../Resource/AudioManager.h"
+
+
 // コンストラクタ
 Player::Player()
 {
@@ -178,6 +181,9 @@ void Player::Begin()
 // 更新処理
 void Player::Update(const float elapsedTime)
 {
+    // プレイヤーが埋まらないように高さを設定している。
+    GetTransform()->SetPositionY(0.0f);
+
     //ロックオン解除、発動
     if (InputLockOn())
     {
@@ -836,6 +842,8 @@ void Player::SelectSkillUpdate(float elapsedTime)
                 selectCard = 2;
             }
             buttonDown = true;
+            // カード選択音
+            AudioManager::Instance().PlayCardSelectSENum();
         }
         else if (ax <= -0.5f && !buttonDown)
         {
@@ -845,6 +853,8 @@ void Player::SelectSkillUpdate(float elapsedTime)
                 selectCard = 0;
             }
             buttonDown = true;
+            // カード選択音
+            AudioManager::Instance().PlayCardSelectSENum();
         }
         else if (ax <= 0.3f && ax >= -0.3f)
         {
@@ -858,6 +868,9 @@ void Player::SelectSkillUpdate(float elapsedTime)
             _timer = 0;
             drawingSkillCards[selectCard]->Overlaping();
             drawDirectionState++;
+
+            // 選択音を鳴らす
+            AudioManager::Instance().PlaySE(SE::Enter);
         }
         break;
 

@@ -104,6 +104,7 @@ namespace PlayerState
 
     private:
         float changeSceneTimer;
+        bool isPlayBGM = false;
     };
 
     //è¨ãØÇ›
