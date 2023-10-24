@@ -19,6 +19,7 @@ Character::Character()
 //#endif // _DEBUG
 
     hitEffect = std::make_unique<Effect>("./Resources/Effect/hit.efk");
+    healEffect = std::make_unique<Effect>("./Resources/Effect/heal.efk");
 }
 
 // 初期化
@@ -199,7 +200,7 @@ void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
         transform->SetRotationY(rotation.y);
 }
 
-Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLOAT3 hitPosition, Character* attacker,float invincibleTime)
+Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLOAT3 hitPosition, Character* attacker,float invincibleTime, bool ignoreDefence)
 {
     DamageResult result;
 
@@ -211,7 +212,7 @@ Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLO
     }
 
     //防御力の影響
-    damage -= defence;
+    if(!ignoreDefence)damage -= defence;
     result.damage = damage;
 
     // ダメージ表示生成
@@ -253,15 +254,19 @@ Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLO
         OnDead(result);
         isDead = true;
         health = 0;
+
+        //エフェクト再生
+        hitEffect->Play(hitPosition,DirectX::XMFLOAT3(2.0f,2.0f,2.0f),DirectX::XMFLOAT4(1.0f,0,0.3f,1.0f));
     }
     //ダメージ通知
     else
     {
+        //エフェクト再生
+        hitEffect->Play(hitPosition);
         OnDamaged();
     }
 
-    //エフェクト再生
-    hitEffect->Play(hitPosition);
+    
 
     //健康状態が変更した場合はtrueを返す
     result.hit = true;
@@ -277,6 +282,10 @@ bool Character::ApplyHeal(float heal)
     health += heal;
 
     OnHealed();
+
+    auto ePos = GetTransform()->GetPosition();
+    ePos.y += 0.6f;
+    healEffect->Play(ePos);
 
     return true;
 }

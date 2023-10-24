@@ -210,6 +210,7 @@
     <ClCompile Include="Source\Mame\Game\AttackSkill.cpp" />
     <ClCompile Include="Source\Mame\Game\BaseEnemyAI.cpp" />
     <ClCompile Include="Source\Mame\Game\BaseSkill.cpp" />
+    <ClCompile Include="Source\Mame\Game\Tutorial.cpp" />
     <ClCompile Include="Source\Mame\Game\BehaviorData.cpp" />
     <ClCompile Include="Source\Mame\Game\BehaviorTree.cpp" />
     <ClCompile Include="Source\Mame\Game\BlackHole.cpp" />
@@ -328,6 +329,7 @@
     <ClInclude Include="Source\Mame\Game\AttackSkill.h" />
     <ClInclude Include="Source\Mame\Game\BaseEnemyAI.h" />
     <ClInclude Include="Source\Mame\Game\BaseSkill.h" />
+    <ClInclude Include="Source\Mame\Game\Tutorial.h" />
     <ClInclude Include="Source\Mame\Game\BehaviorData.h" />
     <ClInclude Include="Source\Mame\Game\BehaviorTree.h" />
     <ClInclude Include="Source\Mame\Game\BlackHole.h" />

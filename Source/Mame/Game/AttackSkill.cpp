@@ -6,6 +6,7 @@ namespace PlayerSkill
 {
     void Drain::Initialize()
     {
+        BaseSkill::Initialize();
         //probability = 5;//èoåªämó¶
         drainCoefficient = 0.3f;
     }
@@ -80,6 +81,16 @@ namespace PlayerSkill
     }
 
     void CanTripleAttack::Overlaping()
+    {
+        overlap++;
+        if (overlap <= 1)return;
+    }
+    void CanCounterAttack::Overlaping()
+    {
+        overlap++;
+        if (overlap <= 1)return;
+    }
+    void ChangeHomingSkill::Overlaping()
     {
         overlap++;
         if (overlap <= 1)return;

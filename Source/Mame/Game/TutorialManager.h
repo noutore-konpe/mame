@@ -1,26 +1,15 @@
 #pragma once
 
 #include <memory>
-#include "../Resource/sprite.h"
+#include "Tutorial.h"
 
-enum class TUTORIAL
+enum class TUTORIAL_STEP
 {
     MOVE,
     ATTACK,
     AVOID,
 
     COUNT, // チュートリアル数
-};
-
-// チュートリアルのスプライトパラメータ
-struct TutorialSpriteParam
-{
-    // ※位置は含めない
-    DirectX::XMFLOAT2 size_     = {};
-    DirectX::XMFLOAT2 texSize_  = {};
-    DirectX::XMFLOAT2 texPos_   = {};
-    DirectX::XMFLOAT4 color_    = {};
-    float             angle_    = 0.0f;
 };
 
 class TutorialManager
@@ -40,51 +29,28 @@ public:
     const bool Update(const float elapsedTime); // true：実行中 false：終了
     void Render();
 
-    // 次のチュートリアルに移る(※チュートリアルが最後まで行ったらfalseを返す)
-    const bool MoveNextTutorial();
+    // 次のチュートリアルを設定(※チュートリアルが最後まで行ったらfalseを返す)
+    const bool SetNextTutorial();
 
     // n番目のチュートリアル達成フラグをONにする
-    void CompleteTutorialAt(const TUTORIAL& index) { tutorialCompleteFlag_[static_cast<int>(index)]; }
+    void CompleteTutorialAt(const TUTORIAL_STEP& step) { tutorialCompleteFlags_[static_cast<int>(step)]; }
 
 public:
-    [[nodiscard]] const int GetCurrentTutorialIndex() const { return currentTutorialIndex_; }
+    // 現在のチュートリアル番号取得
+    [[nodiscard]] const int GetTutorialIndex() const { return static_cast<int>(tutorialstep_); }
 
 public:
-    static constexpr int TUTORIAL_COUNT_ = static_cast<int>(TUTORIAL::COUNT); // チュートリアルの数
+    // チュートリアルの数
+    static constexpr int TUTORIAL_COUNT_ = static_cast<int>(TUTORIAL_STEP::COUNT);
 
 private:
-    std::unique_ptr<Sprite> text_;              // テキスト
-    std::unique_ptr<Sprite> checkMark_;         // チェックマーク
-    std::unique_ptr<Sprite> textBackGround_;    // テキスト背景
+    std::unique_ptr<BaseTutorial> tutorial_;
 
-    int currentTutorialIndex_ = 0;              // 現在のチュートリアル番号
+    // 現在のチュートリアルステップ
+    TUTORIAL_STEP tutorialstep_ = TUTORIAL_STEP::MOVE;
 
     // チュートリアル達成フラグ
-    bool tutorialCompleteFlag_[static_cast<int>(TUTORIAL::COUNT)] = { false };
-
-private:
-    // 各スプライトパラメータ
-    TutorialSpriteParam textParam_ = {
-        { 10.0f, 10.0f },
-        { 100.0f, 100.0f },
-        { 0.0f, 0.0f },
-        { 1.0f, 1.0f, 1.0f, 1.0f },
-        0.0f,
-    };
-    TutorialSpriteParam checkMarkParam_ = {
-        { 10.0f, 10.0f },
-        { 100.0f, 100.0f },
-        { 0.0f, 0.0f },
-        { 1.0f, 1.0f, 1.0f, 1.0f },
-        0.0f,
-    };
-    TutorialSpriteParam textBackGroundParam_ = {
-        { 10.0f, 10.0f },
-        { 100.0f, 100.0f },
-        { 0.0f, 0.0f },
-        { 1.0f, 1.0f, 1.0f, 1.0f },
-        0.0f,
-    };
+    bool tutorialCompleteFlags_[static_cast<int>(TUTORIAL_STEP::COUNT)] = { false };
 
 };
 

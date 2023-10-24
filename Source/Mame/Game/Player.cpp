@@ -64,6 +64,7 @@ Player::Player()
 
     laserEffect = std::make_unique<Effect>("./Resources/Effect/laser.efk");
     expEffect = std::make_unique<Effect>("./Resources/Effect/getExp.efk");
+    
 }
 
 // デストラクタ
@@ -150,7 +151,7 @@ void Player::Initialize()
     
     for (auto& collider : hitCollider)
     {
-        collider.radius *= 1.3f;
+        collider.radius *= 1.6f;
     }
     
     skillArray = &PlayerManager::Instance().GetSkillArray();
@@ -182,7 +183,13 @@ void Player::Update(const float elapsedTime)
     if (InputLockOn())
     {
         Camera::Instance().activeLockOn = !Camera::Instance().activeLockOn;
-        if (Camera::Instance().activeLockOn)LockOnInitialize();
+        if (Camera::Instance().activeLockOn)
+        {
+            if (EnemyManager::Instance().GetEnemyCount() >= 1) 
+            {
+                LockOnInitialize();
+            }
+        }
     }
 
     if (Camera::Instance().activeLockOn)
@@ -225,7 +232,7 @@ void Player::End()
 {
 }
 
-Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, Character* attacker, float invincibleTime)
+Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, Character* attacker, float invincibleTime, bool ignoreDefence)
 {
     DamageResult result;
 
@@ -239,12 +246,15 @@ Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT
     //カウンター受付時間中か
     if (isCounter)
     {
-        result.hitVector = Normalize(attacker->GetTransform()->GetPosition() - GetTransform()->GetPosition());
+        if (attacker)
+        {
+            result.hitVector = Normalize(attacker->GetTransform()->GetPosition() - GetTransform()->GetPosition());
 
-        
-        float length = sqrtf(result.hitVector.x * result.hitVector.x + result.hitVector.z * result.hitVector.z);
-        float rot = result.hitVector.z /= length;
-        GetTransform()->SetRotationY(acosf(rot));
+            float rot = acosf(result.hitVector.z);
+
+            //今回の外積のY成分はhitVector.xなので左右判定はこれを使う
+            GetTransform()->SetRotationY((result.hitVector.x > 0) ? rot : -rot);
+        }
 
         result.damage = damage;
         result.hit = true;
@@ -258,7 +268,12 @@ Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT
         return result;
     }
 
-    return Character::ApplyDamage(damage, hitPosition, attacker, invincibleTime);
+    return Character::ApplyDamage(damage, hitPosition, attacker, invincibleTime, ignoreDefence);
+}
+
+Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, const HitReaction reaction, Character* attacker,float invincibleTime, bool ignoreDefence)
+{
+    return Player::ApplyDamage(damage, hitPosition, attacker, invincibleTime, ignoreDefence);
 }
 
 void Player::MoveUpdate(float elapsedTime,float ax,float ay)
@@ -834,7 +849,7 @@ BaseSkill* Player::Lottery()
         {
             //すでに引かれたスキルはスキップ
             if (skill->isSelect)continue;
-            if (skill->isOneSheet)continue;
+            if (skill->isOneSheet && skill->GetOverlapNum() > 0)continue;
 
             if (skill->rarity == rarity)
             {
@@ -870,7 +885,7 @@ bool Player::ChangeLockOnTarget(float ax)
     if (!(ax > 0.5f || ax < -0.5))return false;
     auto& camera = Camera::Instance();
 
-    if (camera.GetLockOnTarget() == nullptr)return false;
+    if (camera.GetLockOnTarget() == nullptr || !camera.activeLockOn)return false;
     DirectX::XMFLOAT3 curLockOnTargetPos = camera.GetLockOnTarget()->GetPosition();
 
     //外積にプレイヤーから片側にいる敵のみ取得
@@ -949,9 +964,11 @@ bool Player::ChangeLockOnTarget(float ax)
 
 void Player::LockOnUpdate()
 {
-    if (Camera::Instance().GetLockOnTarget() == nullptr)
+    if (Camera::Instance().GetLockOnTarget() == nullptr || 
+        EnemyManager::Instance().GetEnemyCount() <= 0)
     {
         LockOnInitialize();
+        Camera::Instance().activeLockOn = false;
         return;
     }
 

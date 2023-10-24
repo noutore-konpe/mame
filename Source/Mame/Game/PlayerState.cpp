@@ -4,6 +4,10 @@
 #include "SlowMotionManager.h"
 #include "LightColorManager.h"
 
+#include "EnemyManager.h"
+
+#include "Collision.h"
+
 #include "../Scene/SceneManager.h"
 #include "../Scene/SceneResult.h"
 
@@ -164,7 +168,7 @@ namespace PlayerState
                 //ˆê“x‚àƒqƒbƒg‚µ‚Ä‚¢‚È‚¢“G‚È‚Ì‚Å“o˜^‚·‚é
                 hit.emplace_back(enemy);
 
-                result = enemy->ApplyDamage(owner->jabMotionAtkMuls[combo],hitPos, owner);
+                result = enemy->ApplyDamage(owner->jabMotionAtkMuls[combo] * owner->GetBasePower(), hitPos, owner);
 
                 enemy->Flinch();
 
@@ -344,6 +348,8 @@ namespace PlayerState
 
         owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
 
+        cAttack = false;
+
         timer = 0;
     }
     void CounterState::Update(const float& elapsedTime)
@@ -375,7 +381,7 @@ namespace PlayerState
                 owner->GetSword()->PlayAnimation(Player::Animation::CounterAttack, false);
 
                 //ƒXƒ[ƒ‚[ƒVƒ‡ƒ“
-                SlowMotionManager::Instance().ExecuteSlowMotion(0.1f,0.7f,0.05f,0.3f);
+                SlowMotionManager::Instance().ExecuteSlowMotion(0.3f,0.3f,0.05f,0.3f);
 
                 //‰æ–Ê‰‰o
                 auto& lcManager = LightColorManager::Instance();
@@ -383,7 +389,7 @@ namespace PlayerState
                 lcManager.GradualChangeColor(LightColorManager::ColorType::SKY,DirectX::XMFLOAT3(0.2f,0.2f,1), 0.3f);
                 lcManager.ChangeVignetteValue(0.1f, 0.3f);
                 Camera::Instance().ScreenVibrate(0.1f, 0.1f);
-                Camera::Instance().ChangeFov(DirectX::XMConvertToRadians(30), 0.1f);
+                Camera::Instance().ChangeFov(DirectX::XMConvertToRadians(60), 0.1f);
                 Input::Instance().GetGamePad().Vibration(0.2f,0.3f);
 
                 //ƒGƒtƒFƒNƒg
@@ -395,6 +401,37 @@ namespace PlayerState
             timer += elapsedTime;
             break;
         case 2:
+            //UŒ‚
+            if (!cAttack)
+            {
+                if (owner->model->GetCurrentKeyframeIndex() > 10)
+                {
+                    auto shotPos = owner->GetTransform()->GetPosition();
+                    shotPos += 0.7f;
+                    Camera::Instance().ScreenVibrate(0.2f, 0.1f);
+                    Input::Instance().GetGamePad().Vibration(0.2f, 0.5f);
+
+                    //UŒ‚”»’è
+                    for (auto& enemy : EnemyManager::Instance().GetEnemies())
+                    {
+                        for (auto& collider : enemy->GetHitCollider())
+                        {
+                            if (Collision::IntersectSphereVsCapsule(
+                            collider.position,collider.radius,
+                                shotPos,owner->GetTransform()->CalcForward(),100,1
+                            ))
+                            {
+                                enemy->ApplyDamage(owner->GetBasePower() * 3.5f, collider.position, owner);
+                                break;
+                            }
+                        }
+                    }
+
+
+                    cAttack = true;
+                }
+            }
+
             if (!owner->IsPlayAnimation())
             {
                 auto& lcManager = LightColorManager::Instance();

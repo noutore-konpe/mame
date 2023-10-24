@@ -85,6 +85,7 @@ void SceneGame::CreateResource()
     }
 
 
+
     // sprite
     {
         whiteSprite = std::make_unique<Sprite>(graphics.GetDevice(),

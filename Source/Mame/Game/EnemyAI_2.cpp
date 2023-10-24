@@ -62,8 +62,6 @@ EnemyAI_2::EnemyAI_2()
     }
     SetType(Enemy::TYPE::Normal);
 
-
-
     // ImGui名前設定
     name_ = { "EnemyAI_2 : " + std::to_string(nameNum_++) };
 
@@ -73,8 +71,7 @@ EnemyAI_2::EnemyAI_2()
 EnemyAI_2::~EnemyAI_2()
 {
     --nameNum_;
-    if(isDead)
-        EnemyManager::Instance().AddEnemy2KillNum();
+    if (isDead) EnemyManager::Instance().AddEnemy2KillNum();
 }
 
 // 初期化
@@ -84,12 +81,13 @@ void EnemyAI_2::Initialize()
 
     BaseEnemyAI::Initialize();
 
-    constexpr float scale = 1.0f;
+    static constexpr float scale = 1.0f;
+    static constexpr float swordScale = scale * 0.9f;
     this->GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
-    sword_->GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
+    sword_->GetTransform()->SetScale(XMFLOAT3(swordScale, swordScale, swordScale));
 
     moveSpeed_      = 2.0f;
-    animationSpeed_ = 0.5f;
+    animationSpeed_ = 0.8f;
 
     sword_->PlayAnimation(0, true); // デフォルトアニメーション再生再生
 
@@ -101,6 +99,9 @@ void EnemyAI_2::Initialize()
 void EnemyAI_2::Update(const float& elapsedTime)
 {
     BaseEnemyAI::Update(elapsedTime);
+
+    // 剣の高さ調整
+    sword_->GetTransform()->AddPositionY(-0.1f);
 }
 
 

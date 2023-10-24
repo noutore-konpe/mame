@@ -15,53 +15,70 @@
 
 // ウェーブエネミーセット(※ウェーブに格納する)
 #pragma region WaveEnemySet
+
+namespace Set {
+    static constexpr float HP       = 70.0f;
+    static constexpr float ADD_HP   = 5.0f;
+    static constexpr float ATK      = 20.0f;
+    static constexpr float ADD_ATK  = 3.0f;
+}
+
+#if _DEBUG
+WaveEnemySet waveEnemySetTest[] = {
+     WaveEnemySet(0.0f, "EnemyAI_1",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyAI_1",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyAI_2",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyAI_2",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyAI_3",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyAI_3",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyGolem", ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+};
+#endif
 WaveEnemySet waveEnemySet0[] = {
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), 1.0f, 5),
-    WaveEnemySet(1.0f, "EnemyGolem", SceneGame::stageCenter, 5.0f, 10),
+    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 0.0f), Set::ATK + (Set::ADD_ATK * 0.0f), 5),
 };
 WaveEnemySet waveEnemySet1[] = {
-
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), 1.0f, 5),
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), 1.0f, 5),
+    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 1.0f), Set::ATK + (Set::ADD_ATK * 1.0f), 5),
+    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 1.0f), Set::ATK + (Set::ADD_ATK * 1.0f), 5),
 };
 WaveEnemySet waveEnemySet2[] = {
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), 1.0f, 5),
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), 1.0f, 5),
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(2), 1.0f, 5),
+    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 2.0f), Set::ATK + (Set::ADD_ATK * 2.0f), 5),
+    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 2.0f), Set::ATK + (Set::ADD_ATK * 2.0f), 5),
+    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 2.0f), Set::ATK + (Set::ADD_ATK * 2.0f), 5),
 };
 WaveEnemySet waveEnemySet3[] = {
-    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(0), 1.0f, 5),
+    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 3.0f), Set::ATK + (Set::ADD_ATK * 3.0f), 5),
 };
 WaveEnemySet waveEnemySet4[] = {
-    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(0), 1.0f, 5),
-    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(1), 1.0f, 5),
+    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 4.0f), Set::ATK + (Set::ADD_ATK * 4.0f), 5),
+    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 4.0f), Set::ATK + (Set::ADD_ATK * 4.0f), 5),
 };
 WaveEnemySet waveEnemySet5[] = {
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), 1.0f, 5),
-    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(1), 1.0f, 5),
+    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 5.0f), Set::ATK + (Set::ADD_ATK * 5.0f), 5),
+    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 5.0f), Set::ATK + (Set::ADD_ATK * 5.0f), 5),
 };
 WaveEnemySet waveEnemySet6[] = {
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), 1.0f, 5),
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), 1.0f, 5),
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(2), 1.0f, 5),
-    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(3), 1.0f, 5),
+    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 6.0f), Set::ATK + (Set::ADD_ATK * 6.0f), 5),
+    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 6.0f), Set::ATK + (Set::ADD_ATK * 6.0f), 5),
+    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 6.0f), Set::ATK + (Set::ADD_ATK * 6.0f), 5),
+    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(3), Set::HP + (Set::ADD_HP * 6.0f), Set::ATK + (Set::ADD_ATK * 6.0f), 5),
 };
 WaveEnemySet waveEnemySet7[] = {
-    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(0), 1.0f, 5),
+    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 7.0f), Set::ATK + (Set::ADD_ATK * 7.0f), 5),
 };
 WaveEnemySet waveEnemySet8[] = {
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), 1.0f, 5),
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), 1.0f, 5),
-    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(2), 1.0f, 5),
+    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 8.0f), Set::ATK + (Set::ADD_ATK * 8.0f), 5),
+    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 8.0f), Set::ATK + (Set::ADD_ATK * 8.0f), 5),
+    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 8.0f), Set::ATK + (Set::ADD_ATK * 8.0f), 5),
 };
 WaveEnemySet waveEnemySet9[] = {
-    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(0), 1.0f, 5),
-    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(1), 1.0f, 5),
-    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(2), 1.0f, 5),
-    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(3), 1.0f, 5),
+    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 9.0f), Set::ATK + (Set::ADD_ATK * 9.0f), 5),
+    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 9.0f), Set::ATK + (Set::ADD_ATK * 9.0f), 5),
+    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 9.0f), Set::ATK + (Set::ADD_ATK * 9.0f), 5),
+    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(3), Set::HP + (Set::ADD_HP * 9.0f), Set::ATK + (Set::ADD_ATK * 9.0f), 5),
 };
 WaveEnemySet waveEnemySet10[] = {
-    WaveEnemySet(1.0f, "EnemyGolem", SceneGame::stageCenter, 1.0f, 5),
+    WaveEnemySet(1.0f, "EnemyGolem", SceneGame::stageCenter, Set::HP + (Set::ADD_HP * 10.0f), Set::ATK + (Set::ADD_ATK * 10.0f), 5),
 };
 #pragma endregion
 
@@ -69,6 +86,9 @@ WaveEnemySet waveEnemySet10[] = {
 // ウェーブ(※ウェーブ配列に格納する)
 // 引数：ウェーブ名・ウェーブについての備考・WaveEnemySet配列の要素数・WaveEnemySet配列の先頭アドレス
 #pragma region Wave
+#if _DEBUG
+Wave waveTest_ = { "WaveTest", "Test", std::size(waveEnemySetTest),  waveEnemySetTest };
+#endif
 Wave wave0_  = { "Wave0",  "None",    std::size(waveEnemySet0),  waveEnemySet0  };
 Wave wave1_  = { "Wave1",  "None",    std::size(waveEnemySet1),  waveEnemySet1  };
 Wave wave2_  = { "Wave2",  "None",    std::size(waveEnemySet2),  waveEnemySet2  };
@@ -85,6 +105,9 @@ Wave wave10_ = { "Wave10", "VsGolem", std::size(waveEnemySet10), waveEnemySet10 
 
 // ウェーブ配列(※上から順にウェーブが実行される)
 Wave waves_[] = {
+#if _DEBUG
+    //waveTest_,
+#endif
     wave0_,
     wave1_,
     wave2_,
@@ -237,6 +260,7 @@ void WaveManager::SpawnEnemy(WaveEnemySet* waveEnemy)
         enemy->SetPosition(waveEnemy->pos_);            // 位置設定
         enemy->SetHealth(waveEnemy->hp_);               // 体力設定
         enemy->SetMaxHealth(waveEnemy->hp_);            // 最大体力設定
+        enemy->SetAttack(waveEnemy->atk_);              // 攻撃力設定
         enemy->SetDropExpCount(waveEnemy->dropExp_);    // ドロップ経験値数設定
 
         // ウェーブから生まれた敵である(ウェーブ敵フラグON)

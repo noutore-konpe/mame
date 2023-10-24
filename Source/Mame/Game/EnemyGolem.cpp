@@ -9,6 +9,9 @@
 #include "../Scene/SceneGame.h"
 
 #include "EnemyManager.h"
+#include "PlayerManager.h"
+
+#include "Collision.h"
 
 #include "../Resource/texture.h"
 #include "../Other/misc.h"
@@ -519,7 +522,7 @@ void EnemyGolem::ColliderInitialize()
     {
         for (int i = 0; i < static_cast<int>(ColliderName::END); i++)
         {
-            attackCollider.emplace_back(SphereCollider(0.3f));
+            attackCollider.emplace_back(SphereCollider(0.8f));
         }
 
         for (int i = 0; i < static_cast<int>(ColliderName::END); i++)
@@ -556,4 +559,22 @@ void EnemyGolem::ColliderPosUpdate(const float& scale)
     {
         attackCollider[i].position = hitCollider[i].position;
     }
+}
+
+const bool EnemyGolem::AttackCollisionVsPlayer(ColliderName index,float damage)
+{
+    auto* player = PlayerManager::Instance().GetPlayer().get();
+    auto myHitCollider = hitCollider.at(static_cast<int>(index));
+    for  (auto& pHitCollider : player->GetHitCollider())
+    {
+        if (Collision::IntersectSphereVsSphere(
+            pHitCollider.position, pHitCollider.radius,
+            myHitCollider.position, myHitCollider.radius))
+        {
+            player->ApplyDamage(damage, pHitCollider.position,this,Player::HARD);
+            return true;
+        }
+    }
+
+    return false;
 }

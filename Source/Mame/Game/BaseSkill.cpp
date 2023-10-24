@@ -1,5 +1,11 @@
 #include "BaseSkill.h"
-#include "Player.h"
+#include "PlayerManager.h"
+
+void BaseSkill::Initialize()
+{
+    player = PlayerManager::Instance().GetPlayer().get();
+    overlap = 0;
+}
 
 void BaseSkill::Render()
 {

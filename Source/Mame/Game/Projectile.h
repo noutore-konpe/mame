@@ -10,6 +10,7 @@ class Projectile
 public:
     Projectile(
         ProjectileManager* manager,
+        Character* owner,
         const bool isPoison = false
     );
     virtual ~Projectile() {}
@@ -46,6 +47,8 @@ public:
     const BLOW_OFF_FORCE_LEVEL& GetInflictBlowOffForceLevel() const { return inflictBlowOffForceLevel_; }
     void SetInflictBlowOffForceLevel(const BLOW_OFF_FORCE_LEVEL& inflictBlowOffForceLevel) { inflictBlowOffForceLevel_ = inflictBlowOffForceLevel; }
 
+    Character* GetOwner() { return owner; }
+
 public:
     std::unique_ptr<Model> model_;
 
@@ -57,6 +60,8 @@ protected:
     float               attack_     = 1.0f;
 
     bool                isPoison_;
+
+    Character* owner;
 
     BLOW_OFF_FORCE_LEVEL inflictBlowOffForceLevel_ = BLOW_OFF_FORCE_LEVEL::MIDDLE;
 

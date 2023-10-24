@@ -535,6 +535,9 @@
     <ClCompile Include="Source\Mame\Game\TutorialManager.cpp">
       <Filter>mamelib\Mame\Game\Tutorial</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\Tutorial.cpp">
+      <Filter>mamelib\Mame\Game\Tutorial</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -927,6 +930,9 @@
       <Filter>mamelib\Mame\Game</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\TutorialManager.h">
+      <Filter>mamelib\Mame\Game\Tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\Tutorial.h">
       <Filter>mamelib\Mame\Game\Tutorial</Filter>
     </ClInclude>
   </ItemGroup>

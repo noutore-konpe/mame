@@ -7,6 +7,8 @@
 #include "PlayerManager.h"
 #include "WaveManager.h"
 
+#include "EnemyManager.h"
+
 void UserInterface::Initialize()
 {
     Graphics& graphics = Graphics::Instance();
@@ -167,6 +169,8 @@ void UserInterface::DrawDebug()
 // ロックオン
 void UserInterface::UpdateLockOnSprite(const float& elapsedTime)
 {
+    if (EnemyManager::Instance().GetEnemyCount() <= 0)return;
+
     // ロックオン中央画像
     if (Camera::Instance().activeLockOn && Camera::Instance().GetLockOnTarget())
     {
@@ -182,7 +186,7 @@ void UserInterface::UpdateLockOnSprite(const float& elapsedTime)
     }
 
     // ロックオンの最初に出る丸い枠
-    if (isLockOnInitialize)
+    if (isLockOnInitialize && Camera::Instance().activeLockOn && Camera::Instance().GetLockOnTarget())
     {
         float maxTime = 0.3f;
         float minSize = 16.0f;

@@ -7,6 +7,7 @@ class ProjectileHorming : public Projectile
 public:
     ProjectileHorming(
         ProjectileManager* manager,
+        Character* owner,
         const bool isPoison = false
     );
     ~ProjectileHorming() override;
