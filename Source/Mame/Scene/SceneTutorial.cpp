@@ -229,7 +229,7 @@ void SceneTutorial::End()
 {
 }
 
-void SceneTutorial::Render(const float& elapsedTime)
+void SceneTutorial::Render(const float& /*elapsedTime*/)
 {
     Graphics& graphics = Graphics::Instance();
     Shader* shader = graphics.GetShader();

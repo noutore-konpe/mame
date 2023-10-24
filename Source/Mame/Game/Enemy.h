@@ -104,7 +104,7 @@ public:
     // 消去
     void Destroy();
 
-    // 検索する子ノードが存在するか検索する
+    // 検索する子ノードが存在するか調べる
     const bool IsExistChildNode(const std::string& findNodeName);
 
     // 子ノードの数を取得
