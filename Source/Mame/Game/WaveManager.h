@@ -148,7 +148,7 @@ public: // Get・Set Function
     const size_t GetCurrentWaveEnemyCount() const { return waveParent_.children_->spawnEnemyCount_; }
 
 private:
-    static constexpr float BREAK_TIME_ = 5.0f; // 現在のウェーブから次のウェーブに移るまでの休憩時間
+    static constexpr float BREAK_TIME_ = 2.5f; // 現在のウェーブから次のウェーブに移るまでの休憩時間
 
 private:
     WaveParent  waveParent_             = {};       // ウェーブの親(ウェーブを管理)

@@ -49,7 +49,7 @@ void StoneBall::Update(const float& elapsedTime)
             hitCollider.radius
         ))
         {
-            PlayerManager::Instance().GetPlayer()->ApplyDamage(damage);
+            //PlayerManager::Instance().GetPlayer()->ApplyDamage(damage);
         }
     }
 }

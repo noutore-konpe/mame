@@ -167,6 +167,7 @@ private:
 
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> golemEmissive;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> eyeEmissive;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> golemNormal;
 
     Microsoft::WRL::ComPtr<ID3D11Buffer> eyeConstantBuffer;
     struct EyeConstants

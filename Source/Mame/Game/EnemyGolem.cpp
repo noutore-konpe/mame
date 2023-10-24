@@ -37,6 +37,10 @@ EnemyGolem::EnemyGolem()
         L"./Resources/Model/Character/Enemy/golem_eye_emissive.png",
         eyeEmissive.GetAddressOf(),
         &texture2dDesc);
+    ::load_texture_from_file(graphics.GetDevice(),
+        L"./Resources/Model/Character/Enemy/golem_normal.png",
+        golemNormal.GetAddressOf(),
+        &texture2dDesc);
 
     {
         HRESULT hr{ S_OK };
@@ -327,8 +331,13 @@ void EnemyGolem::UpdateConstants()
     // color
     SetEmissiveColor(golemColor);
     SetEmissiveColor(DirectX::XMFLOAT4(0.7f, 0.0f, 1.0f, 1.0f));
-    graphics.GetDeviceContext()->PSSetShaderResources(16, 1, golemEmissive.GetAddressOf());
-    graphics.GetDeviceContext()->PSSetShaderResources(14, 1, eyeEmissive.GetAddressOf());
+    ID3D11ShaderResourceView* shaderResourceViews[] =
+    {
+        golemEmissive.Get(),
+        eyeEmissive.Get(),
+    };
+    graphics.GetDeviceContext()->PSSetShaderResources(16, _countof(shaderResourceViews), shaderResourceViews);
+    graphics.GetDeviceContext()->PSSetShaderResources(14, 1, golemNormal.GetAddressOf());
     
     graphics.GetDeviceContext()->UpdateSubresource(eyeConstantBuffer.Get(), 0, 0, &eyeConstants, 0, 0);
     graphics.GetDeviceContext()->PSSetConstantBuffers(7, 1, eyeConstantBuffer.GetAddressOf());
