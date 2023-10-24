@@ -295,7 +295,9 @@ void SceneGame::Initialize()
 
     isParticleInitialize = false; // particle用
     isWhiteSpriteRender = true;
+    isBlackSpriteRender = false;
     whiteSpriteTimer = 0.0f;
+    blackSpriteTimer = 0.0f;
 
     // Wave Initialize
     {
@@ -353,6 +355,28 @@ void SceneGame::Update(const float& elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
 
+    // リザルトに飛ばす
+    if (PlayerManager::Instance().GetPlayer()->GetIsResult())
+    {
+        isBlackSpriteRender = true;
+
+        float maxTime = 2.0f;
+        if (blackSpriteTimer <= maxTime)
+        {
+            float alpha = Easing::InSine(blackSpriteTimer, maxTime, 1.0f, 0.0f);
+
+            whiteSprite->GetSpriteTransform()->SetColor(DirectX::XMFLOAT4(0, 0, 0, alpha));
+
+            blackSpriteTimer += elapsedTime;
+        }
+        else
+        {
+            whiteSprite->GetSpriteTransform()->SetColor(DirectX::XMFLOAT4(0, 0, 0, 1));
+
+            Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneResult));
+        }
+    }
+
     // 最初の白飛びのスプライト
     UpdateWhiteSprite(elapsedTime);
 
@@ -392,13 +416,13 @@ void SceneGame::Update(const float& elapsedTime)
         particles->Integrate(Graphics::Instance().GetDeviceContext(), slowMotionElapsedTime);
     }
 
+#ifdef _DEBUG
     if (GetAsyncKeyState('P') & 0x01)
     {
         //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneResult);
         Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneResult));
         return;
     }
-#ifdef _DEBUG
 #endif
 
 #ifdef _DEBUG
@@ -760,6 +784,7 @@ void SceneGame::Render(const float& /*elapsedTime*/)
 
         // ※これより下に何も描画しない
         if(isWhiteSpriteRender) whiteSprite->Render();
+        if(isBlackSpriteRender) whiteSprite->Render();
         // ※これより下に何も描画しない
     }
 

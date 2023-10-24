@@ -119,6 +119,9 @@ public: // 取得・設定関数
     void SetMaxHealth(const float maxHp) { maxHealth = maxHp; }
     const float GetMaxHealth() const { return maxHealth; }
 
+    void SetAttack(const float attack) { attack_ = attack; }
+    [[nodiscard]] const float GetAttack() const { return attack_; }
+
     // emissive ※constansのやつなのでこいつを使う場所は UpdateConstansで使ってほしい
     void SetEmissiveIntensity(float intensity) { model->skinned_meshes->data.emissiveIntensity = intensity; }
     void SetEmissiveScrollDirection(DirectX::XMFLOAT2 scroll) { model->skinned_meshes->data.emissiveScrollDirection = scroll; }
@@ -199,10 +202,11 @@ protected:
     float       radius_         = 0.25f;        // 半径(当たり判定に使用)
     float       height_         = 1.5f;         // 高さ(位置修正に使用)
 
-
     float       maxHealth       = 1.0f;
     float       health          = maxHealth;    // hp
     float       invincibleTime  = 1.0f;         // 無敵時間
+
+    float       attack_         = 0.0f;
 
     float       lockOnHeight    = 1.0f;         // 身長
     float       defence         = 0.0f;         // 防御力

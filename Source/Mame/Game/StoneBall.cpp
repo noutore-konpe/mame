@@ -52,7 +52,10 @@ void StoneBall::Update(const float& elapsedTime)
         {
             //TODO:ÉSÅ[ÉåÉÄÅ@ä‚çUåÇ
             PlayerManager::Instance().GetPlayer()->ApplyDamage(damage,hitCollider.position,owner);
-            Destroy();
+            
+            Input::Instance().GetGamePad().Vibration(0.3f, 0.3f);
+
+            Destroy(); // âºè¡ãé
         }
     }
 }

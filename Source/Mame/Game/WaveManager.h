@@ -61,19 +61,23 @@ struct WaveEnemySet
         const std::string&       name,
         const DirectX::XMFLOAT3& pos,
         const float              hp,
+        const float              atk,
         const int                dropExp)
         : spawnTime_(spawnTime)
         , name_(name)
         , pos_(pos)
         , hp_(hp)
+        , atk_(atk)
         , dropExp_(dropExp)
         , isSpawned_(false) // 生成フラグはデフォルトでfalse
     {}
 
+    public:
     float             spawnTime_ = 0.0f;    // 出現時間
     std::string       name_      = "";      // 名前(敵生成時の敵クラス検索用)
     DirectX::XMFLOAT3 pos_       = {};      // 出現位置
     float             hp_        = 0.0f;    // 体力
+    float             atk_       = 0.0f;    // 攻撃力
     int               dropExp_   = 0;       // 落とす経験値の数
     bool              isSpawned_ = false;   // 生成したか(１回だけ生成するためのフラグ)
 
@@ -147,8 +151,8 @@ public: // Get・Set Function
     // 現在のウェーブが出現させる敵の総数を取得
     const size_t GetCurrentWaveEnemyCount() const { return waveParent_.children_->spawnEnemyCount_; }
 
-private:
-    static constexpr float BREAK_TIME_ = 5.0f; // 現在のウェーブから次のウェーブに移るまでの休憩時間
+public:
+    static constexpr float BREAK_TIME_ = 2.5f; // 現在のウェーブから次のウェーブに移るまでの休憩時間
 
 private:
     WaveParent  waveParent_             = {};       // ウェーブの親(ウェーブを管理)

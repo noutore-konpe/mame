@@ -336,5 +336,13 @@ private:
     std::unique_ptr<Effect> expEffect;
     Effekseer::Handle expHandle;
     //------------------------------------------------------------------------------------
+
+    //--- result ---
+public:
+    void SetIsResult() { isResult = true; }
+    bool GetIsResult() { return isResult; }
+
+private:
+    bool isResult = false;
 };
 
