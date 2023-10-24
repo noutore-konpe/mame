@@ -6,8 +6,10 @@
 #include "PlayerManager.h"
 #include "Collision.h"
 
+#include "Enemy.h"
+
 // コンストラクタ
-StoneBall::StoneBall()
+StoneBall::StoneBall(Enemy* owner) : owner(owner)
 {
     Graphics& graphics = Graphics::Instance();
 
@@ -25,13 +27,10 @@ StoneBall::StoneBall()
         stoneBallPS.GetAddressOf());
 }
 
-StoneBall::~StoneBall()
-{
-}
-
 void StoneBall::Initialize()
 {
     GetTransform()->SetScale(DirectX::XMFLOAT3(3.0f, 3.0f, 3.0f));
+    isDestroy = false;
 }
 
 void StoneBall::Finalize()
@@ -40,6 +39,8 @@ void StoneBall::Finalize()
 
 void StoneBall::Update(const float& elapsedTime)
 {
+    if (isDestroy)return;
+
     for (auto& hitCollider : PlayerManager::Instance().GetPlayer()->GetHitCollider())
     {
         if (Collision::IntersectSphereVsSphere(
@@ -49,7 +50,9 @@ void StoneBall::Update(const float& elapsedTime)
             hitCollider.radius
         ))
         {
-            //PlayerManager::Instance().GetPlayer()->ApplyDamage(damage);
+            //TODO:ゴーレム　岩攻撃
+            PlayerManager::Instance().GetPlayer()->ApplyDamage(damage,hitCollider.position,owner);
+            Destroy();
         }
     }
 }
@@ -58,6 +61,7 @@ void StoneBall::Render(const float& scale, ID3D11PixelShader* psShader)
 {
     UpdateConstants();
 
+    if (isDestroy)return;
     Stone::Render(scale, stoneBallPS.Get());
 }
 

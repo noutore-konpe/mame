@@ -230,6 +230,13 @@ Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT
     //カウンター受付時間中か
     if (isCounter)
     {
+        result.hitVector = Normalize(attacker->GetTransform()->GetPosition() - GetTransform()->GetPosition());
+
+        
+        float length = sqrtf(result.hitVector.x * result.hitVector.x + result.hitVector.z * result.hitVector.z);
+        float rot = result.hitVector.z /= length;
+        GetTransform()->SetRotationY(acosf(rot));
+
         result.damage = damage;
         result.hit = true;
         counterCompleted = true;
@@ -320,6 +327,22 @@ void Player::MoveVecUpdate(float ax,float ay)
         moveVec.x /= length;
         moveVec.z /= length;
     }
+}
+
+DirectX::XMFLOAT2 Player::ConvertToCameraMoveVec(float ax, float ay)
+{
+    auto forward = Camera::Instance().GetForward();
+    auto right = Camera::Instance().GetRight();
+    forward.x *= ay;
+    forward.z *= ay;
+    right.x *= ax;
+    right.z *= ax;
+
+    DirectX::XMFLOAT2 moveVec = { right.x + forward.x,right.z + forward.z };
+    float length = sqrtf(moveVec.x * moveVec.x + moveVec.y * moveVec.y);
+    moveVec.x /= length;
+    moveVec.y /= length;
+    return moveVec;
 }
 
 void Player::UpdateVelocity(float elapsedTime,float ax,float ay)

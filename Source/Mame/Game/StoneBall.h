@@ -1,11 +1,13 @@
 #pragma once
 #include "Stone.h"
 
+class Enemy;
+
 class StoneBall : public Stone
 {
 public:
-    StoneBall();
-    ~StoneBall() override;
+    StoneBall(Enemy* owner);
+    ~StoneBall() override {}
 
     void Initialize() override;
     void Finalize() override;
@@ -22,11 +24,17 @@ public:
 
     void SetRadius(float r) { radius = r; }
 
+    void Destroy() { isDestroy = true; }
+
     float radius = 1.0f;
     float damage = 1.0f;
 
 private:
     Microsoft::WRL::ComPtr<ID3D11PixelShader> stoneBallPS;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> stoneBallTexture;
+
+    Enemy* owner;
+
+    bool isDestroy = false;
 };
 

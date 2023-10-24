@@ -5,11 +5,11 @@
 #include "ComboAttackStoneState.h"
 
 // コンストラクタ
-ComboAttackStone::ComboAttackStone()
+ComboAttackStone::ComboAttackStone(Enemy* owner)
 {
     Graphics& graphics = Graphics::Instance();
 
-    stoneBall = std::make_unique<StoneBall>();
+    stoneBall = std::make_unique<StoneBall>(owner);
     magicCircle = std::make_unique<MagicCircle>();
 
 
@@ -43,6 +43,8 @@ void ComboAttackStone::Update(const float& elapsedTime)
 {
     // ステートマシン更新
     GetStateMachine()->Update(elapsedTime);
+
+    stoneBall->Update(elapsedTime);
 }
 
 // 描画

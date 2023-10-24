@@ -64,6 +64,8 @@ public:
     //入力をカメラから見たベクトルに変更しmoveVec変数に入れる関数
     void MoveVecUpdate(float ax, float ay);
 
+    DirectX::XMFLOAT2 ConvertToCameraMoveVec(float ax,float ay);
+
     void AvoidUpdate(float elapsedTime);
 
     void ModelRotZUpdate(float elapsedTime);

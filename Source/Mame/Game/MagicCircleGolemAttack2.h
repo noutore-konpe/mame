@@ -27,7 +27,7 @@ public:
     };
 
 public:
-    MagicCircleGolemAttack2();
+    MagicCircleGolemAttack2(Enemy* owner);
     ~MagicCircleGolemAttack2();
 
     void Initialize();
