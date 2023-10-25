@@ -183,7 +183,7 @@ void Book::CollisionProjectileVsEnemies()
                 enemy->SaveBlowOffInfo(vec, proj->GetInflictBlowOffForceLevel());
 
                 // 敵にダメージを与える
-                auto result = enemy->ApplyDamage(proj->GetAttack(),enmHitColliderPos);
+                auto result = enemy->ApplyDamage(proj->GetAttack() + PlayerManager::Instance().GetPlayer()->GetBasePower() / 10, enmHitColliderPos);
 
                 //毒スキル
                 if (PlayerManager::Instance().GetPoisonSkill()->Active())

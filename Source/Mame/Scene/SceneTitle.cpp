@@ -149,7 +149,6 @@ void SceneTitle::Update(const float& elapsedTime)
         | GetAsyncKeyState('S')
         | GetAsyncKeyState('D');
 
-
     if (!isFade &&
         ((gamePad.GetButtonDown() & anyButton)
             || anyKey))
