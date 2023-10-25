@@ -83,7 +83,7 @@ public:
 
     void Render(const float scale, ID3D11PixelShader* psShader = nullptr) override; // ï`âÊèàóù
 
-    
+
 
     void DrawDebug() override;  // ImGuióp
 
@@ -189,7 +189,7 @@ public:
 
     Model* GetSword() { return swordModel.get(); }
 
-    
+
     void AddExp(const float exp) { curExp += exp; totalExp += exp; }
     const float GetCurExp() const { return curExp; }
     const float GetTotalExp() const { return totalExp; }
@@ -213,7 +213,7 @@ public:
 
     const float GetBasePower() const { return baseAttackPower; }
     //---------------------------ÉXÉLÉã-------------------------------
-   
+
 
     //-----------------------------------------------------------------
 public:

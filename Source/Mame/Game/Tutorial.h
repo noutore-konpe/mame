@@ -73,6 +73,7 @@ class TutorialAttack : public BaseTutorial
 {
 public:
     TutorialAttack();
+    void Initialize() override;
     void DrawImGui() override;
 
 private:
@@ -95,9 +96,19 @@ class TutorialLevelUp : public BaseTutorial
 {
 public:
     TutorialLevelUp();
+    void Update(const float elapsedTime) override;
+    void Render() override;
     void DrawImGui() override;
 
 private:
     const bool MoveNextStepJudgment() override;
+
+    void UpdateCreateEnemy(const float elapsedTime);
+
+private:
+    static constexpr float CREATE_TIME_ = 1.0f;
+
+private:
+    float createTimer_ = 0.0f; // 敵生成タイマー
 
 };

@@ -59,7 +59,6 @@ void TutorialManager::DrawImGui()
     {
         // チュートリアルImGui描画
         tutorial_->DrawImGui();
-
         ImGui::EndMenu();
     }
 

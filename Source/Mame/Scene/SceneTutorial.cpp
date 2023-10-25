@@ -129,6 +129,9 @@ void SceneTutorial::Initialize()
 
     UserInterface::Instance().Initialize();
 
+    // 数字表示初期化
+    NumeralManager::Instance().Initialize();
+
     // チュートリアル初期化
     TutorialManager::Instance().Initialize();
 }
@@ -162,6 +165,14 @@ void SceneTutorial::Update(const float& elapsedTime)
     SlowMotionManager&  slowMotion      = SlowMotionManager::Instance();
     TutorialManager&    tutorialManager = TutorialManager::Instance();
     GamePad&            gamePad         = Input::Instance().GetGamePad();
+
+
+    //if (true == Player::InputDecide())
+    //{
+    //    // ゲームシーンに移る
+    //    sceneManager.ChangeScene(new SceneLoading(new SceneGame));
+    //    return;
+    //}
 
     //カード演出中はほかの処理を更新しない
     Player* player = plManager.GetPlayer().get();
@@ -221,13 +232,6 @@ void SceneTutorial::Update(const float& elapsedTime)
 
         // UI更新
         userInterface.Update(slowMotionElapsedTime);
-
-        // チュートリアル更新
-        const bool tutorialExecuteFlag = tutorialManager.Update(slowMotionElapsedTime);
-        if (false == tutorialExecuteFlag)
-        {
-            // 終了
-        }
     }
 
     //カード演出中だけUpdate前にreturn呼んでるから注意！！
@@ -373,8 +377,10 @@ void SceneTutorial::Render(const float& /*elapsedTime*/)
 
     //ブルームあり２D
     {
-        UserInterface::Instance().BloomRender();
+        // 数字表示描画
+        NumeralManager::Instance().Render();
 
+        UserInterface::Instance().BloomRender();
     }
 
     framebuffers[0]->Deactivate(graphics.GetDeviceContext());
@@ -401,8 +407,6 @@ void SceneTutorial::Render(const float& /*elapsedTime*/)
         };
     }
 
-
-
     // BLOOM
     bloomer->Make(graphics.GetDeviceContext(), framebuffers[0]->shaderResourceViews[0].Get());
 
@@ -422,15 +426,20 @@ void SceneTutorial::Render(const float& /*elapsedTime*/)
 
     //ブルーム無し
     {
+        // チュートリアルスプライト描画
+        tutorialManager.Render();
+
         PlayerManager::Instance().SkillImagesRender();
-        UserInterface::Instance().Render();
     }
 
     // 2D描画
     {
-        // チュートリアルスプライト描画
-        tutorialManager.Render();
+        shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
 
+        // 数字表示描画
+        NumeralManager::Instance().Render();
+
+        UserInterface::Instance().Render();
     }
 }
 

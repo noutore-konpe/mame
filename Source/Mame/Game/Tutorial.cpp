@@ -3,9 +3,13 @@
 #include "../Graphics/Graphics.h"
 #include "../Input/Input.h"
 #include "../Other/Easing.h"
+
 #include "TutorialManager.h"
 #include "EnemyManager.h"
 #include "EnemyAI_Tutorial.h"
+#include "PlayerManager.h"
+#include "Player.h"
+#include "WaveManager.h"
 
 // ベースチュートリアル
 #pragma region BaseTutorial
@@ -47,23 +51,25 @@ void BaseTutorial::Initialize()
 
     // テキスト背景初期化
     // 親の位置（※テキスト背景の位置を親の位置にする）
-    const XMFLOAT2 parentPos = { 735.0f, 215.0f };
+    const XMFLOAT2 parentPos = { 840.0f, 215.0f };
     {
-        texSize = { 520.0f, 300.0f };
+        texSize = textBackGround_->GetSpriteTransform()->GetTexSize();
         scale   = { 1.0f, 1.0f };
-        size    = { texSize.x * scale.x, texSize.y * scale.y };
+        //size    = { texSize.x * scale.x, texSize.y * scale.y };
+        size    = { 400.0f * scale.x, 200.0f * scale.y };
         texPos  = { 0.0f, 0.0f };
         color   = { 1.0f, 1.0f, 1.0f, 0.0f };
         angle   = 0.0f;
         textBackGround_->Initialize(parentPos, size, texSize, texPos, color, angle);
     }
 
+
     // テキスト初期化
     {
         // 親の位置を基準にして位置を設定する
-        pos.x   = parentPos.x + (57.0f);
-        pos.y   = parentPos.y + (51.0f);
-        texSize = { 400.0f, 200.0f };
+        pos.x   = parentPos.x + (-4.0f);
+        pos.y   = parentPos.y + (+10.0f);
+        texSize = text_->GetSpriteTransform()->GetTexSize();
         scale   = { 1.0f, 1.0f };
         size    = { texSize.x * scale.x, texSize.y * scale.y };
         texPos  = { 0.0f, 0.0f };
@@ -77,7 +83,7 @@ void BaseTutorial::Initialize()
         // 親の位置を基準にして位置を設定する
         pos.x   = parentPos.x + (-20.0f);
         pos.y   = parentPos.y + (-30.0f);
-        texSize = { 512.0f, 350.0f };
+        texSize = checkMark_->GetSpriteTransform()->GetTexSize();
         scale   = { 0.3f, 0.3f };
         size    = { texSize.x * scale.x, texSize.y * scale.y };
         texPos  = { 0.0f, 0.0f };
@@ -191,7 +197,6 @@ void BaseTutorial::Update(const float elapsedTime)
         }
 
         textColorAlpha      = textT->GetColorA();
-        textColorAlpha      = textT->GetColorA();
         textBG_ColorAlpha   = textBG_T->GetColorA();
 
         {
@@ -243,13 +248,10 @@ void BaseTutorial::DrawImGui()
 
     if (ImGui::BeginMenu("TextBackGround"))
     {
+        textBackGround_->DrawDebug();
+
         // 位置
         {
-            // 自分の位置だけ動かす
-            XMFLOAT2 pos = textBackGroundT->GetPos();
-            ImGui::SliderFloat2("pos", &pos.x, 0.0f, POS_LIMIT);
-            textBackGroundT->SetPos(pos);
-
             // 他のスプライト位置も動かす
             XMFLOAT2 variationPos = textBackGroundT->GetPos();
             const XMFLOAT2 oldPos = variationPos;
@@ -300,11 +302,10 @@ void BaseTutorial::DrawImGui()
 
     if (ImGui::BeginMenu("Text"))
     {
-        XMFLOAT2 pos = textT->GetPos();
-        ImGui::SliderFloat2("pos", &pos.x, 0.0f, POS_LIMIT);
-        textT->SetPos(pos);
+        textBackGround_->DrawDebug();
 
         // 親の位置からどれくらいずれているかのメモ用
+        const XMFLOAT2& pos = textT->GetPos();
         const XMFLOAT2& textBackGroundPos = textBackGroundT->GetPos();
         XMFLOAT2 variationPos = {
             pos.x - textBackGroundPos.x,
@@ -328,11 +329,8 @@ void BaseTutorial::DrawImGui()
 
     if (ImGui::BeginMenu("CheckMark"))
     {
-        XMFLOAT2 pos = checkMarkT->GetPos();
-        ImGui::SliderFloat2("pos", &pos.x, 0.0f, POS_LIMIT);
-        checkMarkT->SetPos(pos);
-
         // 親の位置からどれくらいずれているかのメモ用
+        const XMFLOAT2& pos = checkMarkT->GetPos();
         const XMFLOAT2& textBackGroundPos = textBackGroundT->GetPos();
         XMFLOAT2 variationPos = {
             pos.x - textBackGroundPos.x,
@@ -542,11 +540,11 @@ const bool TutorialLockOn::MoveNextStepJudgment()
 {
     const Camera& camera = Camera::Instance();
 
-    //// ロックオンが有効になっていればtrueを返す
-    //if (true == camera.GetActiveLockOn())
-    //{
-    //    return true;
-    //}
+    // ロックオンが有効になっていればtrueを返す
+    if (true == camera.GetActiveLockOn())
+    {
+        return true;
+    }
 
     return false;
 }
@@ -565,8 +563,23 @@ TutorialAttack::TutorialAttack()
     {
         text_ = std::make_unique<Sprite>(
             graphics.GetDevice(),
-            L"./Resources/Image/Tutorial/Texts/Attack.png"
+            L"./Resources/Image/Tutorial/Texts/Move.png"
+            //L"./Resources/Image/Tutorial/Texts/Attack.png"
         );
+    }
+}
+
+void TutorialAttack::Initialize()
+{
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    BaseTutorial::Initialize();
+
+    // チュートリアルエネミーの無敵解除
+    if (enemyManager.GetEnemyCount() > 0)
+    {
+        Enemy* enemy = enemyManager.GetEnemy(0);
+        enemy->SetIsInvincible(false);
     }
 }
 
@@ -585,6 +598,14 @@ void TutorialAttack::DrawImGui()
 
 const bool TutorialAttack::MoveNextStepJudgment()
 {
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    // チュートリアルエネミーが存在しなければtrueを返す
+    if (enemyManager.GetEnemyCount() <= 0) return true;
+
+    // チュートリアルエネミーが死んでいたらtrueを返す
+    if (true == enemyManager.GetEnemy(0)->GetIsDead()) return true;
+
     return false;
 }
 
@@ -602,7 +623,8 @@ TutorialAvoid::TutorialAvoid()
     {
         text_ = std::make_unique<Sprite>(
             graphics.GetDevice(),
-            L"./Resources/Image/Tutorial/Texts/Avoid.png"
+            //L"./Resources/Image/Tutorial/Texts/Avoid.png"
+            L"./Resources/Image/Tutorial/Texts/MoveCamera.png"
         );
     }
 
@@ -623,6 +645,10 @@ void TutorialAvoid::DrawImGui()
 
 const bool TutorialAvoid::MoveNextStepJudgment()
 {
+    const GamePad& gamePad = Input::Instance().GetGamePad();
+
+    if (true == Player::InputAvoid()) { return true; }
+
     return false;
 }
 
@@ -640,10 +666,33 @@ TutorialLevelUp::TutorialLevelUp()
     {
         text_ = std::make_unique<Sprite>(
             graphics.GetDevice(),
-            L"./Resources/Image/Tutorial/Texts/LevelUp.png"
+            //L"./Resources/Image/Tutorial/Texts/LevelUp.png"
+            L"./Resources/Image/Tutorial/Texts/LockOn.png"
         );
     }
 
+}
+
+void TutorialLevelUp::Update(const float elapsedTime)
+{
+    using DirectX::XMFLOAT3;
+
+    // 敵生成更新
+    UpdateCreateEnemy(elapsedTime);
+
+    BaseTutorial::Update(elapsedTime);
+
+}
+
+void TutorialLevelUp::Render()
+{
+    PlayerManager& playerManager = PlayerManager::Instance();
+
+    //// スキルカード選択中は描画しないようにする
+    //Player* player = playerManager.GetPlayer().get();
+    //if (true == player->isSelectingSkill) { return; }
+
+    BaseTutorial::Render();
 }
 
 void TutorialLevelUp::DrawImGui()
@@ -661,7 +710,54 @@ void TutorialLevelUp::DrawImGui()
 
 const bool TutorialLevelUp::MoveNextStepJudgment()
 {
+    PlayerManager& playerManager = PlayerManager::Instance();
+
+    // レベルが上がったらtrueを返す
+    Player* player = playerManager.GetPlayer().get();
+    if (player->GetLevel() > 1) { return true; }
+
     return false;
+}
+
+void TutorialLevelUp::UpdateCreateEnemy(const float elapsedTime)
+{
+    using DirectX::XMFLOAT3;
+
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    // 3体だけ生成するようにする
+    if (enemyManager.GetEnemyCount() >= 3)
+    {
+        // 生成タイマーリセット
+        createTimer_ = 0.0f;
+
+        return;
+    }
+
+    // 生成タイマー更新
+    createTimer_ = (std::min)(CREATE_TIME_, createTimer_ + elapsedTime);
+
+    // 生成時間に達していなければreturn
+    if (createTimer_ < CREATE_TIME_) return;
+
+    // 敵生成
+    {
+        EnemyAI_Tutorial* tutorialEnemy = new EnemyAI_Tutorial();
+        tutorialEnemy->Initialize();
+
+        // ランダムなゲート位置から生成
+        const XMFLOAT3 createPos = ::GetGatewayPosition(-1);
+        tutorialEnemy->SetPosition(createPos);
+
+        // 無敵解除
+        tutorialEnemy->SetIsInvincible(false);
+
+        enemyManager.Register(tutorialEnemy);
+    }
+
+    // 生成タイマーリセット
+    createTimer_ = 0.0f;
+
 }
 
 #pragma endregion

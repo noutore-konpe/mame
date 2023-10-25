@@ -172,7 +172,7 @@ namespace PlayerState
 
                 result = enemy->ApplyDamage(owner->jabMotionAtkMuls[combo] * owner->GetBasePower(), hitPos, owner);
 
-                enemy->Flinch();
+                //enemy->Flinch();
 
                 //ƒ_ƒ[ƒW‹zûˆ—
                 PlayerManager::Instance().GetDrainSkill()->Assimilate(result.damage);
