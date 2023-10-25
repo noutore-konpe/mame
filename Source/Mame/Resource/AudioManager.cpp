@@ -70,6 +70,15 @@ void AudioManager::LoadAudio()
 
             se_[static_cast<int>(SE::PlayerDash)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/PlayerDash.wav");
             
+            se_[static_cast<int>(SE::GolemPanchi_0)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemPanchi.wav");
+            se_[static_cast<int>(SE::GolemPanchi_1)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemPanchi.wav");
+            se_[static_cast<int>(SE::GolemPanchi_2)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemPanchi.wav");
+            se_[static_cast<int>(SE::GolemPanchi_3)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemPanchi.wav");
+            se_[static_cast<int>(SE::GolemPanchi_4)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemPanchi.wav");
+            
+            se_[static_cast<int>(SE::GolemEntry_0)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemPanchi.wav");
+            se_[static_cast<int>(SE::GolemEntry_1)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemPanchi.wav");
+            se_[static_cast<int>(SE::GolemEntry_2)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemPanchi.wav");
         }
     }
 
@@ -134,6 +143,16 @@ void AudioManager::LoadAudio()
             se_[static_cast<int>(SE::Hit_9) ]->Volume(0.1f);
 
             se_[static_cast<int>(SE::PlayerDash) ]->Volume(0.5f);
+
+            se_[static_cast<int>(SE::GolemPanchi_0)]->Volume(1.0f);
+            se_[static_cast<int>(SE::GolemPanchi_1)]->Volume(1.0f);
+            se_[static_cast<int>(SE::GolemPanchi_2)]->Volume(1.0f);
+            se_[static_cast<int>(SE::GolemPanchi_3)]->Volume(1.0f);
+            se_[static_cast<int>(SE::GolemPanchi_4)]->Volume(1.0f);
+
+            se_[static_cast<int>(SE::GolemEntry_0)]->Volume(1.0f);
+            se_[static_cast<int>(SE::GolemEntry_1)]->Volume(1.0f);
+            se_[static_cast<int>(SE::GolemEntry_2)]->Volume(1.0f);
         }
     }
 

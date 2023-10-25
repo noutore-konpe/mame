@@ -273,6 +273,8 @@ namespace EnemyGolemState
                 // ゲームパッド振動
                 Input::Instance().GetGamePad().Vibration(1.0f, gamePadVibPower);
 
+                //AudioManager::Instance().PlaySE(SE_NAME::GolemPanchi, SE::GolemPanchi_0, SE::GolemPanchi_4);
+
                 isSwingDown = true;
             }
         }
@@ -373,6 +375,9 @@ namespace EnemyGolemState
 
                 // ゲームパッド振動
                 Input::Instance().GetGamePad().Vibration(0.5f, gamePadVibPower);
+
+                
+                //AudioManager::Instance().PlaySE(SE_NAME::GolemPanchi, SE::GolemPanchi_0, SE::GolemPanchi_4);
             }
             else
             {
@@ -499,6 +504,8 @@ namespace EnemyGolemState
                 Camera::Instance().ScreenVibrate(0.04f, 0.5f);
                 // ゲームパッド振動
                 Input::Instance().GetGamePad().Vibration(0.15f, gamePadVibPower);
+
+                //AudioManager::Instance().PlaySE(SE_NAME::GolemPanchi, SE::GolemPanchi_0, SE::GolemPanchi_4);
             }
 
             // アニメーションが終わったら
@@ -543,6 +550,8 @@ namespace EnemyGolemState
                 Camera::Instance().ScreenVibrate(0.05f, 0.8f);
                 // ゲームパッド振動
                 Input::Instance().GetGamePad().Vibration(0.3f, gamePadVibPower);
+
+                //AudioManager::Instance().PlaySE(SE_NAME::GolemPanchi, SE::GolemPanchi_0, SE::GolemPanchi_4);
             }
 
             // アニメーションが終わったら

@@ -45,6 +45,7 @@ WaveEnemySet waveEnemySetTest[] = {
 };
 #endif
 WaveEnemySet waveEnemySet0[] = {
+    WaveEnemySet(0.5f, "EnemyGolem", SceneGame::stageCenter, Set::GolemHp + (Set::ADD_HP * 10.0f), Set::ATK + (Set::ADD_ATK * 10.0f), 40),
     WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 0.0f), Set::ATK + (Set::ADD_ATK * 0.0f), 5),
     WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 0.0f), Set::ATK + (Set::ADD_ATK * 0.0f), 5),
     WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 0.0f), Set::ATK + (Set::ADD_ATK * 0.0f), 5),

@@ -82,6 +82,16 @@ enum class SE
 
     PlayerDash,
 
+    GolemPanchi_0, // ƒS[ƒŒƒ€‰£‚è
+    GolemPanchi_1, // ƒS[ƒŒƒ€‰£‚è
+    GolemPanchi_2, // ƒS[ƒŒƒ€‰£‚è
+    GolemPanchi_3, // ƒS[ƒŒƒ€‰£‚è
+    GolemPanchi_4, // ƒS[ƒŒƒ€‰£‚è
+
+    GolemEntry_0, // 
+    GolemEntry_1, // 
+    GolemEntry_2, // 
+
     SE_Max,
 };
 
@@ -99,6 +109,9 @@ enum class SE_NAME
     BlackHole,
     Laser,
     PlayerDash,
+
+    GolemPanchi,
+    GolemEntry,
 
     Max,
 };
