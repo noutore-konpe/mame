@@ -116,8 +116,8 @@ void AudioManager::LoadAudio()
             se_[static_cast<int>(SE::BlackHole_1) ]->Volume(1.3f);
             se_[static_cast<int>(SE::BlackHole_2) ]->Volume(1.3f);
 
-            se_[static_cast<int>(SE::Laser_0) ]->Volume(2.0f);
-            se_[static_cast<int>(SE::Laser_1) ]->Volume(2.0f);
+            se_[static_cast<int>(SE::Laser_0) ]->Volume(1.0f);
+            se_[static_cast<int>(SE::Laser_1) ]->Volume(1.0f);
             
             se_[static_cast<int>(SE::Hit_0) ]->Volume(0.1f);
             se_[static_cast<int>(SE::Hit_1) ]->Volume(0.1f);
