@@ -216,7 +216,8 @@ protected:
     float       lockOnHeight    = 1.0f;         // g’·
     float       defence         = 0.0f;         // –hŒä—Í
 
-    float       poisonTimer = 0.0f;//“Å‚ğ‹ò‚ç‚¤ŠÔ
+    float       poisonTimer = 0.0f;//“Å‚ğ‹ò‚ç‚¤‘ŠÔ
+    float       poisonLoopTimer = 0.0f;//“Å‚ğ‹ò‚ç‚¤ˆê‰ñ•ª‚ÌŠÔ
 
     //--------------------------------‹ò‚ç‚¢AUŒ‚”»’è------------------------------------
     std::vector<SphereCollider> hitCollider;

@@ -101,5 +101,12 @@ namespace PlayerSkill
         if (overlap <= 1)return;
 
         player->poisonSlipDamage += damageIncreasing;
+        player->poisonEffectTime += effectTimeIncreasing;
+    }
+
+    void RevengeSkill::Overlaping()
+    {
+        overlap++;
+        if (overlap <= 1)return;
     }
 }

@@ -48,6 +48,19 @@ void PlayerManager::Initialize()
         //ホーミング
         homingSkill = std::make_unique<PlayerSkill::ChangeHomingSkill>(player.get());
         skillArray.emplace_back(homingSkill.get());
+        //ポイズン
+        poisonSkill = std::make_unique<PlayerSkill::PoisonSkill>(player.get());
+        skillArray.emplace_back(poisonSkill.get());
+        //魔導書の弾の連射速度アップ
+        bulletRateUpSkill = std::make_unique<PlayerSkill::BulletRateUp>(player.get());
+        skillArray.emplace_back(bulletRateUpSkill.get());
+        //弾のサイズ
+        bulletSizeUpSkill = std::make_unique<PlayerSkill::BulletSizeUp>(player.get());
+        skillArray.emplace_back(bulletSizeUpSkill.get());
+        //仕返し
+        revengeSkill = std::make_unique<PlayerSkill::RevengeSkill>(player.get());
+        skillArray.emplace_back(revengeSkill.get());
+        
 
         return true;
     }();
