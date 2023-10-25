@@ -37,8 +37,8 @@ public:
     // 次のチュートリアルを設定(※チュートリアルが最後まで行っていたらfalseを返す)
     const bool SetNextTutorial();
 
-    // n番目のチュートリアル達成フラグをONにする
-    void CompleteTutorialAt(const TUTORIAL_STEP step) { tutorialCompleteFlags_[static_cast<int>(step)] = true; }
+    // チュートリアル達成フラグをONにする
+    void CompleteTutorial() { tutorialCompleteFlags_ = true; }
 
 public:
     // 現在のチュートリアル番号取得
@@ -56,7 +56,7 @@ private:
     TUTORIAL_STEP tutorialStep_ = TUTORIAL_STEP::NO_TUTORIAL;
 
     // チュートリアル達成フラグ
-    bool tutorialCompleteFlags_[TUTORIAL_COUNT_] = {false};
+    bool tutorialCompleteFlags_ = false;
 
 };
 

@@ -11,15 +11,15 @@ void TutorialManager::Initialize()
     SetNextTutorial();
 
     // チュートリアル達成フラグリセット
-    for (bool& flag : tutorialCompleteFlags_) { flag = false; }
+    tutorialCompleteFlags_ = false;
 
 }
 
 const bool TutorialManager::Update(const float elapsedTime)
 {
-    // 現在のチュートリアルの達成フラグが立っていたら
+    // チュートリアル達成フラグが立っていたら
     // 次のチュートリアルに移る
-    if (true == tutorialCompleteFlags_[GetTutorialIndex()])
+    if (true == tutorialCompleteFlags_)
     {
         // 次のチュートリアルに移る
         const bool tutorialExecuteFlag = SetNextTutorial();
@@ -30,6 +30,9 @@ const bool TutorialManager::Update(const float elapsedTime)
             // チュートリアル終了
             return false;
         }
+
+        // チュートリアル達成フラグをリセット
+        tutorialCompleteFlags_ = false;
 
         // チュートリアル実行中
         return true;
