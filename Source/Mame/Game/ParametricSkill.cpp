@@ -34,6 +34,7 @@ namespace PlayerSkill
             playerManager.GetHomingSkill()->isNotElected = false;
             playerManager.GetPoisonSkill()->isNotElected = false;
         }
+
         overlap++;
         Book* book = new Book();
         book->Initialize();

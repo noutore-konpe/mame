@@ -20,7 +20,7 @@ namespace PlayerSkill
         void Overlaping()override;
 
     private:
-        float speedIncreasing = 0.5f;//ã¸’l
+        float speedIncreasing = 1.0f;//ã¸’l
     };
 
     //Šî‘bUŒ‚—Íã¸

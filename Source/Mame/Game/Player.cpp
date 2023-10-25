@@ -292,8 +292,18 @@ Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT
                     auto pos = attacker->GetTransform()->GetPosition();
                     pos.y += 0.6f;
                     attacker->ApplyDamage(
-                        result.damage, pos, nullptr, 0, true
+                        result.damage * PlayerManager::Instance().GetRevengeSkill()->revengeMul, pos, nullptr, 0, true
                     );
+
+                    //吹き飛ばしに際してattackerをエネミークラスに変換
+                    for (auto& enemy : EnemyManager::Instance().GetEnemies())
+                    {
+                        if (attacker == enemy)
+                        {
+                            enemy->BlowOff(enemy->GetTransform()->GetPosition() - GetTransform()->GetPosition(), BLOW_OFF_FORCE_LEVEL::MIDDLE);
+                            break;
+                        }
+                    }
                 }
             }
         }
