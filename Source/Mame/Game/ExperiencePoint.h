@@ -86,7 +86,7 @@ private:
     DirectX::XMFLOAT3   targetPosition_ = {};
     DirectX::XMFLOAT3   velocity_       = {};
     float               attractTimer_   = 0.8f;     // 最初の数フレームだけプレイヤーに向かわないにするタイマー
-    float               lifeTimer_      = 60.0f;
+    float               lifeTimer_      = 300.0f;
     float               acceleration_   = 0.7f;
     float               gravity_        = (-0.1f);
     float               friction_       = 0.1f;

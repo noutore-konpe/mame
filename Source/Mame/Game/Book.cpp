@@ -179,7 +179,16 @@ void Book::CollisionProjectileVsEnemies()
                 enemy->SaveBlowOffInfo(vec, proj->GetInflictBlowOffForceLevel());
 
                 // 敵にダメージを与える
-                enemy->ApplyDamage(proj->GetAttack(),enmHitColliderPos);
+                auto result = enemy->ApplyDamage(proj->GetAttack(),enmHitColliderPos);
+
+                //毒スキル
+                if (PlayerManager::Instance().GetPoisonSkill()->Active())
+                {
+                    if (result.hit)
+                    {
+                        enemy->isPoison = true;
+                    }
+                }
 
                 // 弾を消去する
                 proj->Destroy();
@@ -248,8 +257,20 @@ bool Book::LaunchProjectile(const float elapsedTime, const DirectX::XMFLOAT3& ve
         const float    length    = 0.3f;
         const XMFLOAT3 launchPos = bookPos + vecN * length;
 
-        ProjectileStraight* projectile = new ProjectileStraight(&projectileManager,PlayerManager::Instance().GetPlayer().get());
-        projectile->Launch(vecN, launchPos);
+        if (PlayerManager::Instance().GetHomingSkill()->Active())
+        {
+            ProjectileHorming* projectile = new ProjectileHorming(&projectileManager,PlayerManager::Instance().GetPlayer().get());
+            projectile->Launch(vecN, launchPos);
+            projectile->SetRadius(bulletRadius);
+            projectile->GetTransform()->SetScaleFactor(bulletScale);
+        }
+        else
+        {
+            ProjectileStraight* projectile = new ProjectileStraight(&projectileManager,PlayerManager::Instance().GetPlayer().get());
+            projectile->Launch(vecN, launchPos);
+            projectile->SetRadius(bulletRadius);
+            projectile->GetTransform()->SetScaleFactor(bulletScale);
+        }
 
         // 発射までの時間を設定
         launchTimer = launchTime;

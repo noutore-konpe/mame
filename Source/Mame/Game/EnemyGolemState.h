@@ -321,6 +321,8 @@ namespace EnemyGolemState
         float maxMoveSpeed = 3.0f;
 
         float rotateSpeed = 100.0f; // ‰ñ“]‘¬“x
+
+        float walkTimer = 0.0f;
     };
 
     // UŒ‚‚Q

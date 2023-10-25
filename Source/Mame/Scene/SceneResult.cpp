@@ -51,6 +51,8 @@ void SceneResult::CreateResource()
     enemyGolem = std::make_unique<EnemyGolemResult>();
     player = std::make_unique<PlayerResult>();
 
+    pressAnyButtonSprite = std::make_unique<Sprite>(graphics.GetDevice(),
+        L"./Resources/Image/Title/PressAnyButton.png");
 
     CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/FinalPassTexturePS.cso", finalPassPS.GetAddressOf());
     
@@ -281,6 +283,8 @@ void SceneResult::Render(const float& elapsedTime)
 
     // ƒ‚ƒfƒ‹•`‰æ
     RenderEnemyModel();   // “G‚Ìƒ‚ƒfƒ‹
+
+    pressAnyButtonSprite->Render();
 }
 
 void SceneResult::DrawDebug()
@@ -297,6 +301,8 @@ void SceneResult::DrawDebug()
         }
         iconStruct[0].isDisplay = true;
     }
+
+    pressAnyButtonSprite->DrawDebug();
 
     resultSprite->DrawDebug();
 

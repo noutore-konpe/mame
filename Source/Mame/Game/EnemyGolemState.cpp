@@ -236,6 +236,15 @@ namespace EnemyGolemState
 
     void SummonState::Update(const float& elapsedTime)
     {
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::R_HAND, owner->GetAttackDamage());
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::R_LEG, owner->GetAttackDamage());
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::R_LEG_END, owner->GetAttackDamage());
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::R_SHOULDER, owner->GetAttackDamage());
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::L_HAND, owner->GetAttackDamage());
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::L_LEG, owner->GetAttackDamage());
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::L_LEG_END, owner->GetAttackDamage());
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::L_SHOULDER, owner->GetAttackDamage());
+
         // 腕の振り上げ終わってなかったら
         if (!isSwingUp)
         {
@@ -301,7 +310,7 @@ namespace EnemyGolemState
         // アニメーションが終わったら
         if(!owner->IsPlayAnimation())
         {   // 待機ステートへ
-            owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::IdleState));
+            owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::ChoseState));
         }
     }
 
@@ -336,6 +345,11 @@ namespace EnemyGolemState
     // 更新
     void Attack1State::Update(const float& elapsedTime)
     {
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::R_HAND, owner->GetAttackDamage());
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::R_LEG, owner->GetAttackDamage());
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::R_LEG_END, owner->GetAttackDamage());
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::R_SHOULDER, owner->GetAttackDamage());
+
         // 腕ひき
         if (!isAttack1_tame)
         {
@@ -436,6 +450,15 @@ namespace EnemyGolemState
     // 更新
     void ComboAttack1State::Update(const float& elapsedTime)
     {
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::R_HAND, owner->GetAttackDamage());
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::R_LEG, owner->GetAttackDamage());
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::R_LEG_END, owner->GetAttackDamage());
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::R_SHOULDER, owner->GetAttackDamage());
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::L_HAND, owner->GetAttackDamage());
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::L_LEG, owner->GetAttackDamage());
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::L_LEG_END, owner->GetAttackDamage());
+        owner->AttackCollisionVsPlayer(EnemyGolem::ColliderName::L_SHOULDER, owner->GetAttackDamage());
+
         ComboAttack1(elapsedTime);  // コンボ１撃目
         ComboAttack2(elapsedTime);  // コンボ２撃目
         ComboAttack3(elapsedTime);  // コンボ３撃目
@@ -959,6 +982,10 @@ namespace EnemyGolemState
                 c.w = alpha;
                 owner->model->SetModelColor(c);
 
+                // 徐々にBGMを消す
+                float volume = Easing::InSine(deathTimer, maxTime, 0.0f, 0.35f);
+                AudioManager::Instance().GetBGM(BGM::Golem)->Volume(volume);
+
                 deathTimer += elapsedTime;
             }
             else
@@ -1001,6 +1028,14 @@ namespace EnemyGolemState
     // 更新
     void WalkState::Update(const float& elapsedTime)
     {
+        float maxWalk = 1.0f;
+        if (walkTimer > maxWalk)
+        {
+            AudioManager::Instance().PlaySE(SE_NAME::GolemWalk, SE::GolemWalk0, SE::GolemWalk4);
+            walkTimer = 0.0;
+        }
+        walkTimer += elapsedTime;
+
         // モーションブレンド
         {
             if (!isChangeState)

@@ -60,9 +60,16 @@ public:// 取得・設定 関連
 
     // 弾丸
     void SetLaunchTimer(float time) { launchTimer = time; }
+    void SetLaunchTime(float time) { launchTime = time; }
     int GetMaxLaunchNum() { return maxLaunchNum; }
 
     [[nodiscard]] const float GetSearchEnemyRange() const { return searchEnemyRange_; }
+
+    void SetBulletRadius(const float radius) { bulletRadius = radius; }
+    void SetBulletScale(const float scale) { bulletScale = scale; }
+
+    float GetReloadTime() { return reloadTime; }
+    void SetReloadTime(float time) { reloadTime = time; }
 
 private:
     // ----- 制作に必要な情報 -----
@@ -76,6 +83,9 @@ private:
     float launchTime = 0.5f;    // 発射までの時間      // ☆ ( 後で能力として設定される )
     int maxLaunchNum = 3;       // 一回の発射の最大数  // ☆
 
+    // todo : よしあき
+    float reloadTime = 3.0f; // 攻撃までの時間 // ☆
+
     // ステートマシン
     std::unique_ptr<StateMachine<State<Book>>> stateMachine = nullptr;
 
@@ -88,4 +98,7 @@ private:
     float circularMotionAddRotate_  = ::ToRadian(180.0f); // 円運動回転値に追加する回転(上下速度に影響)
 
     float searchEnemyRange_ = 15.0f;    // 敵を索敵できる範囲
+
+    float bulletRadius = 0.1f;
+    float bulletScale = 1.0f;
 };

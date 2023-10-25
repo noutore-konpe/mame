@@ -23,16 +23,81 @@ enum class SE
     GolemEntry,     // ゴーレム登場
     GolemRoar,      // ゴーレム咆哮
     WaveBegin,      // ウェーブ開始音
+    
     CardSelect0,    // 能力取った時の音
     CardSelect1,    // 能力取った時の音
     CardSelect2,    // 能力取った時の音
+    CardSelect3,    // 能力取った時の音
+    
     Enter,          // 選択
-    SwordSlash1,    // 攻撃１
-    SwordSlash2,    // 攻撃２
+    
+    SwordSlash1_0,    // 攻撃１
+    SwordSlash1_1,    // 攻撃１
+    SwordSlash1_2,    // 攻撃１
+    SwordSlash1_3,    // 攻撃１
+    SwordSlash1_4,    // 攻撃１
+    SwordSlash1_5,    // 攻撃１
+    SwordSlash1_6,    // 攻撃１
+
+    SwordSlash2_0,    // 攻撃２
+    SwordSlash2_1,    // 攻撃２
+
     SwordSlash3,    // 攻撃３
-    SwordSlash4,    // 攻撃４
+
+    SwordSlash4_0,    // 攻撃４
+    SwordSlash4_1,    // 攻撃４
+
+
+    GolemWalk0,     // ゴーレム歩き
+    GolemWalk1,     // ゴーレム歩き
+    GolemWalk2,     // ゴーレム歩き
+    GolemWalk3,     // ゴーレム歩き
+    GolemWalk4,     // ゴーレム歩き
+
+    Hit_0, // ヒット音
+    Hit_1, // ヒット音
+    Hit_2, // ヒット音
+    Hit_3, // ヒット音
+    Hit_4, // ヒット音
+    Hit_5, // ヒット音
+    Hit_6, // ヒット音
+    Hit_7, // ヒット音
+    Hit_8, // ヒット音
+    Hit_9, // ヒット音
+    
+    SlowMotion_0, // slowMotion
+    SlowMotion_1, // slowMotion
+
+    CounterBegin_0, // カウンター
+    CounterBegin_1, // カウンター
+    CounterBegin_2, // カウンター
+    CounterBegin_3, // カウンター
+
+    BlackHole_0, // ブラックホール
+    BlackHole_1, // ブラックホール
+    BlackHole_2, // ブラックホール
+
+    Laser_0,
+    Laser_1,
 
     SE_Max,
+};
+
+enum class SE_NAME
+{
+    CardSelect,
+    GolemWalk,
+    SwordSlash1,
+    SwordSlash2,
+    SwordSlash3,
+    SwordSlash4,
+    Hit,
+    SlowMotion,
+    CounterBegin,
+    BlackHole,
+    Laser,
+
+    Max,
 };
 
 class AudioManager
@@ -62,7 +127,7 @@ public:
         const SE& se, 
         const bool isLoop = false, 
         const bool isIgnoreQueue = false
-    );       
+    );
 
     void StopBGM(const BGM& bgm);                   // BGM停止
     void StopSE(const SE& se);                      // SE停止
@@ -86,12 +151,10 @@ private:
 
 
 public:// 何回も再生するためにいるやつ
-    void PlayCardSelectSENum();
+
+    void PlaySE(SE_NAME who, SE startIndex, SE endIndex);
 
 private:// 何回も再生するためにいるやつ
-    void ResetCardSelectSENum() { cardSelectSENum = 0; }
-    void AddCardSelectSENum() { ++cardSelectSENum; }
-    int GetCardSelectSENum() { return cardSelectSENum; }
-    int cardSelectSENum = 0;
+    int countIndex[static_cast<UINT>(SE_NAME::Max)] = {};
 };
 

@@ -22,11 +22,51 @@ void AudioManager::LoadAudio()
             se_[static_cast<int>(SE::CardSelect0)   ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/CardSelect.wav");
             se_[static_cast<int>(SE::CardSelect1)   ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/CardSelect.wav");
             se_[static_cast<int>(SE::CardSelect2)   ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/CardSelect.wav");
+            se_[static_cast<int>(SE::CardSelect3)   ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/CardSelect.wav");
             se_[static_cast<int>(SE::Enter)         ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Enter.wav");
-            se_[static_cast<int>(SE::SwordSlash1)   ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash1.wav");
-            se_[static_cast<int>(SE::SwordSlash2)   ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash2.wav");
+            se_[static_cast<int>(SE::SwordSlash1_0) ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash1.wav");
+            se_[static_cast<int>(SE::SwordSlash1_1) ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash1.wav");
+            se_[static_cast<int>(SE::SwordSlash1_2) ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash1.wav");
+            se_[static_cast<int>(SE::SwordSlash1_3) ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash1.wav");
+            se_[static_cast<int>(SE::SwordSlash1_4) ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash1.wav");
+            se_[static_cast<int>(SE::SwordSlash1_5) ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash1.wav");
+            se_[static_cast<int>(SE::SwordSlash1_6) ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash1.wav");
+            se_[static_cast<int>(SE::SwordSlash2_0) ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash2.wav");
+            se_[static_cast<int>(SE::SwordSlash2_1) ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash2.wav");
             se_[static_cast<int>(SE::SwordSlash3)   ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash3.wav");
-            se_[static_cast<int>(SE::SwordSlash4)   ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash4.wav");
+            se_[static_cast<int>(SE::SwordSlash4_0) ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash4.wav");
+            se_[static_cast<int>(SE::SwordSlash4_1) ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash4.wav");
+            se_[static_cast<int>(SE::GolemWalk0)    ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemWalk.wav");
+            se_[static_cast<int>(SE::GolemWalk1)    ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemWalk.wav");
+            se_[static_cast<int>(SE::GolemWalk2)    ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemWalk.wav");
+            se_[static_cast<int>(SE::GolemWalk3)    ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemWalk.wav");
+            se_[static_cast<int>(SE::GolemWalk4)    ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemWalk.wav");
+            
+            se_[static_cast<int>(SE::Hit_0)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Hit.wav");
+            se_[static_cast<int>(SE::Hit_1)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Hit.wav");
+            se_[static_cast<int>(SE::Hit_2)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Hit.wav");
+            se_[static_cast<int>(SE::Hit_3)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Hit.wav");
+            se_[static_cast<int>(SE::Hit_4)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Hit.wav");
+            se_[static_cast<int>(SE::Hit_5)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Hit.wav");
+            se_[static_cast<int>(SE::Hit_6)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Hit.wav");
+            se_[static_cast<int>(SE::Hit_7)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Hit.wav");
+            se_[static_cast<int>(SE::Hit_8)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Hit.wav");
+            se_[static_cast<int>(SE::Hit_9)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Hit.wav");
+            
+            se_[static_cast<int>(SE::SlowMotion_0)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SlowMotion.wav");
+            se_[static_cast<int>(SE::SlowMotion_1)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SlowMotion.wav");
+            
+            se_[static_cast<int>(SE::CounterBegin_0)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/CounterBegin.wav");
+            se_[static_cast<int>(SE::CounterBegin_1)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/CounterBegin.wav");
+            se_[static_cast<int>(SE::CounterBegin_2)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/CounterBegin.wav");
+            se_[static_cast<int>(SE::CounterBegin_3)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/CounterBegin.wav");
+            
+            se_[static_cast<int>(SE::BlackHole_0)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/BlackHole.wav");
+            se_[static_cast<int>(SE::BlackHole_1)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/BlackHole.wav");
+            se_[static_cast<int>(SE::BlackHole_2)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/BlackHole.wav");
+            
+            se_[static_cast<int>(SE::Laser_0)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/laser.wav");
+            se_[static_cast<int>(SE::Laser_1)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/laser.wav");
         }
     }
 
@@ -34,12 +74,61 @@ void AudioManager::LoadAudio()
     {    
         // BGM音量調整
         {
-            //bgm_[static_cast<int>(BGM::Title)           ]->Volume(0.75f);
+            bgm_[static_cast<int>(BGM::Title)       ]->Volume(0.35f);
+            bgm_[static_cast<int>(BGM::Game)        ]->Volume(0.3f);
+            bgm_[static_cast<int>(BGM::Golem)       ]->Volume(0.35f);
         }
 
         // SE音量調整
         {
             se_[static_cast<int>(SE::Enter)         ]->Volume(1.5f);
+            se_[static_cast<int>(SE::GolemWalk0)    ]->Volume(2.0f);
+            se_[static_cast<int>(SE::GolemWalk1)    ]->Volume(2.0f);
+            se_[static_cast<int>(SE::GolemWalk2)    ]->Volume(2.0f);
+            se_[static_cast<int>(SE::GolemWalk3)    ]->Volume(2.0f);
+            se_[static_cast<int>(SE::GolemWalk4)    ]->Volume(2.0f);
+
+            se_[static_cast<int>(SE::SwordSlash1_0) ]->Volume(0.4f);
+            se_[static_cast<int>(SE::SwordSlash1_1) ]->Volume(0.4f);
+            se_[static_cast<int>(SE::SwordSlash1_2) ]->Volume(0.4f);
+            se_[static_cast<int>(SE::SwordSlash1_3) ]->Volume(0.4f);
+            se_[static_cast<int>(SE::SwordSlash1_4) ]->Volume(0.4f);
+            se_[static_cast<int>(SE::SwordSlash1_5) ]->Volume(0.4f);
+            se_[static_cast<int>(SE::SwordSlash1_6) ]->Volume(0.4f);
+                                                                
+            se_[static_cast<int>(SE::SwordSlash2_0) ]->Volume(0.4f);
+            se_[static_cast<int>(SE::SwordSlash2_1) ]->Volume(0.4f);
+
+            se_[static_cast<int>(SE::SwordSlash3) ]->Volume(0.4f);
+
+            se_[static_cast<int>(SE::SwordSlash4_0) ]->Volume(0.2f);
+            se_[static_cast<int>(SE::SwordSlash4_1) ]->Volume(0.2f);
+
+            se_[static_cast<int>(SE::SlowMotion_0) ]->Volume(1.0f);
+            se_[static_cast<int>(SE::SlowMotion_1) ]->Volume(1.0f);
+
+            se_[static_cast<int>(SE::CounterBegin_0) ]->Volume(0.1f);
+            se_[static_cast<int>(SE::CounterBegin_1) ]->Volume(0.1f);
+            se_[static_cast<int>(SE::CounterBegin_2) ]->Volume(0.1f);
+            se_[static_cast<int>(SE::CounterBegin_3) ]->Volume(0.1f);
+
+            se_[static_cast<int>(SE::BlackHole_0) ]->Volume(1.3f);
+            se_[static_cast<int>(SE::BlackHole_1) ]->Volume(1.3f);
+            se_[static_cast<int>(SE::BlackHole_2) ]->Volume(1.3f);
+
+            se_[static_cast<int>(SE::Laser_0) ]->Volume(1.0f);
+            se_[static_cast<int>(SE::Laser_1) ]->Volume(1.0f);
+            
+            se_[static_cast<int>(SE::Hit_0) ]->Volume(0.1f);
+            se_[static_cast<int>(SE::Hit_1) ]->Volume(0.1f);
+            se_[static_cast<int>(SE::Hit_2) ]->Volume(0.1f);
+            se_[static_cast<int>(SE::Hit_3) ]->Volume(0.1f);
+            se_[static_cast<int>(SE::Hit_4) ]->Volume(0.1f);
+            se_[static_cast<int>(SE::Hit_5) ]->Volume(0.1f);
+            se_[static_cast<int>(SE::Hit_6) ]->Volume(0.1f);
+            se_[static_cast<int>(SE::Hit_7) ]->Volume(0.1f);
+            se_[static_cast<int>(SE::Hit_8) ]->Volume(0.1f);
+            se_[static_cast<int>(SE::Hit_9) ]->Volume(0.1f);
         }
     }
 
@@ -78,26 +167,39 @@ std::unique_ptr<Audio>& AudioManager::GetSE(const SE& seIndex)
     return se_[static_cast<int>(seIndex)];
 }
 
-// カード選択音
-void AudioManager::PlayCardSelectSENum()
-{
-    switch (GetCardSelectSENum())
-    {
-    case 0:
-        PlaySE(SE::CardSelect0);
-        AddCardSelectSENum();
-        break;
-    case 1:
-        PlaySE(SE::CardSelect1);
-        AddCardSelectSENum();
-        break;
-    case 2:
-        PlaySE(SE::CardSelect2);
-        ResetCardSelectSENum();
-        break;
-    }
-}
 
+void AudioManager::PlaySE(SE_NAME who, SE startIndex, SE endIndex)
+{
+    // 再生数するSEの種類
+    int currentIndex = countIndex[static_cast<UINT>(who)];
+
+    // 再生するSEの配列先頭
+    int StartIndex = static_cast<UINT>(startIndex);
+
+    // 今から再生するSEの場所を出す
+    int playIndex = StartIndex + currentIndex;
+
+    // SE再生
+    se_[playIndex]->Play(false);
+
+    // 自分のSE配列の最後尾
+    int EndIndex = static_cast<UINT>(endIndex);
+
+    // 自分のSEの数を取得
+    int IndexCount = EndIndex - StartIndex;
+
+    // 次に再生する番号に設定する
+    if (currentIndex >= IndexCount)
+    {// 最大まで行ったら最初に戻す
+        countIndex[static_cast<UINT>(who)] = 0;
+    }
+    else
+    {// まだ次がある場合は次を設定する
+        ++currentIndex;
+        countIndex[static_cast<UINT>(who)] = currentIndex;
+    }
+
+}
 
 void AudioManager::StopAllBGM()
 {

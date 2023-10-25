@@ -156,6 +156,8 @@ private:
 
     std::unique_ptr<Sprite> chonchonSprite  = nullptr;
 
+    std::unique_ptr<Sprite> pressAnyButtonSprite = nullptr;
+
     struct EnemyResult
     {
         DirectX::XMFLOAT3 position  = {};

@@ -10,8 +10,8 @@ namespace PlayerSkill
     public:
         Drain(Player* player) :
             BaseSkill(player, 
-                L"./Resources/Image/Card/Ckyusyu.png",
-                L"./Resources/Image/Icon/kyusyu.png",
+                L"./Resources/Image/Card/Drain.png",
+                L"./Resources/Image/Icon/iconDrain.png",
                 "Drain",BaseSkill::SUPER_RARE) {}
         ~Drain() {}
 
@@ -47,8 +47,8 @@ namespace PlayerSkill
     public:
         BlackHoleSkill(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/Cblack.png",
-                L"./Resources/Image/Icon/black.png",
+                L"./Resources/Image/Card/BlackHole.png",
+                L"./Resources/Image/Icon/iconBlackHole.png",
                 "BlackHole",
                 BaseSkill::ULTRA_RARE) {}
         ~BlackHoleSkill() {}
@@ -72,8 +72,8 @@ namespace PlayerSkill
     public:
         CanTripleAttack(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/sampleCard.png",
-                L"./Resources/Image/Icon/sampleIcon.png",
+                L"./Resources/Image/Card/ThirdAttack.png",
+                L"./Resources/Image/Icon/iconThirdAttack.png",
                 "Can Triple Attack",
                 BaseSkill::COMMON,
                 true) {}
@@ -87,8 +87,8 @@ namespace PlayerSkill
     public:
         CanCounterAttack(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/sampleCard.png",
-                L"./Resources/Image/Icon/sampleIcon.png",
+                L"./Resources/Image/Card/Counter.png",
+                L"./Resources/Image/Icon/iconCounter.png",
                 "Can Counter Attack",
                 BaseSkill::COMMON,
                 true) {}
@@ -102,12 +102,44 @@ namespace PlayerSkill
     public:
         ChangeHomingSkill(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/sampleCard.png",
-                L"./Resources/Image/Icon/sampleIcon.png",
+                L"./Resources/Image/Card/Homing.png",
+                L"./Resources/Image/Icon/iconHoming.png",
                 "Homing",
                 BaseSkill::SUPER_RARE,
                 true) {}
         ~ChangeHomingSkill() {}
+
+        void Overlaping()override;
+    };
+
+    class PoisonSkill : public BaseSkill
+    {
+    public:
+        PoisonSkill(Player* player) :
+            BaseSkill(player,
+                L"./Resources/Image/Card/Poison.png",
+                L"./Resources/Image/Icon/iconPoison.png",
+                "Poison",
+                BaseSkill::RARE) {}
+        ~PoisonSkill() {}
+
+        void Overlaping()override;
+
+    private:
+        const float damageIncreasing = 3.0f;
+        const float effectTimeIncreasing = 5.0f;
+    };
+
+    class RevengeSkill : public BaseSkill
+    {
+    public:
+        RevengeSkill(Player* player) :
+            BaseSkill(player,
+                L"./Resources/Image/Card/Knockback.png",
+                L"./Resources/Image/Icon/iconKnockback.png",
+                "Poison", 
+                BaseSkill::RARE) {}
+        ~RevengeSkill() {}
 
         void Overlaping()override;
     };

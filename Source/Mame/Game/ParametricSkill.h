@@ -1,6 +1,8 @@
 #pragma once
 #include "BaseSkill.h"
 
+class Book;
+
 //パラメータの上昇関係のスキル
 namespace PlayerSkill
 {
@@ -10,8 +12,8 @@ namespace PlayerSkill
     public:
         MoveSpeedUp(Player* player) : 
             BaseSkill(player,
-                L"./Resources/Image/Card/Cidouup.png",
-                L"./Resources/Image/Icon/idouup.png",
+                L"./Resources/Image/Card/Fleetsteed.png",
+                L"./Resources/Image/Icon/iconFleetSpeed.png",
                 "MoveSpeedUp",BaseSkill::COMMON) {}
         ~MoveSpeedUp() {}
 
@@ -27,8 +29,8 @@ namespace PlayerSkill
     public:
         AttackPowerUp(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/Ckougekiup.png",
-                L"./Resources/Image/Icon/pawaup.png",
+                L"./Resources/Image/Card/Power.png",
+                L"./Resources/Image/Icon/iconPower.png",
                 "AttackPowerUp", BaseSkill::COMMON) {}
         ~AttackPowerUp() {}
 
@@ -44,8 +46,8 @@ namespace PlayerSkill
     public:
         AttackSpeedUp(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/Ckougekisokuup.png",
-                L"./Resources/Image/Icon/kougekisokuup.png",
+                L"./Resources/Image/Card/AttackSpeed.png",
+                L"./Resources/Image/Icon/iconAttackSpeed.png",
                 "AttackSpeedUp", BaseSkill::UNCOMMON) {}
         ~AttackSpeedUp() {}
 
@@ -61,12 +63,17 @@ namespace PlayerSkill
     public:
         BookIncrease(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/Chon.png",
-                L"./Resources/Image/Icon/hon.png",
+                L"./Resources/Image/Card/Grimoire.png",
+                L"./Resources/Image/Icon/iconGrimoire.png",
                 "BookIncrease", BaseSkill::RARE) {}
         ~BookIncrease() {}
 
         void Overlaping()override;
+
+        std::vector<Book*> GetBooks() { return books; }
+
+    private:
+        std::vector<Book*> books;
     };
 
     //体力上限アップ
@@ -75,8 +82,8 @@ namespace PlayerSkill
     public:
         MaxHitPointUp(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/Chpup.png",
-                L"./Resources/Image/Icon/hpup.png",
+                L"./Resources/Image/Card/Life.png",
+                L"./Resources/Image/Icon/iconLife.png",
                 "BookIncrease", BaseSkill::COMMON) {}
         ~MaxHitPointUp() {}
 
@@ -92,8 +99,8 @@ namespace PlayerSkill
     public:
         DefenseUp(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/Cbougyo.png",
-                L"./Resources/Image/Icon/bougyo.png",
+                L"./Resources/Image/Card/Protect.png",
+                L"./Resources/Image/Icon/iconProtect.png",
                 "DefenseUp", BaseSkill::UNCOMMON) {}
         ~DefenseUp() {}
 
@@ -101,6 +108,58 @@ namespace PlayerSkill
 
     private:
         float defenseIncreasing = 2.0f;//上昇値
+    };
+
+    // 弾丸の大きさアップ
+    class BulletSizeUp : public BaseSkill
+    {
+    public:
+        BulletSizeUp(Player* player) :
+            BaseSkill(player,
+                L"./Resources/Image/Card/Bigbullet.png",
+                L"./Resources/Image/Icon/iconBigbullet.png",
+                "BulletSizeUp", BaseSkill::UNCOMMON) {}
+        ~BulletSizeUp() {}
+
+        void Initialize()override;
+        void Overlaping()override;
+
+        const float GetBulletScale()const { return scale; }
+        const float GetBulletRadius()const { return radius; }
+
+    private:
+        const float scaleIncreasing = 0.2f;//上昇値
+        const float radiusIncreasing = 0.02f;//上昇値
+
+        const float initScale = 1.0f;
+        const float initRadius = 0.1f;
+
+        float scale = 1.0f;
+        float radius = 0.1f;
+    };
+
+    // 弾丸連射速度アップ
+    class BulletRateUp : public BaseSkill
+    {
+    public:
+        BulletRateUp(Player* player) :
+            BaseSkill(player,
+                L"./Resources/Image/Card/Reload.png",
+                L"./Resources/Image/Icon/iconReload.png",
+                "BulletRateUp", BaseSkill::UNCOMMON) {}
+        ~BulletRateUp() {}
+
+        void Initialize()override;
+        void Overlaping()override;
+
+        const float GetBulletRate()const { return bulletRate; }
+
+    private:
+        const float initLaunchTime = 0.5f;
+
+        const float rateIncreasing = 0.05f;//上昇値
+
+        float bulletRate = 0.5f;
     };
 }
 

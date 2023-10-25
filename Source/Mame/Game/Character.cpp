@@ -8,6 +8,10 @@
 
 #include "../Other/MathHelper.h"
 
+#include "PlayerManager.h"
+
+#include "../Resource/AudioManager.h"
+
 // コンストラクタ
 Character::Character()
 {
@@ -46,6 +50,8 @@ void Character::Update(const float elapsedTime)
 
     rotValue = 0.0f; //回転量リセット
     if (invincibleTime > 0.0f) invincibleTime -= elapsedTime;
+
+    PoisonUpdate(elapsedTime);
 }
 
 // 描画処理
@@ -200,7 +206,7 @@ void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
     transform->SetRotationY(rotation.y);
 }
 
-Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLOAT3 hitPosition, Character* attacker,float invincibleTime, bool ignoreDefence)
+Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLOAT3 hitPosition, Character* attacker,float invincibleTime, bool ignoreDefence, DirectX::XMFLOAT4 color)
 {
     DamageResult result;
 
@@ -215,13 +221,13 @@ Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLO
     if(!ignoreDefence)damage -= defence;
     result.damage = damage;
 
-    // ダメージ表示生成
-    NumeralManager& numeralManager = NumeralManager::Instance();
-    numeralManager.CreateDamageNumeral(this, (damage > 0 ? damage : 0), GetPosition());
+    
 
+    NumeralManager& numeralManager = NumeralManager::Instance();
     //ダメージが０の場合は健康状態を変更する必要がない
     if (damage <= 0)
     {
+        numeralManager.CreateDamageNumeral(this, (damage > 0 ? damage : 0), GetPosition(), DirectX::XMFLOAT2(22, 30));
         result.hit = true;
         result.damage = 0;
         return result;
@@ -230,6 +236,7 @@ Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLO
     //死亡している場合は健康状態を変更しない
     if (health <= 0)
     {
+        numeralManager.CreateDamageNumeral(this, (damage > 0 ? damage : 0), GetPosition(), DirectX::XMFLOAT2(22, 30));
         result.hit = true;
         return result;
     }
@@ -255,16 +262,27 @@ Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLO
         isDead = true;
         health = 0;
 
+        //とどめはエフェクトのカラーを変更
+        color = DirectX::XMFLOAT4(1.0f, 0.0f, 0.3f, 1.0f);
+
         //エフェクト再生
-        hitEffect->Play(hitPosition,DirectX::XMFLOAT3(2.0f,2.0f,2.0f),DirectX::XMFLOAT4(1.0f,0,0.3f,1.0f));
+        hitEffect->Play(hitPosition,DirectX::XMFLOAT3(2.0f,2.0f,2.0f),color);
+        
+        AudioManager::Instance().PlaySE(SE_NAME::Hit, SE::Hit_0, SE::Hit_9);
     }
     //ダメージ通知
     else
     {
         //エフェクト再生
-        hitEffect->Play(hitPosition);
+        hitEffect->Play(hitPosition,DirectX::XMFLOAT3(1,1,1),color);
+
+        AudioManager::Instance().PlaySE(SE_NAME::Hit, SE::Hit_0, SE::Hit_9);
+
         OnDamaged();
     }
+
+    // ダメージ表示生成
+    numeralManager.CreateDamageNumeral(this, (damage > 0 ? damage : 0), GetPosition(), DirectX::XMFLOAT2(22, 30), color);
 
     //健康状態が変更した場合はtrueを返す
     result.hit = true;
@@ -290,6 +308,32 @@ bool Character::ApplyHeal(float heal)
     healEffect->Play(ePos);
 
     return true;
+}
+
+void Character::PoisonUpdate(float elapsedTime)
+{
+    if (!isPoison)return;
+    
+    auto* player = PlayerManager::Instance().GetPlayer().get();
+
+    //とりあえず5秒毎にダメージ
+    if (poisonLoopTimer > 5.0f)
+    {
+        auto hitPos = GetTransform()->GetPosition();
+        hitPos.y += 0.6f;
+        ApplyDamage(player->poisonSlipDamage,hitPos,nullptr,0.0f,true,DirectX::XMFLOAT4(1,0,1,1));
+        poisonLoopTimer = 0;
+    }
+
+    if (poisonTimer > player->poisonEffectTime)
+    {
+        poisonTimer = 0;
+        poisonLoopTimer = 0;
+        isPoison = false;
+    }
+
+    poisonTimer += elapsedTime;
+    poisonLoopTimer += elapsedTime;
 }
 
 void Character::SphereCollider::DebugRender(const DirectX::XMFLOAT4 color)

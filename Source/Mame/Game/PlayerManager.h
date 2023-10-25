@@ -48,6 +48,10 @@ public: // éÊìæÅEê›íË ä÷òA
     PlayerSkill::CanCounterAttack* GetCounterSkill() { return counterSkill.get(); }
     PlayerSkill::CanTripleAttack* GetTripleAttackSkill() { return tripleAttackSkill.get(); }
     PlayerSkill::ChangeHomingSkill* GetHomingSkill() { return homingSkill.get(); }
+    PlayerSkill::PoisonSkill* GetPoisonSkill() { return poisonSkill.get(); }
+    PlayerSkill::BookIncrease* GetBookIncreaseSkill() { return bookIncreaseSkill.get(); }
+    PlayerSkill::BulletRateUp* GetBulletRateUpSkill() { return bulletRateUpSkill.get(); }
+    PlayerSkill::BulletSizeUp* GetBulletSizeUpSkill() { return bulletSizeUpSkill.get(); }
     //PlayerSkill::* GetDrainSkill() { return drainSkill.get(); }
     
     void SetTamaType(int type) { tamaType = type; }
@@ -68,6 +72,10 @@ private:
     std::unique_ptr<PlayerSkill::CanCounterAttack> counterSkill;
     std::unique_ptr<PlayerSkill::CanTripleAttack> tripleAttackSkill;
     std::unique_ptr<PlayerSkill::ChangeHomingSkill> homingSkill;
+    std::unique_ptr<PlayerSkill::PoisonSkill> poisonSkill;
+    std::unique_ptr<PlayerSkill::BulletRateUp> bulletRateUpSkill;
+    std::unique_ptr<PlayerSkill::BulletSizeUp> bulletSizeUpSkill;
+    std::unique_ptr<PlayerSkill::RevengeSkill> revengeSkill;
 
     float lifeTime = 10;
     int level = 0;

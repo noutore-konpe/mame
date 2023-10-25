@@ -167,7 +167,8 @@ public: // ‚»‚Ì‘¼‚ÌŠÖ”
         const DirectX::XMFLOAT3 hitPosition,
         Character* attacker = nullptr/*UŒ‚‚µ‚Ä‚«‚½“G*/,
         float invincibleTime = 0,
-        bool ignoreDefence = false/*–hŒä–³‹*/);
+        bool ignoreDefence = false,/*–hŒä–³‹*/
+        DirectX::XMFLOAT4 color = {1,1,1,1});
 
     bool ApplyHeal(float heal);
 
@@ -182,6 +183,8 @@ public: // ‚»‚Ì‘¼‚ÌŠÖ”
     //‚Ğ‚é‚Ü‚¹‚é
     virtual void Flinch() {}
 
+
+    void PoisonUpdate(float elapsedTime);
 
 #pragma endregion
 
@@ -200,6 +203,8 @@ public:
 
     bool isInvincible = false;
 
+    bool isPoison = false;//“Åó‘Ô‚©
+
 protected:
     std::string name_           = "";           // –¼‘O(ImGui‚Ég—p)
     float       radius_         = 0.25f;        // ”¼Œa(“–‚½‚è”»’è‚Ég—p)
@@ -214,6 +219,8 @@ protected:
     float       lockOnHeight    = 1.0f;         // g’·
     float       defence         = 0.0f;         // –hŒä—Í
 
+    float       poisonTimer = 0.0f;//“Å‚ğ‹ò‚ç‚¤‘ŠÔ
+    float       poisonLoopTimer = 0.0f;//“Å‚ğ‹ò‚ç‚¤ˆê‰ñ•ª‚ÌŠÔ
 
     //--------------------------------‹ò‚ç‚¢AUŒ‚”»’è------------------------------------
     std::vector<SphereCollider> hitCollider;

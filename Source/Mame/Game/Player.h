@@ -64,8 +64,8 @@ public:
         HARD
     };
 
-    DamageResult ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition,Character* attacker = nullptr,float invincibleTime = 0, bool ignoreDefence = false)override;
-    DamageResult ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, const HitReaction reaction,Character* attacker = nullptr, float invincibleTime = 0, bool ignoreDefence = false);
+    DamageResult ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition,Character* attacker = nullptr,float invincibleTime = 0, bool ignoreDefence = false, DirectX::XMFLOAT4 color = { 1,0,0,1 })override;
+    DamageResult ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, const HitReaction reaction, Character* attacker = nullptr, float invincibleTime = 0, bool ignoreDefence = false);
 
     void MoveUpdate(float elapsedTime, float ax, float ay);
     void UpdateVelocity(float elapsedTime, float ax, float ay);
@@ -298,6 +298,9 @@ private:
 public://getterçÏÇÈÇÃÇﬂÇÒÇ«Ç¢ÇæÇØ
     float jabMotionAtkMuls[3];
     float hardAtkMuls;
+
+    float poisonSlipDamage;
+    float poisonEffectTime;
     //-----------------------------------------------------------------------
 private:
     //----------------------------âÒî---------------------------------------

@@ -123,6 +123,9 @@ void Player::Initialize()
     jabMotionAtkMuls[2] = 2.3f;
     hardAtkMuls = 2.7f;
 
+    poisonSlipDamage = 3.0f;
+    poisonEffectTime = 30.0f;
+
     health = 400.0f;
     maxHealth = 400.0f;
 
@@ -238,7 +241,7 @@ void Player::End()
 {
 }
 
-Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, Character* attacker, float invincibleTime, bool ignoreDefence)
+Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, Character* attacker, float invincibleTime, bool ignoreDefence, DirectX::XMFLOAT4 color)
 {
     DamageResult result;
 
@@ -274,7 +277,7 @@ Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT
         return result;
     }
 
-    return Character::ApplyDamage(damage, hitPosition, attacker, invincibleTime, ignoreDefence);
+    return Character::ApplyDamage(damage, hitPosition, attacker, invincibleTime, ignoreDefence,color);
 }
 
 Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, const HitReaction reaction, Character* attacker,float invincibleTime, bool ignoreDefence)
@@ -844,7 +847,7 @@ void Player::SelectSkillUpdate(float elapsedTime)
             }
             buttonDown = true;
             // カード選択音
-            AudioManager::Instance().PlayCardSelectSENum();
+            AudioManager::Instance().PlaySE(SE_NAME::CardSelect, SE::CardSelect0, SE::CardSelect3);
         }
         else if (ax <= -0.5f && !buttonDown)
         {
@@ -855,7 +858,7 @@ void Player::SelectSkillUpdate(float elapsedTime)
             }
             buttonDown = true;
             // カード選択音
-            AudioManager::Instance().PlayCardSelectSENum();
+            AudioManager::Instance().PlaySE(SE_NAME::CardSelect, SE::CardSelect0, SE::CardSelect3);
         }
         else if (ax <= 0.3f && ax >= -0.3f)
         {

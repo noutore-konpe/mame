@@ -14,7 +14,7 @@ namespace BookState
         // アニメーションを設定(閉じた状態)
         owner->PlayAnimation(static_cast<UINT>(Book::Animation::Closed), true);
 
-        SetTimer(3.0f);
+        SetTimer(owner->GetReloadTime());
     }
 
     // 更新処理
