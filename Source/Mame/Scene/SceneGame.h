@@ -49,7 +49,7 @@ private: // •Ï”“™X
 
     std::unique_ptr<Sprite> whiteSprite;
 
-    std::unique_ptr<Sprite> tutorial;
+    
 
     // effect
     Effect* effect[4];

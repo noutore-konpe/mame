@@ -10,8 +10,8 @@ namespace PlayerSkill
     public:
         MoveSpeedUp(Player* player) : 
             BaseSkill(player,
-                L"./Resources/Image/Card/Cidouup.png",
-                L"./Resources/Image/Icon/idouup.png",
+                L"./Resources/Image/Card/Fleetsteed.png",
+                L"./Resources/Image/Icon/iconFleetSpeed.png",
                 "MoveSpeedUp",BaseSkill::COMMON) {}
         ~MoveSpeedUp() {}
 
@@ -27,8 +27,8 @@ namespace PlayerSkill
     public:
         AttackPowerUp(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/Ckougekiup.png",
-                L"./Resources/Image/Icon/pawaup.png",
+                L"./Resources/Image/Card/Power.png",
+                L"./Resources/Image/Icon/iconPower.png",
                 "AttackPowerUp", BaseSkill::COMMON) {}
         ~AttackPowerUp() {}
 
@@ -44,8 +44,8 @@ namespace PlayerSkill
     public:
         AttackSpeedUp(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/Ckougekisokuup.png",
-                L"./Resources/Image/Icon/kougekisokuup.png",
+                L"./Resources/Image/Card/AttackSpeed.png",
+                L"./Resources/Image/Icon/iconAttackSpeed.png",
                 "AttackSpeedUp", BaseSkill::UNCOMMON) {}
         ~AttackSpeedUp() {}
 
@@ -61,8 +61,8 @@ namespace PlayerSkill
     public:
         BookIncrease(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/Chon.png",
-                L"./Resources/Image/Icon/hon.png",
+                L"./Resources/Image/Card/Grimoire.png",
+                L"./Resources/Image/Icon/iconGrimoire.png",
                 "BookIncrease", BaseSkill::RARE) {}
         ~BookIncrease() {}
 
@@ -75,8 +75,8 @@ namespace PlayerSkill
     public:
         MaxHitPointUp(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/Chpup.png",
-                L"./Resources/Image/Icon/hpup.png",
+                L"./Resources/Image/Card/Life.png",
+                L"./Resources/Image/Icon/iconLife.png",
                 "BookIncrease", BaseSkill::COMMON) {}
         ~MaxHitPointUp() {}
 
@@ -92,8 +92,8 @@ namespace PlayerSkill
     public:
         DefenseUp(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/Cbougyo.png",
-                L"./Resources/Image/Icon/bougyo.png",
+                L"./Resources/Image/Card/Protect.png",
+                L"./Resources/Image/Icon/iconProtect.png",
                 "DefenseUp", BaseSkill::UNCOMMON) {}
         ~DefenseUp() {}
 
