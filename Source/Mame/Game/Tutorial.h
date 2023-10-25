@@ -20,15 +20,15 @@ public:
 
 protected:
     const bool colorAlphaEaseIn(float* colorAlpha, const float endTime = 1.0f);  // 不透明度増加
-    const bool colorAlphaEaseOut(float* colorAlpha, const float endTime = 3.0f); // 不透明度減少
+    const bool colorAlphaEaseOut(float* colorAlpha, const float endTime = 2.0f); // 不透明度減少
 
 protected:
     std::unique_ptr<Sprite> text_;
     std::unique_ptr<Sprite> checkMark_;
     std::unique_ptr<Sprite> textBackGround_;
 
-    float easingTimer_ = 0.0f;
-    int step_ = 0;
+    float   easingTimer_    = 0.0f;
+    int     step_           = 0;
 
 };
 

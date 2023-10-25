@@ -81,9 +81,13 @@ void BaseTutorial::Initialize()
         scale   = { 0.3f, 0.3f };
         size    = { texSize.x * scale.x, texSize.y * scale.y };
         texPos  = { 0.0f, 0.0f };
-        color   = { 1.0f, 1.0f, 1.0f, 0.0f };
+        color   = { 1.0f, 1.0f, 1.0f, 1.0f };
         angle   = 0.0f;
         checkMark_->Initialize(pos, size, texSize, texPos, color, angle);
+
+        // ディゾルブ初期設定
+        checkMark_->GetSpriteDissolve()->SetDissolveValue(1.0f);
+
     }
 
 }
@@ -96,12 +100,12 @@ void BaseTutorial::Update(const float elapsedTime)
     Sprite::SpriteTransform* checkMarkT = checkMark_->GetSpriteTransform();
     Sprite::SpriteTransform* textBG_T   = textBackGround_->GetSpriteTransform();
 
-    text_->Update(elapsedTime);
-    checkMark_->Update(elapsedTime);
-    textBackGround_->Update(elapsedTime);
+    // ディゾルブ更新の呼び出しはせずこちらで更新を行う
+    //text_->Update(elapsedTime);
+    //checkMark_->Update(elapsedTime);
+    //textBackGround_->Update(elapsedTime);
 
     float textColorAlpha        = 0.0f;
-    float checkMarkColorAlpha   = 0.0f;
     float textBG_ColorAlpha     = 0.0f;
 
     switch (step_)
@@ -111,21 +115,18 @@ void BaseTutorial::Update(const float elapsedTime)
         easingTimer_ += elapsedTime;
 
         textColorAlpha      = textT->GetColorA();
-        checkMarkColorAlpha = checkMarkT->GetColorA();
         textBG_ColorAlpha   = textBG_T->GetColorA();
 
         {
-            const bool isEndEaseIn[3] = {
+            const bool isEndEaseIn[2] = {
                 BaseTutorial::colorAlphaEaseIn(&textColorAlpha),
-                BaseTutorial::colorAlphaEaseIn(&checkMarkColorAlpha),
                 BaseTutorial::colorAlphaEaseIn(&textBG_ColorAlpha),
             };
 
             // すべてのスプライトが不透明になったら
             // 次のステップに移る
             if (false == isEndEaseIn[0] &&
-                false == isEndEaseIn[1] &&
-                false == isEndEaseIn[2])
+                false == isEndEaseIn[1]   )
             {
                 ++step_;
 
@@ -136,7 +137,6 @@ void BaseTutorial::Update(const float elapsedTime)
 
         // スプライト不透明度更新
         textT->SetColorA(textColorAlpha);
-        checkMarkT->SetColorA(checkMarkColorAlpha);
         textBG_T->SetColorA(textBG_ColorAlpha);
 
         break;
@@ -150,25 +150,60 @@ void BaseTutorial::Update(const float elapsedTime)
 
         break;
     case 2:
-        // イージンタイマー更新
+        // チェックマークのディゾルブインが終わったら次のステップに移動
+        {
+            Sprite::SpriteDissolve* checkMarkDissolve = checkMark_->GetSpriteDissolve();
+            checkMarkDissolve->AddDissolveValue(-elapsedTime);
+            if (checkMarkDissolve->GetDissolveValue() <= (-0.1f))
+            {
+                checkMarkDissolve->SetDissolveValue(-0.1f);
+                ++step_;
+                break;
+            }
+        }
+
+        break;
+    case 3: // 待機
+        // タイマー更新(イージングタイマーを待機タイマー代わりに使用)
         easingTimer_ += elapsedTime;
 
+        // しばらく間を開けたら次のステップに移動
+        if (easingTimer_ >= 2.0)
+        {
+            // イージングタイマーリセット
+            easingTimer_ = 0.0f;
+            ++step_;
+            break;
+        }
+
+        break;
+    case 4:
+        // イージングタイマー更新
+        easingTimer_ += elapsedTime;
+
+        // チェックマークのディゾルブアウト更新
+        {
+            Sprite::SpriteDissolve* checkMarkDissolve = checkMark_->GetSpriteDissolve();
+            if (checkMarkDissolve->GetDissolveValue() < 1.0f)
+            {
+                checkMarkDissolve->AddDissolveValue(elapsedTime);
+            }
+        }
+
         textColorAlpha      = textT->GetColorA();
-        checkMarkColorAlpha = checkMarkT->GetColorA();
+        textColorAlpha      = textT->GetColorA();
         textBG_ColorAlpha   = textBG_T->GetColorA();
 
         {
-            const bool isEndEaseOut[3] = {
+            const bool isEndEaseOut[2] = {
                 BaseTutorial::colorAlphaEaseOut(&textColorAlpha),
-                BaseTutorial::colorAlphaEaseOut(&checkMarkColorAlpha),
                 BaseTutorial::colorAlphaEaseOut(&textBG_ColorAlpha),
             };
 
             // すべてのスプライトが透明になったら
             // チュートリアル達成フラグを立てる
             if (false == isEndEaseOut[0] &&
-                false == isEndEaseOut[1] &&
-                false == isEndEaseOut[2])
+                false == isEndEaseOut[1]   )
             {
                 tutorialManager.CompleteTutorial();
 
@@ -179,7 +214,6 @@ void BaseTutorial::Update(const float elapsedTime)
 
         // スプライト不透明度更新
         textT->SetColorA(textColorAlpha);
-        checkMarkT->SetColorA(checkMarkColorAlpha);
         textBG_T->SetColorA(textBG_ColorAlpha);
 
         break;
@@ -209,30 +243,57 @@ void BaseTutorial::DrawImGui()
 
     if (ImGui::BeginMenu("TextBackGround"))
     {
-        XMFLOAT2 pos = textBackGroundT->GetPos();
-        const XMFLOAT2 oldPos = pos;
-        ImGui::SliderFloat2("pos", &pos.x, 0.0f, POS_LIMIT);
-        textBackGroundT->SetPos(pos);
+        // 位置
+        {
+            // 自分の位置だけ動かす
+            XMFLOAT2 pos = textBackGroundT->GetPos();
+            ImGui::SliderFloat2("pos", &pos.x, 0.0f, POS_LIMIT);
+            textBackGroundT->SetPos(pos);
 
-        // 他のスプライトも一緒に移動させる
-        const XMFLOAT2 addChlidPos = {
-            (pos.x - oldPos.x), (pos.y - oldPos.y)
-        };
-        textT->AddPosX(addChlidPos.x);
-        textT->AddPosY(addChlidPos.y);
-        checkMarkT->AddPosX(addChlidPos.x);
-        checkMarkT->AddPosY(addChlidPos.y);
+            // 他のスプライト位置も動かす
+            XMFLOAT2 variationPos = textBackGroundT->GetPos();
+            const XMFLOAT2 oldPos = variationPos;
+            ImGui::SliderFloat2("variationPos", &variationPos.x, 0.0f, POS_LIMIT);
+            textBackGroundT->SetPos(variationPos);
 
-        // scaleをsizeに反映させる
-        const XMFLOAT2& texSize = textBackGroundT->GetTexSize();
-        float scaleX    = textBackGroundT->GetSize().x / textBackGroundT->GetTexSize().x;
-        float scaleY    = textBackGroundT->GetSize().y / textBackGroundT->GetTexSize().y;
-        float oldScaleX = scaleX;
-        ImGui::SliderFloat("scale", &scaleX, 0.0f, SCALE_LIMIT);
-        // scaleXの変動量をscaleYにも反映させる
-        scaleY += scaleX - oldScaleX;
-        textBackGroundT->SetSizeX(texSize.x * scaleX);
-        textBackGroundT->SetSizeY(texSize.y * scaleY);
+            // 他のスプライトも一緒に移動させる
+            const XMFLOAT2 addChlidPos = {
+                (variationPos.x - oldPos.x), (variationPos.y - oldPos.y)
+            };
+            textT->AddPosX(addChlidPos.x);
+            textT->AddPosY(addChlidPos.y);
+            checkMarkT->AddPosX(addChlidPos.x);
+            checkMarkT->AddPosY(addChlidPos.y);
+        }
+
+        // スケール
+        {
+            // scaleをsizeに反映させる
+            const XMFLOAT2& texSize = textBackGroundT->GetTexSize();
+            float scaleX    = textBackGroundT->GetSize().x / textBackGroundT->GetTexSize().x;
+            float scaleY    = textBackGroundT->GetSize().y / textBackGroundT->GetTexSize().y;
+            float oldScaleX = scaleX;
+            ImGui::SliderFloat("scale", &scaleX, 0.0f, SCALE_LIMIT);
+            // scaleXの変動量をscaleYにも反映させる
+            const float variationScaleX = scaleX - oldScaleX;
+            scaleY += variationScaleX;
+            textBackGroundT->SetSizeX(texSize.x * scaleX);
+            textBackGroundT->SetSizeY(texSize.y * scaleY);
+
+            // 基準点が違ったので失敗
+            //// 他のスプライトも一緒にスケーリングさせる
+            //{
+            //    const float textScaleX = textT->GetSize().x / textT->GetTexSize().x;
+            //    const float textScaleY = textT->GetSize().y / textT->GetTexSize().y;
+            //    textT->SetSizeX(textT->GetTexSize().x * (textScaleX + variationScaleX));
+            //    textT->SetSizeY(textT->GetTexSize().y * (textScaleY + variationScaleX));
+            //
+            //    const float checkMarkScaleX = checkMarkT->GetSize().x / checkMarkT->GetTexSize().x;
+            //    const float checkMarkScaleY = checkMarkT->GetSize().y / checkMarkT->GetTexSize().y;
+            //    checkMarkT->SetSizeX(checkMarkT->GetTexSize().x * (checkMarkScaleX + variationScaleX));
+            //    checkMarkT->SetSizeY(checkMarkT->GetTexSize().y * (checkMarkScaleY + variationScaleX));
+            //}
+        }
 
         ImGui::EndMenu();
     }
@@ -245,11 +306,11 @@ void BaseTutorial::DrawImGui()
 
         // 親の位置からどれくらいずれているかのメモ用
         const XMFLOAT2& textBackGroundPos = textBackGroundT->GetPos();
-        XMFLOAT2 textVariation = {
+        XMFLOAT2 variationPos = {
             pos.x - textBackGroundPos.x,
             pos.y - textBackGroundPos.y,
         };
-        ImGui::InputFloat2("textVariation", &textVariation.x);
+        ImGui::InputFloat2("variationPos", &variationPos.x);
 
         // scaleをsizeに反映させる
         const XMFLOAT2& texSize = textT->GetTexSize();
@@ -273,11 +334,11 @@ void BaseTutorial::DrawImGui()
 
         // 親の位置からどれくらいずれているかのメモ用
         const XMFLOAT2& textBackGroundPos = textBackGroundT->GetPos();
-        XMFLOAT2 checkMarkVariation = {
+        XMFLOAT2 variationPos = {
             pos.x - textBackGroundPos.x,
             pos.y - textBackGroundPos.y,
         };
-        ImGui::InputFloat2("checkMarkVariation", &checkMarkVariation.x);
+        ImGui::InputFloat2("variationPos", &variationPos.x);
 
         // scaleをsizeに反映させる
         const XMFLOAT2& texSize = checkMarkT->GetTexSize();
@@ -290,10 +351,9 @@ void BaseTutorial::DrawImGui()
         checkMarkT->SetSizeX(texSize.x * scaleX);
         checkMarkT->SetSizeY(texSize.y * scaleY);
 
-        static float dissolveValue = 1.0f;
-        ImGui::SliderFloat("dissolveValue", &dissolveValue, -1.0f, 1.0f);
-        text_->GetSpriteDissolve()->SetDissolveValue(dissolveValue);
-
+        float dissolveValue = checkMark_->GetSpriteDissolve()->GetDissolveValue();
+        ImGui::SliderFloat("dissolveValue", &dissolveValue, -0.1f, 1.0f);
+        checkMark_->GetSpriteDissolve()->SetDissolveValue(dissolveValue);
 
         ImGui::EndMenu();
     }
@@ -410,9 +470,17 @@ void TutorialMoveCamera::DrawImGui()
 const bool TutorialMoveCamera::MoveNextStepJudgment()
 {
     const GamePad& gamePad = Input::Instance().GetGamePad();
+    const Mouse&   mouse   = Input::Instance().GetMouse();
 
-    // カメラ移動入力がされていたらtrueを返す
-    if (gamePad.GetAxisRY() != 0.0f ||
+    // マウスのカメラ移動入力がされていたらtrueを返す
+    if (mouse.GetPositionX() != mouse.GetOldPositionX() ||
+        mouse.GetPositionY() != mouse.GetOldPositionY())
+    {
+        return true;
+    }
+
+    // キーボードのカメラ移動入力がされていたらtrueを返す
+    if (gamePad.GetAxisRX() != 0.0f ||
         gamePad.GetAxisRY() != 0.0f)
     {
         return true;
