@@ -7,6 +7,8 @@
 #include "Collision.h"
 #include "PlayerManager.h"
 
+#include "WaveManager.h"
+
 void EnemyManager::Initialize()
 {
     // CRA : 0.Initialize : 初期化
@@ -283,7 +285,7 @@ void EnemyManager::CollisionProjectileVsPlayer()
             }
 
             // プレイヤーにダメージを与える
-            player->ApplyDamage(proj->GetAttack(),plHitColliderPos,proj->GetOwner());
+            player->ApplyDamage(/*proj->GetAttack()*/static_cast<float>(WaveManager::Instance().GetCurrentWaveIndex()), plHitColliderPos, proj->GetOwner());
 
             // 弾を消去する
             proj->Destroy();
