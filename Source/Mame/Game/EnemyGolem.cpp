@@ -164,6 +164,9 @@ void EnemyGolem::Initialize()
     AudioManager::Instance().PlayBGM(BGM::Golem);
 
     AudioManager::Instance().GetBGM(BGM::Golem)->Volume(0.35f);
+
+    // 怯み用
+    isDown = false;
 }
 
 // 終了化
@@ -178,6 +181,9 @@ void EnemyGolem::Begin()
 // 更新処理
 void EnemyGolem::Update(const float& elapsedTime)
 {
+
+
+
     PlayerManager::Instance().isChange = true;
 
     // ステートマシン更新

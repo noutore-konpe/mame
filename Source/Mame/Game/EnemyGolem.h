@@ -199,5 +199,9 @@ private:
 #ifdef _DEBUG
     int currentStateDebug = 0;
 #endif // _DEBUG
+
+    bool isDown = false;    // ‹¯‚Ý—p
+
+
 };
 
