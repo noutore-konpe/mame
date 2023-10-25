@@ -37,10 +37,12 @@ WaveEnemySet waveEnemySetTest[] = {
 #endif
 WaveEnemySet waveEnemySet0[] = {
     WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 0.0f), Set::ATK + (Set::ADD_ATK * 0.0f), 5),
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 0.0f), Set::ATK + (Set::ADD_ATK * 0.0f), 5),
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 0.0f), Set::ATK + (Set::ADD_ATK * 0.0f), 5),
+    //WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 0.0f), Set::ATK + (Set::ADD_ATK * 0.0f), 5),
+    //WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 0.0f), Set::ATK + (Set::ADD_ATK * 0.0f), 5),
 };
 WaveEnemySet waveEnemySet1[] = {
+    WaveEnemySet(1.0f, "EnemyGolem", SceneGame::stageCenter, Set::GolemHp + (Set::ADD_HP * 5.0f), Set::ATK + (Set::ADD_ATK * 5.0f), 30),
+    WaveEnemySet(1.0f, "EnemyGolem", SceneGame::stageCenter, Set::GolemHp + (Set::ADD_HP * 5.0f), Set::ATK + (Set::ADD_ATK * 5.0f), 30),
     WaveEnemySet(0.5f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 1.0f), Set::ATK + (Set::ADD_ATK * 1.0f), 5),
     WaveEnemySet(0.5f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 1.0f), Set::ATK + (Set::ADD_ATK * 1.0f), 5),
     WaveEnemySet(0.5f, "EnemyAI_2", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 1.0f), Set::ATK + (Set::ADD_ATK * 1.0f), 8),

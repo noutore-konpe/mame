@@ -250,6 +250,8 @@ void SceneGame::Initialize()
     // ÉQÅ[ÉÄBGMçƒê∂
     AudioManager::Instance().PlayBGM(BGM::Enviroment);
     AudioManager::Instance().PlayBGM(BGM::Game);
+
+    PlayerManager::Instance().SetFogTimer(2.0f);
 }
 
 // èIóπâª
@@ -391,6 +393,114 @@ void SceneGame::Update(const float& elapsedTime)
         SetCursorPos(posX, posY);
     }
 #endif // _DEBUG
+
+    Graphics& graphics = Graphics::Instance();
+    Shader* shader = graphics.GetShader();
+
+    // BGMä«óù
+    if (PlayerManager::Instance().isChangeBGM)
+    {
+        std::vector<Enemy*> enemy;
+        EnemyManager::Instance().GetSpecifyEnemy(Enemy::TYPE::Golem, enemy);
+
+        if (enemy.size() > 0)
+        {
+            PlayerManager::Instance().isChangeBGM = false;
+        }
+        else
+        {
+            AudioManager::Instance().StopBGM(BGM::Golem);
+            AudioManager::Instance().PlayBGM(BGM::Game);
+        }
+    }
+
+    if (PlayerManager::Instance().isChange)
+    {
+        if (PlayerManager::Instance().GetFog())
+        {
+            std::vector<Enemy*> enemy;
+            EnemyManager::Instance().GetSpecifyEnemy(Enemy::TYPE::Golem, enemy);
+
+            if (enemy.size() > 0)
+            {
+                PlayerManager::Instance().isChange = false;
+            }
+            else
+            {
+                PlayerManager::Instance().SetFog(false);
+                PlayerManager::Instance().SetFogTimer(0.0f);
+            }
+        }
+        else
+        {
+            std::vector<Enemy*> enemy;
+            EnemyManager::Instance().GetSpecifyEnemy(Enemy::TYPE::Golem, enemy);
+
+            if (enemy.size() > 0)
+            {
+                PlayerManager::Instance().SetFog(true);
+                PlayerManager::Instance().SetFogTimer(0.0f);
+            }
+            else
+            {
+                PlayerManager::Instance().isChange = false;
+            }
+        }
+    }
+
+    if (PlayerManager::Instance().GetFog())
+    {
+        float maxTime = 1.0f;
+        if (PlayerManager::Instance().GetFogTimer() <= maxTime)
+        {
+            float a = Easing::InSine(PlayerManager::Instance().GetFogTimer(), maxTime, 8.0f, 0.0005f);
+            float b = Easing::InSine(PlayerManager::Instance().GetFogTimer(), maxTime, 14.0f, 10.0f);
+
+            float r = Easing::InSine(PlayerManager::Instance().GetFogTimer(), maxTime, 0.58f, 1.0f);
+            float g = Easing::InSine(PlayerManager::Instance().GetFogTimer(), maxTime, 0.0f, 1.0f);
+
+            shader->fogConstants.fogDensity = a;
+            shader->fogConstants.fogHeightFalloff = b;
+            shader->fogConstants.fogColor.x = r;
+            shader->fogConstants.fogColor.y = g;
+
+            PlayerManager::Instance().AddFogTimer(elapsedTime);
+        }
+        else
+        {
+            shader->fogConstants.fogDensity = 8.0f;
+            shader->fogConstants.fogHeightFalloff = 14.0f;
+            shader->fogConstants.fogColor.x = 0.58f;
+            shader->fogConstants.fogColor.y = 0.0f;
+        }
+    }
+    else
+    {
+        float maxTime = 1.0f;
+        if (PlayerManager::Instance().GetFogTimer() <= maxTime)
+        {
+            float a = Easing::InSine(PlayerManager::Instance().GetFogTimer(), maxTime, 0.0005f, 0.8f);
+            float b = Easing::InSine(PlayerManager::Instance().GetFogTimer(), maxTime, 10.0f, 14.0f);
+
+            float r = Easing::InSine(PlayerManager::Instance().GetFogTimer(), maxTime, 1.0f, 0.58f);
+            float g = Easing::InSine(PlayerManager::Instance().GetFogTimer(), maxTime, 1.0f, 0.0f);
+
+            shader->fogConstants.fogDensity = a;
+            shader->fogConstants.fogHeightFalloff = b;
+            shader->fogConstants.fogColor.x = r;
+            shader->fogConstants.fogColor.y = g;
+
+            PlayerManager::Instance().AddFogTimer(elapsedTime);
+        }
+        else
+        {
+            shader->fogConstants.fogDensity = 0.0005f;
+            shader->fogConstants.fogHeightFalloff = 10.0f;
+            shader->fogConstants.fogColor.x = 1.0f;
+            shader->fogConstants.fogColor.y = 1.0f;
+        }
+    }
+
 
     {
         Camera::Instance().Update(slowMotionElapsedTime);

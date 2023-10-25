@@ -116,9 +116,13 @@ EnemyGolem::~EnemyGolem()
     {
         EnemyManager::Instance().AddEnemyGolemKillNum();
 
-        AudioManager::Instance().StopBGM(BGM::Golem);
-        AudioManager::Instance().PlayBGM(BGM::Game);
+
+        PlayerManager::Instance().isChangeBGM = true;
     }
+
+    PlayerManager::Instance().isChange = true;
+    
+    //PlayerManager::Instance().SetFogTimer(0.0f);
 }
 
 // 初期化
@@ -174,6 +178,8 @@ void EnemyGolem::Begin()
 // 更新処理
 void EnemyGolem::Update(const float& elapsedTime)
 {
+    PlayerManager::Instance().isChange = true;
+
     // ステートマシン更新
     GetStateMachine()->Update(elapsedTime);
 
