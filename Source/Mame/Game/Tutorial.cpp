@@ -3,6 +3,7 @@
 #include "../Graphics/Graphics.h"
 #include "../Input/Input.h"
 #include "../Other/Easing.h"
+#include "../Scene/SceneTitle.h"
 
 #include "TutorialManager.h"
 #include "EnemyManager.h"
@@ -740,10 +741,10 @@ const bool TutorialAvoid::MoveNextStepJudgment()
 #pragma endregion
 
 
-// レベルアップチュートリアル
-#pragma region TutorialLevelUp
+// チュートリアルエンド
+#pragma region TutorialEnd
 
-TutorialLevelUp::TutorialLevelUp()
+TutorialEnd::TutorialEnd()
 {
     Graphics& graphics = Graphics::Instance();
 
@@ -751,42 +752,29 @@ TutorialLevelUp::TutorialLevelUp()
     {
         text_ = std::make_unique<Sprite>(
             graphics.GetDevice(),
-            //L"./Resources/Image/Tutorial/Texts/LevelUp.png"
-            L"./Resources/Image/Tutorial/Texts/LockOn.png"
+            L"./Resources/Image/Tutorial/Texts/End.png"
         );
     }
 
 }
 
-void TutorialLevelUp::Update(const float elapsedTime)
+void TutorialEnd::Initialize()
 {
-    using DirectX::XMFLOAT3;
+    BaseTutorial::Initialize();
 
-    // 敵生成更新
-    const int createCount = 3;
-    const int dropExpCount = 8;
-    UpdateCreateEnemy(elapsedTime, createCount, dropExpCount);
-
-    BaseTutorial::Update(elapsedTime);
-
+    DirectX::XMFLOAT2 size = text_->GetSpriteTransform()->GetSize();
+    size.x *= 0.75f;
+    size.y *= 0.75f;
+    text_->GetSpriteTransform()->SetSize(size);
+    text_->GetSpriteTransform()->AddPosX(20.0f);
+    text_->GetSpriteTransform()->AddPosY(25.0f);
 }
 
-void TutorialLevelUp::Render()
-{
-    PlayerManager& playerManager = PlayerManager::Instance();
-
-    //// スキルカード選択中は描画しないようにする
-    //Player* player = playerManager.GetPlayer().get();
-    //if (true == player->isSelectingSkill) { return; }
-
-    BaseTutorial::Render();
-}
-
-void TutorialLevelUp::DrawImGui()
+void TutorialEnd::DrawImGui()
 {
 #if USE_IMGUI
 
-    if (ImGui::BeginMenu("TutorialLevelUp"))
+    if (ImGui::BeginMenu("TutorialEnd"))
     {
         BaseTutorial::DrawImGui();
         ImGui::EndMenu();
@@ -795,13 +783,37 @@ void TutorialLevelUp::DrawImGui()
 #endif
 }
 
-const bool TutorialLevelUp::MoveNextStepJudgment()
+const bool TutorialEnd::MoveNextStepJudgment()
 {
-    PlayerManager& playerManager = PlayerManager::Instance();
+    const GamePad& gamePad = Input::Instance().GetGamePad();
 
-    // レベルが上がったらtrueを返す
-    Player* player = playerManager.GetPlayer().get();
-    if (player->GetLevel() > 1) { return true; }
+    const GamePadButton anyButton =
+        GamePad::BTN_UP
+        | GamePad::BTN_RIGHT
+        | GamePad::BTN_DOWN
+        | GamePad::BTN_LEFT
+        | GamePad::BTN_A
+        | GamePad::BTN_B
+        | GamePad::BTN_X
+        | GamePad::BTN_Y
+        | GamePad::BTN_LEFT_SHOULDER
+        | GamePad::BTN_RIGHT_SHOULDER
+        | GamePad::BTN_LEFT_THUMB
+        | GamePad::BTN_RIGHT_THUMB
+        | GamePad::BTN_LEFT_TRIGGER
+        | GamePad::BTN_RIGHT_TRIGGER;
+
+    const unsigned int anyKey =
+        GetAsyncKeyState('W')
+        | GetAsyncKeyState('A')
+        | GetAsyncKeyState('S')
+        | GetAsyncKeyState('D');
+
+
+    if ((gamePad.GetButtonDown() & anyButton) || anyKey)
+    {
+        return true;
+    }
 
     return false;
 }

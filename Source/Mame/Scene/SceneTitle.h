@@ -42,7 +42,7 @@ private:
     // ----- 変数 -----
     float pressTimer = 0.0f;    // 点滅用タイマー(Press Any Button)
     bool isAlphaDown = false;   // 点滅切り替え用(Press Any Button)
-    
+
     bool isFade = false;    // フェードを行うか
     float fadeTimer = 0.0f; // フェード用のタイマー
 
