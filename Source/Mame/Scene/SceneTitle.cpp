@@ -164,7 +164,7 @@ void SceneTitle::Update(const float& elapsedTime)
     {
         static bool once = false;
         Camera::Instance().TitleInitialize();
-        if (!once)
+        /*if (!once)
         {
             Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTutorial));
             once = true;
@@ -172,7 +172,8 @@ void SceneTitle::Update(const float& elapsedTime)
         else
         {
             Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
-        }
+        }*/
+            Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
         //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneResult));
         return;
     }

@@ -138,7 +138,7 @@ namespace PlayerSkill
         void Overlaping()override;
 
         //仕返しダメージ倍率
-        float revengeMul = 1.0f;
+        float revengeMul = 0.3f;
         const float revengeIncreasing = 0.2f;
     private:
         std::unique_ptr<Sprite> card2;

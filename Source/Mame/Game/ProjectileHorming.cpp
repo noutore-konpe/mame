@@ -34,8 +34,9 @@ void ProjectileHorming::Initialize()
 {
     using DirectX::XMFLOAT3;
 
-    constexpr float scale = 1.0f;
-    GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
+    GetTransform()->SetScaleFactor(10.0f);
+    //constexpr float scale = 1.0f;
+    //GetTransform()->SetScale(XMFLOAT3(scale, scale, scale));
 }
 
 
@@ -63,7 +64,8 @@ void ProjectileHorming::Update(const float elapsedTime)
             Enemy* enemy = enmManager.GetEnemy(i);
 
             const XMFLOAT3& pos    = this->GetPosition();
-            const XMFLOAT3& enmPos = enemy->GetPosition();
+            XMFLOAT3 enmPos = enemy->GetPosition();
+            enmPos.y += enemy->GetHeight() / 2;
             const XMFLOAT3  vec    = enmPos - pos;
             float           length = 0.0f;
             const XMFLOAT3  vecN   = ::XMFloat3Normalize(vec, &length);
