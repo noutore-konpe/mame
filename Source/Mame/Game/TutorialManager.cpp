@@ -1,10 +1,11 @@
 #include "TutorialManager.h"
+#include "../../Taki174/Common.h"
 #include "../Graphics/Graphics.h"
 
 void TutorialManager::Initialize()
 {
     // チュートリアルステップ初期化
-    tutorialstep_ = TUTORIAL_STEP::MOVE;
+    tutorialStep_ = TUTORIAL_STEP::MOVE;
 
     // 次のチュートリアル設定
     SetNextTutorial();
@@ -52,22 +53,27 @@ const bool TutorialManager::SetNextTutorial()
     Graphics& graphics = Graphics::Instance();
 
     // チュートリアルが最後まで行っていたらチュートリアル終了
-    if (tutorialstep_ >= TUTORIAL_STEP::COUNT)
+    if (tutorialStep_ >= TUTORIAL_STEP::COUNT)
     {
         return false;
     }
 
-    // チュートリアル分岐
-    switch (tutorialstep_)
+    // チュートリアル代入分岐
+    switch (tutorialStep_)
     {
-    case TUTORIAL_STEP::MOVE: tutorial_ = std::make_unique<TutorialMove>(); break;
+    case TUTORIAL_STEP::MOVE:        tutorial_ = std::make_unique<TutorialMove>();       break;
+    case TUTORIAL_STEP::MOVE_CAMERA: tutorial_ = std::make_unique<TutorialMoveCamera>(); break;
+    case TUTORIAL_STEP::LOCK_ON:     tutorial_ = std::make_unique<TutorialLockOn>();     break;
+    case TUTORIAL_STEP::ATTACK:      tutorial_ = std::make_unique<TutorialAttack>();     break;
+    case TUTORIAL_STEP::AVOID:       tutorial_ = std::make_unique<TutorialAvoid>();      break;
+    case TUTORIAL_STEP::LEVEL_UP:    tutorial_ = std::make_unique<TutorialLevelUp>();    break;
     }
 
     // チュートリアル初期化
     tutorial_->Initialize();
 
     // チュートリアルステップ加算
-    tutorialstep_ = static_cast<TUTORIAL_STEP>(static_cast<int>(tutorialstep_) + 1);
+    ::IncrementEnumClass(&tutorialStep_);
 
     return true;
 }

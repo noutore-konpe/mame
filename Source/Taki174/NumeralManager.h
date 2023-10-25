@@ -36,7 +36,7 @@ public:
         Character* parent,
         const int numeral,
         const DirectX::XMFLOAT3& worldPos,
-        const DirectX::XMFLOAT2& size = { 30, 30 },
+        const DirectX::XMFLOAT2& size = { 22, 30 },
         const DirectX::XMFLOAT4& color = { 1,1,1,1 },
         const float angle = 0.0f,
         const float rowOffset = 40.0f // çsä‘í≤êÆ

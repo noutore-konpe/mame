@@ -170,6 +170,13 @@ void PlayerManager::CollisionPlayerVsEnemy()
 
         if (lengthSq > (range * range)) continue;
 
+        if (player->GetStateMachine()->GetStateIndex() == Player::STATE::AVOID)
+        {
+            auto hitPos = enemy->GetTransform()->GetPosition();
+            hitPos.y += 0.6f;
+            enemy->ApplyDamage(0.1f * player->GetBasePower(), hitPos,nullptr,0.1f);
+        }
+
 #ifdef _DEBUG
         // 吹っ飛ばし（仮）
         {
@@ -178,11 +185,11 @@ void PlayerManager::CollisionPlayerVsEnemy()
 
 
             // 吹っ飛ぶ方向ベクトル(未正規化)と吹っ飛ぶ力の度合いを保存
-            enemy->SaveBlowOffInfo(
-                -vecFromEnemyToPlayer,
-                BLOW_OFF_FORCE_LEVEL::MIDDLE
-            );
-            enemy->ApplyDamage(999999,enemy->GetTransform()->GetPosition()); // 死亡フラグと吹っ飛びフラグを立てる
+            //enemy->SaveBlowOffInfo(
+            //    -vecFromEnemyToPlayer,
+            //    BLOW_OFF_FORCE_LEVEL::MIDDLE
+            //);
+            //enemy->ApplyDamage(999999,enemy->GetTransform()->GetPosition()); // 死亡フラグと吹っ飛びフラグを立てる
 
 #else
             // 任意の吹っ飛ばし
@@ -223,6 +230,36 @@ bool PlayerManager::AttackCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies
         for (auto& enemy : EnemyManager::Instance().GetEnemies())
         {
             for (auto& atkCollider : player->GetAttackCollider())
+            {
+                for (auto& hitCollider : enemy->GetHitCollider())
+                {
+                    if (Collision::IntersectSphereVsSphere(
+                        atkCollider.position, atkCollider.radius,
+                        hitCollider.position, hitCollider.radius))
+                    {
+                        // 吹っ飛び情報を保存
+                        const DirectX::XMFLOAT3 vec = enemy->GetPosition() - atkCollider.position;
+                        enemy->SaveBlowOffInfo(vec, player->GetInflictBlowOffForceLevel());
+
+                        hitPos = hitCollider.position;
+                        hitEnemies.emplace_back(enemy);
+                        hit = true;
+                    }
+                }
+            }
+        }
+    }
+    return hit;
+}
+
+bool PlayerManager::HitCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies, DirectX::XMFLOAT3& hitPos)
+{
+    bool hit = false;
+    if (player->isActiveAttackFrame)
+    {
+        for (auto& enemy : EnemyManager::Instance().GetEnemies())
+        {
+            for (auto& atkCollider : player->GetHitCollider())
             {
                 for (auto& hitCollider : enemy->GetHitCollider())
                 {

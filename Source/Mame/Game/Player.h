@@ -41,6 +41,8 @@ public: // enum関連
         CounterAttack,
         SoftStagger,
         HardStagger,//吹っ飛び、死亡
+        StandUp,
+        HardAttack
     };
 
 
@@ -62,8 +64,8 @@ public:
         HARD
     };
 
-    DamageResult ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition,Character* attacker = nullptr,float invincibleTime = 0, bool ignoreDefence = false)override;
-    DamageResult ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, const HitReaction reaction,Character* attacker = nullptr, float invincibleTime = 0, bool ignoreDefence = false);
+    DamageResult ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition,Character* attacker = nullptr,float invincibleTime = 0, bool ignoreDefence = false, DirectX::XMFLOAT4 color = { 1,0,0,1 })override;
+    DamageResult ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, const HitReaction reaction, Character* attacker = nullptr, float invincibleTime = 0, bool ignoreDefence = false);
 
     void MoveUpdate(float elapsedTime, float ax, float ay);
     void UpdateVelocity(float elapsedTime, float ax, float ay);
@@ -96,7 +98,7 @@ public:
     void OnDamaged()override;
     void OnDead(DamageResult result)override;
 
-    void ChangeState(int newState) { stateMachine->ChangeState(newState); }
+    void ChangeState(int newState);
 
 
     void ResetSteppingTimer() { steppingTimer = 0; }
@@ -114,12 +116,14 @@ public:
 
     void LockOnInitialize();
 
-    void BlownUpdate(float elapsedTime);//吹っ飛び更新処理
+    const bool BlownUpdate(float elapsedTime);//吹っ飛び更新処理(吹っ飛び中true)
     void Blow(DirectX::XMFLOAT3 blowVec/*吹き飛ぶ方向*/);//吹っ飛しするときに呼ぶ
 
     void ActiveCounter();
 
     void PlayLaserEffect();
+
+    void TurnNearEnemy(float radius,float elapsedTime);
 
 private:
     float blowTime = 1.0f;
@@ -133,7 +137,14 @@ public:
     //入力関数
     static bool InputJabAttack()
     {
-        return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X);
+        return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_X) ||
+            (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_LEFT);
+    }
+
+    static bool InputHardAttack()
+    {
+        return (Input::Instance().GetGamePad().GetButtonDown() & GamePad::BTN_Y) ||
+            (Input::Instance().GetMouse().GetButtonDown() & Mouse::BTN_RIGHT);
     }
 
     static bool InputDash()
@@ -233,6 +244,8 @@ private:
 
     //----------------------------カメラ関係----------------------------------
     float cameraRotSpeed = 2.0f;//旋回速度
+    float cameraRotSpeedMouseX = 0.1f;
+    float cameraRotSpeedMouseY = 0.18f;
     //-----------------------------------------------------------------------
 
     //--------------------------移動-----------------------------------------
@@ -284,6 +297,10 @@ private:
 
 public://getter作るのめんどいだけ
     float jabMotionAtkMuls[3];
+    float hardAtkMuls;
+
+    float poisonSlipDamage;
+    float poisonEffectTime;
     //-----------------------------------------------------------------------
 private:
     //----------------------------回避---------------------------------------

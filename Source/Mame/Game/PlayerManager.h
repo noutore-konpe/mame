@@ -30,6 +30,9 @@ public:
 
     bool AttackCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies, DirectX::XMFLOAT3& hitPos);
 
+    //‹ò‚ç‚¢”»’è‚Ì—¼•û‚ğUŒ‚”»’è‚Æ‚µ‚Ä”»’è‚·‚éŠÖ”
+    bool HitCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies, DirectX::XMFLOAT3& hitPos);
+
     const float GetLifeTime() const { return lifeTime; }
     void SetLifeTime(const float time) { lifeTime = time; }
 
@@ -42,6 +45,9 @@ public: // æ“¾Eİ’è ŠÖ˜A
     std::vector<BaseSkill*>& GetSkillArray() { return skillArray; }
 
     PlayerSkill::Drain* GetDrainSkill() { return drainSkill.get(); }
+    PlayerSkill::CanCounterAttack* GetCounterSkill() { return counterSkill.get(); }
+    PlayerSkill::CanTripleAttack* GetTripleAttackSkill() { return tripleAttackSkill.get(); }
+    PlayerSkill::ChangeHomingSkill* GetHomingSkill() { return homingSkill.get(); }
     //PlayerSkill::* GetDrainSkill() { return drainSkill.get(); }
     
     void SetTamaType(int type) { tamaType = type; }

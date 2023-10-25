@@ -129,7 +129,7 @@ private:
     float offsetY = 2.7f;
     float focusOffsetY = 1.0f;
 
-    float maxEyeSpeed = 8.0f;
+    float maxEyeSpeed = 15.0f;
     float maxFocusSpeed = 20.0f;
 
     Transform* focusTarget;//注視点になるオブジェクト
@@ -141,7 +141,7 @@ private:
     DirectX::XMFLOAT3 eyePos;
     DirectX::XMFLOAT3 focusPos = {0,0,1};
 
-    float acceleration = 3.0f;
+    float acceleration = 12.0f;
     float focusAcceleration = 9.0f;
     DirectX::XMFLOAT3 velocity;
     DirectX::XMFLOAT3 focusVelocity;
@@ -162,6 +162,7 @@ private:
     float initFov;
     float holdFov;
     float resultFov;
+
     
 private:
     //イージング等の視野角変更更新
@@ -176,5 +177,8 @@ public:
 
     //視野角をもとに戻す
     void RestoreFov(float time);
+
+    //マウスを使用しているか
+    bool useMouse = false;
 private:
 };

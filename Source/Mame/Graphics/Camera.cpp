@@ -377,7 +377,32 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
 
         focus = DirectX::XMVectorAdd(DirectX::XMVectorScale(DirectX::XMLoadFloat3(&screenVibrationOffset),7.0f), focus);
     }
-    if (focusTarget && !enableDebugCamera)
+    else if (focusTarget && useMouse)
+    {
+        DirectX::XMFLOAT3 targetPos = focusTarget->GetPosition();
+        DirectX::XMFLOAT3 forward = GetForward();
+
+        eye = { DirectX::XMVectorSet(
+            targetPos.x - forward.x * focalLength,
+            targetPos.y - forward.y * focalLength + 1.0f,
+            targetPos.z - forward.z * focalLength,
+            1.0f) };
+
+        /* focus = { DirectX::XMVectorSet(
+             targetPos.x,
+             targetPos.y + focusOffsetY,
+             targetPos.z,
+             1.0f) };*/
+
+        focus = { DirectX::XMVectorSet(
+            targetPos.x,
+            targetPos.y + focusOffsetY,
+            targetPos.z,
+            1.0f) };
+
+        focus = DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&screenVibrationOffset), focus);
+    }
+    else if (focusTarget && !enableDebugCamera)
     {
         //DirectX::XMFLOAT3 pos = transform.GetPosition();
         DirectX::XMFLOAT3 targetPos = focusTarget->GetPosition();

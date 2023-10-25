@@ -104,12 +104,30 @@ namespace PlayerSkill
             BaseSkill(player,
                 L"./Resources/Image/Card/sampleCard.png",
                 L"./Resources/Image/Icon/sampleIcon.png",
-                "Can Counter Attack",
+                "Homing",
                 BaseSkill::SUPER_RARE,
                 true) {}
         ~ChangeHomingSkill() {}
 
         void Overlaping()override;
+    };
+
+    class PoisonSkill : public BaseSkill
+    {
+    public:
+        PoisonSkill(Player* player) :
+            BaseSkill(player,
+                L"./Resources/Image/Card/sampleCard.png",
+                L"./Resources/Image/Icon/sampleIcon.png",
+                "Poison",
+                BaseSkill::RARE,
+                true) {}
+        ~PoisonSkill() {}
+
+        void Overlaping()override;
+
+    private:
+        const float damageIncreasing = 3.0f;
     };
 }
 

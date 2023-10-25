@@ -583,7 +583,7 @@ const bool EnemyGolem::AttackCollisionVsPlayer(ColliderName index,float damage)
             pHitCollider.position, pHitCollider.radius,
             myHitCollider.position, myHitCollider.radius))
         {
-            player->ApplyDamage(damage, pHitCollider.position,this,Player::HARD);
+            player->ApplyDamage(damage, pHitCollider.position,Player::HitReaction::HARD,this,0.01f);
             return true;
         }
     }
