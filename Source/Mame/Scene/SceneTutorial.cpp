@@ -154,12 +154,12 @@ void SceneTutorial::Begin()
 void SceneTutorial::Update(const float& elapsedTime)
 {
     Mame::Scene::SceneManager& sceneManager = Mame::Scene::SceneManager::Instance();
-    TutorialManager&    tutorialManager = TutorialManager::Instance();
     PlayerManager&      plManager       = PlayerManager::Instance();
     EnemyManager&       enemyManager    = EnemyManager::Instance();
     NumeralManager&     numeralManager  = NumeralManager::Instance();
     UserInterface&      userInterface   = UserInterface::Instance();
     SlowMotionManager&  slowMotion      = SlowMotionManager::Instance();
+    TutorialManager&    tutorialManager = TutorialManager::Instance();
     GamePad&            gamePad         = Input::Instance().GetGamePad();
 
     //カード演出中はほかの処理を更新しない
@@ -220,6 +220,13 @@ void SceneTutorial::Update(const float& elapsedTime)
 
         // UI更新
         userInterface.Update(slowMotionElapsedTime);
+
+        // チュートリアル更新
+        const bool tutorialExecuteFlag = tutorialManager.Update(slowMotionElapsedTime);
+        if (false == tutorialExecuteFlag)
+        {
+            // 終了
+        }
     }
 
     //カード演出中だけUpdate前にreturn呼んでるから注意！！
@@ -233,6 +240,7 @@ void SceneTutorial::Render(const float& /*elapsedTime*/)
 {
     Graphics& graphics = Graphics::Instance();
     Shader* shader = graphics.GetShader();
+    TutorialManager& tutorialManager = TutorialManager::Instance();
 
     Shader::SceneConstants sceneConstants{};
 
@@ -359,6 +367,7 @@ void SceneTutorial::Render(const float& /*elapsedTime*/)
     //ブルームあり２D
     {
         UserInterface::Instance().BloomRender();
+
     }
 
     framebuffers[0]->Deactivate(graphics.GetDeviceContext());
@@ -413,10 +422,15 @@ void SceneTutorial::Render(const float& /*elapsedTime*/)
     // 2D描画
     {
         // チュートリアルスプライト描画
-        TutorialManager::Instance().Render();
+        tutorialManager.Render();
+
     }
 }
 
 void SceneTutorial::DrawDebug()
 {
+    TutorialManager& tutorialManager = TutorialManager::Instance();
+
+    // チュートリアルImGui描画
+    tutorialManager.DrawImGui();
 }

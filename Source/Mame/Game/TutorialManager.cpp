@@ -5,7 +5,7 @@
 void TutorialManager::Initialize()
 {
     // チュートリアルステップ初期化
-    tutorialStep_ = TUTORIAL_STEP::MOVE;
+    tutorialStep_ = TUTORIAL_STEP::NO_TUTORIAL;
 
     // 次のチュートリアル設定
     SetNextTutorial();
@@ -48,9 +48,27 @@ void TutorialManager::Render()
     tutorial_->Render();
 }
 
+void TutorialManager::DrawImGui()
+{
+#if USE_IMGUI
+
+    if (ImGui::BeginMenu("TutorialManager"))
+    {
+        // チュートリアルImGui描画
+        tutorial_->DrawImGui();
+
+        ImGui::EndMenu();
+    }
+
+#endif
+}
+
 const bool TutorialManager::SetNextTutorial()
 {
     Graphics& graphics = Graphics::Instance();
+
+    // チュートリアルステップ加算
+    ::IncrementEnumClass(&tutorialStep_);
 
     // チュートリアルが最後まで行っていたらチュートリアル終了
     if (tutorialStep_ >= TUTORIAL_STEP::COUNT)
@@ -71,9 +89,6 @@ const bool TutorialManager::SetNextTutorial()
 
     // チュートリアル初期化
     tutorial_->Initialize();
-
-    // チュートリアルステップ加算
-    ::IncrementEnumClass(&tutorialStep_);
 
     return true;
 }

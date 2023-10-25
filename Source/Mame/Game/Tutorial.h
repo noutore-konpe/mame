@@ -13,6 +13,7 @@ public:
     virtual void Initialize() = 0;
     virtual void Update(const float elapsedTime) = 0;
     virtual void Render() = 0;
+    virtual void DrawImGui() = 0;
 
 };
 
@@ -27,6 +28,7 @@ public:
     void Initialize() override;
     void Update(const float elapsedTime) override;
     void Render() override;
+    void DrawImGui() override;
 
 private:
     std::unique_ptr<Sprite> text_;
@@ -45,6 +47,7 @@ public:
     void Initialize() override;
     void Update(const float elapsedTime) override;
     void Render() override;
+    void DrawImGui() override;
 
 private:
     std::unique_ptr<Sprite> text_;
@@ -63,6 +66,7 @@ public:
     void Initialize() override;
     void Update(const float elapsedTime) override;
     void Render() override;
+    void DrawImGui() override;
 
 private:
     std::unique_ptr<Sprite> text_;
@@ -81,6 +85,7 @@ public:
     void Initialize() override;
     void Update(const float elapsedTime) override;
     void Render() override;
+    void DrawImGui() override;
 
 private:
     std::unique_ptr<Sprite> text_;
@@ -99,6 +104,7 @@ public:
     void Initialize() override;
     void Update(const float elapsedTime) override;
     void Render() override;
+    void DrawImGui() override;
 
 private:
     std::unique_ptr<Sprite> text_;
@@ -117,6 +123,7 @@ public:
     void Initialize() override;
     void Update(const float elapsedTime) override;
     void Render() override;
+    void DrawImGui() override;
 
 private:
     std::unique_ptr<Sprite> text_;
