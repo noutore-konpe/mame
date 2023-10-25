@@ -25,6 +25,15 @@ namespace PlayerSkill
 
     void BookIncrease::Overlaping()
     {
+        //各種本のスキルを抽選対象
+        if (overlap == 0)
+        {
+            auto& playerManager = PlayerManager::Instance();
+            playerManager.GetBulletRateUpSkill()->isNotElected = false;
+            playerManager.GetBulletSizeUpSkill()->isNotElected = false;
+            playerManager.GetHomingSkill()->isNotElected = false;
+            playerManager.GetPoisonSkill()->isNotElected = false;
+        }
         overlap++;
         Book* book = new Book();
         book->Initialize();
@@ -49,6 +58,7 @@ namespace PlayerSkill
         BaseSkill::Initialize();
         reloadTime = initReloadTime;
         rate = initShotRate;
+        isNotElected = true;
     }
     void BulletRateUp::Overlaping()
     {
@@ -73,6 +83,7 @@ namespace PlayerSkill
         BaseSkill::Initialize();
         scale = initScale;
         radius = initRadius;
+        isNotElected = true;
     }
 
     void BulletSizeUp::Overlaping()

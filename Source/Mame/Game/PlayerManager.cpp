@@ -256,6 +256,7 @@ bool PlayerManager::AttackCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies
 
                         hitPos = hitCollider.position;
                         hitEnemies.emplace_back(enemy);
+                        
                         hit = true;
                     }
                 }

@@ -109,6 +109,7 @@ namespace PlayerSkill
                 true) {}
         ~ChangeHomingSkill() {}
 
+        void Initialize()override;
         void Overlaping()override;
     };
 
@@ -123,6 +124,7 @@ namespace PlayerSkill
                 BaseSkill::RARE) {}
         ~PoisonSkill() {}
 
+        void Initialize()override;
         void Overlaping()override;
 
     private:

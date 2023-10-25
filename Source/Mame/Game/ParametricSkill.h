@@ -65,7 +65,9 @@ namespace PlayerSkill
             BaseSkill(player,
                 L"./Resources/Image/Card/Grimoire.png",
                 L"./Resources/Image/Icon/iconGrimoire.png",
-                "BookIncrease", BaseSkill::COMMON) {}
+                "BookIncrease", BaseSkill::COMMON,
+                false,
+                4) {}
         ~BookIncrease() {}
 
         void Overlaping()override;
@@ -90,7 +92,7 @@ namespace PlayerSkill
         void Overlaping()override;
 
     private:
-        float maxHealthIncreasing = 1.0f;//è„è∏íl
+        float maxHealthIncreasing = 100.0f;//è„è∏íl
     };
 
     // ñhå‰óÕ

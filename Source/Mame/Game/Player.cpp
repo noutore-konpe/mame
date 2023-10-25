@@ -232,7 +232,8 @@ void Player::Update(const float elapsedTime)
 
     lifeTimer += elapsedTime;
 
-   
+   //たまに地面に埋まったりするからYに０いれとく
+    GetTransform()->SetPositionY(0);
 }
 
 // Updateの後に呼ばれる
@@ -286,11 +287,14 @@ Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT
         {
             if (PlayerManager::Instance().GetRevengeSkill()->Active())
             {
-                auto pos = attacker->GetTransform()->GetPosition();
-                pos.y += 0.6f;
-                attacker->ApplyDamage(
-                    result.damage, pos,nullptr,0,true
-                );
+                if (attacker)
+                {
+                    auto pos = attacker->GetTransform()->GetPosition();
+                    pos.y += 0.6f;
+                    attacker->ApplyDamage(
+                        result.damage, pos, nullptr, 0, true
+                    );
+                }
             }
         }
     }
@@ -705,7 +709,7 @@ void Player::DrawDebug()
 
         stateMachine->DrawDebug();
         
-
+        ImGui::DragFloat("HP",&health);
         //ImGui::Checkbox("ShoeCollider",&showCollider);
 
         if (ImGui::TreeNode("Camera"))
@@ -952,7 +956,11 @@ BaseSkill* Player::Lottery()
         {
             //すでに引かれたスキルはスキップ
             if (skill->isSelect)continue;
+
+            //すでに取得している枚数制限付きのスキルを除く
             if (skill->isOneSheet && skill->GetOverlapNum() > 0)continue;
+            if (skill->GetOverlapNum() >= skill->overlapLimit)continue;
+            if (skill->isNotElected)continue;
 
             if (skill->rarity == rarity)
             {
@@ -1198,7 +1206,8 @@ void Player::TurnNearEnemy(float radius,float elapsedTime)
 void Player::OnDamaged()
 {
     //stateMachine->ChangeState(STAGGER_SOFT);
-
+    Input::Instance().GetGamePad().Vibration(0.2f,0.3f);
+    Camera::Instance().ScreenVibrate(0.1f,0.3f);
     
 }
 
@@ -1210,6 +1219,9 @@ void Player::OnDead(DamageResult result)
 
     PlayerManager::Instance().SetLifeTime(lifeTimer);
     PlayerManager::Instance().SetLevel(level);
+
+    Input::Instance().GetGamePad().Vibration(0.6f, 2.0f);
+    Camera::Instance().ScreenVibrate(0.4f, 2.0f);
 }
 
 void Player::ChangeState(int newState)

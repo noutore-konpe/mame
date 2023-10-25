@@ -1,6 +1,6 @@
 #include "AttackSkill.h"
-#include "Player.h"
 #include "BlackHole.h"
+#include "PlayerManager.h"
 
 namespace PlayerSkill
 {
@@ -90,14 +90,43 @@ namespace PlayerSkill
         overlap++;
         if (overlap <= 1)return;
     }
+    void ChangeHomingSkill::Initialize()
+    {
+        BaseSkill::Initialize();
+        isNotElected = true;
+    }
     void ChangeHomingSkill::Overlaping()
     {
         overlap++;
+
+        if (PlayerManager::Instance().GetPoisonSkill()->Active())
+        {
+            PlayerManager::Instance().SetTamaType(static_cast<int>(PlayerManager::TYPE::All));
+        }
+        else
+        {
+            PlayerManager::Instance().SetTamaType(static_cast<int>(PlayerManager::TYPE::Homing));
+        }
+
         if (overlap <= 1)return;
+    }
+    void PoisonSkill::Initialize()
+    {
+        BaseSkill::Initialize();
+        isNotElected = true;
     }
     void PoisonSkill::Overlaping()
     {
         overlap++;
+        if (PlayerManager::Instance().GetHomingSkill()->Active())
+        {
+            PlayerManager::Instance().SetTamaType(static_cast<int>(PlayerManager::TYPE::All));
+        }
+        else
+        {
+            PlayerManager::Instance().SetTamaType(static_cast<int>(PlayerManager::TYPE::Doku));
+        }
+
         if (overlap <= 1)return;
 
         player->poisonSlipDamage += damageIncreasing;

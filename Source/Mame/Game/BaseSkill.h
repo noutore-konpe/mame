@@ -33,7 +33,8 @@ public:
         const wchar_t* iconImageFilename,
         const char* name,
         RARITY rear,
-        bool isOneSheet = false) :player(player), name(name), rarity(rear),overlap(0),isOneSheet(isOneSheet)
+        bool isOneSheet = false,
+        int limit = INT_MAX) :player(player), name(name), rarity(rear),overlap(0),isOneSheet(isOneSheet),overlapLimit(limit)
     {
         card = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), cardImageFilename, "./Resources/Shader/sprite_dissolve_ps.cso");
         icon = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), iconImageFilename);
@@ -70,6 +71,11 @@ public:
     bool isSelect;//選択肢の候補に上がっているか（上がっているならcard->render()を呼ぶ）
 
     bool isOneSheet;//一枚限定重複しない
+
+    int overlapLimit;
+
+    bool isNotElected = false;//当選しない
+
 protected:
     //int probability;//このスキルが出にくさ　値が大きいほど出現する確率が低い
     int overlap;//重複回数（同じスキルを重複してとることで能力が強くなる）

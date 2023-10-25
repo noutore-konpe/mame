@@ -90,6 +90,7 @@ public:
         Normal,
         Doku,
         Homing,
+        All
     };
 };
 
