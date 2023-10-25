@@ -166,13 +166,13 @@ void SceneTutorial::Update(const float& elapsedTime)
     TutorialManager&    tutorialManager = TutorialManager::Instance();
     GamePad&            gamePad         = Input::Instance().GetGamePad();
 
-
-    //if (true == Player::InputDecide())
-    //{
-    //    // ゲームシーンに移る
-    //    sceneManager.ChangeScene(new SceneLoading(new SceneGame));
-    //    return;
-    //}
+    if ((gamePad.GetButtonDown() & GamePad::BTN_START) ||
+         GetAsyncKeyState('1'))
+    {
+        // ゲームシーンに移る
+        sceneManager.ChangeScene(new SceneLoading(new SceneGame));
+        return;
+    }
 
     //カード演出中はほかの処理を更新しない
     Player* player = plManager.GetPlayer().get();
