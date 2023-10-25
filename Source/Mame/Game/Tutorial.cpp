@@ -563,8 +563,7 @@ TutorialAttack::TutorialAttack()
     {
         text_ = std::make_unique<Sprite>(
             graphics.GetDevice(),
-            L"./Resources/Image/Tutorial/Texts/Move.png"
-            //L"./Resources/Image/Tutorial/Texts/Attack.png"
+            L"./Resources/Image/Tutorial/Texts/LowAttack.png"
         );
     }
 }
@@ -623,8 +622,7 @@ TutorialAvoid::TutorialAvoid()
     {
         text_ = std::make_unique<Sprite>(
             graphics.GetDevice(),
-            //L"./Resources/Image/Tutorial/Texts/Avoid.png"
-            L"./Resources/Image/Tutorial/Texts/MoveCamera.png"
+            L"./Resources/Image/Tutorial/Texts/Avoid.png"
         );
     }
 
