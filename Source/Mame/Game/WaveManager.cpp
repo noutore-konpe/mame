@@ -313,8 +313,8 @@ void WaveManager::UpdateWave(const float elapsedTime)
             // エンドレスウェーブカウンターが５のときはゴーレムを生成するようにする
             if (endlessWaveCounter_ == 5)
             {
-                // ゴーレム１体だけ生成するようにする
-                endlessWaveCreateCount_ = 1;
+                // ゴーレム1~3体生成するようにする
+                endlessWaveCreateCount_ = ::RandInt(1, 3);
             }
             else
             {
