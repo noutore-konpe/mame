@@ -158,6 +158,8 @@ void EnemyGolem::Initialize()
 
     AudioManager::Instance().StopBGM(BGM::Game);
     AudioManager::Instance().PlayBGM(BGM::Golem);
+
+    AudioManager::Instance().GetBGM(BGM::Golem)->Volume(0.35f);
 }
 
 // I—¹‰»

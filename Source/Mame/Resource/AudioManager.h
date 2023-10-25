@@ -26,11 +26,17 @@ enum class SE
     CardSelect0,    // ”\—Íæ‚Á‚½‚Ì‰¹
     CardSelect1,    // ”\—Íæ‚Á‚½‚Ì‰¹
     CardSelect2,    // ”\—Íæ‚Á‚½‚Ì‰¹
+    CardSelect3,    // ”\—Íæ‚Á‚½‚Ì‰¹
     Enter,          // ‘I‘ğ
     SwordSlash1,    // UŒ‚‚P
     SwordSlash2,    // UŒ‚‚Q
     SwordSlash3,    // UŒ‚‚R
     SwordSlash4,    // UŒ‚‚S
+    GolemWalk0,     // ƒS[ƒŒƒ€•à‚«
+    GolemWalk1,     // ƒS[ƒŒƒ€•à‚«
+    GolemWalk2,     // ƒS[ƒŒƒ€•à‚«
+    GolemWalk3,     // ƒS[ƒŒƒ€•à‚«
+    GolemWalk4,     // ƒS[ƒŒƒ€•à‚«
 
     SE_Max,
 };
@@ -87,11 +93,17 @@ private:
 
 public:// ‰½‰ñ‚àÄ¶‚·‚é‚½‚ß‚É‚¢‚é‚â‚Â
     void PlayCardSelectSENum();
+    void PlayGolemWalk();
 
 private:// ‰½‰ñ‚àÄ¶‚·‚é‚½‚ß‚É‚¢‚é‚â‚Â
     void ResetCardSelectSENum() { cardSelectSENum = 0; }
     void AddCardSelectSENum() { ++cardSelectSENum; }
     int GetCardSelectSENum() { return cardSelectSENum; }
     int cardSelectSENum = 0;
+
+    void ResetGolemWalk() { golemWalk = 0; }
+    void AddGolemWalk() { ++golemWalk; }
+    int GetGolemWalk() { return golemWalk; }
+    int golemWalk = 0;
 };
 

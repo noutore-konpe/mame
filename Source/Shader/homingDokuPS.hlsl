@@ -39,7 +39,7 @@ float4 main(PSIn psIn) : SV_TARGET
     float3 rim = rimIntensity * romColor;
     
     const float dh = psIn.localPosition.y / 500.0;
-    const float3 foot = 3.0 * float3(colorR, 1.0, 0.0) * exp(-dh * 18.0);
+    const float3 foot = 3.0 * float3(colorR, 0.0, 1.0) * exp(-dh * 18.0);
     
     float alpha = 0.7; // Ç±Ç±Ç≈ìßñæìxïœçXâ¬î\
     

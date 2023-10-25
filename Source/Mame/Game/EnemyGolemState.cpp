@@ -959,6 +959,10 @@ namespace EnemyGolemState
                 c.w = alpha;
                 owner->model->SetModelColor(c);
 
+                // 徐々にBGMを消す
+                float volume = Easing::InSine(deathTimer, maxTime, 0.0f, 0.35f);
+                AudioManager::Instance().GetBGM(BGM::Golem)->Volume(volume);
+
                 deathTimer += elapsedTime;
             }
             else
@@ -1001,6 +1005,14 @@ namespace EnemyGolemState
     // 更新
     void WalkState::Update(const float& elapsedTime)
     {
+        float maxWalk = 1.0f;
+        if (walkTimer > maxWalk)
+        {
+            AudioManager::Instance().PlayGolemWalk();
+            walkTimer = 0.0;
+        }
+        walkTimer += elapsedTime;
+
         // モーションブレンド
         {
             if (!isChangeState)
