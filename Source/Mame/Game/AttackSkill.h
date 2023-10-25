@@ -137,8 +137,9 @@ namespace PlayerSkill
             BaseSkill(player,
                 L"./Resources/Image/Card/sampleCard.png",
                 L"./Resources/Image/Icon/sampleIcon.png",
-                "Poison",
-                BaseSkill::RARE) {}
+                "Revenge",
+                BaseSkill::RARE,
+                true) {}
         ~RevengeSkill() {}
 
         void Overlaping()override;

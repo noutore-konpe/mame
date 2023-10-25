@@ -2,6 +2,8 @@
 #include "../Resource/sprite.h"
 #include "../Graphics/Graphics.h"
 
+#include <string>
+
 class Player;
 
 using Probability = int;

@@ -276,7 +276,23 @@ Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT
         return result;
     }
 
-    return Character::ApplyDamage(damage, hitPosition, attacker, invincibleTime, ignoreDefence,color);
+    result = Character::ApplyDamage(damage, hitPosition, attacker, invincibleTime, ignoreDefence,color);
+
+    //Žd•Ô‚µ
+    if (result.hit)
+    {
+        if (result.damage > 0)
+        {
+            if (PlayerManager::Instance().GetRevengeSkill()->Active())
+            {
+                auto pos = attacker->GetTransform()->GetPosition();
+                pos.y += 0.6f;
+                attacker->ApplyDamage(
+                    result.damage, pos,nullptr,0,true
+                );
+            }
+        }
+    }
 }
 
 Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, const HitReaction reaction, Character* attacker,float invincibleTime, bool ignoreDefence)
