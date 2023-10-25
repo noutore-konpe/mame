@@ -22,12 +22,18 @@ protected:
     const bool colorAlphaEaseIn(float* colorAlpha, const float endTime = 1.0f);  // 不透明度増加
     const bool colorAlphaEaseOut(float* colorAlpha, const float endTime = 2.0f); // 不透明度減少
 
+    void UpdateCreateEnemy(const float elapsedTime, const int createCount, const int dropExpCount);
+
+public:
+    static constexpr float CREATE_TIME_ = 1.0f;
+
 protected:
     std::unique_ptr<Sprite> text_;
     std::unique_ptr<Sprite> checkMark_;
     std::unique_ptr<Sprite> textBackGround_;
 
     float   easingTimer_    = 0.0f;
+    float   createTimer_    = CREATE_TIME_; // 敵生成タイマー
     int     step_           = 0;
 
 };
@@ -61,23 +67,36 @@ class TutorialLockOn : public BaseTutorial
 {
 public:
     TutorialLockOn();
-    void Initialize() override;
+    void Update(const float elapsedTime) override;
     void DrawImGui()  override;
 
 private:
     const bool MoveNextStepJudgment() override;
 };
 
-// 攻撃チュートリアル
-class TutorialAttack : public BaseTutorial
+// 弱攻撃チュートリアル
+class TutorialLowAttack : public BaseTutorial
 {
 public:
-    TutorialAttack();
-    void Initialize() override;
+    TutorialLowAttack();
+    void Update(const float elapsedTime) override;
     void DrawImGui() override;
 
 private:
     const bool MoveNextStepJudgment() override;
+};
+
+// 強攻撃チュートリアル
+class TutorialHighAttack : public BaseTutorial
+{
+public:
+    TutorialHighAttack();
+    void Update(const float elapsedTime) override;
+    void DrawImGui() override;
+
+private:
+    const bool MoveNextStepJudgment() override;
+
 };
 
 // 回避チュートリアル
@@ -102,13 +121,5 @@ public:
 
 private:
     const bool MoveNextStepJudgment() override;
-
-    void UpdateCreateEnemy(const float elapsedTime);
-
-private:
-    static constexpr float CREATE_TIME_ = 1.0f;
-
-private:
-    float createTimer_ = 0.0f; // 敵生成タイマー
 
 };
