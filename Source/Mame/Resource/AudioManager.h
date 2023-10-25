@@ -80,6 +80,8 @@ enum class SE
     Laser_0,
     Laser_1,
 
+    PlayerDash,
+
     SE_Max,
 };
 
@@ -96,6 +98,7 @@ enum class SE_NAME
     CounterBegin,
     BlackHole,
     Laser,
+    PlayerDash,
 
     Max,
 };

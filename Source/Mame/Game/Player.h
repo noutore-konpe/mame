@@ -42,7 +42,8 @@ public: // enumŠÖ˜A
         SoftStagger,
         HardStagger,//‚Á”ò‚ÑA€–S
         StandUp,
-        HardAttack
+        HardAttack,
+        EnemyWalk
     };
 
 

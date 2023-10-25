@@ -20,6 +20,8 @@ namespace PlayerState
         enableInputButton = false;
         owner->PlayWalkAnimation();
         owner->PlaySwordWalkAnimation();
+
+        AudioManager::Instance().PlaySE(SE::PlayerDash, true);
     }
     void NormalState::Update(const float& elapsedTime)
     {
@@ -27,6 +29,8 @@ namespace PlayerState
 
         float ax = gamePad.GetAxisLX();
         float ay = gamePad.GetAxisLY();
+
+        AudioManager::Instance().GetSE(SE::PlayerDash)->Volume(owner->model->weight * 1.0f);
 
         owner->MoveUpdate(elapsedTime,ax,ay);
 

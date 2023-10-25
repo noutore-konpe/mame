@@ -8,6 +8,8 @@
 
 #include "Enemy.h"
 
+#include "WaveManager.h"
+
 // コンストラクタ
 StoneBall::StoneBall(Enemy* owner) : owner(owner)
 {
@@ -51,7 +53,7 @@ void StoneBall::Update(const float& elapsedTime)
         ))
         {
             //TODO:ゴーレム　岩攻撃
-            PlayerManager::Instance().GetPlayer()->ApplyDamage(damage,hitCollider.position, Player::HitReaction::HARD,owner);
+            PlayerManager::Instance().GetPlayer()->ApplyDamage(damage + 2 * WaveManager::Instance().GetCurrentWaveIndex(), hitCollider.position, Player::HitReaction::HARD, owner);
             
             Input::Instance().GetGamePad().Vibration(0.3f, 0.3f);
 
