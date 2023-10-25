@@ -75,6 +75,7 @@ public:
         void SetTexSizeX(const float x) { texSize.x = x; }
         void SetTexSizeY(const float y) { texSize.y = y; }
 
+        void AddPosX(const float posX) { pos.x += posX; }
         void AddPosY(const float posY) { pos.y += posY; }
 
         DirectX::XMFLOAT2 GetPos() { return pos; }
@@ -123,7 +124,7 @@ public:
         void SetEdgeThreshold(float threshold) { edgeThreshold = threshold; }
         void SetEdgeColor(DirectX::XMFLOAT4 color) { edgeColor = color; }
         void SetDelay(float d) { delay = d; }
-        void SetDissolveType(int type) { dissolveType = type; }
+        void SetDissolveType(int type) { dissolveType = type; } // (0:FadeIn,1:FadeOut)
 
         int GetMaskTextureValue() { return maskTextureValue; }
         float GetDissolveValue() { return dissolveValue; }

@@ -5,14 +5,15 @@
 
 enum class TUTORIAL_STEP
 {
-    MOVE,           // 移動
-    MOVE_CAMERA,    // カメラ移動
-    LOCK_ON,        // ロックオン
-    ATTACK,         // 攻撃
-    AVOID,          // 回避
-    LEVEL_UP,       // レベルアップ
+    NO_TUTORIAL = -1,   // デフォルト
+    MOVE,               // 移動
+    MOVE_CAMERA,        // カメラ移動
+    LOCK_ON,            // ロックオン
+    ATTACK,             // 攻撃
+    AVOID,              // 回避
+    LEVEL_UP,           // レベルアップ
 
-    COUNT,          // チュートリアル数
+    COUNT,              // チュートリアル数
 };
 
 class TutorialManager
@@ -31,12 +32,13 @@ public:
     void Initialize();
     const bool Update(const float elapsedTime); // true：実行中 false：終了
     void Render();
+    void DrawImGui();
 
     // 次のチュートリアルを設定(※チュートリアルが最後まで行っていたらfalseを返す)
     const bool SetNextTutorial();
 
-    // n番目のチュートリアル達成フラグをONにする
-    void CompleteTutorialAt(const TUTORIAL_STEP step) { tutorialCompleteFlags_[static_cast<int>(step)] = true; }
+    // チュートリアル達成フラグをONにする
+    void CompleteTutorial() { tutorialCompleteFlags_ = true; }
 
 public:
     // 現在のチュートリアル番号取得
@@ -51,10 +53,10 @@ private:
     std::unique_ptr<BaseTutorial> tutorial_;
 
     // 現在のチュートリアルステップ
-    TUTORIAL_STEP tutorialStep_ = TUTORIAL_STEP::MOVE;
+    TUTORIAL_STEP tutorialStep_ = TUTORIAL_STEP::NO_TUTORIAL;
 
     // チュートリアル達成フラグ
-    bool tutorialCompleteFlags_[TUTORIAL_COUNT_] = {false};
+    bool tutorialCompleteFlags_ = false;
 
 };
 

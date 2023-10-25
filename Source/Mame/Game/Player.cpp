@@ -68,7 +68,7 @@ Player::Player()
 
     laserEffect = std::make_unique<Effect>("./Resources/Effect/laser.efk");
     expEffect = std::make_unique<Effect>("./Resources/Effect/getExp.efk");
-    
+
 }
 
 // デストラクタ
@@ -103,6 +103,7 @@ void Player::Initialize()
 
     stateMachine->SetState(STATE::NORMAL);
 
+    GetTransform()->SetRotationY(DirectX::XMConvertToRadians(180.0f));
     GetTransform()->SetScaleFactor(0.7f);
 
     //-------------------------スキルが関係するパラメータの初期化--------------------------------
@@ -156,12 +157,12 @@ void Player::Initialize()
     hitCollider[static_cast<int>(HitColName::L_LEG_END)].radius = 0.07f;
     hitCollider[static_cast<int>(HitColName::R_ELBOW)].radius = 0.07f;
     hitCollider[static_cast<int>(HitColName::L_ELBOW)].radius = 0.07f;
-    
+
     for (auto& collider : hitCollider)
     {
         collider.radius *= 1.6f;
     }
-    
+
     skillArray = &PlayerManager::Instance().GetSkillArray();
 
     lifeTimer = 0;
@@ -193,7 +194,7 @@ void Player::Update(const float elapsedTime)
         Camera::Instance().activeLockOn = !Camera::Instance().activeLockOn;
         if (Camera::Instance().activeLockOn)
         {
-            if (EnemyManager::Instance().GetEnemyCount() >= 1) 
+            if (EnemyManager::Instance().GetEnemyCount() >= 1)
             {
                 LockOnInitialize();
             }
@@ -221,7 +222,7 @@ void Player::Update(const float elapsedTime)
 
     LevelUpdate();
 
-    
+
     for (auto& skill : *skillArray)
     {
         skill->Update(elapsedTime);
@@ -232,7 +233,7 @@ void Player::Update(const float elapsedTime)
 
     lifeTimer += elapsedTime;
 
-   
+
 }
 
 // Updateの後に呼ばれる
@@ -298,7 +299,7 @@ Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT
             ChangeState(STATE::STAGGER_SOFT);
             break;
         case HitReaction::HARD:
-           
+
             Blow(result.hitVector);
             ChangeState(STATE::STAGGER_HARD);
             break;
@@ -662,7 +663,7 @@ void Player::Render(const float scale, ID3D11PixelShader* psShader)
             collider.DebugRender(DirectX::XMFLOAT4(1,0,0,1));
         }
     }
-    
+
 #endif // _DEBUG
 
 
@@ -685,7 +686,7 @@ void Player::DrawDebug()
         Character::DrawDebug();
 
         stateMachine->DrawDebug();
-        
+
 
         //ImGui::Checkbox("ShoeCollider",&showCollider);
 
@@ -738,7 +739,7 @@ void Player::DrawDebug()
             isSelectingSkill = false;
         }
 
-        
+
 
         ImGui::End();
 
@@ -1048,7 +1049,7 @@ bool Player::ChangeLockOnTarget(float ax)
 
 void Player::LockOnUpdate()
 {
-    if (Camera::Instance().GetLockOnTarget() == nullptr || 
+    if (Camera::Instance().GetLockOnTarget() == nullptr ||
         EnemyManager::Instance().GetEnemyCount() <= 0)
     {
         LockOnInitialize();
@@ -1180,7 +1181,7 @@ void Player::OnDamaged()
 {
     //stateMachine->ChangeState(STAGGER_SOFT);
 
-    
+
 }
 
 void Player::OnDead(DamageResult result)
@@ -1228,7 +1229,7 @@ DirectX::XMFLOAT3 Player::CollidedPosition(const DirectX::XMFLOAT3 pos)
 {
     //ステージ判定
     DirectX::XMFLOAT3 collectPos;
-    
+
     float length = Length(pos);
     if (SceneGame::stageRadius < length)
     {
@@ -1253,7 +1254,7 @@ void Player::ColliderPosUpdate(const float& scale)
         hitCollider[static_cast<int>(HitColName::HIP)].position = GetJointPosition(meshBodyName, "ref_P:ref_P:j_Hips", scale);
         hitCollider[static_cast<int>(HitColName::R_ELBOW)].position = GetJointPosition(meshBodyName, "ref_P:ref_P:j_RightForeArm", scale);
         hitCollider[static_cast<int>(HitColName::L_ELBOW)].position = GetJointPosition(meshBodyName, "ref_P:ref_P:j_LeftForeArm", scale);
-    
+
         //hitCollider[static_cast<int>(HitColName::LEG)].position = GetJointPosition(meshBodyName,"setup_0927:chara_rig_0906:j_Sentar",scale);
         hitCollider[static_cast<int>(HitColName::R_LEG)].position = GetJointPosition(meshLegName, "ref_P:ref_P:j_RightLeg", scale);
         hitCollider[static_cast<int>(HitColName::L_LEG)].position = GetJointPosition(meshLegName, "ref_P:ref_P:j_LeftLeg", scale);
@@ -1268,7 +1269,7 @@ void Player::ColliderPosUpdate(const float& scale)
         const std::string swordMeshName = "ref_S:sword_rig_1005:sword_mdl_1005:Sword";
         const DirectX::XMFLOAT3 swordRoot = swordModel->skinned_meshes->JointPosition(swordMeshName, "ref_S:sword_rig_1005:j_sword",&swordModel->keyframe ,world);//根本
         const DirectX::XMFLOAT3 swordTip = swordModel->skinned_meshes->JointPosition(swordMeshName, "ref_S:sword_rig_1005:j_sword_end", &swordModel->keyframe, world);//先端
-     
+
         const DirectX::XMFLOAT3 vec = swordTip - swordRoot;
         float swordLength = Length(vec);
         const DirectX::XMFLOAT3 vecNormal = Normalize(vec);
