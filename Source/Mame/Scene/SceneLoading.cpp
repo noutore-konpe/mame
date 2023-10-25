@@ -11,6 +11,7 @@ SceneLoading::SceneLoading(BaseScene* nextScene) :nextScene(nextScene)
 {
     Graphics& graphics = Graphics::Instance();
 
+
     // ƒV[ƒ“‚Ì‘®«‚ğİ’è
     SetSceneType(static_cast<int>(Mame::Scene::TYPE::LOAD));
 }
