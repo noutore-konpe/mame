@@ -103,6 +103,7 @@ void Player::Initialize()
 
     stateMachine->SetState(STATE::NORMAL);
 
+    GetTransform()->SetRotationY(DirectX::XMConvertToRadians(180.0f));
     GetTransform()->SetScaleFactor(0.7f);
 
     //-------------------------スキルが関係するパラメータの初期化--------------------------------
