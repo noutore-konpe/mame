@@ -120,14 +120,28 @@ namespace PlayerSkill
                 L"./Resources/Image/Card/Poison.png",
                 L"./Resources/Image/Icon/iconPoison.png",
                 "Poison",
-                BaseSkill::RARE,
-                true) {}
+                BaseSkill::RARE) {}
         ~PoisonSkill() {}
 
         void Overlaping()override;
 
     private:
         const float damageIncreasing = 3.0f;
+        const float effectTimeIncreasing = 5.0f;
+    };
+
+    class RevengeSkill : public BaseSkill
+    {
+    public:
+        RevengeSkill(Player* player) :
+            BaseSkill(player,
+                L"./Resources/Image/Card/sampleCard.png",
+                L"./Resources/Image/Icon/sampleIcon.png",
+                "Poison",
+                BaseSkill::RARE) {}
+        ~RevengeSkill() {}
+
+        void Overlaping()override;
     };
 }
 

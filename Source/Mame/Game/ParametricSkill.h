@@ -1,6 +1,8 @@
 #pragma once
 #include "BaseSkill.h"
 
+class Book;
+
 //パラメータの上昇関係のスキル
 namespace PlayerSkill
 {
@@ -67,6 +69,11 @@ namespace PlayerSkill
         ~BookIncrease() {}
 
         void Overlaping()override;
+
+        std::vector<Book*> GetBooks() { return books; }
+
+    private:
+        std::vector<Book*> books;
     };
 
     //体力上限アップ
@@ -101,6 +108,58 @@ namespace PlayerSkill
 
     private:
         float defenseIncreasing = 2.0f;//上昇値
+    };
+
+    // 弾丸の大きさアップ
+    class BulletSizeUp : public BaseSkill
+    {
+    public:
+        BulletSizeUp(Player* player) :
+            BaseSkill(player,
+                L"./Resources/Image/Card/sampleCard.png",
+                L"./Resources/Image/Icon/sampleIcon.png",
+                "BulletSizeUp", BaseSkill::UNCOMMON) {}
+        ~BulletSizeUp() {}
+
+        void Initialize()override;
+        void Overlaping()override;
+
+        const float GetBulletScale()const { return scale; }
+        const float GetBulletRadius()const { return radius; }
+
+    private:
+        const float scaleIncreasing = 0.2f;//上昇値
+        const float radiusIncreasing = 0.02f;//上昇値
+
+        const float initScale = 1.0f;
+        const float initRadius = 0.1f;
+
+        float scale = 1.0f;
+        float radius = 0.1f;
+    };
+
+    // 弾丸連射速度アップ
+    class BulletRateUp : public BaseSkill
+    {
+    public:
+        BulletRateUp(Player* player) :
+            BaseSkill(player,
+                L"./Resources/Image/Card/sampleCard.png",
+                L"./Resources/Image/Icon/sampleIcon.png",
+                "BulletRateUp", BaseSkill::UNCOMMON) {}
+        ~BulletRateUp() {}
+
+        void Initialize()override;
+        void Overlaping()override;
+
+        const float GetBulletRate()const { return bulletRate; }
+
+    private:
+        const float initLaunchTime = 0.5f;
+
+        const float rateIncreasing = 0.05f;//上昇値
+
+        float bulletRate = 0.5f;
     };
 }
 

@@ -1,7 +1,7 @@
 #include "ParametricSkill.h"
-#include "Player.h"
 #include "ItemManager.h"
 #include "Book.h"
+#include "PlayerManager.h"
 
 namespace PlayerSkill
 {   
@@ -26,7 +26,10 @@ namespace PlayerSkill
     void BookIncrease::Overlaping()
     {
         overlap++;
-        ItemManager::Instance().Register(new Book());
+        Book* book = new Book();
+        book->Initialize();
+        books.emplace_back(book);
+        ItemManager::Instance().Register((book));
     }
 
     void MaxHitPointUp::Overlaping()
@@ -40,5 +43,47 @@ namespace PlayerSkill
     {
         overlap++;
         player->AddDefense(defenseIncreasing);
+    }
+    void BulletRateUp::Initialize()
+    {
+        BaseSkill::Initialize();
+        bulletRate = 0.5f;
+    }
+    void BulletRateUp::Overlaping()
+    {
+        overlap++;
+        auto* bookSkill = PlayerManager::Instance().GetBookIncreaseSkill();
+        for (auto& book : bookSkill->GetBooks())
+        {
+            float rate = initLaunchTime - overlap * rateIncreasing;
+            if (rate < 0.1f)rate = 0.1f;
+            book->SetLaunchTime(rate);
+            bulletRate = rate;
+        }
+    }
+
+    void BulletSizeUp::Initialize()
+    {
+        BaseSkill::Initialize();
+        scale = initScale;
+        radius = initRadius;
+    }
+
+    void BulletSizeUp::Overlaping()
+    {
+        overlap++;
+        auto* bookSkill = PlayerManager::Instance().GetBookIncreaseSkill();
+        for (auto& book : bookSkill->GetBooks())
+        {
+            float sca = initScale + overlap * scaleIncreasing;
+            if (sca > 3.0f)sca = 3.0f;
+            book->SetBulletScale(sca);
+            scale = sca;
+
+            float r = initRadius + overlap * radiusIncreasing;
+            if (r > 1.0f)r = 1.0f;
+            book->SetBulletRadius(r);
+            radius = r;
+        }
     }
 }

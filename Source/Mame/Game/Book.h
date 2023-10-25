@@ -60,9 +60,13 @@ public:// æ“¾Eİ’è ŠÖ˜A
 
     // ’eŠÛ
     void SetLaunchTimer(float time) { launchTimer = time; }
+    void SetLaunchTime(float time) { launchTime = time; }
     int GetMaxLaunchNum() { return maxLaunchNum; }
 
     [[nodiscard]] const float GetSearchEnemyRange() const { return searchEnemyRange_; }
+
+    void SetBulletRadius(const float radius) { bulletRadius = radius; }
+    void SetBulletScale(const float scale) { bulletScale = scale; }
 
 private:
     // ----- §ì‚É•K—v‚Èî•ñ -----
@@ -88,4 +92,7 @@ private:
     float circularMotionAddRotate_  = ::ToRadian(180.0f); // ‰~‰^“®‰ñ“]’l‚É’Ç‰Á‚·‚é‰ñ“](ã‰º‘¬“x‚É‰e‹¿)
 
     float searchEnemyRange_ = 15.0f;    // “G‚ğõ“G‚Å‚«‚é”ÍˆÍ
+
+    float bulletRadius = 0.1f;
+    float bulletScale = 1.0f;
 };
