@@ -57,6 +57,7 @@ namespace PlayerState
     }
     void NormalState::Finalize()
     {
+        AudioManager::Instance().StopSE(SE::PlayerDash);
     }
 
     void JabAttackState::Initialize()
