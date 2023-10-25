@@ -24,6 +24,8 @@ private:// íËêî
         IconNum,
         Enemy,
         EnemyKill,
+        PressAnyButton,
+
         Max,
     };
 
@@ -193,6 +195,8 @@ private:
     bool isIconUpdateEnd    = false;
     bool isIconNum          = false;
     bool isEnemy            = false;
+
+    bool isPressAnyButton = false;
 
     struct IconStruct
     {
