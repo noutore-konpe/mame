@@ -50,6 +50,9 @@ public: // æ“¾Eİ’è ŠÖ˜A
     PlayerSkill::ChangeHomingSkill* GetHomingSkill() { return homingSkill.get(); }
     //PlayerSkill::* GetDrainSkill() { return drainSkill.get(); }
     
+    void SetTamaType(int type) { tamaType = type; }
+    int GetTamaType() { return tamaType; }
+
 private:
     std::unique_ptr<Player> player = nullptr;
 
@@ -68,5 +71,15 @@ private:
 
     float lifeTime = 10;
     int level = 0;
+
+    int tamaType = 0;
+
+public:
+    enum class TYPE
+    {
+        Normal,
+        Doku,
+        Homing,
+    };
 };
 

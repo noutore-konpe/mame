@@ -10,7 +10,7 @@ Texture2D textureMaps[4] : register(t0);
 Texture2D maskTexture : register(t15);
 
 float4 main(PSIn psIn) : SV_TARGET
-{    
+{        
     float4 color = textureMaps[0].Sample(samplerStates[POINT], psIn.texcoord) * psIn.color;
     float alpha = color.a;
     
@@ -46,12 +46,20 @@ float4 main(PSIn psIn) : SV_TARGET
     // ”¼‹…ƒ‰ƒCƒg
     float3 hemisphereLight = CalcHemisphereLight(psIn);
     
-    float3 finalColor = directionLight + hemisphereLight * color.rgb;
+    float3 finalColor = directionLight + hemisphereLight * 0.6f * color.rgb;
+    //float3 finalColor = directionLight + hemisphereLight * color.rgb;
+    
     
     // “ñŽŸ”½ŽË
     finalColor.x += 0.2f;
     finalColor.y += 0.2f;
     finalColor.z += 0.2f;
+    
+    
+    finalColor.x = min(1.0f, finalColor.x);
+    finalColor.y = min(1.0f, finalColor.y);
+    finalColor.z = min(1.0f, finalColor.z);
+    
     
     return float4(max(0, finalColor), alpha) * psIn.color;
 

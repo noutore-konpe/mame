@@ -184,6 +184,18 @@
     <FxCompile Include="Source\Shader\GolemPS.hlsl">
       <Filter>mamelib\Shader\Fbx</Filter>
     </FxCompile>
+    <FxCompile Include="Source\Shader\normalTamaPS.hlsl">
+      <Filter>mamelib\Shader\Fbx\tama</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\dokuTamaPS.hlsl">
+      <Filter>mamelib\Shader\Fbx\tama</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\homingTamaPS.hlsl">
+      <Filter>mamelib\Shader\Fbx\tama</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\homingDokuPS.hlsl">
+      <Filter>mamelib\Shader\Fbx\tama</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Mame\Scene\BaseScene.cpp">
@@ -1163,6 +1175,9 @@
     </Filter>
     <Filter Include="mamelib\Mame\Game\Tutorial">
       <UniqueIdentifier>{006e22f0-b01c-416d-88df-1d7247ec3c1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mamelib\Shader\Fbx\tama">
+      <UniqueIdentifier>{5c6905b6-72d2-4c55-b844-0d827cbcb3f6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

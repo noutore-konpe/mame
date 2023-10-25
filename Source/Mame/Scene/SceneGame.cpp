@@ -10,6 +10,7 @@
 #include "../Input/Input.h"
 #include "../Other/misc.h"
 #include "../Resource/texture.h"
+#include "../Resource/AudioManager.h"
 
 #include "../Game/PlayerManager.h"
 #include "../Game/ItemManager.h"
@@ -83,72 +84,7 @@ void SceneGame::CreateResource()
         //ItemManager::Instance().Register(new MagicCircle());
     }
 
-    // enemy
-    {
-#if 1
 
-        EnemyManager& enemyManager = EnemyManager::Instance();
-    //EnemyGolem* enemyGolem = new EnemyGolem;
-    //enemyGolem->Initialize();
-    //enemyGolem->SetHealth(20);
-    //enemyManager.Register(enemyGolem);
-        //EnemyManager& enemyManager = EnemyManager::Instance();
-        EnemyGolem* enemyGolem = new EnemyGolem;
-        enemyGolem->Initialize();
-        enemyManager.Register(enemyGolem);
-
-        // EnemyGolem* enemyGolem = new EnemyGolem;
-        // enemyManager.Register(enemyGolem);
-
-
-
-        // max 6~7
-        // EnemyAI_1
-        for (int i = 0; i < 2; ++i)
-        {
-            EnemyAI_1* enemyAI_1 = new EnemyAI_1;
-            enemyAI_1->Initialize();
-            const XMFLOAT3 setPosition = {
-                ::RandFloat(-10.0f, +10.0f),
-                0.0f,
-                ::RandFloat(-10.0f, +10.0f)
-            };
-            enemyAI_1->SetPosition(setPosition);
-
-            enemyManager.Register(enemyAI_1);
-        }
-        // EnemyAI_2
-        for (int i = 0; i < 2; ++i)
-        {
-            EnemyAI_2* enemyAI_2 = new EnemyAI_2;
-            enemyAI_2->Initialize();
-
-            const XMFLOAT3 setPosition = {
-                ::RandFloat(-10.0f, +10.0f),
-                0.0f,
-                ::RandFloat(-10.0f, +10.0f)
-            };
-            enemyAI_2->SetPosition(setPosition);
-
-            enemyManager.Register(enemyAI_2);
-        }
-        // EnemyAI_3
-        for (int i = 0; i < 2; ++i)
-        {
-            EnemyAI_3* enemyAI_3 = new EnemyAI_3;
-            enemyAI_3->Initialize();
-
-            const XMFLOAT3 setPosition = {
-                ::RandFloat(-10.0f, +10.0f),
-                0.0f,
-                ::RandFloat(-10.0f, +10.0f)
-            };
-            enemyAI_3->SetPosition(setPosition);
-
-            enemyManager.Register(enemyAI_3);
-        }
-#endif
-    }
 
     // sprite
     {
@@ -311,6 +247,9 @@ void SceneGame::Initialize()
     // ExecuteSlowMotion Initialize
     SlowMotionManager::Instance().Initialize();
 
+    // ゲームBGM再生
+    AudioManager::Instance().PlayBGM(BGM::Enviroment);
+    AudioManager::Instance().PlayBGM(BGM::Game);
 }
 
 // 終了化
@@ -343,6 +282,9 @@ void SceneGame::Finalize()
             }
         }
     }
+
+    // オーディオを止める
+    AudioManager::Instance().StopAllAudio();
 }
 
 // Updateの前に呼び出される
@@ -519,6 +461,13 @@ void SceneGame::Render(const float& /*elapsedTime*/)
         // 描画の初期設定※必ず呼ぶこと！！！
         Mame::Scene::BaseScene::RenderInitialize();
 
+        //DirectX::XMFLOAT3 cameraPos = Camera::Instance().GetTransform()->GetPosition();
+        //DirectX::XMFLOAT3 playerPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
+        //shadow.lightViewFocus.x = playerPos.x;
+        //shadow.lightViewFocus.z = playerPos.z;
+        //shadow.lightViewFocus.x = cameraPos.x;
+        //shadow.lightViewFocus.z = cameraPos.z;
+
 
         // SHADOW : make shadow map
         {
@@ -689,6 +638,8 @@ void SceneGame::Render(const float& /*elapsedTime*/)
         DirectX::XMStoreFloat4x4(&view, camera.GetViewMatrix());
         DirectX::XMStoreFloat4x4(&projection, camera.GetProjectionMatrix());
 
+        //shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
+
         EffectManager::Instance().Render(view, projection);
     }
 
@@ -820,6 +771,8 @@ void SceneGame::DrawDebug()
     PlayerManager&          plManager    = PlayerManager::Instance();
     EnemyManager&           enemyManager = EnemyManager::Instance();
     ExperiencePointManager& expManager   = ExperiencePointManager::Instance();
+
+    
 
     if (ImGui::Begin("sceneGame"))
     {
