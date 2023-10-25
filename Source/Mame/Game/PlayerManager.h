@@ -59,6 +59,19 @@ public: // éÊìæÅEê›íË ä÷òA
     void SetTamaType(int type) { tamaType = type; }
     int GetTamaType() { return tamaType; }
 
+    void SetFog(bool f) 
+    {
+        isFog = f;
+    }
+    bool GetFog() { return isFog; }
+    void AddFogTimer(const float& elapsedTime) { fogTimer += elapsedTime; }
+    void SetFogTimer(const float& t) { fogTimer = t; }
+    float GetFogTimer() { return fogTimer; }
+
+    bool isChange = false;
+
+    bool isChangeBGM = false;
+
 private:
     std::unique_ptr<Player> player = nullptr;
 
@@ -83,6 +96,9 @@ private:
     int level = 0;
 
     int tamaType = 0;
+
+    bool isFog = false;
+    float fogTimer = 0.0f;
 
 public:
     enum class TYPE

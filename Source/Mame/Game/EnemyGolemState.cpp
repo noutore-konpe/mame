@@ -983,8 +983,21 @@ namespace EnemyGolemState
                 owner->model->SetModelColor(c);
 
                 // ™X‚ÉBGM‚ðÁ‚·
-                float volume = Easing::InSine(deathTimer, maxTime, 0.0f, 0.35f);
-                AudioManager::Instance().GetBGM(BGM::Golem)->Volume(volume);
+                if (PlayerManager::Instance().isChangeBGM)
+                {
+                    std::vector<Enemy*> enemy;
+                    EnemyManager::Instance().GetSpecifyEnemy(Enemy::TYPE::Golem, enemy);
+
+                    if (enemy.size() > 0)
+                    {
+                        PlayerManager::Instance().isChangeBGM = false;
+                    }
+                    else
+                    {
+                        float volume = Easing::InSine(deathTimer, maxTime, 0.0f, 0.35f);
+                        AudioManager::Instance().GetBGM(BGM::Golem)->Volume(volume);
+                    }
+                }
 
                 deathTimer += elapsedTime;
             }
