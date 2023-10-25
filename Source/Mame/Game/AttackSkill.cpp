@@ -159,7 +159,7 @@ namespace PlayerSkill
             "Poison",
             BaseSkill::RARE) 
     {
-        card2 = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Card/Poison2.png");
+        card2 = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Card/Poison2.png", "./Resources/Shader/sprite_dissolve_ps.cso");
         card2->GetSpriteDissolve()->SetMaskTextureValue(2);
     }
     void PoisonSkill::Update(float elapsedTime)
@@ -204,14 +204,14 @@ namespace PlayerSkill
             "KnockBack",
             BaseSkill::RARE) 
     {
-        card2 = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Card/Knockback.png", "./Resources/Shader/sprite_dissolve_ps.cso");
+        card2 = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Card/Knockback2.png", "./Resources/Shader/sprite_dissolve_ps.cso");
         card2->GetSpriteDissolve()->SetMaskTextureValue(2);
     }
 
     void RevengeSkill::Initialize()
     {
         BaseSkill::Initialize();
-        revengeMul = 1.0f;
+        revengeMul = 0.3f;
     }
 
     void RevengeSkill::Update(float elapsedTime)

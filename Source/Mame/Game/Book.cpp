@@ -264,7 +264,7 @@ bool Book::LaunchProjectile(const float elapsedTime, const DirectX::XMFLOAT3& ve
         if (PlayerManager::Instance().GetHomingSkill()->Active())
         {
             ProjectileHorming* projectile = new ProjectileHorming(&projectileManager,PlayerManager::Instance().GetPlayer().get());
-            projectile->Launch(vecN, launchPos);
+            projectile->Launch(launchPos, vecN);
             projectile->SetRadius(bulletRadius);
             projectile->GetTransform()->SetScale(DirectX::XMFLOAT3(bulletScale, bulletScale, bulletScale));
         }
