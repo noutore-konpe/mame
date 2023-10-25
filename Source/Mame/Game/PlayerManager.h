@@ -52,6 +52,8 @@ public: // éÊìæÅEê›íË ä÷òA
     PlayerSkill::BookIncrease* GetBookIncreaseSkill() { return bookIncreaseSkill.get(); }
     PlayerSkill::BulletRateUp* GetBulletRateUpSkill() { return bulletRateUpSkill.get(); }
     PlayerSkill::BulletSizeUp* GetBulletSizeUpSkill() { return bulletSizeUpSkill.get(); }
+    PlayerSkill::RevengeSkill* GetRevengeSkill() { return revengeSkill.get(); }
+    
     //PlayerSkill::* GetDrainSkill() { return drainSkill.get(); }
     
     void SetTamaType(int type) { tamaType = type; }
@@ -104,6 +106,7 @@ public:
         Normal,
         Doku,
         Homing,
+        All
     };
 };
 

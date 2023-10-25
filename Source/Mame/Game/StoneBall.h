@@ -29,7 +29,7 @@ public:
     bool GetIsDestroy() { return isDestroy; }
 
     float radius = 1.0f;
-    float damage = 1.0f;
+    float damage = 10.0f;
 
 private:
     Microsoft::WRL::ComPtr<ID3D11PixelShader> stoneBallPS;

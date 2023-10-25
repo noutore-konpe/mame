@@ -20,7 +20,7 @@ namespace PlayerSkill
         void Overlaping()override;
 
     private:
-        float speedIncreasing = 0.5f;//上昇値
+        float speedIncreasing = 1.0f;//上昇値
     };
 
     //基礎攻撃力上昇
@@ -65,7 +65,9 @@ namespace PlayerSkill
             BaseSkill(player,
                 L"./Resources/Image/Card/Grimoire.png",
                 L"./Resources/Image/Icon/iconGrimoire.png",
-                "BookIncrease", BaseSkill::RARE) {}
+                "BookIncrease", BaseSkill::COMMON,
+                false,
+                4) {}
         ~BookIncrease() {}
 
         void Overlaping()override;
@@ -90,7 +92,7 @@ namespace PlayerSkill
         void Overlaping()override;
 
     private:
-        float maxHealthIncreasing = 1.0f;//上昇値
+        float maxHealthIncreasing = 100.0f;//上昇値
     };
 
     // 防御力
@@ -152,14 +154,16 @@ namespace PlayerSkill
         void Initialize()override;
         void Overlaping()override;
 
-        const float GetBulletRate()const { return bulletRate; }
-
+        const float GetReloadTime()const { return reloadTime; }
+        const float GetBulletRate() const { return rate; }
     private:
-        const float initLaunchTime = 0.5f;
+        const float initReloadTime = 3.0f;
+        const float reloadIncreasing = 0.3f;//上昇値
+        float reloadTime = 3.0f;
 
-        const float rateIncreasing = 0.05f;//上昇値
-
-        float bulletRate = 0.5f;
+        const float initShotRate = 0.5f;
+        const float rateIncreasing = 0.05f;
+        float rate = 5.0f;
     };
 }
 

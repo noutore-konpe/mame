@@ -7,7 +7,7 @@
 
 PlayerManager::PlayerManager()
 {
-    
+
 }
 
 // èâä˙âª
@@ -60,7 +60,7 @@ void PlayerManager::Initialize()
         //édï‘Çµ
         revengeSkill = std::make_unique<PlayerSkill::RevengeSkill>(player.get());
         skillArray.emplace_back(revengeSkill.get());
-        
+
 
         return true;
     }();
@@ -256,6 +256,7 @@ bool PlayerManager::AttackCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies
 
                         hitPos = hitCollider.position;
                         hitEnemies.emplace_back(enemy);
+                        
                         hit = true;
                     }
                 }

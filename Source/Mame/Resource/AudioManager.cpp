@@ -67,6 +67,9 @@ void AudioManager::LoadAudio()
             
             se_[static_cast<int>(SE::Laser_0)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/laser.wav");
             se_[static_cast<int>(SE::Laser_1)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/laser.wav");
+
+            se_[static_cast<int>(SE::PlayerDash)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/PlayerDash.wav");
+            
         }
     }
 
@@ -129,6 +132,8 @@ void AudioManager::LoadAudio()
             se_[static_cast<int>(SE::Hit_7) ]->Volume(0.1f);
             se_[static_cast<int>(SE::Hit_8) ]->Volume(0.1f);
             se_[static_cast<int>(SE::Hit_9) ]->Volume(0.1f);
+
+            se_[static_cast<int>(SE::PlayerDash) ]->Volume(0.5f);
         }
     }
 

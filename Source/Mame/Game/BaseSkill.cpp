@@ -5,6 +5,9 @@ void BaseSkill::Initialize()
 {
     player = PlayerManager::Instance().GetPlayer().get();
     overlap = 0;
+    timer = 0;
+
+    card = card1.get();
 }
 
 void BaseSkill::Render()

@@ -156,6 +156,9 @@ void EnemyGolem::Initialize()
     //”»’èİ’è
     ColliderInitialize();
 
+    //‰Ÿ‚µo‚µ”»’è
+    radius_ = 1.0f;
+
 #ifdef _DEBUG
     currentStateDebug = 0;
 #endif // _DEBUG

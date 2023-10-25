@@ -8,11 +8,7 @@ namespace PlayerSkill
     class Drain : public BaseSkill
     {
     public:
-        Drain(Player* player) :
-            BaseSkill(player, 
-                L"./Resources/Image/Card/Drain.png",
-                L"./Resources/Image/Icon/iconDrain.png",
-                "Drain",BaseSkill::SUPER_RARE) {}
+        Drain(Player* player);
         ~Drain() {}
 
         void Initialize()override;
@@ -26,6 +22,8 @@ namespace PlayerSkill
 
     private:
         float drainCoefficient;//çUåÇóÕÇ©ÇÁãzé˚HPÇÃéZèoÇ…égÇ§åWêî(èdï°Ç∑ÇÈÇΩÇ—Ç…Ç±ÇÍÇ™ëùÇ¶ÇƒÇ¢Ç≠)
+
+        std::unique_ptr<Sprite> card2;
     };
 
     //îöîjëÆê´ïtó^ÅiñvÅj
@@ -45,12 +43,7 @@ namespace PlayerSkill
     class BlackHoleSkill : public BaseSkill
     {
     public:
-        BlackHoleSkill(Player* player) :
-            BaseSkill(player,
-                L"./Resources/Image/Card/BlackHole.png",
-                L"./Resources/Image/Icon/iconBlackHole.png",
-                "BlackHole",
-                BaseSkill::ULTRA_RARE) {}
+        BlackHoleSkill(Player* player);
         ~BlackHoleSkill() {}
 
         void Overlaping()override;
@@ -64,7 +57,11 @@ namespace PlayerSkill
         float coolTimer;
         const float coolTimeDecrease = 3.0f;
 
+        
+
         DirectX::XMFLOAT3 createPos;
+
+        std::unique_ptr<Sprite> card2;
     };
 
     class CanTripleAttack : public BaseSkill
@@ -109,39 +106,42 @@ namespace PlayerSkill
                 true) {}
         ~ChangeHomingSkill() {}
 
+        void Initialize()override;
         void Overlaping()override;
     };
 
     class PoisonSkill : public BaseSkill
     {
     public:
-        PoisonSkill(Player* player) :
-            BaseSkill(player,
-                L"./Resources/Image/Card/Poison.png",
-                L"./Resources/Image/Icon/iconPoison.png",
-                "Poison",
-                BaseSkill::RARE) {}
+        PoisonSkill(Player* player);
         ~PoisonSkill() {}
 
+        void Update(float elapsedTime)override;
+        void Initialize()override;
         void Overlaping()override;
 
     private:
         const float damageIncreasing = 3.0f;
         const float effectTimeIncreasing = 5.0f;
+
+        std::unique_ptr<Sprite> card2;
     };
 
     class RevengeSkill : public BaseSkill
     {
     public:
-        RevengeSkill(Player* player) :
-            BaseSkill(player,
-                L"./Resources/Image/Card/Knockback.png",
-                L"./Resources/Image/Icon/iconKnockback.png",
-                "Poison", 
-                BaseSkill::RARE) {}
+        RevengeSkill(Player* player);
         ~RevengeSkill() {}
 
+        void Initialize()override;
+        void Update(float elapsedTime)override;
         void Overlaping()override;
+
+        //édï‘ÇµÉ_ÉÅÅ[ÉWî{ó¶
+        float revengeMul = 1.0f;
+        const float revengeIncreasing = 0.2f;
+    private:
+        std::unique_ptr<Sprite> card2;
     };
 }
 

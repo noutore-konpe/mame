@@ -97,9 +97,9 @@ void SceneTitle::Initialize()
     pressSprite->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(370, 520));
     fadeSprite->GetSpriteTransform()->SetColorA(0.0f);
 
-    
+
     AudioManager::Instance().PlayBGM(BGM::Title);
-    
+
 
     // •Ï”‰Šú‰»
     pressTimer = 0.0f;
@@ -162,9 +162,17 @@ void SceneTitle::Update(const float& elapsedTime)
     // sceneØ‚è‘Ö‚¦
     if (IsChangeScene(elapsedTime))
     {
+        static bool once = false;
         Camera::Instance().TitleInitialize();
-        Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
-        //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTutorial));
+        if (!once)
+        {
+            Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTutorial));
+            once = true;
+        }
+        else
+        {
+            Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        }
         //Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneResult));
         return;
     }

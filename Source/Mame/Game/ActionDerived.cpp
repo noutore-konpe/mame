@@ -32,7 +32,7 @@ const ActionBase::State EntryStageAction::Run(const float elapsedTime)
 		// アニメーション再生
 		{
 			owner_->PlayBlendAnimation(
-				Animation::Idle, Animation::Dash,
+				Animation::Idle, Animation::EnemyWalk,
 				true, owner_->GetAnimationSpeed()
 			);
 
@@ -121,7 +121,7 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 		// アニメーション再生
 		{
 			owner_->PlayBlendAnimation(
-				Animation::Idle, Animation::Dash,
+				Animation::Idle, Animation::EnemyWalk,
 				true, owner_->GetAnimationSpeed()
 			);
 
@@ -269,7 +269,7 @@ const ActionBase::State PursuitAction::Run(const float elapsedTime)
 		// アニメーション再生
 		{
 			owner_->PlayBlendAnimation(
-				Animation::Idle, Animation::Dash,
+				Animation::Idle, Animation::EnemyWalk,
 				true, owner_->GetAnimationSpeed()
 			);
 

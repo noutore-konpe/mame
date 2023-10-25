@@ -110,7 +110,7 @@ void Player::Initialize()
     level = 1;//レベル
     curExp = 0;//経験値
     totalExp = 0;//合計経験値
-    levelUpExp = 100;//レベルアップに必要な経験値
+    levelUpExp = 30;//レベルアップに必要な経験値
     isSelectingSkill = false;//スキルの選択演出中かどうかのフラグ
 
     maxEyeSpeed = 4.2f;
@@ -120,8 +120,8 @@ void Player::Initialize()
 
     jabMotionAtkMuls[0] = 1.0f;
     jabMotionAtkMuls[1] = 1.2f;
-    jabMotionAtkMuls[2] = 2.3f;
-    hardAtkMuls = 2.7f;
+    jabMotionAtkMuls[2] = 3.5f;
+    hardAtkMuls = 2.4f;
 
     poisonSlipDamage = 3.0f;
     poisonEffectTime = 30.0f;
@@ -233,7 +233,8 @@ void Player::Update(const float elapsedTime)
 
     lifeTimer += elapsedTime;
 
-
+   //たまに地面に埋まったりするからYに０いれとく
+    GetTransform()->SetPositionY(0);
 }
 
 // Updateの後に呼ばれる
@@ -266,6 +267,7 @@ Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT
         }
 
         result.damage = damage;
+        counterDamage = damage;
         result.hit = true;
         counterCompleted = true;
 
@@ -277,7 +279,38 @@ Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT
         return result;
     }
 
-    return Character::ApplyDamage(damage, hitPosition, attacker, invincibleTime, ignoreDefence,color);
+    result = Character::ApplyDamage(damage, hitPosition, attacker, invincibleTime, ignoreDefence,color);
+
+    //仕返し
+    if (result.hit)
+    {
+        if (result.damage > 0)
+        {
+            if (PlayerManager::Instance().GetRevengeSkill()->Active())
+            {
+                if (attacker)
+                {
+                    auto pos = attacker->GetTransform()->GetPosition();
+                    pos.y += 0.6f;
+                    attacker->ApplyDamage(
+                        result.damage * PlayerManager::Instance().GetRevengeSkill()->revengeMul, pos, nullptr, 0, true
+                    );
+
+                    //吹き飛ばしに際してattackerをエネミークラスに変換
+                    for (auto& enemy : EnemyManager::Instance().GetEnemies())
+                    {
+                        if (attacker == enemy)
+                        {
+                            enemy->BlowOff(enemy->GetTransform()->GetPosition() - GetTransform()->GetPosition(), BLOW_OFF_FORCE_LEVEL::MIDDLE);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return result;
 }
 
 Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, const HitReaction reaction, Character* attacker,float invincibleTime, bool ignoreDefence)
@@ -686,6 +719,8 @@ void Player::DrawDebug()
         Character::DrawDebug();
 
         stateMachine->DrawDebug();
+        
+        ImGui::DragFloat("HP",&health);
 
 
         //ImGui::Checkbox("ShoeCollider",&showCollider);
@@ -934,7 +969,11 @@ BaseSkill* Player::Lottery()
         {
             //すでに引かれたスキルはスキップ
             if (skill->isSelect)continue;
+
+            //すでに取得している枚数制限付きのスキルを除く
             if (skill->isOneSheet && skill->GetOverlapNum() > 0)continue;
+            if (skill->GetOverlapNum() >= skill->overlapLimit)continue;
+            if (skill->isNotElected)continue;
 
             if (skill->rarity == rarity)
             {
@@ -1173,13 +1212,16 @@ void Player::TurnNearEnemy(float radius,float elapsedTime)
     //最近距離に位置する敵が索敵範囲よりも近いなら回転処理をする
     if (nearest < radius)
     {
-        Turn(elapsedTime, vec.x, vec.z, 600.0f);
+        Turn(elapsedTime, vec.x, vec.z, 720.0f);
     }
 }
 
 void Player::OnDamaged()
 {
     //stateMachine->ChangeState(STAGGER_SOFT);
+    Input::Instance().GetGamePad().Vibration(0.2f,0.3f);
+    Camera::Instance().ScreenVibrate(0.1f,0.3f);
+    
 
 
 }
@@ -1192,6 +1234,9 @@ void Player::OnDead(DamageResult result)
 
     PlayerManager::Instance().SetLifeTime(lifeTimer);
     PlayerManager::Instance().SetLevel(level);
+
+    Input::Instance().GetGamePad().Vibration(0.6f, 2.0f);
+    Camera::Instance().ScreenVibrate(0.4f, 2.0f);
 }
 
 void Player::ChangeState(int newState)
@@ -1217,6 +1262,8 @@ void Player::LevelUpdate()
 
         level++;
         curExp -= levelUpExp;
+
+        levelUpExp += 10;
 
         drawDirectionState = 0;
 

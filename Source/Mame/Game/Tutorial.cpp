@@ -3,6 +3,7 @@
 #include "../Graphics/Graphics.h"
 #include "../Input/Input.h"
 #include "../Other/Easing.h"
+#include "../Scene/SceneTitle.h"
 
 #include "TutorialManager.h"
 #include "EnemyManager.h"
@@ -95,6 +96,10 @@ void BaseTutorial::Initialize()
         checkMark_->GetSpriteDissolve()->SetDissolveValue(1.0f);
 
     }
+
+    createTimer_ = 0.0f;
+    easingTimer_ = 0.0f;
+    step_        = 0;
 
 }
 
@@ -387,6 +392,53 @@ const bool BaseTutorial::colorAlphaEaseOut(float* colorAlpha, const float endTim
     return true;
 }
 
+void BaseTutorial::UpdateCreateEnemy(
+    const float elapsedTime,
+    const int createCount = 1,
+    const int dropExpCount = 0)
+{
+    using DirectX::XMFLOAT3;
+
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    // 指定した数だけ生成するようにする
+    if (enemyManager.GetEnemyCount() >= createCount)
+    {
+        // 生成タイマーリセット
+        createTimer_ = 0.0f;
+
+        return;
+    }
+
+    // 生成タイマー更新
+    createTimer_ = (std::min)(CREATE_TIME_, createTimer_ + elapsedTime);
+
+    // 生成時間に達していなければreturn
+    if (createTimer_ < CREATE_TIME_) return;
+
+    // 敵生成
+    {
+        EnemyAI_Tutorial* tutorialEnemy = new EnemyAI_Tutorial();
+        tutorialEnemy->Initialize();
+
+        // ランダムなゲート位置から生成
+        const XMFLOAT3 createPos = ::GetGatewayPosition(-1);
+        tutorialEnemy->SetPosition(createPos);
+
+        // 無敵解除
+        tutorialEnemy->SetIsInvincible(false);
+
+        // ドロップ経験値設定
+        tutorialEnemy->SetDropExpCount(dropExpCount);
+
+        enemyManager.Register(tutorialEnemy);
+    }
+
+    // 生成タイマーリセット
+    createTimer_ = 0.0f;
+
+}
+
 #pragma endregion
 
 
@@ -507,20 +559,14 @@ TutorialLockOn::TutorialLockOn()
 
 }
 
-void TutorialLockOn::Initialize()
+void TutorialLockOn::Update(const float elapsedTime)
 {
-    EnemyManager& enemyManager = EnemyManager::Instance();
+    using DirectX::XMFLOAT3;
 
-    // ベースチュートリアルの初期化関数呼び出し
-    BaseTutorial::Initialize();
+    // 敵生成更新
+    UpdateCreateEnemy(elapsedTime);
 
-    // チュートリアルエネミー生成・初期化・登録
-    {
-        EnemyAI_Tutorial* tutorialEnemy = new EnemyAI_Tutorial();
-        tutorialEnemy->Initialize();
-        enemyManager.Register(tutorialEnemy);
-    }
-
+    BaseTutorial::Update(elapsedTime);
 }
 
 void TutorialLockOn::DrawImGui()
@@ -552,10 +598,10 @@ const bool TutorialLockOn::MoveNextStepJudgment()
 #pragma endregion
 
 
-// 攻撃チュートリアル
-#pragma region TutorialAttack
+// 弱攻撃チュートリアル
+#pragma region TutorialLowAttack
 
-TutorialAttack::TutorialAttack()
+TutorialLowAttack::TutorialLowAttack()
 {
     Graphics& graphics = Graphics::Instance();
 
@@ -568,25 +614,21 @@ TutorialAttack::TutorialAttack()
     }
 }
 
-void TutorialAttack::Initialize()
+void TutorialLowAttack::Update(const float elapsedTime)
 {
-    EnemyManager& enemyManager = EnemyManager::Instance();
+    using DirectX::XMFLOAT3;
 
-    BaseTutorial::Initialize();
+    // 敵生成更新
+    UpdateCreateEnemy(elapsedTime);
 
-    // チュートリアルエネミーの無敵解除
-    if (enemyManager.GetEnemyCount() > 0)
-    {
-        Enemy* enemy = enemyManager.GetEnemy(0);
-        enemy->SetIsInvincible(false);
-    }
+    BaseTutorial::Update(elapsedTime);
 }
 
-void TutorialAttack::DrawImGui()
+void TutorialLowAttack::DrawImGui()
 {
 #if USE_IMGUI
 
-    if (ImGui::BeginMenu("TutorialAttack"))
+    if (ImGui::BeginMenu("TutorialLowAttack"))
     {
         BaseTutorial::DrawImGui();
         ImGui::EndMenu();
@@ -595,15 +637,61 @@ void TutorialAttack::DrawImGui()
 #endif
 }
 
-const bool TutorialAttack::MoveNextStepJudgment()
+const bool TutorialLowAttack::MoveNextStepJudgment()
 {
     EnemyManager& enemyManager = EnemyManager::Instance();
 
-    // チュートリアルエネミーが存在しなければtrueを返す
-    if (enemyManager.GetEnemyCount() <= 0) return true;
+    if (true == Player::InputJabAttack()) { return true; }
 
-    // チュートリアルエネミーが死んでいたらtrueを返す
-    if (true == enemyManager.GetEnemy(0)->GetIsDead()) return true;
+    return false;
+}
+
+#pragma endregion
+
+// 強攻撃チュートリアル
+#pragma region TutorialHighAttack
+
+TutorialHighAttack::TutorialHighAttack()
+{
+    Graphics& graphics = Graphics::Instance();
+
+    // テキストスプライト生成
+    {
+        text_ = std::make_unique<Sprite>(
+            graphics.GetDevice(),
+            L"./Resources/Image/Tutorial/Texts/HighAttack.png"
+        );
+    }
+}
+
+void TutorialHighAttack::Update(const float elapsedTime)
+{
+    using DirectX::XMFLOAT3;
+
+    // 敵生成更新
+    UpdateCreateEnemy(elapsedTime);
+
+    BaseTutorial::Update(elapsedTime);
+}
+
+void TutorialHighAttack::DrawImGui()
+{
+#if USE_IMGUI
+
+    if (ImGui::BeginMenu("TutorialHighAttack"))
+    {
+        BaseTutorial::DrawImGui();
+        ImGui::EndMenu();
+    }
+
+#endif
+}
+
+const bool TutorialHighAttack::MoveNextStepJudgment()
+{
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    if (true == Player::InputHardAttack()) { return true; }
 
     return false;
 }
@@ -653,10 +741,10 @@ const bool TutorialAvoid::MoveNextStepJudgment()
 #pragma endregion
 
 
-// レベルアップチュートリアル
-#pragma region TutorialLevelUp
+// チュートリアルエンド
+#pragma region TutorialEnd
 
-TutorialLevelUp::TutorialLevelUp()
+TutorialEnd::TutorialEnd()
 {
     Graphics& graphics = Graphics::Instance();
 
@@ -664,40 +752,29 @@ TutorialLevelUp::TutorialLevelUp()
     {
         text_ = std::make_unique<Sprite>(
             graphics.GetDevice(),
-            //L"./Resources/Image/Tutorial/Texts/LevelUp.png"
-            L"./Resources/Image/Tutorial/Texts/LockOn.png"
+            L"./Resources/Image/Tutorial/Texts/End.png"
         );
     }
 
 }
 
-void TutorialLevelUp::Update(const float elapsedTime)
+void TutorialEnd::Initialize()
 {
-    using DirectX::XMFLOAT3;
+    BaseTutorial::Initialize();
 
-    // 敵生成更新
-    UpdateCreateEnemy(elapsedTime);
-
-    BaseTutorial::Update(elapsedTime);
-
+    DirectX::XMFLOAT2 size = text_->GetSpriteTransform()->GetSize();
+    size.x *= 0.75f;
+    size.y *= 0.75f;
+    text_->GetSpriteTransform()->SetSize(size);
+    text_->GetSpriteTransform()->AddPosX(20.0f);
+    text_->GetSpriteTransform()->AddPosY(25.0f);
 }
 
-void TutorialLevelUp::Render()
-{
-    PlayerManager& playerManager = PlayerManager::Instance();
-
-    //// スキルカード選択中は描画しないようにする
-    //Player* player = playerManager.GetPlayer().get();
-    //if (true == player->isSelectingSkill) { return; }
-
-    BaseTutorial::Render();
-}
-
-void TutorialLevelUp::DrawImGui()
+void TutorialEnd::DrawImGui()
 {
 #if USE_IMGUI
 
-    if (ImGui::BeginMenu("TutorialLevelUp"))
+    if (ImGui::BeginMenu("TutorialEnd"))
     {
         BaseTutorial::DrawImGui();
         ImGui::EndMenu();
@@ -706,56 +783,39 @@ void TutorialLevelUp::DrawImGui()
 #endif
 }
 
-const bool TutorialLevelUp::MoveNextStepJudgment()
+const bool TutorialEnd::MoveNextStepJudgment()
 {
-    PlayerManager& playerManager = PlayerManager::Instance();
+    const GamePad& gamePad = Input::Instance().GetGamePad();
 
-    // レベルが上がったらtrueを返す
-    Player* player = playerManager.GetPlayer().get();
-    if (player->GetLevel() > 1) { return true; }
+    const GamePadButton anyButton =
+        GamePad::BTN_UP
+        | GamePad::BTN_RIGHT
+        | GamePad::BTN_DOWN
+        | GamePad::BTN_LEFT
+        | GamePad::BTN_A
+        | GamePad::BTN_B
+        | GamePad::BTN_X
+        | GamePad::BTN_Y
+        | GamePad::BTN_LEFT_SHOULDER
+        | GamePad::BTN_RIGHT_SHOULDER
+        | GamePad::BTN_LEFT_THUMB
+        | GamePad::BTN_RIGHT_THUMB
+        | GamePad::BTN_LEFT_TRIGGER
+        | GamePad::BTN_RIGHT_TRIGGER;
+
+    const unsigned int anyKey =
+        GetAsyncKeyState('W')
+        | GetAsyncKeyState('A')
+        | GetAsyncKeyState('S')
+        | GetAsyncKeyState('D');
+
+
+    if ((gamePad.GetButtonDown() & anyButton) || anyKey)
+    {
+        return true;
+    }
 
     return false;
-}
-
-void TutorialLevelUp::UpdateCreateEnemy(const float elapsedTime)
-{
-    using DirectX::XMFLOAT3;
-
-    EnemyManager& enemyManager = EnemyManager::Instance();
-
-    // 3体だけ生成するようにする
-    if (enemyManager.GetEnemyCount() >= 3)
-    {
-        // 生成タイマーリセット
-        createTimer_ = 0.0f;
-
-        return;
-    }
-
-    // 生成タイマー更新
-    createTimer_ = (std::min)(CREATE_TIME_, createTimer_ + elapsedTime);
-
-    // 生成時間に達していなければreturn
-    if (createTimer_ < CREATE_TIME_) return;
-
-    // 敵生成
-    {
-        EnemyAI_Tutorial* tutorialEnemy = new EnemyAI_Tutorial();
-        tutorialEnemy->Initialize();
-
-        // ランダムなゲート位置から生成
-        const XMFLOAT3 createPos = ::GetGatewayPosition(-1);
-        tutorialEnemy->SetPosition(createPos);
-
-        // 無敵解除
-        tutorialEnemy->SetIsInvincible(false);
-
-        enemyManager.Register(tutorialEnemy);
-    }
-
-    // 生成タイマーリセット
-    createTimer_ = 0.0f;
-
 }
 
 #pragma endregion

@@ -54,6 +54,10 @@ void Book::Initialize()
 
     // Transform設定
     SetTransform();
+
+    //TODO:スキルの内容の勘違いで変更
+    SetReloadTime(PlayerManager::Instance().GetBulletRateUpSkill()->GetReloadTime());
+    SetLaunchTime(PlayerManager::Instance().GetBulletRateUpSkill()->GetBulletRate());
 }
 
 // 終了化
@@ -262,14 +266,14 @@ bool Book::LaunchProjectile(const float elapsedTime, const DirectX::XMFLOAT3& ve
             ProjectileHorming* projectile = new ProjectileHorming(&projectileManager,PlayerManager::Instance().GetPlayer().get());
             projectile->Launch(vecN, launchPos);
             projectile->SetRadius(bulletRadius);
-            projectile->GetTransform()->SetScaleFactor(bulletScale);
+            projectile->GetTransform()->SetScale(DirectX::XMFLOAT3(bulletScale, bulletScale, bulletScale));
         }
         else
         {
             ProjectileStraight* projectile = new ProjectileStraight(&projectileManager,PlayerManager::Instance().GetPlayer().get());
             projectile->Launch(vecN, launchPos);
             projectile->SetRadius(bulletRadius);
-            projectile->GetTransform()->SetScaleFactor(bulletScale);
+            projectile->GetTransform()->SetScale(DirectX::XMFLOAT3(bulletScale, bulletScale, bulletScale));
         }
 
         // 発射までの時間を設定

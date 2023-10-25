@@ -86,14 +86,12 @@ void EnemyAI_Tutorial::Initialize()
 
     sword_->PlayAnimation(0, true); // 剣のデフォルトアニメーション再生再生
 
-    // 無敵・攻撃力ゼロ
     maxHealth     = 20.0f;
     health        = maxHealth;
-    isInvincible  = true;
     attack_       = 0.0f;
 
-    // ドロップ経験値設定
-    dropExpCount_ = 8;
+    // ドロップ経験値ゼロ設定
+    dropExpCount_ = 0;
 
     // ゼロ番目のゲート位置を初期位置に設定
     SetPosition(::GetGatewayPosition(0));

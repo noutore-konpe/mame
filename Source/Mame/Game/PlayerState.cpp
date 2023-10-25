@@ -20,6 +20,8 @@ namespace PlayerState
         enableInputButton = false;
         owner->PlayWalkAnimation();
         owner->PlaySwordWalkAnimation();
+
+        AudioManager::Instance().PlaySE(SE::PlayerDash, true);
     }
     void NormalState::Update(const float& elapsedTime)
     {
@@ -27,6 +29,8 @@ namespace PlayerState
 
         float ax = gamePad.GetAxisLX();
         float ay = gamePad.GetAxisLY();
+
+        AudioManager::Instance().GetSE(SE::PlayerDash)->Volume(owner->model->weight * 1.0f);
 
         owner->MoveUpdate(elapsedTime,ax,ay);
 
@@ -53,6 +57,7 @@ namespace PlayerState
     }
     void NormalState::Finalize()
     {
+        AudioManager::Instance().StopSE(SE::PlayerDash);
     }
 
     void JabAttackState::Initialize()
@@ -73,7 +78,12 @@ namespace PlayerState
 
         const float keyframeIndex = owner->model->GetCurrentKeyframeIndex();
         if (keyframeIndex > activeAttackFrame[combo])owner->isActiveAttackFrame = true;
-        else owner->isActiveAttackFrame = false;
+        else
+        {
+            //‹ß‚­‚Ì“G‚Ö‰ñ“]
+            owner->TurnNearEnemy(3.0f, elapsedTime);
+            owner->isActiveAttackFrame = false;
+        }
 
         switch (combo)
         {
@@ -90,6 +100,8 @@ namespace PlayerState
                 owner->GetSword()->PlayAnimation(Player::Animation::Jab_1, false, owner->GetAttackSpeed());
                 hit.clear();//ƒqƒbƒg‚µ‚½“G‚Ì‰Šú‰»
                 initialize = true;
+
+                Input::Instance().GetGamePad().Vibration(0.1f,0.1f);
 
                 AudioManager::Instance().PlaySE(SE_NAME::SwordSlash1, SE::SwordSlash1_0, SE::SwordSlash1_6);
             }
@@ -115,6 +127,7 @@ namespace PlayerState
                 hit.clear();//ƒqƒbƒg‚µ‚½“G‚Ì‰Šú‰»
                 initialize = true;
 
+                Input::Instance().GetGamePad().Vibration(0.1f, 0.1f);
                 AudioManager::Instance().PlaySE(SE_NAME::SwordSlash2, SE::SwordSlash2_0, SE::SwordSlash2_1);
             }
 
@@ -138,7 +151,7 @@ namespace PlayerState
                 hit.clear();//ƒqƒbƒg‚µ‚½“G‚Ì‰Šú‰»
                 initialize = true;
 
-                
+                Input::Instance().GetGamePad().Vibration(0.1f, 0.1f);
             }
 
             //XVˆ—(ŽŸ‚ÌƒRƒ“ƒ{‚Ö‚Ì‘JˆÚ‚à‚µ‚Ä‚¢‚é)
@@ -207,8 +220,6 @@ namespace PlayerState
     {
         const float keyframeIndex = owner->model->GetCurrentKeyframeIndex();
 
-        
-
         switch (state)
         {
         case UPDATE_FRAME:
@@ -217,8 +228,7 @@ namespace PlayerState
                 state++;
             }
 
-            //‹ß‚­‚Ì“G‚Ö‰ñ“]
-            owner->TurnNearEnemy(2.0f,elapsedTime);
+            
             break;
         case DODGE_CANSEL_FRAME:
             if (owner->InputAvoid())//‰ñ”ðƒLƒƒƒ“ƒZƒ‹
@@ -283,6 +293,7 @@ namespace PlayerState
         owner->PlayAnimation(Player::Animation::Avoid,false);
         owner->GetSword()->PlayAnimation(Player::Animation::Avoid,false);
         owner->SetAcceleration(dodgeSpeed);
+        Input::Instance().GetGamePad().Vibration(0.1f, 0.1f);
         hit.clear();
     }
     void AvoidState::Update(const float& elapsedTime)
@@ -304,7 +315,7 @@ namespace PlayerState
                 //ˆê“x‚àƒqƒbƒg‚µ‚Ä‚¢‚È‚¢“G‚È‚Ì‚Å“o˜^‚·‚é
                 hit.emplace_back(enemy);
 
-                result = enemy->ApplyDamage(0.1f * owner->GetBasePower(), hitPos, owner);
+                result = enemy->ApplyDamage(0.1f * owner->GetBasePower(), hitPos, owner,0.2f);
 
                 enemy->Flinch();
 
@@ -367,7 +378,10 @@ namespace PlayerState
         owner->PlayAnimation(Player::Animation::HardAttack, false, owner->GetAttackSpeed() + 0.2f);
         owner->GetSword()->PlayAnimation(Player::Animation::HardAttack, false, owner->GetAttackSpeed() + 0.2f);
         owner->ResetSteppingTimer();
+        Input::Instance().GetGamePad().Vibration(0.1f, 0.1f);
         hit.clear();
+
+        owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
 
         owner->isActiveAttackFrame = true;
 
@@ -394,7 +408,7 @@ namespace PlayerState
 
         if (keyframeIndex < 10)
         {
-            owner->TurnNearEnemy(2.0f, elapsedTime);
+            owner->TurnNearEnemy(3.0f, elapsedTime);
         }
 
         //‰ñ”ðƒLƒƒƒ“ƒZƒ‹
@@ -442,6 +456,7 @@ namespace PlayerState
     void HardAttackState::Finalize()
     {
         owner->isActiveAttackFrame = false;
+        owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
     }
 
     void SoftStaggerState::Initialize()
@@ -503,7 +518,7 @@ namespace PlayerState
         owner->counterCompleted = false;
         owner->PlayAnimation(Player::Animation::Counter, false);
         owner->GetSword()->PlayAnimation(Player::Animation::Counter, false);
-
+        Input::Instance().GetGamePad().Vibration(0.1f, 0.1f);
         owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
 
         cAttack = false;
@@ -584,7 +599,7 @@ namespace PlayerState
                             ))
                             {
                                 enemy->SaveBlowOffInfo(owner->GetTransform()->CalcForward(), BLOW_OFF_FORCE_LEVEL::HIGH);
-                                enemy->ApplyDamage(owner->GetBasePower() * 3.5f, collider.position, owner,0,true);
+                                enemy->ApplyDamage(owner->GetBasePower() * 1.5f + 2.0f * owner->counterDamage, collider.position, owner,0,true);
                                 break;
                             }
                         }
@@ -616,5 +631,6 @@ namespace PlayerState
     {
         owner->isInvincible = false;
         owner->isCounter = false;
+        owner->counterCompleted = false;
     }
 }

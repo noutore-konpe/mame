@@ -1,9 +1,18 @@
 #include "AttackSkill.h"
-#include "Player.h"
 #include "BlackHole.h"
+#include "PlayerManager.h"
 
 namespace PlayerSkill
 {
+    Drain::Drain(Player* player) :
+        BaseSkill(player,
+            L"./Resources/Image/Card/Drain.png",
+            L"./Resources/Image/Icon/iconDrain.png",
+            "Drain", BaseSkill::SUPER_RARE) 
+    {
+        card2 = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Card/Drain2.png", "./Resources/Shader/sprite_dissolve_ps.cso");
+        card2->GetSpriteDissolve()->SetMaskTextureValue(2);
+    }
     void Drain::Initialize()
     {
         BaseSkill::Initialize();
@@ -13,7 +22,15 @@ namespace PlayerSkill
 
     void Drain::Update(float elapsedTime)
     {
-
+        if (overlap > 0)
+        {
+            if (timer > 2.0f)
+            {
+                card = card2.get();
+            }
+            timer += elapsedTime;
+        }
+        card2->GetSpriteTransform()->SetPos(card1->GetSpriteTransform()->GetPos());
     }
 
     void Drain::DrawDebug()
@@ -47,8 +64,21 @@ namespace PlayerSkill
         player->ApplyHeal(drainAmount);
     }
 
+    BlackHoleSkill::BlackHoleSkill(Player* player) :
+        BaseSkill(player,
+            L"./Resources/Image/Card/BlackHole.png",
+            L"./Resources/Image/Icon/iconBlackHole.png",
+            "BlackHole",
+            BaseSkill::ULTRA_RARE) 
+    {
+        card2 = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Card/BlackHole2.png", "./Resources/Shader/sprite_dissolve_ps.cso");
+        card2->GetSpriteDissolve()->SetMaskTextureValue(2);
+    }
+    
+
     void BlackHoleSkill::Overlaping()
     {
+        
         overlap++;
         if (overlap <= 1)return;
 
@@ -69,6 +99,16 @@ namespace PlayerSkill
     }
     void BlackHoleSkill::Update(float elapsedTime)
     {
+        if (overlap > 0)
+        {
+            if (timer > 1.0f)
+            {
+                card = card2.get();
+            }
+            timer += elapsedTime;
+        }
+        card2->GetSpriteTransform()->SetPos(card1->GetSpriteTransform()->GetPos());
+
         if (overlap <= 0)return;
 
         coolTimer += elapsedTime;
@@ -78,6 +118,8 @@ namespace PlayerSkill
             
             CreateBlackHole();
         }
+
+        
     }
 
     void CanTripleAttack::Overlaping()
@@ -90,23 +132,106 @@ namespace PlayerSkill
         overlap++;
         if (overlap <= 1)return;
     }
+    void ChangeHomingSkill::Initialize()
+    {
+        BaseSkill::Initialize();
+        isNotElected = true;
+    }
     void ChangeHomingSkill::Overlaping()
     {
         overlap++;
+
+        if (PlayerManager::Instance().GetPoisonSkill()->Active())
+        {
+            PlayerManager::Instance().SetTamaType(static_cast<int>(PlayerManager::TYPE::All));
+        }
+        else
+        {
+            PlayerManager::Instance().SetTamaType(static_cast<int>(PlayerManager::TYPE::Homing));
+        }
+
         if (overlap <= 1)return;
+    }
+    PoisonSkill::PoisonSkill(Player* player) :
+        BaseSkill(player,
+            L"./Resources/Image/Card/Poison.png",
+            L"./Resources/Image/Icon/iconPoison.png",
+            "Poison",
+            BaseSkill::RARE) 
+    {
+        card2 = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Card/Poison2.png");
+        card2->GetSpriteDissolve()->SetMaskTextureValue(2);
+    }
+    void PoisonSkill::Update(float elapsedTime)
+    {
+        if (overlap > 0)
+        {
+            if (timer > 1.0f)
+            {
+                card = card2.get();
+            }
+            timer += elapsedTime;
+        }
+        card2->GetSpriteTransform()->SetPos(card1->GetSpriteTransform()->GetPos());
+    }
+    void PoisonSkill::Initialize()
+    {
+        BaseSkill::Initialize();
+        isNotElected = true;
     }
     void PoisonSkill::Overlaping()
     {
         overlap++;
+        if (PlayerManager::Instance().GetHomingSkill()->Active())
+        {
+            PlayerManager::Instance().SetTamaType(static_cast<int>(PlayerManager::TYPE::All));
+        }
+        else
+        {
+            PlayerManager::Instance().SetTamaType(static_cast<int>(PlayerManager::TYPE::Doku));
+        }
+
         if (overlap <= 1)return;
 
         player->poisonSlipDamage += damageIncreasing;
         player->poisonEffectTime += effectTimeIncreasing;
     }
 
+    RevengeSkill::RevengeSkill(Player* player) :
+        BaseSkill(player,
+            L"./Resources/Image/Card/Knockback.png",
+            L"./Resources/Image/Icon/iconKnockback.png",
+            "KnockBack",
+            BaseSkill::RARE) 
+    {
+        card2 = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Card/Knockback.png", "./Resources/Shader/sprite_dissolve_ps.cso");
+        card2->GetSpriteDissolve()->SetMaskTextureValue(2);
+    }
+
+    void RevengeSkill::Initialize()
+    {
+        BaseSkill::Initialize();
+        revengeMul = 1.0f;
+    }
+
+    void RevengeSkill::Update(float elapsedTime)
+    {
+        if (overlap > 0)
+        {
+            if (timer > 1.0f)
+            {
+                card = card2.get();
+            }
+            timer += elapsedTime;
+        }
+        card2->GetSpriteTransform()->SetPos(card1->GetSpriteTransform()->GetPos());
+    }
+
     void RevengeSkill::Overlaping()
     {
         overlap++;
         if (overlap <= 1)return;
+
+        revengeMul += revengeIncreasing;
     }
 }

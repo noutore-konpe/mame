@@ -243,6 +243,10 @@ Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLO
 
     //ƒ_ƒ[ƒWˆ—
     health -= damage;
+
+    Camera::Instance().ScreenVibrate(0.05f, 0.1f);
+    Input::Instance().GetGamePad().Vibration(0.1f, 0.1f);
+
     if (attacker)
     {
         result.hitVector = Normalize(GetTransform()->GetPosition() - attacker->GetTransform()->GetPosition());

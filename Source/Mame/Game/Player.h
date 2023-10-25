@@ -42,7 +42,8 @@ public: // enum関連
         SoftStagger,
         HardStagger,//吹っ飛び、死亡
         StandUp,
-        HardAttack
+        HardAttack,
+        EnemyWalk
     };
 
 
@@ -219,6 +220,7 @@ public:
 public:
     bool isCounter;//カウンター受付時間か？
     bool counterCompleted;//カウンター成立フラグ
+    float counterDamage;//カウンターをした攻撃のダメージ
 
     const BLOW_OFF_FORCE_LEVEL& GetInflictBlowOffForceLevel() const { return inflictBlowOffForceLevel_; }
     void SetInflictBlowOffForceLevel(const BLOW_OFF_FORCE_LEVEL& inflictBlowOffForceLevel) { inflictBlowOffForceLevel_ = inflictBlowOffForceLevel; }
