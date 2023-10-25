@@ -116,8 +116,8 @@ namespace PlayerSkill
     public:
         BulletSizeUp(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/sampleCard.png",
-                L"./Resources/Image/Icon/sampleIcon.png",
+                L"./Resources/Image/Card/Bigbullet.png",
+                L"./Resources/Image/Icon/iconBigbullet.png",
                 "BulletSizeUp", BaseSkill::UNCOMMON) {}
         ~BulletSizeUp() {}
 
@@ -144,8 +144,8 @@ namespace PlayerSkill
     public:
         BulletRateUp(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/sampleCard.png",
-                L"./Resources/Image/Icon/sampleIcon.png",
+                L"./Resources/Image/Card/Reload.png",
+                L"./Resources/Image/Icon/iconReload.png",
                 "BulletRateUp", BaseSkill::UNCOMMON) {}
         ~BulletRateUp() {}
 

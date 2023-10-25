@@ -135,9 +135,9 @@ namespace PlayerSkill
     public:
         RevengeSkill(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/sampleCard.png",
-                L"./Resources/Image/Icon/sampleIcon.png",
-                "Poison",
+                L"./Resources/Image/Card/Knockback.png",
+                L"./Resources/Image/Icon/iconKnockback.png",
+                "Poison", 
                 BaseSkill::RARE) {}
         ~RevengeSkill() {}
 
