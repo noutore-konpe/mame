@@ -104,6 +104,8 @@ void SceneTutorial::CreateResource()
 // ‰Šú‰»
 void SceneTutorial::Initialize()
 {
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
     // player
     PlayerManager::Instance().Initialize();
 
@@ -114,9 +116,7 @@ void SceneTutorial::Initialize()
     ItemManager::Instance().Initialize();
 
     // enemy
-    EnemyManager& enemyManager = EnemyManager::Instance();
     enemyManager.Initialize();
-    //enemyAura->Initialize();
 
     // stage
     stageBase->Initialize();
@@ -135,11 +135,12 @@ void SceneTutorial::Initialize()
 
 void SceneTutorial::Finalize()
 {
-    // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    // Exp
     expManager.Finalize();
 
-    EnemyManager& enemyManager = EnemyManager::Instance();
     enemyManager.Finalize();
 
     ItemManager::Instance().Finalize();
@@ -240,6 +241,7 @@ void SceneTutorial::Render(const float& /*elapsedTime*/)
 {
     Graphics& graphics = Graphics::Instance();
     Shader* shader = graphics.GetShader();
+    EnemyManager& enemyManager = EnemyManager::Instance();
     TutorialManager& tutorialManager = TutorialManager::Instance();
 
     Shader::SceneConstants sceneConstants{};
@@ -346,6 +348,11 @@ void SceneTutorial::Render(const float& /*elapsedTime*/)
         // player
         {
             PlayerManager::Instance().Render(0.01f);
+        }
+
+        // enemy
+        {
+            enemyManager.Render(0.01f);
         }
 
         // Exp

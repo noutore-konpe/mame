@@ -1,7 +1,10 @@
 #include "Tutorial.h"
+
 #include "../Graphics/Graphics.h"
 #include "../Input/Input.h"
 #include "TutorialManager.h"
+#include "EnemyManager.h"
+#include "EnemyAI_Tutorial.h"
 
 // 移動チュートリアル
 #pragma region TutorialMove
@@ -466,7 +469,7 @@ TutorialLockOn::TutorialLockOn()
     {
         text_ = std::make_unique<Sprite>(
             graphics.GetDevice(),
-            L"./Resources/Image/Tutorial/Texts/MoveCamera.png"
+            L"./Resources/Image/Tutorial/Texts/LockOn.png"
         );
 
         checkMark_ = std::make_unique<Sprite>(
@@ -488,18 +491,22 @@ void TutorialLockOn::Initialize()
     using DirectX::XMFLOAT2;
     using DirectX::XMFLOAT4;
 
-    XMFLOAT2 pos     = {};
-    XMFLOAT2 texSize = {};
-    XMFLOAT2 scale   = {};
-    XMFLOAT2 size    = {};
-    XMFLOAT2 texPos  = {};
-    XMFLOAT4 color   = {};
-    float    angle   = {};
+    EnemyManager& enemyManager = EnemyManager::Instance();
 
-    // テキスト背景初期化
-    // 親の位置（※テキスト背景の位置を親の位置にする）
-    const XMFLOAT2 parentPos = { 735.0f, 215.0f };
+    // スプライト初期化
     {
+        XMFLOAT2 pos     = {};
+        XMFLOAT2 texSize = {};
+        XMFLOAT2 scale   = {};
+        XMFLOAT2 size    = {};
+        XMFLOAT2 texPos  = {};
+        XMFLOAT4 color   = {};
+        float    angle   = {};
+
+        // テキスト背景初期化
+        // 親の位置（※テキスト背景の位置を親の位置にする）
+        const XMFLOAT2 parentPos = { 735.0f, 215.0f };
+        {
         texSize = { 520.0f, 300.0f };
         scale   = { 1.0f, 1.0f };
         size    = { texSize.x * scale.x, texSize.y * scale.y };
@@ -509,8 +516,8 @@ void TutorialLockOn::Initialize()
         textBackGround_->Initialize(parentPos, size, texSize, texPos, color, angle);
     }
 
-    // テキスト初期化
-    {
+        // テキスト初期化
+        {
         // 親の位置を基準にして位置を設定する
         pos.x   = parentPos.x + (57.0f);
         pos.y   = parentPos.y + (51.0f);
@@ -523,8 +530,8 @@ void TutorialLockOn::Initialize()
         text_->Initialize(pos, size, texSize, texPos, color, angle);
     }
 
-    // チェックマーク初期化
-    {
+        // チェックマーク初期化
+        {
         // 親の位置を基準にして位置を設定する
         pos.x   = parentPos.x + (-20.0f);
         pos.y   = parentPos.y + (-30.0f);
@@ -536,17 +543,32 @@ void TutorialLockOn::Initialize()
         angle   = 0.0f;
         checkMark_->Initialize(pos, size, texSize, texPos, color, angle);
     }
+    }
+
+    // チュートリアルエネミー生成・初期化・登録
+    {
+        EnemyAI_Tutorial* tutorialEnemy = new EnemyAI_Tutorial();
+        tutorialEnemy->Initialize();
+        enemyManager.Register(tutorialEnemy);
+    }
 
 }
 
 void TutorialLockOn::Update(const float elapsedTime)
 {
     TutorialManager& tutorialManager = TutorialManager::Instance();
-    const GamePad& gamePad = Input::Instance().GetGamePad();
+    Camera& camera = Camera::Instance();
 
     text_->Update(elapsedTime);
     checkMark_->Update(elapsedTime);
     textBackGround_->Update(elapsedTime);
+
+    // ロックオンが有効になっていれば
+    // ロックオンチュートリアル達成フラグを立てる
+    if (true == camera.GetActiveLockOn())
+    {
+        tutorialManager.CompleteTutorialAt(TUTORIAL_STEP::LOCK_ON);
+    }
 
 }
 

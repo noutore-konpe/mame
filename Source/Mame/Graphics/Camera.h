@@ -116,6 +116,8 @@ public:
     Enemy* GetLockOnTarget() const { return lockOnTarget; }
     void SetLockOnTarget(Enemy* enemy) { lockOnTarget = enemy; }
 
+    [[nodiscard]] const bool GetActiveLockOn() const { return activeLockOn; }
+
 public:
     bool activeLockOn = false;//ロックオン起動
 private:
@@ -163,7 +165,7 @@ private:
     float holdFov;
     float resultFov;
 
-    
+
 private:
     //イージング等の視野角変更更新
     void UpdateFov(float elapsedTime);
