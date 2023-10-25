@@ -7,7 +7,7 @@
 
 PlayerManager::PlayerManager()
 {
-    
+
 }
 
 // ‰Šú‰»
@@ -60,7 +60,7 @@ void PlayerManager::Initialize()
         //d•Ô‚µ
         revengeSkill = std::make_unique<PlayerSkill::RevengeSkill>(player.get());
         skillArray.emplace_back(revengeSkill.get());
-        
+
 
         return true;
     }();

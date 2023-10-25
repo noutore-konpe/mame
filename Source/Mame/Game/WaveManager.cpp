@@ -16,12 +16,21 @@
 // ウェーブエネミーセット(※ウェーブに格納する)
 #pragma region WaveEnemySet
 
-namespace Set {
+namespace Set
+{
     static constexpr float HP       = 70.0f;
     static constexpr float GolemHp  = 300.0f;
     static constexpr float ADD_HP   = 5.0f;
     static constexpr float ATK      = 20.0f;
     static constexpr float ADD_ATK  = 3.0f;
+}
+
+namespace EndlessSet
+{
+    static constexpr float HP       = Set::HP + (Set::ADD_HP * 10.0f);
+    static constexpr float GOLEM_HP = Set::GolemHp + (Set::ADD_HP * 10.0f);
+    static constexpr float ATK      = Set::ATK + (Set::ADD_ATK * 10.0f);
+    static constexpr float EXP      = 5;
 }
 
 #if _DEBUG
@@ -164,9 +173,9 @@ void WaveManager::InitWave(const int waveIndex)
         // 現在のウェーブ番号をリセット
         currentWaveIndex_ = 0;
 #endif
-        // ウェーブ番号超過修正
+        // ウェーブ番号を超過している場合はエンドレスウェーブにする
         const int waveIndexEnd = GetWaveIndexEnd();
-        if (currentWaveIndex_ > waveIndexEnd) currentWaveIndex_ = waveIndexEnd;
+        if (currentWaveIndex_ > waveIndexEnd) endlessWaveFlag_ = true;
     }
 
     // 現在のウェーブが出現させる敵の総数を残りの敵カウンターに代入
@@ -177,14 +186,16 @@ void WaveManager::InitWave(const int waveIndex)
 
     // すべてのウェーブの敵の生成フラグをリセット
     ResetWaveEnemySpawnFlag();
+
+    endlessWaveHp_  = EndlessSet::HP;
+    endlessWaveAtk_ = EndlessSet::ATK;
+    endlessWaveExp_ = EndlessSet::EXP;
 }
 
 
 // ウェーブ更新
 void WaveManager::UpdateWave(const float elapsedTime)
 {
-    // if (ゲームクリアフラグが立っている) return;
-
     // タイマー更新
     waveTimer_ = (std::min)(FLT_MAX, waveTimer_ + elapsedTime);
 
@@ -204,23 +215,70 @@ void WaveManager::UpdateWave(const float elapsedTime)
         return;
     }
 
-    // 敵生成
+    // エンドレスフラグが立っていればエンドレスで敵を生成する
+    if (true == endlessWaveFlag_)
     {
-        // 現在のウェーブを取得
-        const Wave currentWave = waveParent_.children_[currentWaveIndex_];
-        for (size_t i = 0; i < currentWave.spawnEnemyCount_; ++i)
+        if (waveTimer_ >= ENDLESS_WAVE_CREATE_TIME_ &&
+            endlessWaveCreateCount_ > 0)
         {
-            // 出現させる敵のパラメータを取得
-            WaveEnemySet* waveEnemy = &currentWave.waveEnemySets_[i];
+            --endlessWaveCreateCount_;
 
-            // 生成済みならcontinue
-            if (true == waveEnemy->isSpawned_) continue;
+            WaveEnemySet waveEnemy = {};
 
-            // 生成時間を過ぎたら生成する
-            if (waveTimer_ >= waveEnemy->spawnTime_)
+            // エンドレスウェーブカウンターが５ならゴーレム生成
+            if (endlessWaveCounter_ == 5)
             {
-                SpawnEnemy(waveEnemy);  // 敵を生成
-                waveTimer_ = 0.0f;      // タイマーリセット
+                waveEnemy.name_ = "EnemyGolem";
+
+                // ステージの中心に生成位置を設定
+                waveEnemy.pos_ = SceneGame::stageCenter;
+            }
+            else
+            {
+                // 敵の種類をランダムで決める
+                const int enemyNameRandom = ::RandInt(0, 2);
+                switch (enemyNameRandom)
+                {
+                case 0: waveEnemy.name_ = "EnemyAI_1"; break;
+                case 1: waveEnemy.name_ = "EnemyAI_2"; break;
+                case 2: waveEnemy.name_ = "EnemyAI_3"; break;
+                }
+
+                // ランダムなゲート位置を生成位置に設定
+                waveEnemy.pos_ = ::GetGatewayPosition(-1);
+            }
+
+            waveEnemy.hp_       = endlessWaveHp_ ;
+            waveEnemy.atk_      = endlessWaveAtk_;
+            waveEnemy.dropExp_  = endlessWaveExp_;
+
+            // 敵生成
+            SpawnEnemy(&waveEnemy);
+
+            // ウェーブタイマーリセット
+            waveTimer_ = 0.0f;
+        }
+    }
+    else
+    {
+        // 敵生成
+        {
+            // 現在のウェーブを取得
+            const Wave currentWave = waveParent_.children_[currentWaveIndex_];
+            for (size_t i = 0; i < currentWave.spawnEnemyCount_; ++i)
+            {
+                // 出現させる敵のパラメータを取得
+                WaveEnemySet* waveEnemy = &currentWave.waveEnemySets_[i];
+
+                // 生成済みならcontinue
+                if (true == waveEnemy->isSpawned_) continue;
+
+                // 生成時間を過ぎたら生成する
+                if (waveTimer_ >= waveEnemy->spawnTime_)
+                {
+                    SpawnEnemy(waveEnemy);  // 敵を生成
+                    waveTimer_ = 0.0f;      // タイマーリセット
+                }
             }
         }
     }
@@ -228,31 +286,57 @@ void WaveManager::UpdateWave(const float elapsedTime)
     // ウェーブ中のすべての敵が倒されたら次のウェーブに移る
     if (remainingEnemyCounter_ <= 0)
     {
-        ++currentWaveIndex_; // 現在のウェーブ番号を加算
+        // 現在のウェーブ番号を加算
+        ++currentWaveIndex_;
 
-        // 現在のウェーブが最後のウェーブならゲームクリアにする
+        // タイマーリセット
+        waveTimer_ = 0.0f;
+
+        // 休憩時間に入る(休憩フラグON)
+        breakTimeFlag_ = true;
+
+        // 現在のウェーブが最後のウェーブならエンドレスウェーブを回す
         const int waveIndexEnd = GetWaveIndexEnd();
         if (currentWaveIndex_ > waveIndexEnd)
         {
-            // ゲームクリア
-            //assert("Game Clear");
+            // エンドレスウェーブフラグが立っていなければ立てる
+            if (false == endlessWaveFlag_) { endlessWaveFlag_ = true; }
+
+            // エンドレスウェーブカウンター加算
+            ++endlessWaveCounter_;
+
+            // エンドレスウェーブカウンターが５を超えたら１にリセットする
+            if (endlessWaveCounter_ > 5) { endlessWaveCounter_ = 1; }
+
+            // 体力・攻撃力増加
+            endlessWaveHp_  += Set::ADD_HP;
+            endlessWaveAtk_ += Set::ADD_ATK;
+
+            // エンドレスウェーブカウンターが５のときはゴーレムを生成するようにする
+            if (endlessWaveCounter_ == 5)
+            {
+                // ゴーレム１体だけ生成するようにする
+                endlessWaveCreateCount_ = 1;
+            }
+            else
+            {
+                // 7~9の敵を生成する
+                endlessWaveCreateCount_ = ::RandInt(7, 9);
+            }
+
+            // エンドレスウェーブで生成する敵の数を残りの敵カウンターに代入
+            remainingEnemyCounter_ = endlessWaveCreateCount_;
         }
         else
         {
-            // タイマーリセット
-            waveTimer_ = 0.0f;
-
-            // 敵の総数を残りの敵カウンターに代入
+            // ウェーブの敵の総数を残りの敵カウンターに代入
             remainingEnemyCounter_ = waveParent_.children_[currentWaveIndex_].spawnEnemyCount_;
-
-            // 休憩時間に入る(休憩フラグON)
-            breakTimeFlag_ = true;
-
-            // waveの表記を出す
-            UserInterface::Instance().SetWaveSlideSprite();
-            // waveの効果音
-            AudioManager::Instance().PlaySE(SE::WaveBegin);
         }
+
+        // waveの表記を出す
+        UserInterface::Instance().SetWaveSlideSprite();
+        // waveの効果音
+        AudioManager::Instance().PlaySE(SE::WaveBegin);
 
     }
 
@@ -322,8 +406,23 @@ void WaveManager::DrawDebug()
 {
 #ifdef USE_IMGUI
 
+    if (true == endlessWaveFlag_)
+    {
+        if (ImGui::BeginMenu("EndlessWave"))
+        {
+            // エンドレスウェーブカウンター
+            int endlessWaveCounter = endlessWaveCounter_;
+            ImGui::InputInt("endlessWaveCounter", &endlessWaveCounter);
+
+            // エンドレスウェーブの生成する敵の数
+            int endlessWaveCreateCount = endlessWaveCreateCount_;
+            ImGui::InputInt("endlessWaveCreateCount", &endlessWaveCreateCount);
+
+            ImGui::EndMenu();
+        }
+    }
     // 現在のウェーブ情報をデバッグ表示
-    if (ImGui::BeginMenu("Wave"))
+    else if (ImGui::BeginMenu("Wave"))
     {
         const Wave& currentWave = waveParent_.children_[currentWaveIndex_];
 

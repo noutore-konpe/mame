@@ -110,13 +110,12 @@ private:
     const bool MoveNextStepJudgment() override;
 };
 
-// レベルアップチュートリアル
-class TutorialLevelUp : public BaseTutorial
+// チュートリアルエンド
+class TutorialEnd : public BaseTutorial
 {
 public:
-    TutorialLevelUp();
-    void Update(const float elapsedTime) override;
-    void Render() override;
+    TutorialEnd();
+    void Initialize() override;
     void DrawImGui() override;
 
 private:

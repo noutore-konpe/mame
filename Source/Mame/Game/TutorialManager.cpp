@@ -81,13 +81,13 @@ const bool TutorialManager::SetNextTutorial()
     // チュートリアル代入分岐
     switch (tutorialStep_)
     {
-    case TUTORIAL_STEP::MOVE:        tutorial_ = std::make_unique<TutorialMove>();       break;
-    case TUTORIAL_STEP::MOVE_CAMERA: tutorial_ = std::make_unique<TutorialMoveCamera>(); break;
-    case TUTORIAL_STEP::LOCK_ON:     tutorial_ = std::make_unique<TutorialLockOn>();     break;
-    case TUTORIAL_STEP::LOW_ATTACK:  tutorial_ = std::make_unique<TutorialLowAttack>();  break;
-    case TUTORIAL_STEP::HIGH_ATTACK: tutorial_ = std::make_unique<TutorialHighAttack>(); break;
-    case TUTORIAL_STEP::AVOID:       tutorial_ = std::make_unique<TutorialAvoid>();      break;
-    case TUTORIAL_STEP::LEVEL_UP:    tutorial_ = std::make_unique<TutorialLevelUp>();    break;
+    case TUTORIAL_STEP::MOVE:         tutorial_ = std::make_unique<TutorialMove>();       break;
+    case TUTORIAL_STEP::MOVE_CAMERA:  tutorial_ = std::make_unique<TutorialMoveCamera>(); break;
+    case TUTORIAL_STEP::LOCK_ON:      tutorial_ = std::make_unique<TutorialLockOn>();     break;
+    case TUTORIAL_STEP::LOW_ATTACK:   tutorial_ = std::make_unique<TutorialLowAttack>();  break;
+    case TUTORIAL_STEP::HIGH_ATTACK:  tutorial_ = std::make_unique<TutorialHighAttack>(); break;
+    case TUTORIAL_STEP::AVOID:        tutorial_ = std::make_unique<TutorialAvoid>();      break;
+    case TUTORIAL_STEP::TUTORIAL_END: tutorial_ = std::make_unique<TutorialEnd>();        break;
     }
 
     // チュートリアル初期化
