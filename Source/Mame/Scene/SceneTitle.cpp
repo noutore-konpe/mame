@@ -97,9 +97,9 @@ void SceneTitle::Initialize()
     pressSprite->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(370, 520));
     fadeSprite->GetSpriteTransform()->SetColorA(0.0f);
 
-    
+
     AudioManager::Instance().PlayBGM(BGM::Title);
-    
+
 
     // •Ï”‰Šú‰»
     pressTimer = 0.0f;

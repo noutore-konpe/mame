@@ -56,6 +56,7 @@ inline DirectX::XMFLOAT3 GetGatewayPosition(/*NoConst*/ int gatewayIndex)
 // ウェーブエネミー構造体
 struct WaveEnemySet
 {
+    WaveEnemySet() {}
     WaveEnemySet(
         const float              spawnTime,
         const std::string&       name,
@@ -152,7 +153,8 @@ public: // Get・Set Function
     const size_t GetCurrentWaveEnemyCount() const { return waveParent_.children_->spawnEnemyCount_; }
 
 public:
-    static constexpr float BREAK_TIME_ = 2.5f; // 現在のウェーブから次のウェーブに移るまでの休憩時間
+    static constexpr float BREAK_TIME_ = 2.5f;              // 現在のウェーブから次のウェーブに移るまでの休憩時間
+    static constexpr float ENDLESS_WAVE_CREATE_TIME_ = 1.0f;
 
 private:
     WaveParent  waveParent_             = {};       // ウェーブの親(ウェーブを管理)
@@ -160,4 +162,11 @@ private:
     int         currentWaveIndex_       = 0;        // 現在のウェーブ番号
     int         remainingEnemyCounter_  = 0;        // 残りの敵の数
     bool        breakTimeFlag_          = false;    // 休憩フラグ
+
+    float       endlessWaveHp_          = 0.0f;
+    float       endlessWaveAtk_         = 0.0f;
+    float       endlessWaveExp_         = 0.0f;
+    int         endlessWaveCounter_     = 0;        // エンドレスウェーブを回した回数
+    int         endlessWaveCreateCount_ = 0;        // エンドレスウェーブの敵を生成する数
+    bool        endlessWaveFlag_        = false;    // エンドレスウェーブフラグ
 };
