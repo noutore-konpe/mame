@@ -95,4 +95,11 @@ namespace PlayerSkill
         overlap++;
         if (overlap <= 1)return;
     }
+    void PoisonSkill::Overlaping()
+    {
+        overlap++;
+        if (overlap <= 1)return;
+
+        player->poisonSlipDamage += damageIncreasing;
+    }
 }

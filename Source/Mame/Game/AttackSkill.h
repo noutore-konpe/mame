@@ -111,5 +111,23 @@ namespace PlayerSkill
 
         void Overlaping()override;
     };
+
+    class PoisonSkill : public BaseSkill
+    {
+    public:
+        PoisonSkill(Player* player) :
+            BaseSkill(player,
+                L"./Resources/Image/Card/sampleCard.png",
+                L"./Resources/Image/Icon/sampleIcon.png",
+                "Poison",
+                BaseSkill::RARE,
+                true) {}
+        ~PoisonSkill() {}
+
+        void Overlaping()override;
+
+    private:
+        const float damageIncreasing = 3.0f;
+    };
 }
 

@@ -8,6 +8,8 @@
 
 #include "../Other/MathHelper.h"
 
+#include "PlayerManager.h"
+
 // コンストラクタ
 Character::Character()
 {
@@ -200,7 +202,7 @@ void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
     transform->SetRotationY(rotation.y);
 }
 
-Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLOAT3 hitPosition, Character* attacker,float invincibleTime, bool ignoreDefence)
+Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLOAT3 hitPosition, Character* attacker,float invincibleTime, bool ignoreDefence, DirectX::XMFLOAT4 color)
 {
     DamageResult result;
 
@@ -215,9 +217,7 @@ Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLO
     if(!ignoreDefence)damage -= defence;
     result.damage = damage;
 
-    // ダメージ表示生成
-    NumeralManager& numeralManager = NumeralManager::Instance();
-    numeralManager.CreateDamageNumeral(this, (damage > 0 ? damage : 0), GetPosition());
+    
 
     //ダメージが０の場合は健康状態を変更する必要がない
     if (damage <= 0)
@@ -255,16 +255,23 @@ Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLO
         isDead = true;
         health = 0;
 
+        //とどめはエフェクトのカラーを変更
+        color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.3f, 1.0f);
+
         //エフェクト再生
-        hitEffect->Play(hitPosition,DirectX::XMFLOAT3(2.0f,2.0f,2.0f),DirectX::XMFLOAT4(1.0f,0,0.3f,1.0f));
+        hitEffect->Play(hitPosition,DirectX::XMFLOAT3(2.0f,2.0f,2.0f),color);
     }
     //ダメージ通知
     else
     {
         //エフェクト再生
-        hitEffect->Play(hitPosition);
+        hitEffect->Play(hitPosition,DirectX::XMFLOAT3(1,1,1),color);
         OnDamaged();
     }
+
+    // ダメージ表示生成
+    NumeralManager& numeralManager = NumeralManager::Instance();
+    numeralManager.CreateDamageNumeral(this, (damage > 0 ? damage : 0), GetPosition(), DirectX::XMFLOAT2(22, 30), color);
 
     //健康状態が変更した場合はtrueを返す
     result.hit = true;
@@ -290,6 +297,21 @@ bool Character::ApplyHeal(float heal)
     healEffect->Play(ePos);
 
     return true;
+}
+
+void Character::PoisonUpdate(float elapsedTime)
+{
+    if (!isPoison)return;
+    
+    //とりあえず３秒毎にダメージ
+    if (poisonTimer > 3.0f)
+    {
+        auto hitPos = GetTransform()->GetPosition();
+        hitPos.y += 0.6f;
+        ApplyDamage(PlayerManager::Instance().GetPlayer()->poisonSlipDamage,hitPos,nullptr,0.0f,true,DirectX::XMFLOAT4(1,0,1,1));
+    }
+
+    poisonTimer += elapsedTime;
 }
 
 void Character::SphereCollider::DebugRender(const DirectX::XMFLOAT4 color)

@@ -248,8 +248,16 @@ bool Book::LaunchProjectile(const float elapsedTime, const DirectX::XMFLOAT3& ve
         const float    length    = 0.3f;
         const XMFLOAT3 launchPos = bookPos + vecN * length;
 
-        ProjectileStraight* projectile = new ProjectileStraight(&projectileManager,PlayerManager::Instance().GetPlayer().get());
-        projectile->Launch(vecN, launchPos);
+        if (PlayerManager::Instance().GetHomingSkill()->Active())
+        {
+            ProjectileHorming* projectile = new ProjectileHorming(&projectileManager,PlayerManager::Instance().GetPlayer().get());
+            projectile->Launch(vecN, launchPos);
+        }
+        else
+        {
+            ProjectileStraight* projectile = new ProjectileStraight(&projectileManager,PlayerManager::Instance().GetPlayer().get());
+            projectile->Launch(vecN, launchPos);
+        }
 
         // ”­Ë‚Ü‚Å‚ÌŠÔ‚ğİ’è
         launchTimer = launchTime;
