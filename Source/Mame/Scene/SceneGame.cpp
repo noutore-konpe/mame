@@ -452,6 +452,7 @@ void SceneGame::Render(const float& /*elapsedTime*/)
 
     Shader::SceneConstants sceneConstants{};
 
+    
 
     float playerScaleFactor = 0.01f;
     float enemyScaleFactor = 0.01f;
@@ -461,12 +462,10 @@ void SceneGame::Render(const float& /*elapsedTime*/)
         // 描画の初期設定※必ず呼ぶこと！！！
         Mame::Scene::BaseScene::RenderInitialize();
 
-        //DirectX::XMFLOAT3 cameraPos = Camera::Instance().GetTransform()->GetPosition();
-        //DirectX::XMFLOAT3 playerPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
-        //shadow.lightViewFocus.x = playerPos.x;
-        //shadow.lightViewFocus.z = playerPos.z;
-        //shadow.lightViewFocus.x = cameraPos.x;
-        //shadow.lightViewFocus.z = cameraPos.z;
+
+        DirectX::XMFLOAT3 playerPos = PlayerManager::Instance().GetPlayer()->GetTransform()->GetPosition();
+        shadow.lightViewFocus.x = playerPos.x;
+        shadow.lightViewFocus.z = playerPos.z;
 
 
         // SHADOW : make shadow map

@@ -133,6 +133,9 @@ public: // æ“¾Eİ’èŠÖ”
     const bool GetIsDead() const { return isDead; }
     void SetIsDead(const bool dead) { isDead = dead; }
 
+    [[nodiscard]] const bool GetIsInvincible() const { return isInvincible; }
+    [[nodiscard]] void SetIsInvincible(const bool invincible) { isInvincible = invincible; }
+
     std::vector<SphereCollider> GetHitCollider() { return hitCollider; }        //‹ò‚ç‚¢”»’èæ“¾
     std::vector<SphereCollider> GetAttackCollider() { return attackCollider; }  //UŒ‚”»’èæ“¾
 
@@ -151,7 +154,7 @@ public: // ‚»‚Ì‘¼‚ÌŠÖ”
 
     void Turn(float elapsedTime, float vx, float vz, float rotSpeed);
 
-    
+
 
     struct DamageResult
     {
@@ -162,7 +165,7 @@ public: // ‚»‚Ì‘¼‚ÌŠÖ”
     //–ß‚è’l‚Í—^‚¦‚ç‚ê‚½ƒ_ƒ[ƒW”AŠî–{–³“GŠÔ‚Í‹¯‚İƒ‚[ƒVƒ‡ƒ“‚É‡‚í‚¹‚é‚©‚ç‚±‚±‚Í‚O‚Å‚¢‚¢
     virtual DamageResult ApplyDamage(float damage,
         const DirectX::XMFLOAT3 hitPosition,
-        Character* attacker = nullptr/*UŒ‚‚µ‚Ä‚«‚½“G*/, 
+        Character* attacker = nullptr/*UŒ‚‚µ‚Ä‚«‚½“G*/,
         float invincibleTime = 0,
         bool ignoreDefence = false,/*–hŒä–³‹*/
         DirectX::XMFLOAT4 color = {1,1,1,1});

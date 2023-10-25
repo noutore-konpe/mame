@@ -550,6 +550,9 @@
     <ClCompile Include="Source\Mame\Game\Tutorial.cpp">
       <Filter>mamelib\Mame\Game\Tutorial</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mame\Game\EnemyAI_Tutorial.cpp">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -946,6 +949,9 @@
     </ClInclude>
     <ClInclude Include="Source\Mame\Game\Tutorial.h">
       <Filter>mamelib\Mame\Game\Tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mame\Game\EnemyAI_Tutorial.h">
+      <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

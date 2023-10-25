@@ -39,8 +39,8 @@ private:
     Microsoft::WRL::ComPtr<ID3D11Buffer> playerConstant;
     struct PlayerConstants
     {
-        DirectX::XMFLOAT4 color;
-    }playerConstants;
+        DirectX::XMFLOAT4 color{ 0.3f,0.3f,0.3f,1.0f };
+    }playerConstants = {};
 
     bool isChangeScene = false;
     float easingTimer = 0.0f;

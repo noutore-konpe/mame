@@ -24,6 +24,8 @@ private:// íËêî
         IconNum,
         Enemy,
         EnemyKill,
+        PressAnyButton,
+
         Max,
     };
 
@@ -156,6 +158,8 @@ private:
 
     std::unique_ptr<Sprite> chonchonSprite  = nullptr;
 
+    std::unique_ptr<Sprite> pressAnyButtonSprite = nullptr;
+
     struct EnemyResult
     {
         DirectX::XMFLOAT3 position  = {};
@@ -191,6 +195,8 @@ private:
     bool isIconUpdateEnd    = false;
     bool isIconNum          = false;
     bool isEnemy            = false;
+
+    bool isPressAnyButton = false;
 
     struct IconStruct
     {

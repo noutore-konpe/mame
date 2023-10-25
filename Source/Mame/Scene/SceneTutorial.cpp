@@ -104,6 +104,8 @@ void SceneTutorial::CreateResource()
 // 初期化
 void SceneTutorial::Initialize()
 {
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
     // player
     PlayerManager::Instance().Initialize();
 
@@ -114,9 +116,7 @@ void SceneTutorial::Initialize()
     ItemManager::Instance().Initialize();
 
     // enemy
-    EnemyManager& enemyManager = EnemyManager::Instance();
     enemyManager.Initialize();
-    //enemyAura->Initialize();
 
     // stage
     stageBase->Initialize();
@@ -129,17 +129,21 @@ void SceneTutorial::Initialize()
 
     UserInterface::Instance().Initialize();
 
+    // 数字表示初期化
+    NumeralManager::Instance().Initialize();
+
     // チュートリアル初期化
     TutorialManager::Instance().Initialize();
 }
 
 void SceneTutorial::Finalize()
 {
-    // Exp
     ExperiencePointManager& expManager = ExperiencePointManager::Instance();
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    // Exp
     expManager.Finalize();
 
-    EnemyManager& enemyManager = EnemyManager::Instance();
     enemyManager.Finalize();
 
     ItemManager::Instance().Finalize();
@@ -154,13 +158,21 @@ void SceneTutorial::Begin()
 void SceneTutorial::Update(const float& elapsedTime)
 {
     Mame::Scene::SceneManager& sceneManager = Mame::Scene::SceneManager::Instance();
-    TutorialManager&    tutorialManager = TutorialManager::Instance();
     PlayerManager&      plManager       = PlayerManager::Instance();
     EnemyManager&       enemyManager    = EnemyManager::Instance();
     NumeralManager&     numeralManager  = NumeralManager::Instance();
     UserInterface&      userInterface   = UserInterface::Instance();
     SlowMotionManager&  slowMotion      = SlowMotionManager::Instance();
+    TutorialManager&    tutorialManager = TutorialManager::Instance();
     GamePad&            gamePad         = Input::Instance().GetGamePad();
+
+
+    //if (true == Player::InputDecide())
+    //{
+    //    // ゲームシーンに移る
+    //    sceneManager.ChangeScene(new SceneLoading(new SceneGame));
+    //    return;
+    //}
 
     //カード演出中はほかの処理を更新しない
     Player* player = plManager.GetPlayer().get();
@@ -233,6 +245,8 @@ void SceneTutorial::Render(const float& /*elapsedTime*/)
 {
     Graphics& graphics = Graphics::Instance();
     Shader* shader = graphics.GetShader();
+    EnemyManager& enemyManager = EnemyManager::Instance();
+    TutorialManager& tutorialManager = TutorialManager::Instance();
 
     Shader::SceneConstants sceneConstants{};
 
@@ -340,6 +354,11 @@ void SceneTutorial::Render(const float& /*elapsedTime*/)
             PlayerManager::Instance().Render(0.01f);
         }
 
+        // enemy
+        {
+            enemyManager.Render(0.01f);
+        }
+
         // Exp
         ExperiencePointManager& expManager = ExperiencePointManager::Instance();
         expManager.Render(1.0f);
@@ -358,6 +377,10 @@ void SceneTutorial::Render(const float& /*elapsedTime*/)
 
     //ブルームあり２D
     {
+        shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
+        // 数字表示描画
+        NumeralManager::Instance().Render();
+
         UserInterface::Instance().BloomRender();
     }
 
@@ -385,8 +408,6 @@ void SceneTutorial::Render(const float& /*elapsedTime*/)
         };
     }
 
-
-
     // BLOOM
     bloomer->Make(graphics.GetDeviceContext(), framebuffers[0]->shaderResourceViews[0].Get());
 
@@ -406,17 +427,27 @@ void SceneTutorial::Render(const float& /*elapsedTime*/)
 
     //ブルーム無し
     {
+        // チュートリアルスプライト描画
+        tutorialManager.Render();
+
         PlayerManager::Instance().SkillImagesRender();
-        UserInterface::Instance().Render();
     }
 
     // 2D描画
     {
-        // チュートリアルスプライト描画
-        TutorialManager::Instance().Render();
+        shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
+
+        // 数字表示描画
+        NumeralManager::Instance().Render();
+
+        UserInterface::Instance().Render();
     }
 }
 
 void SceneTutorial::DrawDebug()
 {
+    TutorialManager& tutorialManager = TutorialManager::Instance();
+
+    // チュートリアルImGui描画
+    tutorialManager.DrawImGui();
 }

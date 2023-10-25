@@ -51,6 +51,8 @@ void SceneResult::CreateResource()
     enemyGolem = std::make_unique<EnemyGolemResult>();
     player = std::make_unique<PlayerResult>();
 
+    pressAnyButtonSprite = std::make_unique<Sprite>(graphics.GetDevice(),
+        L"./Resources/Image/Title/PressAnyButton.png");
 
     CreatePsFromCso(graphics.GetDevice(), "./Resources/Shader/FinalPassTexturePS.cso", finalPassPS.GetAddressOf());
     
@@ -135,6 +137,10 @@ void SceneResult::Initialize()
     
 
     resultState = static_cast<UINT>(STATE::Initialize);
+
+
+    pressAnyButtonSprite->GetSpriteTransform()->SetPosX(720);
+    isPressAnyButton = false;
 
     // リザルトBGM再生
     AudioManager::Instance().PlayBGM(BGM::Result);
@@ -228,6 +234,44 @@ void SceneResult::Update(const float& elapsedTime)
         break;
     case static_cast<UINT>(STATE::EnemyKill):
         UpdateEnemyKillNumAndx(elapsedTime);    
+
+        if (isPressAnyButton)
+            resultState = static_cast<UINT>(STATE::PressAnyButton);
+
+        break;
+    case static_cast<UINT>(STATE::PressAnyButton):
+    {
+        GamePad& gamePad = Input::Instance().GetGamePad();
+
+        const GamePadButton anyButton =
+            GamePad::BTN_UP
+            | GamePad::BTN_RIGHT
+            | GamePad::BTN_DOWN
+            | GamePad::BTN_LEFT
+            | GamePad::BTN_A
+            | GamePad::BTN_B
+            | GamePad::BTN_X
+            | GamePad::BTN_Y
+            | GamePad::BTN_LEFT_SHOULDER
+            | GamePad::BTN_RIGHT_SHOULDER
+            | GamePad::BTN_LEFT_THUMB
+            | GamePad::BTN_RIGHT_THUMB
+            | GamePad::BTN_LEFT_TRIGGER
+            | GamePad::BTN_RIGHT_TRIGGER;
+
+        const unsigned int anyKey =
+            GetAsyncKeyState('W')
+            | GetAsyncKeyState('A')
+            | GetAsyncKeyState('S')
+            | GetAsyncKeyState('D');
+
+
+        if (((gamePad.GetButtonDown() & anyButton)
+            || anyKey))
+        {
+            Mame::Scene::SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
+        }
+    }
         break;
     }
 }
@@ -281,6 +325,9 @@ void SceneResult::Render(const float& elapsedTime)
 
     // モデル描画
     RenderEnemyModel();   // 敵のモデル
+
+    if (isPressAnyButton)
+        pressAnyButtonSprite->Render();
 }
 
 void SceneResult::DrawDebug()
@@ -297,6 +344,8 @@ void SceneResult::DrawDebug()
         }
         iconStruct[0].isDisplay = true;
     }
+
+    pressAnyButtonSprite->DrawDebug();
 
     resultSprite->DrawDebug();
 
@@ -587,6 +636,8 @@ void SceneResult::UpdateEnemyKillNumAndx(const float& elapsedTime)
 
                 KillX.easingTimer = 0.0f;
                 isSlide = false;
+
+                isPressAnyButton = true;
             }
         }
     }

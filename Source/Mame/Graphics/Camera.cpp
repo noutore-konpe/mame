@@ -247,7 +247,8 @@ void Camera::Initialize()
     initFov = fov;
     transform.SetPosition(DirectX::XMFLOAT3(0.0f, 1.0f, 10.0f));
     transform.SetScale(DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-    transform.SetRotation(DirectX::XMFLOAT4(0.0f, DirectX::XMConvertToRadians(180), 0.0f, 0.0f));
+    //transform.SetRotation(DirectX::XMFLOAT4(0.0f, DirectX::XMConvertToRadians(180), 0.0f, 0.0f));
+    transform.SetRotation(DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f));
 
     activeLockOn = false;
 
@@ -413,7 +414,7 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
             eyePos.y - forward.y * focalLength + 1.0f,
             eyePos.z - forward.z * focalLength,
             1.0f) };
-        
+
        /* focus = { DirectX::XMVectorSet(
             targetPos.x,
             targetPos.y + focusOffsetY,
@@ -551,7 +552,7 @@ void Camera::Reset()
 void Camera::EyeMoveDelayUpdate(float elapsedTime,
     const DirectX::XMFLOAT3 eyeTargetPos)
 {
-    
+
     DirectX::XMFLOAT3 moveVec = eyeTargetPos - eyePos;
     float length = Length(moveVec);
     moveVec = Normalize(moveVec);
@@ -594,7 +595,7 @@ void Camera::FocusMoveDelayUpdate(float elapsedTime,
     }
 
     focusPos = focusPos + focusVelocity * elapsedTime;
-    
+
 }
 
 

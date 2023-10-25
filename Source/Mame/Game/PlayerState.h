@@ -59,6 +59,9 @@ namespace PlayerState
 
         //‚P‚Â‚ÌUŒ‚ƒ‚[ƒVƒ‡ƒ“‚É“ñ‰ñ˜A‘±‚Åƒqƒbƒg‚µ‚È‚¢‚æ‚¤‚Éˆê“xUŒ‚
         std::vector<Enemy*> hit;
+
+        bool isAudio = false;
+        float audioTimer = 0.0f;
     };
 
     //‹­UŒ‚
@@ -73,6 +76,9 @@ namespace PlayerState
         void Finalize() override;
     private:
         std::vector<Enemy*> hit;
+
+        bool isAudio = false;
+        float audioTimer = 0.0f;
     };
 
     //‰ñ”ğ

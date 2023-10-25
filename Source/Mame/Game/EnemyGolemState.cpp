@@ -310,7 +310,7 @@ namespace EnemyGolemState
         // アニメーションが終わったら
         if(!owner->IsPlayAnimation())
         {   // 待機ステートへ
-            owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::IdleState));
+            owner->GetStateMachine()->ChangeState(static_cast<UINT>(EnemyGolem::StateMachineState::ChoseState));
         }
     }
 
@@ -1031,7 +1031,7 @@ namespace EnemyGolemState
         float maxWalk = 1.0f;
         if (walkTimer > maxWalk)
         {
-            AudioManager::Instance().PlayGolemWalk();
+            AudioManager::Instance().PlaySE(SE_NAME::GolemWalk, SE::GolemWalk0, SE::GolemWalk4);
             walkTimer = 0.0;
         }
         walkTimer += elapsedTime;

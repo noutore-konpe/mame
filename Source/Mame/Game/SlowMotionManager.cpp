@@ -4,6 +4,8 @@
 #include "../../imgui/imgui.h"
 #include "../Other/Easing.h"
 
+#include "../Resource/AudioManager.h"
+
 void SlowMotionManager::Initialize()
 {
     // パラメータ初期化
@@ -136,4 +138,5 @@ void SlowMotionManager::ExecuteSlowMotion(
     // スローモーションフラグを立てる
     slowMotionFlag_     = true;
 
+    //AudioManager::Instance().PlaySE(SE_NAME::SlowMotion, SE::SlowMotion_0, SE::SlowMotion_1);
 }
