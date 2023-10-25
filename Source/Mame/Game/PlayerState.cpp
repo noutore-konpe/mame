@@ -281,7 +281,7 @@ namespace PlayerState
                 //ˆê“x‚àƒqƒbƒg‚µ‚Ä‚¢‚È‚¢“G‚È‚Ì‚Å“o˜^‚·‚é
                 hit.emplace_back(enemy);
 
-                result = enemy->ApplyDamage(0.1f * owner->GetBasePower(), hitPos, owner);
+                result = enemy->ApplyDamage(0.1f * owner->GetBasePower(), hitPos, owner,0.2f);
 
                 enemy->Flinch();
 
@@ -345,6 +345,8 @@ namespace PlayerState
         owner->GetSword()->PlayAnimation(Player::Animation::HardAttack, false, owner->GetAttackSpeed() + 0.2f);
         owner->ResetSteppingTimer();
         hit.clear();
+
+        owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
 
         owner->isActiveAttackFrame = true;
     }
@@ -540,7 +542,7 @@ namespace PlayerState
                             ))
                             {
                                 enemy->SaveBlowOffInfo(owner->GetTransform()->CalcForward(), BLOW_OFF_FORCE_LEVEL::HIGH);
-                                enemy->ApplyDamage(owner->GetBasePower() * 3.5f, collider.position, owner,0,true);
+                                enemy->ApplyDamage(owner->GetBasePower() * 1.5f + 2.0f * owner->counterDamage, collider.position, owner,0,true);
                                 break;
                             }
                         }

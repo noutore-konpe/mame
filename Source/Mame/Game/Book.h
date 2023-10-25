@@ -68,6 +68,9 @@ public:// 取得・設定 関連
     void SetBulletRadius(const float radius) { bulletRadius = radius; }
     void SetBulletScale(const float scale) { bulletScale = scale; }
 
+    float GetReloadTime() { return reloadTime; }
+    void SetReloadTime(float time) { reloadTime = time; }
+
 private:
     // ----- 制作に必要な情報 -----
     static int totalNum;    // 現在 "Book" が何個生成されてるか知るためのもの
@@ -79,6 +82,9 @@ private:
     float launchTimer = 0.0f;   // 発射用タイマー
     float launchTime = 0.5f;    // 発射までの時間      // ☆ ( 後で能力として設定される )
     int maxLaunchNum = 3;       // 一回の発射の最大数  // ☆
+
+    // todo : よしあき
+    float reloadTime = 3.0f; // 攻撃までの時間 // ☆
 
     // ステートマシン
     std::unique_ptr<StateMachine<State<Book>>> stateMachine = nullptr;

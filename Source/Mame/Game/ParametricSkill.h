@@ -12,8 +12,8 @@ namespace PlayerSkill
     public:
         MoveSpeedUp(Player* player) : 
             BaseSkill(player,
-                L"./Resources/Image/Card/Cidouup.png",
-                L"./Resources/Image/Icon/idouup.png",
+                L"./Resources/Image/Card/Fleetsteed.png",
+                L"./Resources/Image/Icon/iconFleetSpeed.png",
                 "MoveSpeedUp",BaseSkill::COMMON) {}
         ~MoveSpeedUp() {}
 
@@ -29,8 +29,8 @@ namespace PlayerSkill
     public:
         AttackPowerUp(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/Ckougekiup.png",
-                L"./Resources/Image/Icon/pawaup.png",
+                L"./Resources/Image/Card/Power.png",
+                L"./Resources/Image/Icon/iconPower.png",
                 "AttackPowerUp", BaseSkill::COMMON) {}
         ~AttackPowerUp() {}
 
@@ -46,8 +46,8 @@ namespace PlayerSkill
     public:
         AttackSpeedUp(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/Ckougekisokuup.png",
-                L"./Resources/Image/Icon/kougekisokuup.png",
+                L"./Resources/Image/Card/AttackSpeed.png",
+                L"./Resources/Image/Icon/iconAttackSpeed.png",
                 "AttackSpeedUp", BaseSkill::UNCOMMON) {}
         ~AttackSpeedUp() {}
 
@@ -63,9 +63,9 @@ namespace PlayerSkill
     public:
         BookIncrease(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/Chon.png",
-                L"./Resources/Image/Icon/hon.png",
-                "BookIncrease", BaseSkill::RARE) {}
+                L"./Resources/Image/Card/Grimoire.png",
+                L"./Resources/Image/Icon/iconGrimoire.png",
+                "BookIncrease", BaseSkill::COMMON) {}
         ~BookIncrease() {}
 
         void Overlaping()override;
@@ -82,8 +82,8 @@ namespace PlayerSkill
     public:
         MaxHitPointUp(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/Chpup.png",
-                L"./Resources/Image/Icon/hpup.png",
+                L"./Resources/Image/Card/Life.png",
+                L"./Resources/Image/Icon/iconLife.png",
                 "BookIncrease", BaseSkill::COMMON) {}
         ~MaxHitPointUp() {}
 
@@ -99,8 +99,8 @@ namespace PlayerSkill
     public:
         DefenseUp(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/Cbougyo.png",
-                L"./Resources/Image/Icon/bougyo.png",
+                L"./Resources/Image/Card/Protect.png",
+                L"./Resources/Image/Icon/iconProtect.png",
                 "DefenseUp", BaseSkill::UNCOMMON) {}
         ~DefenseUp() {}
 
@@ -116,8 +116,8 @@ namespace PlayerSkill
     public:
         BulletSizeUp(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/sampleCard.png",
-                L"./Resources/Image/Icon/sampleIcon.png",
+                L"./Resources/Image/Card/Bigbullet.png",
+                L"./Resources/Image/Icon/iconBigbullet.png",
                 "BulletSizeUp", BaseSkill::UNCOMMON) {}
         ~BulletSizeUp() {}
 
@@ -144,22 +144,24 @@ namespace PlayerSkill
     public:
         BulletRateUp(Player* player) :
             BaseSkill(player,
-                L"./Resources/Image/Card/sampleCard.png",
-                L"./Resources/Image/Icon/sampleIcon.png",
+                L"./Resources/Image/Card/Reload.png",
+                L"./Resources/Image/Icon/iconReload.png",
                 "BulletRateUp", BaseSkill::UNCOMMON) {}
         ~BulletRateUp() {}
 
         void Initialize()override;
         void Overlaping()override;
 
-        const float GetBulletRate()const { return bulletRate; }
-
+        const float GetReloadTime()const { return reloadTime; }
+        const float GetBulletRate() const { return rate; }
     private:
-        const float initLaunchTime = 0.5f;
+        const float initReloadTime = 3.0f;
+        const float reloadIncreasing = 0.3f;//è„è∏íl
+        float reloadTime = 3.0f;
 
-        const float rateIncreasing = 0.05f;//è„è∏íl
-
-        float bulletRate = 0.5f;
+        const float initShotRate = 0.5f;
+        const float rateIncreasing = 0.05f;
+        float rate = 5.0f;
     };
 }
 

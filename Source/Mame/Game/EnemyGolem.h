@@ -127,7 +127,7 @@ public:
     // 攻撃魔法陣更新処理
     void UpdateAttack2MagicCircle(const float& lengthX, const float& lengthZ);
 
-private:
+public:
     enum class ColliderName
     {
         HIP,
@@ -157,6 +157,11 @@ private:
     /// <param name="hitPos">攻撃が当たった座標</param>
     /// <returns></returns>
     const bool AttackCollisionVsPlayer(ColliderName index, float damage);
+
+    int GetAttackDamage() { return attackDamage; }
+
+    int attackDamage = 10;
+
 private:
     static int nameNum_;
 
@@ -166,6 +171,8 @@ public:
     std::unique_ptr<MagicCircleGolemAttack2> magicCircleGolemAttack2;
     std::unique_ptr<ComboAttackStone> comboAttackStone;
     std::unique_ptr<ComboAttackStone> comboAttackStones[3];
+
+    
 
 private:
     // ステートマシン

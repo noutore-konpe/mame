@@ -109,7 +109,7 @@ void Player::Initialize()
     level = 1;//レベル
     curExp = 0;//経験値
     totalExp = 0;//合計経験値
-    levelUpExp = 100;//レベルアップに必要な経験値
+    levelUpExp = 30;//レベルアップに必要な経験値
     isSelectingSkill = false;//スキルの選択演出中かどうかのフラグ
 
     maxEyeSpeed = 4.2f;
@@ -119,8 +119,8 @@ void Player::Initialize()
 
     jabMotionAtkMuls[0] = 1.0f;
     jabMotionAtkMuls[1] = 1.2f;
-    jabMotionAtkMuls[2] = 2.3f;
-    hardAtkMuls = 2.7f;
+    jabMotionAtkMuls[2] = 3.5f;
+    hardAtkMuls = 2.4f;
 
     poisonSlipDamage = 3.0f;
     poisonEffectTime = 30.0f;
@@ -265,6 +265,7 @@ Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT
         }
 
         result.damage = damage;
+        counterDamage = damage;
         result.hit = true;
         counterCompleted = true;
 
@@ -293,6 +294,8 @@ Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT
             }
         }
     }
+
+    return result;
 }
 
 Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT3 hitPosition, const HitReaction reaction, Character* attacker,float invincibleTime, bool ignoreDefence)
@@ -1188,7 +1191,7 @@ void Player::TurnNearEnemy(float radius,float elapsedTime)
     //最近距離に位置する敵が索敵範囲よりも近いなら回転処理をする
     if (nearest < radius)
     {
-        Turn(elapsedTime, vec.x, vec.z, 600.0f);
+        Turn(elapsedTime, vec.x, vec.z, 720.0f);
     }
 }
 
@@ -1232,6 +1235,8 @@ void Player::LevelUpdate()
 
         level++;
         curExp -= levelUpExp;
+
+        levelUpExp += 10;
 
         drawDirectionState = 0;
 

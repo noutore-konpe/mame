@@ -49,6 +49,8 @@ private: // •Ï”“™X
 
     std::unique_ptr<Sprite> whiteSprite;
 
+    
+
     // effect
     Effect* effect[4];
     //std::unique_ptr<Effect> effect[4];

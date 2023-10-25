@@ -56,6 +56,7 @@ void Book::Initialize()
     SetTransform();
 
     //TODO:スキルの内容の勘違いで変更
+    SetReloadTime(PlayerManager::Instance().GetBulletRateUpSkill()->GetReloadTime());
     SetLaunchTime(PlayerManager::Instance().GetBulletRateUpSkill()->GetBulletRate());
 }
 

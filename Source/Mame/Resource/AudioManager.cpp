@@ -22,11 +22,17 @@ void AudioManager::LoadAudio()
             se_[static_cast<int>(SE::CardSelect0)   ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/CardSelect.wav");
             se_[static_cast<int>(SE::CardSelect1)   ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/CardSelect.wav");
             se_[static_cast<int>(SE::CardSelect2)   ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/CardSelect.wav");
+            se_[static_cast<int>(SE::CardSelect3)   ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/CardSelect.wav");
             se_[static_cast<int>(SE::Enter)         ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Enter.wav");
             se_[static_cast<int>(SE::SwordSlash1)   ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash1.wav");
             se_[static_cast<int>(SE::SwordSlash2)   ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash2.wav");
             se_[static_cast<int>(SE::SwordSlash3)   ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash3.wav");
             se_[static_cast<int>(SE::SwordSlash4)   ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SwordSlash4.wav");
+            se_[static_cast<int>(SE::GolemWalk0)    ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemWalk.wav");
+            se_[static_cast<int>(SE::GolemWalk1)    ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemWalk.wav");
+            se_[static_cast<int>(SE::GolemWalk2)    ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemWalk.wav");
+            se_[static_cast<int>(SE::GolemWalk3)    ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemWalk.wav");
+            se_[static_cast<int>(SE::GolemWalk4)    ] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemWalk.wav");
         }
     }
 
@@ -34,12 +40,19 @@ void AudioManager::LoadAudio()
     {    
         // BGMâπó í≤êÆ
         {
-            //bgm_[static_cast<int>(BGM::Title)           ]->Volume(0.75f);
+            bgm_[static_cast<int>(BGM::Title)       ]->Volume(0.35f);
+            bgm_[static_cast<int>(BGM::Game)        ]->Volume(0.3f);
+            bgm_[static_cast<int>(BGM::Golem)       ]->Volume(0.35f);
         }
 
         // SEâπó í≤êÆ
         {
             se_[static_cast<int>(SE::Enter)         ]->Volume(1.5f);
+            se_[static_cast<int>(SE::GolemWalk0)    ]->Volume(2.0f);
+            se_[static_cast<int>(SE::GolemWalk1)    ]->Volume(2.0f);
+            se_[static_cast<int>(SE::GolemWalk2)    ]->Volume(2.0f);
+            se_[static_cast<int>(SE::GolemWalk3)    ]->Volume(2.0f);
+            se_[static_cast<int>(SE::GolemWalk4)    ]->Volume(2.0f);
         }
     }
 
@@ -93,7 +106,38 @@ void AudioManager::PlayCardSelectSENum()
         break;
     case 2:
         PlaySE(SE::CardSelect2);
+        AddCardSelectSENum();
+        break;
+    case 3:
+        PlaySE(SE::CardSelect3);
         ResetCardSelectSENum();
+        break;
+    }
+}
+
+void AudioManager::PlayGolemWalk()
+{
+    switch (GetGolemWalk())
+    {
+    case 0:
+        PlaySE(SE::GolemWalk0);
+        AddGolemWalk();
+        break;
+    case 1:
+        PlaySE(SE::GolemWalk1);
+        AddGolemWalk();
+        break;
+    case 2:
+        PlaySE(SE::GolemWalk2);
+        AddGolemWalk();
+        break;
+    case 3:
+        PlaySE(SE::GolemWalk3);
+        AddGolemWalk();
+        break;
+    case 4:
+        PlaySE(SE::GolemWalk4);
+        ResetGolemWalk();
         break;
     }
 }

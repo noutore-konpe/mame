@@ -101,8 +101,8 @@ void BaseEnemyAI::ColliderInitialize()
     //èâä˙âª
     if (hitCollider.size() == 0)
     {
-        swordColliderNum = 5;
-        swordColliderRadius = 0.18f;
+        swordColliderNum = 6;
+        swordColliderRadius = 0.2f;
         if (sword_ != nullptr)
         {
             for (int i = 0; i < swordColliderNum; i++)
@@ -164,12 +164,13 @@ void BaseEnemyAI::ColliderPosUpdate(const float& scale)
         float swordLength = Length(vec);
         const DirectX::XMFLOAT3 vecNormal = Normalize(vec);
 
-        const float collideInterval = swordLength / swordColliderNum;//îªíËÇ≤Ç∆ÇÃê›íuä‘äu
+        const float collideInterval = 0.2f;//îªíËÇ≤Ç∆ÇÃê›íuä‘äu
 
-        for (int i = 0; i < attackCollider.size(); ++i)
+        for (int i = 0; i < attackCollider.size() - 1; ++i)
         {
             attackCollider[i].position = swordRoot + vecNormal * collideInterval * static_cast<float>(i);
         }
+        attackCollider[attackCollider.size() - 1].position = swordRoot - vecNormal * 0.2f;
     }
 }
 

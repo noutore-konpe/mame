@@ -47,7 +47,8 @@ namespace PlayerSkill
     void BulletRateUp::Initialize()
     {
         BaseSkill::Initialize();
-        bulletRate = 0.5f;
+        reloadTime = initReloadTime;
+        rate = initShotRate;
     }
     void BulletRateUp::Overlaping()
     {
@@ -55,10 +56,15 @@ namespace PlayerSkill
         auto* bookSkill = PlayerManager::Instance().GetBookIncreaseSkill();
         for (auto& book : bookSkill->GetBooks())
         {
-            float rate = initLaunchTime - overlap * rateIncreasing;
+            float reload = initReloadTime - overlap * reloadIncreasing;
+            if (reload < 0.3f)reload = 0.5f;
+            book->SetReloadTime(reload);
+            reloadTime = reload;
+
+            float rate = initShotRate - overlap * rateIncreasing;
             if (rate < 0.1f)rate = 0.1f;
             book->SetLaunchTime(rate);
-            bulletRate = rate;
+            this->rate = rate;
         }
     }
 
