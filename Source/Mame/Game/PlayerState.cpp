@@ -61,6 +61,9 @@ namespace PlayerState
         initialize = false;
         //owner->isActiveAttackFrame = true;
 
+        isAudio = false;
+        audioTimer = 0.0f;
+
         hit.clear();
     }
     void JabAttackState::Update(const float& elapsedTime)
@@ -87,6 +90,8 @@ namespace PlayerState
                 owner->GetSword()->PlayAnimation(Player::Animation::Jab_1, false, owner->GetAttackSpeed());
                 hit.clear();//ヒットした敵の初期化
                 initialize = true;
+
+                AudioManager::Instance().PlaySE(SE_NAME::SwordSlash1, SE::SwordSlash1_0, SE::SwordSlash1_6);
             }
 
             //更新処理(次のコンボへの遷移もしている)
@@ -109,6 +114,8 @@ namespace PlayerState
                 owner->GetSword()->PlayAnimation(Player::Animation::Jab_2, false, owner->GetAttackSpeed());
                 hit.clear();//ヒットした敵の初期化
                 initialize = true;
+
+                AudioManager::Instance().PlaySE(SE_NAME::SwordSlash2, SE::SwordSlash2_0, SE::SwordSlash2_1);
             }
 
             //更新処理(次のコンボへの遷移もしている)
@@ -130,11 +137,27 @@ namespace PlayerState
                 owner->GetSword()->PlayAnimation(Player::Animation::Jab_3, false, owner->GetAttackSpeed());
                 hit.clear();//ヒットした敵の初期化
                 initialize = true;
+
+                
             }
 
             //更新処理(次のコンボへの遷移もしている)
             {
                 AttackUpdate(elapsedTime,dodgeCanselFrame3, comboCanselFrame3);
+            }
+
+            if (!isAudio)
+            {
+                float maxTime = 0.5f;
+                if (audioTimer <= maxTime)
+                {
+                    audioTimer += elapsedTime;
+                }
+                else
+                {
+                    AudioManager::Instance().PlaySE(SE::SwordSlash3);
+                    isAudio = true;
+                }
             }
 
             break;
@@ -347,9 +370,26 @@ namespace PlayerState
         hit.clear();
 
         owner->isActiveAttackFrame = true;
+
+        isAudio = false;
+        audioTimer = 0.0f;
     }
     void HardAttackState::Update(const float& elapsedTime)
     {
+        if (!isAudio)
+        {
+            float maxTime = 0.5f;
+            if (audioTimer <= maxTime)
+            {
+                audioTimer += elapsedTime;
+            }
+            else
+            {
+                AudioManager::Instance().PlaySE(SE_NAME::SwordSlash4, SE::SwordSlash4_0, SE::SwordSlash4_1);
+                isAudio = true;
+            }
+        }
+
         int keyframeIndex = owner->model->GetCurrentKeyframeIndex();
 
         if (keyframeIndex < 10)
@@ -469,6 +509,8 @@ namespace PlayerState
         cAttack = false;
 
         timer = 0;
+
+        AudioManager::Instance().PlaySE(SE_NAME::CounterBegin, SE::CounterBegin_0, SE::CounterBegin_3);
     }
     void CounterState::Update(const float& elapsedTime)
     {
@@ -513,6 +555,8 @@ namespace PlayerState
                 //エフェクト
                 PlayerManager::Instance().GetPlayer()->PlayLaserEffect();
 
+                //AudioManager::Instance().PlaySE(SE_NAME::Laser, SE::Laser_0, SE::Laser_1);
+                AudioManager::Instance().PlaySE(SE_NAME::Laser, SE::Laser_0, SE::Laser_1);
                 state++;
             }
 

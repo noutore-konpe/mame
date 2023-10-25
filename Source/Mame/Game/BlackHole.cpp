@@ -13,6 +13,8 @@
 
 #include "../Scene/SceneGame.h"
 
+#include "../Resource/AudioManager.h"
+
 int BlackHole::nameNum_ = 0;
 
 BlackHole::BlackHole(AbilityManager* abilityManager)
@@ -51,6 +53,8 @@ void BlackHole::Initialize()
 
     //エフェクト再生
     PlayEffect();
+
+    AudioManager::Instance().PlaySE(SE_NAME::BlackHole, SE::BlackHole_0, SE::BlackHole_2);
 }
 
 void BlackHole::Finalize()

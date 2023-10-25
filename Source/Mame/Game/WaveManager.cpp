@@ -18,6 +18,7 @@
 
 namespace Set {
     static constexpr float HP       = 70.0f;
+    static constexpr float GolemHp  = 300.0f;
     static constexpr float ADD_HP   = 5.0f;
     static constexpr float ATK      = 20.0f;
     static constexpr float ADD_ATK  = 3.0f;
@@ -36,50 +37,70 @@ WaveEnemySet waveEnemySetTest[] = {
 #endif
 WaveEnemySet waveEnemySet0[] = {
     WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 0.0f), Set::ATK + (Set::ADD_ATK * 0.0f), 5),
+    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 0.0f), Set::ATK + (Set::ADD_ATK * 0.0f), 5),
+    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 0.0f), Set::ATK + (Set::ADD_ATK * 0.0f), 5),
 };
 WaveEnemySet waveEnemySet1[] = {
-    WaveEnemySet(1.0f, "EnemyGolem", SceneGame::stageCenter, Set::HP + (Set::ADD_HP * 10.0f), Set::ATK + (Set::ADD_ATK * 10.0f), 5),
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 1.0f), Set::ATK + (Set::ADD_ATK * 1.0f), 5),
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 1.0f), Set::ATK + (Set::ADD_ATK * 1.0f), 5),
+    WaveEnemySet(0.5f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 1.0f), Set::ATK + (Set::ADD_ATK * 1.0f), 5),
+    WaveEnemySet(0.5f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 1.0f), Set::ATK + (Set::ADD_ATK * 1.0f), 5),
+    WaveEnemySet(0.5f, "EnemyAI_2", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 1.0f), Set::ATK + (Set::ADD_ATK * 1.0f), 8),
 };
 WaveEnemySet waveEnemySet2[] = {
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 2.0f), Set::ATK + (Set::ADD_ATK * 2.0f), 5),
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 2.0f), Set::ATK + (Set::ADD_ATK * 2.0f), 5),
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 2.0f), Set::ATK + (Set::ADD_ATK * 2.0f), 5),
+    WaveEnemySet(0.5f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 2.0f), Set::ATK + (Set::ADD_ATK * 2.0f), 7),
+    WaveEnemySet(0.5f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 2.0f), Set::ATK + (Set::ADD_ATK * 2.0f), 7),
+    WaveEnemySet(0.5f, "EnemyAI_1", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 2.0f), Set::ATK + (Set::ADD_ATK * 2.0f), 7),
+    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 2.0f), Set::ATK + (Set::ADD_ATK * 2.0f), 10),
+    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 2.0f), Set::ATK + (Set::ADD_ATK * 2.0f), 10),
 };
 WaveEnemySet waveEnemySet3[] = {
-    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 3.0f), Set::ATK + (Set::ADD_ATK * 3.0f), 5),
+    WaveEnemySet(0.5f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 3.0f), Set::ATK + (Set::ADD_ATK * 3.0f), 10),
+    WaveEnemySet(0.5f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 3.0f), Set::ATK + (Set::ADD_ATK * 3.0f), 10),
+    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 3.0f), Set::ATK + (Set::ADD_ATK * 3.0f), 10),
+    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(3), Set::HP + (Set::ADD_HP * 3.0f), Set::ATK + (Set::ADD_ATK * 3.0f), 10),
 };
 WaveEnemySet waveEnemySet4[] = {
-    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 4.0f), Set::ATK + (Set::ADD_ATK * 4.0f), 5),
-    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 4.0f), Set::ATK + (Set::ADD_ATK * 4.0f), 5),
+    WaveEnemySet(0.5f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 4.0f), Set::ATK + (Set::ADD_ATK * 4.0f), 10),
+    WaveEnemySet(0.5f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 4.0f), Set::ATK + (Set::ADD_ATK * 4.0f), 10),
+    WaveEnemySet(0.5f, "EnemyAI_1", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 4.0f), Set::ATK + (Set::ADD_ATK * 4.0f), 10),
+    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(3), Set::HP + (Set::ADD_HP * 4.0f), Set::ATK + (Set::ADD_ATK * 4.0f), 10),
+    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 4.0f), Set::ATK + (Set::ADD_ATK * 4.0f), 10),
+    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 4.0f), Set::ATK + (Set::ADD_ATK * 4.0f), 10),
 };
 WaveEnemySet waveEnemySet5[] = {
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 5.0f), Set::ATK + (Set::ADD_ATK * 5.0f), 5),
-    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 5.0f), Set::ATK + (Set::ADD_ATK * 5.0f), 5),
+    WaveEnemySet(1.0f, "EnemyGolem", SceneGame::stageCenter, Set::GolemHp + (Set::ADD_HP * 5.0f), Set::ATK + (Set::ADD_ATK * 5.0f), 30),
 };
 WaveEnemySet waveEnemySet6[] = {
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 6.0f), Set::ATK + (Set::ADD_ATK * 6.0f), 5),
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 6.0f), Set::ATK + (Set::ADD_ATK * 6.0f), 5),
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 6.0f), Set::ATK + (Set::ADD_ATK * 6.0f), 5),
-    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(3), Set::HP + (Set::ADD_HP * 6.0f), Set::ATK + (Set::ADD_ATK * 6.0f), 5),
+    WaveEnemySet(0.5f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 6.0f), Set::ATK + (Set::ADD_ATK * 6.0f), 10),
+    WaveEnemySet(0.5f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 6.0f), Set::ATK + (Set::ADD_ATK * 6.0f), 10),
+    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 6.0f), Set::ATK + (Set::ADD_ATK * 6.0f), 10),
+    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(3), Set::HP + (Set::ADD_HP * 6.0f), Set::ATK + (Set::ADD_ATK * 6.0f), 10),
+    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 6.0f), Set::ATK + (Set::ADD_ATK * 6.0f), 10),
 };
 WaveEnemySet waveEnemySet7[] = {
-    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 7.0f), Set::ATK + (Set::ADD_ATK * 7.0f), 5),
+    WaveEnemySet(0.5f, "EnemyAI_3", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 7.0f), Set::ATK + (Set::ADD_ATK * 7.0f), 12),
+    WaveEnemySet(0.5f, "EnemyAI_3", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 7.0f), Set::ATK + (Set::ADD_ATK * 7.0f), 12),
+    WaveEnemySet(0.5f, "EnemyAI_3", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 7.0f), Set::ATK + (Set::ADD_ATK * 7.0f), 12),
+    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(3), Set::HP + (Set::ADD_HP * 7.0f), Set::ATK + (Set::ADD_ATK * 7.0f), 12),
+    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 7.0f), Set::ATK + (Set::ADD_ATK * 7.0f), 12),
 };
 WaveEnemySet waveEnemySet8[] = {
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 8.0f), Set::ATK + (Set::ADD_ATK * 8.0f), 5),
-    WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 8.0f), Set::ATK + (Set::ADD_ATK * 8.0f), 5),
-    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 8.0f), Set::ATK + (Set::ADD_ATK * 8.0f), 5),
+    WaveEnemySet(0.5f, "EnemyAI_2", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 8.0f), Set::ATK + (Set::ADD_ATK * 8.0f), 12),
+    WaveEnemySet(0.5f, "EnemyAI_2", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 8.0f), Set::ATK + (Set::ADD_ATK * 8.0f), 12),
+    WaveEnemySet(0.5f, "EnemyAI_2", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 8.0f), Set::ATK + (Set::ADD_ATK * 8.0f), 12),
+    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(3), Set::HP + (Set::ADD_HP * 8.0f), Set::ATK + (Set::ADD_ATK * 8.0f), 12),
+    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 8.0f), Set::ATK + (Set::ADD_ATK * 8.0f), 12),
 };
 WaveEnemySet waveEnemySet9[] = {
-    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 9.0f), Set::ATK + (Set::ADD_ATK * 9.0f), 5),
-    WaveEnemySet(1.0f, "EnemyAI_2", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 9.0f), Set::ATK + (Set::ADD_ATK * 9.0f), 5),
-    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 9.0f), Set::ATK + (Set::ADD_ATK * 9.0f), 5),
-    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(3), Set::HP + (Set::ADD_HP * 9.0f), Set::ATK + (Set::ADD_ATK * 9.0f), 5),
+    WaveEnemySet(0.5f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 9.0f), Set::ATK + (Set::ADD_ATK * 9.0f), 13),
+    WaveEnemySet(0.5f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 9.0f), Set::ATK + (Set::ADD_ATK * 9.0f), 13),
+    WaveEnemySet(0.5f, "EnemyAI_2", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 9.0f), Set::ATK + (Set::ADD_ATK * 9.0f), 13),
+    WaveEnemySet(0.5f, "EnemyAI_2", ::GetGatewayPosition(3), Set::HP + (Set::ADD_HP * 9.0f), Set::ATK + (Set::ADD_ATK * 9.0f), 13),
+    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 9.0f), Set::ATK + (Set::ADD_ATK * 9.0f), 13),
+    WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 9.0f), Set::ATK + (Set::ADD_ATK * 9.0f), 13),
 };
 WaveEnemySet waveEnemySet10[] = {
-    WaveEnemySet(1.0f, "EnemyGolem", SceneGame::stageCenter, Set::HP + (Set::ADD_HP * 10.0f), Set::ATK + (Set::ADD_ATK * 10.0f), 5),
+    WaveEnemySet(0.5f, "EnemyGolem", SceneGame::stageCenter, Set::GolemHp + (Set::ADD_HP * 10.0f), Set::ATK + (Set::ADD_ATK * 10.0f), 40),
+    WaveEnemySet(2.5f, "EnemyGolem", SceneGame::stageCenter, Set::GolemHp + (Set::ADD_HP * 10.0f), Set::ATK + (Set::ADD_ATK * 10.0f), 40),
 };
 #pragma endregion
 

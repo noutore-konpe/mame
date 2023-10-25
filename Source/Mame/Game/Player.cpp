@@ -846,7 +846,7 @@ void Player::SelectSkillUpdate(float elapsedTime)
             }
             buttonDown = true;
             // カード選択音
-            AudioManager::Instance().PlayCardSelectSENum();
+            AudioManager::Instance().PlaySE(SE_NAME::CardSelect, SE::CardSelect0, SE::CardSelect3);
         }
         else if (ax <= -0.5f && !buttonDown)
         {
@@ -857,7 +857,7 @@ void Player::SelectSkillUpdate(float elapsedTime)
             }
             buttonDown = true;
             // カード選択音
-            AudioManager::Instance().PlayCardSelectSENum();
+            AudioManager::Instance().PlaySE(SE_NAME::CardSelect, SE::CardSelect0, SE::CardSelect3);
         }
         else if (ax <= 0.3f && ax >= -0.3f)
         {
