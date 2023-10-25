@@ -9,7 +9,8 @@ enum class TUTORIAL_STEP
     MOVE,               // 移動
     MOVE_CAMERA,        // カメラ移動
     LOCK_ON,            // ロックオン
-    ATTACK,             // 攻撃
+    LOW_ATTACK,         // 弱攻撃
+    HIGH_ATTACK,        // 強攻撃
     AVOID,              // 回避
     LEVEL_UP,           // レベルアップ
 
