@@ -377,6 +377,7 @@ void SceneTutorial::Render(const float& /*elapsedTime*/)
 
     //ƒuƒ‹[ƒ€‚ ‚è‚QD
     {
+        shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
         // ”š•\¦•`‰æ
         NumeralManager::Instance().Render();
 
