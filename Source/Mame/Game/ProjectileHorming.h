@@ -2,6 +2,7 @@
 
 #include "Projectile.h"
 
+// スペルミス
 class ProjectileHorming : public Projectile
 {
 public:

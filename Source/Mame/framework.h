@@ -113,7 +113,7 @@ public:
 		}
 		break;
 
-		case WM_DESTROY:			
+		case WM_DESTROY:
 			PostQuitMessage(0);
 			break;
 		case WM_CREATE:
@@ -159,7 +159,7 @@ public:
 	static high_resolution_timer tictoc;
 	uint32_t frames{ 0 };
 	//static float elapsedTime;
-	
+
 	float elapsedTime{0};
 	void CalculateFrameStats()
 	{

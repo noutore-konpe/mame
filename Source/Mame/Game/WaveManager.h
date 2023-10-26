@@ -164,6 +164,7 @@ private:
     bool        breakTimeFlag_          = false;    // 休憩フラグ
 
     float       endlessWaveHp_          = 0.0f;
+    float       endlessGolemHp_         = 0.0f;
     float       endlessWaveAtk_         = 0.0f;
     float       endlessWaveExp_         = 0.0f;
     int         endlessWaveCounter_     = 0;        // エンドレスウェーブを回した回数
