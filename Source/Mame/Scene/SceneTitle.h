@@ -27,6 +27,8 @@ public:
     void DrawDebug()    override;
 
 private:
+    void UpdateFog(const float& elapsedTime);
+
     void PressAnyButton(const float& elapsedTime);
     bool IsChangeScene(const float& elapsedTime);
 
@@ -45,6 +47,7 @@ private:
 
     bool isFade = false;    // フェードを行うか
     float fadeTimer = 0.0f; // フェード用のタイマー
+
 
 private:
     std::unique_ptr<FrameBuffer> framebuffers[3];
