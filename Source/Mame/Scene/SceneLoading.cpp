@@ -57,7 +57,8 @@ void SceneLoading::Initialize()
     titleLogo->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(800, 480));
     titleLogo->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(640, 360));
 
-    Camera::Instance().TitleInitialize();
+    //Camera::Instance().TitleInitialize();
+    Camera::Instance().ResultInitialize();
 
     isChangeScene = false;
     easingTimer = 0.0f;
@@ -137,8 +138,8 @@ void SceneLoading::Render(const float& elapsedTime)
         Mame::Scene::BaseScene::RenderInitialize();
 
         Camera& camera = Camera::Instance();
-        Camera::Instance().TitleSetPerspectiveFov(graphics.GetDeviceContext());
-        //Camera::Instance().ResultSetPerSpectiveFov(graphics.GetDeviceContext());
+        //Camera::Instance().TitleSetPerspectiveFov(graphics.GetDeviceContext());
+        Camera::Instance().ResultSetPerSpectiveFov(graphics.GetDeviceContext());
 
         Shader::SceneConstants sceneConstants{};
         DirectX::XMStoreFloat4x4(&sceneConstants.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());
