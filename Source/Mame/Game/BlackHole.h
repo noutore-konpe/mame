@@ -29,7 +29,7 @@ private:
     std::unique_ptr<Effect> blackholeEffect;
 
     float lifeTimer_    = 5.0f;
-    float inhaleLength_ = 3.0f; // ‹z‚¢‚Ş‹——£
+    float inhaleLength_ = 5.0f; // ‹z‚¢‚Ş‹——£
     float inhaleForce_  = 4.0f; // ‹z‚¢‚Ş—Í
     int effectPlayTime = 0;
 

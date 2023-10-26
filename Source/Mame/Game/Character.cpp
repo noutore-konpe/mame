@@ -208,7 +208,15 @@ void Character::Turn(float elapsedTime, float vx, float vz, float rotSpeed)
 
 Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLOAT3 hitPosition, Character* attacker,float invincibleTime, bool ignoreDefence, DirectX::XMFLOAT4 color)
 {
+    NumeralManager& numeralManager = NumeralManager::Instance();
     DamageResult result;
+
+    //死亡している場合は健康状態を変更しない
+    if (health <= 0)
+    {
+        result.hit = true;
+        return result;
+    }
 
     //無敵時間か
     if (this->invincibleTime > 0.0f || isInvincible)
@@ -221,23 +229,13 @@ Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLO
     if(!ignoreDefence)damage -= defence;
     result.damage = damage;
 
-    
 
-    NumeralManager& numeralManager = NumeralManager::Instance();
     //ダメージが０の場合は健康状態を変更する必要がない
     if (damage <= 0)
     {
         numeralManager.CreateDamageNumeral(this, (damage > 0 ? damage : 0), GetPosition(), DirectX::XMFLOAT2(22, 30));
         result.hit = true;
         result.damage = 0;
-        return result;
-    }
-
-    //死亡している場合は健康状態を変更しない
-    if (health <= 0)
-    {
-        numeralManager.CreateDamageNumeral(this, (damage > 0 ? damage : 0), GetPosition(), DirectX::XMFLOAT2(22, 30));
-        result.hit = true;
         return result;
     }
 
@@ -271,12 +269,13 @@ Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLO
 
         //エフェクト再生
         hitEffect->Play(hitPosition,DirectX::XMFLOAT3(2.0f,2.0f,2.0f),color);
-        
+
         AudioManager::Instance().PlaySE(SE_NAME::Hit, SE::Hit_0, SE::Hit_9);
     }
     //ダメージ通知
     else
     {
+
         //エフェクト再生
         hitEffect->Play(hitPosition,DirectX::XMFLOAT3(1,1,1),color);
 
@@ -317,7 +316,7 @@ bool Character::ApplyHeal(float heal)
 void Character::PoisonUpdate(float elapsedTime)
 {
     if (!isPoison)return;
-    
+
     auto* player = PlayerManager::Instance().GetPlayer().get();
 
     //とりあえず5秒毎にダメージ

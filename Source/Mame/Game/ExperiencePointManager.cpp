@@ -112,6 +112,9 @@ void ExperiencePointManager::CollisionExpVsPlayer(const float /*elapsedTime*/)
     {
         ExperiencePoint* exp = GetExp(i);
 
+        // プレイヤーが死亡している場合は取得しないようにする
+        if (true == plManager.GetPlayer()->GetIsDead()) continue;
+
         // 演出時間中の場合はcontinue
         if (exp->GetAttractTimer() > 0.0f) continue;
 

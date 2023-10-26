@@ -290,6 +290,9 @@ const bool ExperiencePoint::SearchPlayer()
 
     PlayerManager& plManager = PlayerManager::Instance();
 
+    // Ž€–S‚µ‚Ä‚¢‚½‚çreturn
+    if (true == plManager.GetPlayer()->GetIsDead()) { return false; }
+
     const XMFLOAT3& pos       = this->GetTransform()->GetPosition();
     XMFLOAT3        plPos     = plManager.GetPlayer()->GetTransform()->GetPosition();
                     plPos.y  += plManager.GetPlayer()->GetHeight() * 0.5f;
