@@ -15,6 +15,10 @@
 
 #include "../Resource/AudioManager.h"
 
+#include "SlowMotionManager.h"
+
+#include "Collision.h"
+
 // DummyState
 namespace EnemyGolemState
 {
@@ -161,6 +165,14 @@ namespace EnemyGolemState
 
                     // ゲームパッド振動
                     Input::Instance().GetGamePad().Vibration(2.0f, gamePadVibPower);
+
+                    //プレイヤー吹っ飛ばし
+                    auto* player =  PlayerManager::Instance().GetPlayer().get();
+                    if (Collision::IntersectSphereVsSphere(
+                        owner->GetPosition(), 5.0f, player->GetTransform()->GetPosition(), player->GetRadius()))
+                    {
+                        player->Blow(player->GetTransform()->GetPosition() - owner->GetPosition());
+                    }
                 }
 
                 animationTimer += elapsedTime;
@@ -938,6 +950,9 @@ namespace EnemyGolemState
 
         deathTimer = 0.0f;
         isDestroy = false;
+
+        //スロー
+        SlowMotionManager::Instance().ExecuteSlowMotion();
     }
 
     // 更新

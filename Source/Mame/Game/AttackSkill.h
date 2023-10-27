@@ -75,6 +75,9 @@ namespace PlayerSkill
 
     private:
         std::unique_ptr<Sprite> card2;
+
+        //è„è∏çUåÇî{ó¶
+        const float mulIncreasing = 0.2f;
     };
 
     class CanCounterAttack : public BaseSkill
@@ -88,6 +91,9 @@ namespace PlayerSkill
 
     private:
         std::unique_ptr<Sprite> card2;
+
+        //è„è∏çUåÇî{ó¶
+        const float mulIncreasing = 0.2f;
     };
 
     class ChangeHomingSkill : public BaseSkill

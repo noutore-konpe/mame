@@ -126,6 +126,8 @@ public:
 
     void TurnNearEnemy(float radius,float elapsedTime);
 
+
+
 private:
     float blowTime = 1.0f;
     float blowTimer;
@@ -301,6 +303,7 @@ private:
 public://getterçÏÇÈÇÃÇﬂÇÒÇ«Ç¢ÇæÇØ
     float jabMotionAtkMuls[3];
     float hardAtkMuls;
+    float counterMuls;
 
     float poisonSlipDamage;
     float poisonEffectTime;

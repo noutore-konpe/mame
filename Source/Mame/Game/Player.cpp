@@ -122,6 +122,7 @@ void Player::Initialize()
     jabMotionAtkMuls[1] = 1.2f;
     jabMotionAtkMuls[2] = 3.5f;
     hardAtkMuls = 2.4f;
+    counterMuls = 1.0f;
 
     poisonSlipDamage = 3.0f;
     poisonEffectTime = 30.0f;
@@ -339,7 +340,6 @@ Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT
         case HitReaction::HARD:
 
             Blow(result.hitVector);
-            ChangeState(STATE::STAGGER_HARD);
             break;
         }
     }
@@ -1097,7 +1097,7 @@ void Player::LockOnUpdate()
         EnemyManager::Instance().GetEnemyCount() <= 0)
     {
         LockOnInitialize();
-        Camera::Instance().activeLockOn = false;
+        Camera::Instance().CancelLockOn();
         return;
     }
 
@@ -1108,7 +1108,7 @@ void Player::LockOnUpdate()
         if (ChangeLockOnTarget(1))return;
         else if (ChangeLockOnTarget(-1))return;
 
-        Camera::Instance().activeLockOn = false;
+        Camera::Instance().CancelLockOn();
         return;
     }
 
@@ -1165,11 +1165,14 @@ const bool Player::BlownUpdate(float elapsedTime)
 
 void Player::Blow(DirectX::XMFLOAT3 blowVec)
 {
+    if (isDead)return;
     this->blowVec = Normalize(blowVec);
     float rot = acosf(Normalize(-blowVec).z);
     //¡‰ñ‚ÌŠOÏ‚ÌY¬•ª‚ÍhitVector.x‚È‚Ì‚Å¶‰E”»’è‚Í‚±‚ê‚ðŽg‚¤
     GetTransform()->SetRotationY((blowVec.x > 0) ? -rot : rot);
     blowTimer = blowTime;
+
+    stateMachine->ChangeState(STATE::STAGGER_HARD);
 }
 
 void Player::ActiveCounter()

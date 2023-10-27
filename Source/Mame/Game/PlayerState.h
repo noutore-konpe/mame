@@ -139,6 +139,9 @@ namespace PlayerState
         void Finalize() override;
     private:
         int state;
+
+        const float getUpStartframe = 30;
+        const float getUpEndframe = 70;
     };
 
     //カウンター
