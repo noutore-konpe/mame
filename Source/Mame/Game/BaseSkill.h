@@ -83,7 +83,7 @@ public:
 protected:
     //int probability;//このスキルが出にくさ　値が大きいほど出現する確率が低い
     int overlap;//重複回数（同じスキルを重複してとることで能力が強くなる）
-    float timer;
+    //float timer;
 
     Player* player;
 

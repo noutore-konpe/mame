@@ -5,7 +5,9 @@ void BaseSkill::Initialize()
 {
     player = PlayerManager::Instance().GetPlayer().get();
     overlap = 0;
-    timer = 0;
+    //timer = 0;
+
+    icon->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(60, 60));
 
     card = card1.get();
 }

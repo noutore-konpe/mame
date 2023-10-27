@@ -448,6 +448,11 @@ void Camera::SetPerspectiveFov(ID3D11DeviceContext* dc)
     DirectX::XMFLOAT3 cameraPos{};
     DirectX::XMStoreFloat3(&cameraPos, eye);
     GetTransform()->SetPosition(cameraPos);
+
+    //ゲームカメラに値を保存(外部での取得用)
+    DirectX::XMStoreFloat3(&gameCamera.eye, eye);
+    DirectX::XMStoreFloat3(&gameCamera.focus, focus);
+    DirectX::XMStoreFloat3(&gameCamera.up, up);
 }
 
 void Camera::DrawDebug()
@@ -596,6 +601,30 @@ void Camera::FocusMoveDelayUpdate(float elapsedTime,
 
     focusPos = focusPos + focusVelocity * elapsedTime;
 
+}
+
+void Camera::CancelLockOn()
+{
+    //ロックオン解除したときに今向いている方向を向きっぱなしにする
+
+    DirectX::XMFLOAT3 resetAngle;
+
+    DirectX::XMFLOAT3 vec = Normalize(gameCamera.focus - gameCamera.eye);
+    float rotY = acosf(vec.z);
+    float rotX = acosf(vec.y);
+    if (vec.x < 0)
+    {
+        rotY = -rotY;
+    }
+    /*if (vec.y < 0)
+    {
+        rotX = -rotX;
+    }*/
+
+    rotX -= DirectX::XMConvertToRadians(90);
+
+    GetTransform()->SetRotationY(rotY);
+    GetTransform()->SetRotationX(rotX);
 }
 
 

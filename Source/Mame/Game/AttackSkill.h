@@ -67,31 +67,27 @@ namespace PlayerSkill
     class CanTripleAttack : public BaseSkill
     {
     public:
-        CanTripleAttack(Player* player) :
-            BaseSkill(player,
-                L"./Resources/Image/Card/ThirdAttack.png",
-                L"./Resources/Image/Icon/iconThirdAttack.png",
-                "Can Triple Attack",
-                BaseSkill::COMMON,
-                true) {}
+        CanTripleAttack(Player* player);
         ~CanTripleAttack() {}
 
+        void Update(float elapsedTime);
         void Overlaping()override;
+
+    private:
+        std::unique_ptr<Sprite> card2;
     };
 
     class CanCounterAttack : public BaseSkill
     {
     public:
-        CanCounterAttack(Player* player) :
-            BaseSkill(player,
-                L"./Resources/Image/Card/Counter.png",
-                L"./Resources/Image/Icon/iconCounter.png",
-                "Can Counter Attack",
-                BaseSkill::COMMON,
-                true) {}
+        CanCounterAttack(Player* player);
         ~CanCounterAttack() {}
 
+        void Update(float elapsedTime);
         void Overlaping()override;
+
+    private:
+        std::unique_ptr<Sprite> card2;
     };
 
     class ChangeHomingSkill : public BaseSkill

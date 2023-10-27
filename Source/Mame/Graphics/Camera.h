@@ -118,6 +118,8 @@ public:
 
     [[nodiscard]] const bool GetActiveLockOn() const { return activeLockOn; }
 
+    void CancelLockOn();//ロックオン解除
+
 public:
     bool activeLockOn = false;//ロックオン起動
 private:
@@ -165,6 +167,7 @@ private:
     float holdFov;
     float resultFov;
 
+    view_camera gameCamera;
 
 private:
     //イージング等の視野角変更更新

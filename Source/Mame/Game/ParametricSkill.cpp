@@ -9,6 +9,7 @@ namespace PlayerSkill
     {
         overlap++;
         player->AddMaxSpeed(speedIncreasing);
+        player->AddMaxDodgeSpeed(speedIncreasing);
     }
 
     void AttackPowerUp::Overlaping()

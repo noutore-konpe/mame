@@ -24,11 +24,7 @@ namespace PlayerSkill
     {
         if (overlap > 0)
         {
-            if (timer > 2.0f)
-            {
-                card = card2.get();
-            }
-            timer += elapsedTime;
+            card = card2.get();   
         }
         card2->GetSpriteTransform()->SetPos(card1->GetSpriteTransform()->GetPos());
     }
@@ -101,11 +97,7 @@ namespace PlayerSkill
     {
         if (overlap > 0)
         {
-            if (timer > 1.0f)
-            {
-                card = card2.get();
-            }
-            timer += elapsedTime;
+            card = card2.get();
         }
         card2->GetSpriteTransform()->SetPos(card1->GetSpriteTransform()->GetPos());
 
@@ -122,11 +114,53 @@ namespace PlayerSkill
         
     }
 
+    CanTripleAttack::CanTripleAttack(Player* player) :
+        BaseSkill(player,
+            L"./Resources/Image/Card/ThirdAttack.png",
+            L"./Resources/Image/Icon/iconThirdAttack.png",
+            "Can Triple Attack",
+            BaseSkill::COMMON,
+            true) 
+    {
+        card2 = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Card/ThirdAttack2.png", "./Resources/Shader/sprite_dissolve_ps.cso");
+        card2->GetSpriteDissolve()->SetMaskTextureValue(2);
+    }
+
+    void CanTripleAttack::Update(float elapsedTime)
+    {
+        if (overlap > 0)
+        {
+            card = card2.get();
+        }
+        card2->GetSpriteTransform()->SetPos(card1->GetSpriteTransform()->GetPos());
+    }
+
     void CanTripleAttack::Overlaping()
     {
         overlap++;
         if (overlap <= 1)return;
     }
+    CanCounterAttack::CanCounterAttack(Player* player) :
+        BaseSkill(player,
+            L"./Resources/Image/Card/Counter.png",
+            L"./Resources/Image/Icon/iconCounter.png",
+            "Can Counter Attack",
+            BaseSkill::COMMON,
+            true) 
+    {
+        card2 = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Card/ThirdAttack2.png", "./Resources/Shader/sprite_dissolve_ps.cso");
+        card2->GetSpriteDissolve()->SetMaskTextureValue(2);
+    }
+
+    void CanCounterAttack::Update(float elapsedTime)
+    {
+        if (overlap > 0)
+        {
+            card = card2.get();
+        }
+        card2->GetSpriteTransform()->SetPos(card1->GetSpriteTransform()->GetPos());
+    }
+
     void CanCounterAttack::Overlaping()
     {
         overlap++;
@@ -166,11 +200,7 @@ namespace PlayerSkill
     {
         if (overlap > 0)
         {
-            if (timer > 1.0f)
-            {
-                card = card2.get();
-            }
-            timer += elapsedTime;
+            card = card2.get();
         }
         card2->GetSpriteTransform()->SetPos(card1->GetSpriteTransform()->GetPos());
     }
@@ -218,11 +248,7 @@ namespace PlayerSkill
     {
         if (overlap > 0)
         {
-            if (timer > 1.0f)
-            {
-                card = card2.get();
-            }
-            timer += elapsedTime;
+            card = card2.get();
         }
         card2->GetSpriteTransform()->SetPos(card1->GetSpriteTransform()->GetPos());
     }

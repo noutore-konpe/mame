@@ -95,6 +95,8 @@ namespace PlayerState
     private:
         float dodgeSpeed  = 20.0f;
         std::vector<Enemy*> hit;
+
+        const int invincibleFrame = 20;
     };
 
     //Ž€–S

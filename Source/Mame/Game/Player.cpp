@@ -192,12 +192,17 @@ void Player::Update(const float elapsedTime)
     if (InputLockOn())
     {
         Camera::Instance().activeLockOn = !Camera::Instance().activeLockOn;
+
         if (Camera::Instance().activeLockOn)
         {
             if (EnemyManager::Instance().GetEnemyCount() >= 1)
             {
                 LockOnInitialize();
             }
+        }
+        else
+        {
+            Camera::Instance().CancelLockOn();
         }
     }
 
