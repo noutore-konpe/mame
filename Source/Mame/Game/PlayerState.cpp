@@ -52,7 +52,7 @@ namespace PlayerState
         {
             owner->ChangeState(Player::STATE::ATTACK_HARD);
         }
-        
+
         owner->ActiveCounter();
     }
     void NormalState::Finalize()
@@ -111,7 +111,6 @@ namespace PlayerState
                 AttackUpdate(elapsedTime,dodgeCanselFrame1,comboCanselFrame1);
             }
 
-
             break;
         case 1://2Œ‚–Ú
             //‰Šú‰»ˆ—
@@ -142,7 +141,7 @@ namespace PlayerState
             if (!initialize)
             {
                 // “G‚É—^‚¦‚é‚Á”ò‚Ñ—ÍƒŒƒxƒ‹‚ÌÝ’è(ŠeUŒ‚‚ÌŠJŽn‘O‚ÉÝ’è‚·‚é)
-                owner->SetInflictBlowOffForceLevel(BLOW_OFF_FORCE_LEVEL::MIDDLE);
+                owner->SetInflictBlowOffForceLevel(BLOW_OFF_FORCE_LEVEL::HIGH);
 
                 owner->ResetSteppingTimer();
                 state = UPDATE_FRAME;
@@ -228,7 +227,7 @@ namespace PlayerState
                 state++;
             }
 
-            
+
             break;
         case DODGE_CANSEL_FRAME:
             if (owner->InputAvoid())//‰ñ”ðƒLƒƒƒ“ƒZƒ‹
@@ -290,6 +289,9 @@ namespace PlayerState
 
     void AvoidState::Initialize()
     {
+        // “G‚É—^‚¦‚é‚Á”ò‚Ñ—ÍƒŒƒxƒ‹‚ÌÝ’è(ŠeUŒ‚‚ÌŠJŽn‘O‚ÉÝ’è‚·‚é)
+        owner->SetInflictBlowOffForceLevel(BLOW_OFF_FORCE_LEVEL::LOW);
+
         owner->PlayAnimation(Player::Animation::Avoid,false);
         owner->GetSword()->PlayAnimation(Player::Animation::Avoid,false);
         owner->SetAcceleration(dodgeSpeed);
@@ -317,7 +319,7 @@ namespace PlayerState
 
                 result = enemy->ApplyDamage(0.1f * owner->GetBasePower(), hitPos, owner,0.2f);
 
-                enemy->Flinch();
+                // enemy->Flinch();
 
                 //ƒ_ƒ[ƒW‹zŽûˆ—
                 PlayerManager::Instance().GetDrainSkill()->Assimilate(result.damage);
@@ -374,6 +376,9 @@ namespace PlayerState
 
     void HardAttackState::Initialize()
     {
+        // “G‚É—^‚¦‚é‚Á”ò‚Ñ—ÍƒŒƒxƒ‹‚ÌÝ’è(ŠeUŒ‚‚ÌŠJŽn‘O‚ÉÝ’è‚·‚é)
+        owner->SetInflictBlowOffForceLevel(BLOW_OFF_FORCE_LEVEL::HIGH);
+
         owner->SetVelocity(DirectX::XMFLOAT3(0, 0, 0));
         owner->PlayAnimation(Player::Animation::HardAttack, false, owner->GetAttackSpeed() + 0.2f);
         owner->GetSword()->PlayAnimation(Player::Animation::HardAttack, false, owner->GetAttackSpeed() + 0.2f);
@@ -440,7 +445,7 @@ namespace PlayerState
 
                     result = enemy->ApplyDamage(owner->hardAtkMuls * owner->GetBasePower(), hitPos, owner);
 
-                    enemy->Flinch();
+                    //enemy->Flinch();
 
                     //ƒ_ƒ[ƒW‹zŽûˆ—
                     PlayerManager::Instance().GetDrainSkill()->Assimilate(result.damage);
@@ -448,11 +453,13 @@ namespace PlayerState
                 }
             }
         }
+
         if (!owner->IsPlayAnimation())
         {
             owner->ChangeState(Player::STATE::NORMAL);
         }
     }
+
     void HardAttackState::Finalize()
     {
         owner->isActiveAttackFrame = false;
@@ -514,6 +521,9 @@ namespace PlayerState
 
     void CounterState::Initialize()
     {
+        // “G‚É—^‚¦‚é‚Á”ò‚Ñ—ÍƒŒƒxƒ‹‚ÌÝ’è(ŠeUŒ‚‚ÌŠJŽn‘O‚ÉÝ’è‚·‚é)
+        owner->SetInflictBlowOffForceLevel(BLOW_OFF_FORCE_LEVEL::VERY_HIGH);
+
         state = 0;
         owner->counterCompleted = false;
         owner->PlayAnimation(Player::Animation::Counter, false);
@@ -598,7 +608,7 @@ namespace PlayerState
                                 shotPos,owner->GetTransform()->CalcForward(),100,1
                             ))
                             {
-                                enemy->SaveBlowOffInfo(owner->GetTransform()->CalcForward(), BLOW_OFF_FORCE_LEVEL::HIGH);
+                                enemy->SaveBlowOffInfo(owner->GetTransform()->CalcForward(), owner->GetInflictBlowOffForceLevel());
                                 enemy->ApplyDamage(owner->GetBasePower() * 1.5f + 2.0f * owner->counterDamage, collider.position, owner,0,true);
                                 break;
                             }

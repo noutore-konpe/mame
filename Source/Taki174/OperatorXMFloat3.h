@@ -211,3 +211,31 @@ inline const DirectX::XMFLOAT3 operator-(
 }
 
 #pragma endregion
+
+// ”äŠr‰‰ŽZŽq
+#pragma region Comparison operator
+inline const bool operator==(
+    const DirectX::XMFLOAT3& float3_1,
+    const DirectX::XMFLOAT3& float3_2)
+{
+    const bool result = {
+        (float3_1.x == float3_2.x) &&
+        (float3_1.y == float3_2.y) &&
+        (float3_1.z == float3_2.z)
+    };
+
+    return result;
+}
+inline const bool operator!=(
+    const DirectX::XMFLOAT3& float3_1,
+    const DirectX::XMFLOAT3& float3_2)
+{
+    const bool result = {
+        (float3_1.x != float3_2.x) ||
+        (float3_1.y != float3_2.y) ||
+        (float3_1.z != float3_2.z)
+    };
+
+    return result;
+}
+#pragma endregion

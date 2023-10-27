@@ -333,10 +333,14 @@ void EnemyManager::CollisionEnemyVsEnemy(const float /*elapsedTime*/)
     {
         Enemy* enemyA = GetEnemy(a);
 
+        if (true == enemyA->GetIsDead()) { continue; }
+
         // a以降の敵と判定を行う（a以前はすでに判定済みのため）
         for (size_t b = a + 1; b < enemyCount; ++b)
         {
             Enemy* enemyB = GetEnemy(b);
+
+            if (true == enemyB->GetIsDead()) { continue; }
 
             const XMFLOAT3& positionA = enemyA->GetPosition();
             const XMFLOAT3& positionB = enemyB->GetPosition();

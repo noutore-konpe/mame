@@ -32,7 +32,6 @@ private:
     static int nameNum_;
 
 private:
-    DirectX::XMFLOAT3   direction_ = {};   // •ûŒü
     float               speed_     = 3.0f; // ‘¬“x
     float               lifeTimer_ = 3.0f; // Žõ–½
 

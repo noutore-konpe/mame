@@ -53,6 +53,10 @@ public:
 	template <class TemplateAI>
 	LongRangeAttackAction(TemplateAI* enemy) : ActionBase(enemy) {}
 	const ActionBase::State Run(const float elapsedTime) override;
+
+private:
+	bool isLaunched = false; // î≠éÀÇµÇΩÇ©
+
 };
 
 // Ç–ÇÈÇ›çsìÆ
@@ -71,6 +75,10 @@ public:
 	template <class TemplateAI>
 	BlowOffAction(TemplateAI* enemy) : ActionBase(enemy) {}
 	const ActionBase::State Run(const float elapsedTime) override;
+
+private:
+	bool isMovedBack = false; // å„ÇÎÇ…à⁄ìÆÇµÇΩÇ©
+
 };
 
 

@@ -80,15 +80,10 @@ public:
     void ElapseRunTimer(const float elapsedTime) { runTimer_ = (std::max)(0.0f, runTimer_ - elapsedTime); }
 
     // ひるませる
-    virtual void Flinch()override {}
-
-
+    virtual void Flinch() override {}
 
     //攻撃判定とダメージ処理 引数は与えるダメージ量
     void AttackCollisionOnPlayer(const float damage);
-
-    // 吹っ飛ばす
-    void BlowOff();
 
     /// <summary>
     /// 吹っ飛ばす
@@ -146,12 +141,12 @@ protected:
 protected:
     // 吹っ飛ばす力
     float blowOffForce_[static_cast<int>(BLOW_OFF_FORCE_LEVEL::COUNT)] = {
-        0.0f,   // BLOW_OFF_FORCE_LEVEL::NONE
-        1.25f,  // BLOW_OFF_FORCE_LEVEL::VERY_LOW
-        2.5f,   // BLOW_OFF_FORCE_LEVEL::LOW
-        5.0f,   // BLOW_OFF_FORCE_LEVEL::MIDDLE
-        10.0f,  // BLOW_OFF_FORCE_LEVEL::HIGH
-        15.0f,  // BLOW_OFF_FORCE_LEVEL::VERY_HIGH
+         0.0f,   // BLOW_OFF_FORCE_LEVEL::NONE
+        +1.25f,  // BLOW_OFF_FORCE_LEVEL::VERY_LOW
+        +2.5f,   // BLOW_OFF_FORCE_LEVEL::LOW
+        +5.0f,   // BLOW_OFF_FORCE_LEVEL::MIDDLE
+        +7.5f,   // BLOW_OFF_FORCE_LEVEL::HIGH
+        +10.0f,  // BLOW_OFF_FORCE_LEVEL::VERY_HIGH
     };
 
 private:

@@ -1152,7 +1152,7 @@ void Player::LockOnInitialize()
             float dot = ::XMFloat3Dot(vecN_FromEnemyToCamera, cameraForwardN);
 
             // カメラ外にいたらロックオンしない（ある程度オモテでもウラ扱いにする）
-            // ※カメラが俯瞰になればなるほど少しカメラ外でもロックオンできてしまうやり方
+            // ※カメラが俯瞰になっていくと少しカメラ外でもロックオンできてしまうやり方
             if (dot > -0.8f) { continue; }
         }
 #endif

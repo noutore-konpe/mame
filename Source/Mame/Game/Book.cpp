@@ -179,8 +179,9 @@ void Book::CollisionProjectileVsEnemies()
                 if (false == isHit) continue;
 
                 // “G‚Ì‚Á”ò‚Ñî•ñ‚ð•Û‘¶
-                const XMFLOAT3 vec = enmHitColliderPos - projPos;
-                enemy->SaveBlowOffInfo(vec, proj->GetInflictBlowOffForceLevel());
+                //const XMFLOAT3 vec = enmHitColliderPos - projPos;
+                //enemy->SaveBlowOffInfo(vec, proj->GetInflictBlowOffForceLevel());
+                enemy->SaveBlowOffInfo(proj->GetDirection(), proj->GetInflictBlowOffForceLevel());
 
                 // “G‚Éƒ_ƒ[ƒW‚ð—^‚¦‚é
                 auto result = enemy->ApplyDamage(proj->GetAttack() + PlayerManager::Instance().GetPlayer()->GetBasePower() / 10, enmHitColliderPos);
