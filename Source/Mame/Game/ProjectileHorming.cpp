@@ -5,6 +5,7 @@
 #include "../Graphics/Graphics.h"
 #include "PlayerManager.h"
 #include "EnemyManager.h"
+#include "BaseEnemyAI.h"
 
 int ProjectileHorming::nameNum_ = 0;
 
@@ -54,7 +55,6 @@ void ProjectileHorming::Update(const float elapsedTime)
 
     // 移動
     {
-        XMFLOAT3 toTargetVecN   = {};       // 目標への単位ベクトル
         float    targetLength   = FLT_MAX;  // 目標との距離
 
         // 弾に一番近い敵を探す
@@ -63,28 +63,24 @@ void ProjectileHorming::Update(const float elapsedTime)
         {
             Enemy* enemy = enmManager.GetEnemy(i);
 
-            const XMFLOAT3& pos    = this->GetPosition();
-            XMFLOAT3 enmPos = enemy->GetPosition();
-            enmPos.y += enemy->GetHeight() / 2;
-            const XMFLOAT3  vec    = enmPos - pos;
-            float           length = 0.0f;
-            const XMFLOAT3  vecN   = ::XMFloat3Normalize(vec, &length);
+            // 死亡していたらcontinue;
+            if (true == enemy->GetIsDead()) { continue; }
+
+            const XMFLOAT3& pos       = this->GetPosition();
+            const XMFLOAT3& enmPos    = enemy->GetHitColliderAt(static_cast<int>(BaseEnemyAI::HitColName::HIP)).position;
+            const XMFLOAT3  vec       = enmPos - pos;
+                  float     length    = 0.0f;
+            const XMFLOAT3  vecN      = ::XMFloat3Normalize(vec, &length);
 
             if (length < targetLength)
             {
-                toTargetVecN = vecN;
+                direction_   = vecN; // 方向を保存
                 targetLength = length;
             }
         }
 
-        // 目標へのベクトルがあれば目標へ向かい、
-        // ベクトルがなければLaunch()のときに入力された方向に飛んでいく
-        const float vecLengthSq = ::XMFloat3LengthSq(toTargetVecN);
-        const XMFLOAT3 force = {
-            (vecLengthSq != 0.0f)
-            ? toTargetVecN * speed_
-            : direction_   * speed_
-        };
+        // 目標に向かう（目標が見つからなければ前回保存した方向に向かう）
+        const XMFLOAT3 force = direction_ * speed_;
         GetTransform()->AddPosition(force * elapsedTime);
     }
 

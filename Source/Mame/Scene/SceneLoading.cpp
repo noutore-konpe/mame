@@ -57,9 +57,20 @@ void SceneLoading::Initialize()
     titleLogo->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(800, 480));
     titleLogo->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(640, 360));
 
+    //Camera::Instance().TitleInitialize();
+    Camera::Instance().ResultInitialize();
+
     isChangeScene = false;
     easingTimer = 0.0f;
     playerConstants.color = { 0.3f, 0.3f, 0.3f, 1.0f };
+
+    // Fogリセット
+    Graphics& graphics = Graphics::Instance();
+    Shader* shader = graphics.GetShader();
+    shader->fogConstants.fogDensity = 0.0005f;
+    shader->fogConstants.fogHeightFalloff = 10.0f;
+    shader->fogConstants.fogColor.x = 1.0f;
+    shader->fogConstants.fogColor.y = 1.0f;
 
     // スレッド開始
     // std::thread(LoadingThread, this);
@@ -135,7 +146,8 @@ void SceneLoading::Render(const float& elapsedTime)
         Mame::Scene::BaseScene::RenderInitialize();
 
         Camera& camera = Camera::Instance();
-        Camera::Instance().TitleSetPerspectiveFov(graphics.GetDeviceContext());
+        //Camera::Instance().TitleSetPerspectiveFov(graphics.GetDeviceContext());
+        Camera::Instance().ResultSetPerSpectiveFov(graphics.GetDeviceContext());
 
         Shader::SceneConstants sceneConstants{};
         DirectX::XMStoreFloat4x4(&sceneConstants.viewProjection, camera.GetViewMatrix() * camera.GetProjectionMatrix());

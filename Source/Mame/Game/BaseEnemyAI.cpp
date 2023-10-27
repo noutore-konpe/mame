@@ -234,10 +234,6 @@ void BaseEnemyAI::Flinch()
     //if (activeNode_ != nullptr && "EntryStage" == activeNode_->GetName()) return;
 
     flinchStartFlag_ = true;     // ひるみ開始フラグを立てる
-
-    // 連続でひるんだ際にひるみアニメ―ションを
-    // 毎回リセットするために適当なアニメーションを入力しておく
-    PlayAnimation(0, false, animationSpeed_);
 }
 
 // 吹っ飛ばす関数
@@ -253,10 +249,6 @@ void BaseEnemyAI::BlowOff(
     blowOffForceLevel_  = blowOffForceLevel;
 
     isBlowOff_ = true;     // 吹っ飛びフラグを立てる
-
-    // 連続で吹っ飛んだ際にひるみアニメ―ションを
-    // 毎回リセットするために適当なアニメーションを入力しておく
-    PlayAnimation(0, false, animationSpeed_);
 }
 
 

@@ -124,7 +124,7 @@ protected:
     float airControl_       = 0.3f;
     float acceleration_     = 0.3f;
 
-    float attackLength_     = 3.0f;     // UŒ‚‹——£
+    float attackLength_     = 2.0f;     // UŒ‚‹——£
 
     bool isGround_          = false;
 

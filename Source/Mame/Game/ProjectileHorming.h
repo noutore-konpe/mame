@@ -2,6 +2,7 @@
 
 #include "Projectile.h"
 
+// スペルミス
 class ProjectileHorming : public Projectile
 {
 public:
@@ -31,7 +32,6 @@ private:
     static int nameNum_;
 
 private:
-    DirectX::XMFLOAT3   direction_ = {};   // 方向
     float               speed_     = 3.0f; // 速度
     float               lifeTimer_ = 3.0f; // 寿命
 

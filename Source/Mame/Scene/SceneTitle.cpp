@@ -100,12 +100,22 @@ void SceneTitle::Initialize()
 
     AudioManager::Instance().PlayBGM(BGM::Title);
 
+    // Fogリセット
+    Graphics& graphics = Graphics::Instance();
+    Shader* shader = graphics.GetShader();
+    shader->fogConstants.fogDensity = 0.0005f;
+    shader->fogConstants.fogHeightFalloff = 10.0f;
+    shader->fogConstants.fogColor.x = 1.0f;
+    shader->fogConstants.fogColor.y = 1.0f;
 
     // 変数初期化
     pressTimer = 0.0f;
     isAlphaDown = false;
     fadeTimer = 0.0f;
     isFade = false;
+
+    Camera::Instance().SetIsFogWhite(true);
+    Camera::Instance().SetFogTimer(10.0f);
 }
 
 // 終了化
@@ -125,7 +135,11 @@ void SceneTitle::Update(const float& elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
 
+    // カメラの動き
     Camera::Instance().TitleUpdate(elapsedTime);
+
+    // fog
+    UpdateFog(elapsedTime);
 
     const GamePadButton anyButton =
         GamePad::BTN_UP
@@ -359,6 +373,66 @@ void SceneTitle::DrawDebug()
     emmaSprite->DrawDebug();
     pressSprite->DrawDebug();
 
+}
+
+void SceneTitle::UpdateFog(const float& elapsedTime)
+{
+    Graphics& graphics = Graphics::Instance();
+    Shader* shader = graphics.GetShader();
+    Camera& camera = Camera::Instance();
+
+    if (!camera.GetIsFogWhite())
+    {
+        float maxTime = 1.0f;
+        if (camera.GetFogTimer() <= maxTime)
+        {
+            float a = Easing::InSine(camera.GetFogTimer(), maxTime, 8.0f, 0.0005f);
+            float b = Easing::InSine(camera.GetFogTimer(), maxTime, 14.0f, 10.0f);
+
+            float r = Easing::InSine(camera.GetFogTimer(), maxTime, 0.58f, 1.0f);
+            float g = Easing::InSine(camera.GetFogTimer(), maxTime, 0.0f, 1.0f);
+
+            shader->fogConstants.fogDensity = a;
+            shader->fogConstants.fogHeightFalloff = b;
+            shader->fogConstants.fogColor.x = r;
+            shader->fogConstants.fogColor.y = g;
+
+            camera.AddFogTimer(elapsedTime);
+        }
+        else
+        {
+            shader->fogConstants.fogDensity = 8.0f;
+            shader->fogConstants.fogHeightFalloff = 14.0f;
+            shader->fogConstants.fogColor.x = 0.58f;
+            shader->fogConstants.fogColor.y = 0.0f;
+        }
+    }
+    else
+    {
+        float maxTime = 1.0f;
+        if (camera.GetFogTimer() <= maxTime)
+        {
+            float a = Easing::InSine(camera.GetFogTimer(), maxTime, 0.0005f, 0.8f);
+            float b = Easing::InSine(camera.GetFogTimer(), maxTime, 10.0f, 14.0f);
+
+            float r = Easing::InSine(camera.GetFogTimer(), maxTime, 1.0f, 0.58f);
+            float g = Easing::InSine(camera.GetFogTimer(), maxTime, 1.0f, 0.0f);
+
+            shader->fogConstants.fogDensity = a;
+            shader->fogConstants.fogHeightFalloff = b;
+            shader->fogConstants.fogColor.x = r;
+            shader->fogConstants.fogColor.y = g;
+
+            camera.AddFogTimer(elapsedTime);
+        }
+        else
+        {
+            shader->fogConstants.fogDensity = 0.0005f;
+            shader->fogConstants.fogHeightFalloff = 10.0f;
+            shader->fogConstants.fogColor.x = 1.0f;
+            shader->fogConstants.fogColor.y = 1.0f;
+        }
+    }
 }
 
 void SceneTitle::PressAnyButton(const float& elapsedTime)

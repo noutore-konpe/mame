@@ -35,17 +35,14 @@ namespace EndlessSet
 
 #if _DEBUG
 WaveEnemySet waveEnemySetTest[] = {
-     WaveEnemySet(0.0f, "EnemyAI_1",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
-     WaveEnemySet(0.0f, "EnemyAI_1",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
-     WaveEnemySet(0.0f, "EnemyAI_2",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
-     WaveEnemySet(0.0f, "EnemyAI_2",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
      WaveEnemySet(0.0f, "EnemyAI_3",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
-     WaveEnemySet(0.0f, "EnemyAI_3",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
-     WaveEnemySet(0.0f, "EnemyGolem", ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyAI_3",  ::GetGatewayPosition(1), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyAI_3",  ::GetGatewayPosition(2), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyAI_3",  ::GetGatewayPosition(3), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyAI_3",  ::GetGatewayPosition(4), Set::HP, Set::ATK, 5),
 };
 #endif
 WaveEnemySet waveEnemySet0[] = {
-    WaveEnemySet(0.5f, "EnemyGolem", SceneGame::stageCenter, Set::GolemHp + (Set::ADD_HP * 10.0f), Set::ATK + (Set::ADD_ATK * 10.0f), 40),
     WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 0.0f), Set::ATK + (Set::ADD_ATK * 0.0f), 5),
     WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 0.0f), Set::ATK + (Set::ADD_ATK * 0.0f), 5),
     WaveEnemySet(1.0f, "EnemyAI_1", ::GetGatewayPosition(2), Set::HP + (Set::ADD_HP * 0.0f), Set::ATK + (Set::ADD_ATK * 0.0f), 5),
@@ -187,6 +184,7 @@ void WaveManager::InitWave(const int waveIndex)
     ResetWaveEnemySpawnFlag();
 
     endlessWaveHp_  = EndlessSet::HP;
+    endlessGolemHp_ = EndlessSet::GOLEM_HP;
     endlessWaveAtk_ = EndlessSet::ATK;
     endlessWaveExp_ = EndlessSet::EXP;
 }
@@ -231,6 +229,8 @@ void WaveManager::UpdateWave(const float elapsedTime)
 
                 // ステージの中心に生成位置を設定
                 waveEnemy.pos_ = SceneGame::stageCenter;
+
+                waveEnemy.hp_ = endlessGolemHp_;
             }
             else
             {
@@ -245,9 +245,10 @@ void WaveManager::UpdateWave(const float elapsedTime)
 
                 // ランダムなゲート位置を生成位置に設定
                 waveEnemy.pos_ = ::GetGatewayPosition(-1);
+
+                waveEnemy.hp_ = endlessWaveHp_;
             }
 
-            waveEnemy.hp_       = endlessWaveHp_ ;
             waveEnemy.atk_      = endlessWaveAtk_;
             waveEnemy.dropExp_  = endlessWaveExp_;
 
@@ -309,6 +310,7 @@ void WaveManager::UpdateWave(const float elapsedTime)
 
             // 体力・攻撃力増加
             endlessWaveHp_  += Set::ADD_HP;
+            endlessGolemHp_ += Set::ADD_HP;
             endlessWaveAtk_ += Set::ADD_ATK;
 
             // エンドレスウェーブカウンターが５のときはゴーレムを生成するようにする

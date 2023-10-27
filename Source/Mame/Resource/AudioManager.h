@@ -92,6 +92,8 @@ enum class SE
     GolemEntry_1, // 
     GolemEntry_2, // 
 
+
+
     SE_Max,
 };
 

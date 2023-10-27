@@ -414,6 +414,7 @@ void SceneGame::Update(const float& elapsedTime)
         }
     }
 
+    // Fog
     if (PlayerManager::Instance().isChange)
     {
         if (PlayerManager::Instance().GetFog())
@@ -511,6 +512,9 @@ void SceneGame::Update(const float& elapsedTime)
 
     // item
     ItemManager::Instance().Update(slowMotionElapsedTime);
+
+    // デバッグ用
+    //return;
 
     // enemy
     {

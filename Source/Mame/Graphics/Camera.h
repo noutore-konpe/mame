@@ -46,6 +46,16 @@ public:
     float angle = 0.0f;
     float length = 27.0f;
 
+    // title—p
+    bool isFogWhite = false;
+    bool isWhite = false;
+    float fogTimer = 0.0f;
+    bool GetIsFogWhite() { return isFogWhite; }
+    void SetIsFogWhite(bool fog) { isFogWhite = fog; }
+    float GetFogTimer() { return fogTimer; }
+    void SetFogTimer(const float& time) { fogTimer = time; }
+    void AddFogTimer(const float& time) { fogTimer += time; }
+
 public:
     void Initialize();
 

@@ -89,6 +89,8 @@ void EnemyAI_2::Initialize()
     moveSpeed_      = 2.0f;
     animationSpeed_ = 0.8f;
 
+    attackLength_   = 2.25f; // 近すぎると攻撃がすり抜けるので調整
+
     sword_->PlayAnimation(0, true); // デフォルトアニメーション再生再生
 
     ColliderInitialize();

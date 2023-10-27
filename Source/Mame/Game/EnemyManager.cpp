@@ -186,17 +186,43 @@ void EnemyManager::Clear()
 void EnemyManager::DrawDebug()
 {
 #ifdef USE_IMGUI
+    using DirectX::XMFLOAT3;
+
+    Camera& camera = Camera::Instance();
+
+    // カメラ外にいるか
+    //if (ImGui::Begin("isInCamera"))
+    //{
+    //    for (Enemy*& enemy : enemies_)
+    //    {
+    //        const XMFLOAT3& enemyPos  = enemy->GetPosition();
+    //        const XMFLOAT3& cameraPos = camera.GetTransform()->GetPosition();
+    //        const XMFLOAT3  vecN_FromEnemyToCamera = ::XMFloat3Normalize(cameraPos - enemyPos);
+    //        const XMFLOAT3  cameraForwardN         = camera.GetForward();
+
+    //        // ベクトルに対してカメラの前方ベクトル(法線)の表裏の取得
+    //        float dot = ::XMFloat3Dot(vecN_FromEnemyToCamera, cameraForwardN);
+    //        ImGui::InputFloat("dot", &dot);
+
+    //        // カメラ外にいるか(ある程度オモテでもウラ扱いにする)
+    //        const float cameraRotationX = camera.GetTransform()->GetRotationX();
+    //        bool isBehindCamera = (dot > -0.8f) ? true : false;
+
+    //        ImGui::Checkbox("isBehindCamera", &isBehindCamera);
+    //    }
+    //    ImGui::End();
+    //}
+
     if (ImGui::BeginMenu("Enemies"))
     {
-
-        // 敵ひるませるボタン
-        if (ImGui::Button("FlinchEnemies"))
-        {
-            for (Enemy*& enemy : enemies_)
-            {
-                enemy->Flinch();
-            }
-        }
+        //// 敵ひるませるボタン
+        //if (ImGui::Button("FlinchEnemies"))
+        //{
+        //    for (Enemy*& enemy : enemies_)
+        //    {
+        //        enemy->Flinch();
+        //    }
+        //}
 
         for (Enemy*& enemy : enemies_)
         {
@@ -307,10 +333,14 @@ void EnemyManager::CollisionEnemyVsEnemy(const float /*elapsedTime*/)
     {
         Enemy* enemyA = GetEnemy(a);
 
+        if (true == enemyA->GetIsDead()) { continue; }
+
         // a以降の敵と判定を行う（a以前はすでに判定済みのため）
         for (size_t b = a + 1; b < enemyCount; ++b)
         {
             Enemy* enemyB = GetEnemy(b);
+
+            if (true == enemyB->GetIsDead()) { continue; }
 
             const XMFLOAT3& positionA = enemyA->GetPosition();
             const XMFLOAT3& positionB = enemyB->GetPosition();

@@ -21,7 +21,9 @@ const ActionBase::State EntryStageAction::Run(const float elapsedTime)
 	switch (owner_->GetStep())
 	{
 	case 0:
+		// ターゲット位置が設定されていなければ
 		// 現在の位置からステージ中心に向かってある程度進んだ位置を目標地点に設定
+		if (XMFLOAT3(0,0,0) == owner_->GetTargetPosition())
 		{
 			const XMFLOAT3& pos  = owner_->GetTransform()->GetPosition();
 			const XMFLOAT3  vecN = ::XMFloat3Normalize(SceneGame::stageCenter - pos);
@@ -466,6 +468,9 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 		//owner_->SetRunTimer(::RandFloat(+1.0f, +1.0f));
 		owner_->SetRunTimer(60.0f); // 行動タイマー設定
 
+		// 発射フラグリセット
+		isLaunched = false;
+
 		// アニメーション再生
 		{
 			// 攻撃アニメーション再生
@@ -517,8 +522,11 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 		// 回転
 		owner_->Turn(elapsedTime, vec.x, vec.z, owner_->GetTurnSpeed());
 
-		// 指定のキーフレームになったら弾丸発射
-		if (23 == owner_->model->GetCurrentKeyframeIndex())
+		// まだ弾を発射していなくて指定のキーフレームになったら弾丸発射
+		const int currentKeyframeIndex = owner_->model->GetCurrentKeyframeIndex();
+		if (false == isLaunched &&
+			currentKeyframeIndex >= 23 &&
+			currentKeyframeIndex <= 25)
 		{
 			// 右手の位置を取得
 			const int rightHandColiderlIndex = static_cast<int>(BaseEnemyAI::HitColName::R_HAND);
@@ -540,6 +548,9 @@ const ActionBase::State LongRangeAttackAction::Run(const float elapsedTime)
 			// 弾丸生成
 			ProjectileStraight* projectile = new ProjectileStraight(owner_->GetProjectileManager(),owner_);
 			projectile->Launch(vecN, launchPos);
+
+			// 発射した
+			isLaunched = true;
 		}
 
 		// 攻撃アニメーションが終わったら成功終了
@@ -581,6 +592,9 @@ const ActionBase::State FlinchAction::Run(const float /*elapsedTime*/)
 
 		// ひるみアニメーション再生
 		{
+			// 連続でひるんだ際にひるみアニメ―ションを
+			// 毎回リセットするために適当なアニメーションを入力しておく
+			owner_->PlayAnimation(0, false, owner_->GetAnimationSpeed());
 			owner_->PlayAnimation(Animation::SoftStagger, false, owner_->GetAnimationSpeed());
 
 			Model* sword = owner_->GetSword();
@@ -637,12 +651,19 @@ const ActionBase::State BlowOffAction::Run(const float elapsedTime)
 	using DirectX::XMFLOAT3;
 	using DirectX::XMFLOAT4;
 
+	enum STEP
+	{
+		INIT,			// 初期化
+		BLOW_OFF,		// 吹っ飛び
+		DESTROY,		// 死亡
+		STAND_UP,		// 立ち上がり
+	};
+
 	XMFLOAT4* modelColor = &owner_->model->color;
 
 	switch (owner_->GetStep())
 	{
-	case 0:
-
+	case INIT:
 		// 吹っ飛ばす力を速度に設定する
 		const XMFLOAT3 blowOffVecN = ::XMFloat3Normalize(owner_->GetBlowOffVec());
 		{
@@ -657,8 +678,14 @@ const ActionBase::State BlowOffAction::Run(const float elapsedTime)
 		// 吹っ飛ばされた方向を向く
 		owner_->GetTransform()->SetRotationY(::atan2f(-blowOffVecN.x, -blowOffVecN.z));
 
+		// 後ろ移動フラグリセット
+		isMovedBack = false;
+
 		// 吹っ飛びアニメーション再生
 		{
+			//// 連続で吹っ飛んだ際に吹っ飛びアニメ―ションを
+			//// 毎回リセットするために適当なアニメーションを入力しておく
+			//PlayAnimation(0, false, animationSpeed_);
 			owner_->PlayAnimation(Animation::HardStagger, false, owner_->GetAnimationSpeed());
 
 			Model* sword = owner_->GetSword();
@@ -672,19 +699,20 @@ const ActionBase::State BlowOffAction::Run(const float elapsedTime)
 		owner_->SetStep(1);
 		[[fallthrough]];
 		// break;
-	case 1:
-
+	case BLOW_OFF:
 		// アニメーション再生中ならbreak
 		if (true == owner_->IsPlayAnimation()) break;
 
 		// 吹っ飛びアニメーションが終わったら
 		{
-			// 死んでいなければそのまま終了
+			// 死んでいなければ立ち上がりアニメーションを行う
 			if (false == owner_->GetIsDead())
 			{
-				owner_->SetIsBlowOff(false);		// 吹っ飛びフラグOFF
-				owner_->SetStep(0);					// ステップリセット
-				return ActionBase::State::Complete;	// 成功終了
+				owner_->PlayAnimation(Animation::StandUp, false);
+
+				// ステップ３に移動
+				owner_->SetStep(3);
+				break;
 			}
 
 			// 透明にしていく
@@ -708,11 +736,12 @@ const ActionBase::State BlowOffAction::Run(const float elapsedTime)
 		}
 
 		break;
-	case 2:
-
+	case DESTROY:
 		// 透明にしていく
-		const float reduceColorW = (-1.0f) * elapsedTime;
-		modelColor->w += reduceColorW;
+		{
+			const float reduceColorW = (-1.0f) * elapsedTime;
+			modelColor->w += reduceColorW;
+		}
 
 		// モデルが透明になりきったら消去する
 		if (owner_->model->color.w <= 0.0f)
@@ -721,6 +750,32 @@ const ActionBase::State BlowOffAction::Run(const float elapsedTime)
 			owner_->SetIsBlowOff(false);		// 一応吹っ飛びフラグを下ろしておく
 			owner_->SetStep(0);					// ステップリセット
 			return ActionBase::State::Complete;	//　成功終了
+		}
+
+		break;
+	case STAND_UP:
+
+		// 立ち上がりアニメーションが終わったら終了
+		if (false == owner_->IsPlayAnimation())
+		{
+			owner_->SetIsBlowOff(false);		// 吹っ飛びフラグをOFFにする
+			owner_->SetFlinchStartFlag(false);  // 吹っ飛び終了後にひるみ開始フラグが立っている場合、ひるまないようにする
+			owner_->SetStep(0);					// ステップリセット
+			return ActionBase::State::Complete;	//　成功終了
+		}
+
+		// 後ろに下がる
+		const int currentKeyframeIndex = owner_->model->GetCurrentKeyframeIndex();
+		if (false == isMovedBack &&
+			currentKeyframeIndex >= 35 &&
+			currentKeyframeIndex <= 37)
+		{
+			const XMFLOAT3 backVecN  = (-owner_->GetTransform()->CalcForward());
+			const float backMovement = 5.0f;
+			owner_->SetVelocity(backVecN * backMovement);
+
+			// 後ろに下がった
+			isMovedBack = true;
 		}
 
 		break;
