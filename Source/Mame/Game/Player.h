@@ -175,6 +175,7 @@ public:
 
     //getter,setter
     void AddMaxSpeed(const float spd) { maxEyeSpeed += spd; }
+    void AddMaxDodgeSpeed(const float spd) { maxDodgeSpeed += spd; }
 
     void AddBaseAttackPower(const float power) { baseAttackPower += power; }
 

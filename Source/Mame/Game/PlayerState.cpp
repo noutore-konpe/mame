@@ -297,10 +297,16 @@ namespace PlayerState
         owner->SetAcceleration(dodgeSpeed);
         Input::Instance().GetGamePad().Vibration(0.1f, 0.1f);
         hit.clear();
+
     }
     void AvoidState::Update(const float& elapsedTime)
     {
-        //owner->MoveUpdate(elapsedTime);
+        //–³“GŠÔ‚Ìİ’è
+        if (owner->model->GetCurrentKeyframeIndex() < invincibleFrame)
+        {
+            owner->isInvincible = true;
+        }
+        else owner->isInvincible = false;
 
         //UŒ‚”»’è
         DirectX::XMFLOAT3 hitPos;
