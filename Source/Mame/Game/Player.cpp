@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "../../Taki174/Common.h"
+#include "../../Taki174/FunctionXMFloat3.h"
 
 #include "../Graphics/Graphics.h"
 #include "../Other/Easing.h"
@@ -719,7 +720,7 @@ void Player::DrawDebug()
         Character::DrawDebug();
 
         stateMachine->DrawDebug();
-        
+
         ImGui::DragFloat("HP",&health);
 
 
@@ -1124,11 +1125,38 @@ void Player::LockOnInitialize()
 {
     using DirectX::XMFLOAT3;
 
-    if (EnemyManager::Instance().GetEnemyCount() == 0)return;
+    EnemyManager& enemyManager = EnemyManager::Instance();
+    Camera&       camera       = Camera::Instance();
+
+    // ターゲットリセット
+    Camera::Instance().SetLockOnTarget(nullptr);
+
+    if (enemyManager.GetEnemyCount() == 0) return;
+
     float length0 = FLT_MAX;
-    for (auto& enemy : EnemyManager::Instance().GetEnemies())
+    for (Enemy*& enemy : enemyManager.GetEnemies())
     {
-        const XMFLOAT3 ePos = enemy->GetTransform()->GetPosition();
+        // 死んでいたらcontinue
+        if (true == enemy->GetIsDead()) { continue; }
+
+        const XMFLOAT3& ePos = enemy->GetTransform()->GetPosition();
+
+
+#if 1   // カメラ外判定
+        {
+            const XMFLOAT3& cameraPos              = camera.GetTransform()->GetPosition();
+            const XMFLOAT3  vecN_FromEnemyToCamera = ::XMFloat3Normalize(cameraPos - ePos);
+            const XMFLOAT3  cameraForwardN         = camera.GetForward();
+
+            // [エネミー→カメラ]ベクトルに対してカメラの前方ベクトル(法線)の表裏の取得
+            float dot = ::XMFloat3Dot(vecN_FromEnemyToCamera, cameraForwardN);
+
+            // カメラ外にいたらロックオンしない（ある程度オモテでもウラ扱いにする）
+            // ※カメラが俯瞰になっていくと少しカメラ外でもロックオンできてしまうやり方
+            if (dot > -0.8f) { continue; }
+        }
+#endif
+
         float length1 = Length(ePos - GetTransform()->GetPosition());
         if (length0 > length1)
         {
@@ -1137,6 +1165,7 @@ void Player::LockOnInitialize()
             length0 = length1;
         }
     }
+
 }
 
 const bool Player::BlownUpdate(float elapsedTime)
@@ -1171,7 +1200,7 @@ void Player::ActiveCounter()
 {
     if (InputCounter())
     {
-        ChangeState(static_cast<float>(STATE::COUNTER));
+        ChangeState(static_cast<int>(STATE::COUNTER));
     }
 }
 
@@ -1221,7 +1250,7 @@ void Player::OnDamaged()
     //stateMachine->ChangeState(STAGGER_SOFT);
     Input::Instance().GetGamePad().Vibration(0.2f,0.3f);
     Camera::Instance().ScreenVibrate(0.1f,0.3f);
-    
+
 
 
 }

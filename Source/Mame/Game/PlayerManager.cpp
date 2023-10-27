@@ -260,12 +260,16 @@ bool PlayerManager::AttackCollisionPlayerToEnemy(std::vector<Enemy*>& hitEnemies
                         hitCollider.position, hitCollider.radius))
                     {
                         // ‚Á”ò‚Ñî•ñ‚ð•Û‘¶
-                        const DirectX::XMFLOAT3 vec = enemy->GetPosition() - atkCollider.position;
-                        enemy->SaveBlowOffInfo(vec, player->GetInflictBlowOffForceLevel());
+                        //const DirectX::XMFLOAT3 vec = hitCollider.position - atkCollider.position;
+                        //enemy->SaveBlowOffInfo(vec, player->GetInflictBlowOffForceLevel());
+                        enemy->SaveBlowOffInfo(
+                            player->GetTransform()->CalcForward(),
+                            player->GetInflictBlowOffForceLevel()
+                        );
 
                         hitPos = hitCollider.position;
                         hitEnemies.emplace_back(enemy);
-                        
+
                         hit = true;
                     }
                 }

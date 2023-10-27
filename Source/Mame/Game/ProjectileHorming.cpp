@@ -5,6 +5,7 @@
 #include "../Graphics/Graphics.h"
 #include "PlayerManager.h"
 #include "EnemyManager.h"
+#include "BaseEnemyAI.h"
 
 int ProjectileHorming::nameNum_ = 0;
 
@@ -66,17 +67,7 @@ void ProjectileHorming::Update(const float elapsedTime)
             if (true == enemy->GetIsDead()) { continue; }
 
             const XMFLOAT3& pos       = this->GetPosition();
-                  XMFLOAT3  enmPos    = enemy->GetPosition();
-                            enmPos.y += enemy->GetHeight() * 0.5f; // 高さ調整
-
-            // 敵がひるみ中ならアニメーションで少し後ろにのけぞって
-            // 位置ずれが生じているので位置を少し後ろに修正する
-            if (true == enemy->GetIsFlinch())
-            {
-                const float    modifyBack  = 0.1f;
-                const XMFLOAT3 enmBackVecN = (-enemy->GetTransform()->CalcForward());
-                enmPos = enmPos + enmBackVecN * modifyBack;
-            }
+            const XMFLOAT3& enmPos    = enemy->GetHitColliderAt(static_cast<int>(BaseEnemyAI::HitColName::HIP)).position;
             const XMFLOAT3  vec       = enmPos - pos;
                   float     length    = 0.0f;
             const XMFLOAT3  vecN      = ::XMFloat3Normalize(vec, &length);

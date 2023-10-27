@@ -32,6 +32,9 @@ public:
     const DirectX::XMFLOAT3& GetPosition() { return GetTransform()->GetPosition(); }
     void SetPosition(const DirectX::XMFLOAT3& pos) { GetTransform()->SetPosition(pos); }
 
+    [[nodiscard]] const DirectX::XMFLOAT3& GetDirection() const { return direction_; }
+    void SetDirection(const DirectX::XMFLOAT3& direction) { direction_ = direction; }
+
     const Character* GetParent() const { return parent_; }
     void SetParent(Character* parent) { parent_ = parent; }
 
@@ -56,6 +59,7 @@ protected:
     ProjectileManager*  manager_    = nullptr;
     Character*          parent_     = nullptr;  // 自分を生成したキャラクターのポインタ
     std::string         name_       = "";
+    DirectX::XMFLOAT3   direction_  = {}; // 方向
     float               radius_     = 0.1f;
     float               attack_     = 1.0f;
 
