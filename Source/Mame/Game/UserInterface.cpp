@@ -49,6 +49,12 @@ void UserInterface::Initialize()
     numSlideSprite = std::make_unique<Sprite>(graphics.GetDevice(),
         L"./Resources/Image/UI/numbers.png");
 
+    skillNumSprite = std::make_unique<Sprite>(graphics.GetDevice(),
+        L"./Resources/Image/UI/numbers.png");
+        
+    skillxSprite = std::make_unique<Sprite>(graphics.GetDevice(),
+        L"./Resources/Image/UI/x.png");
+
     // 初期化
     hpSprite->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(25.0f, 0.0f));
     hpSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(380.0f, 50.0f));
@@ -109,6 +115,9 @@ void UserInterface::Update(float elapsedTime)
 // 描画
 void UserInterface::Render()
 {
+    RenderSkillNum();
+    RenderSkillX();
+
     backGageSprite[0]->Render();
     backGageSprite[1]->Render();
     hpSprite->Render();
@@ -134,8 +143,13 @@ void UserInterface::BloomRender()
 
 void UserInterface::DrawDebug()
 {
+
     if (ImGui::BeginMenu("UserInterface"))
     {
+        ImGui::Begin("NumSprite_0");
+        skillxSprite->DrawDebug();
+        ImGui::End();
+
         if (ImGui::Button("waveSlide"))
         {
             isWaveSlideSprite = true;
@@ -598,4 +612,96 @@ void UserInterface::RenderWave()
     chonchonSprite->GetSpriteTransform()->SetPos(DirectX::XMFLOAT2(70.0f, 692.0f));
     chonchonSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(10.0f, 15.0f));
     chonchonSprite->Render();
+}
+
+void UserInterface::RenderNum(const int who, const float firstPosX, const float secondPosX, const float thirdPosX, const float fourthPosX)
+{
+    float texSizeX = 60;
+    float one = who % 10 * texSizeX;
+    float ten = who / 10 % 10 * texSizeX;
+    float hundred = who / 100 % 10 * texSizeX;
+    float thousand = who / 1000 % 10 * texSizeX;
+
+    if (who < 10)
+    {
+        skillNumSprite->GetSpriteTransform()->SetPosX(firstPosX);
+        skillNumSprite->GetSpriteTransform()->SetTexPosX(one);
+        skillNumSprite->Render();
+    }
+    else if (who < 100)
+    {
+        skillNumSprite->GetSpriteTransform()->SetPosX(secondPosX);
+        skillNumSprite->GetSpriteTransform()->SetTexPosX(one);
+        skillNumSprite->Render();
+        skillNumSprite->GetSpriteTransform()->SetPosX(firstPosX);
+        skillNumSprite->GetSpriteTransform()->SetTexPosX(ten);
+        skillNumSprite->Render();
+    }
+    else if (who < 1000)
+    {
+        skillNumSprite->GetSpriteTransform()->SetPosX(thirdPosX);
+        skillNumSprite->GetSpriteTransform()->SetTexPosX(one);
+        skillNumSprite->Render();
+        skillNumSprite->GetSpriteTransform()->SetPosX(secondPosX);
+        skillNumSprite->GetSpriteTransform()->SetTexPosX(ten);
+        skillNumSprite->Render();
+        skillNumSprite->GetSpriteTransform()->SetPosX(firstPosX);
+        skillNumSprite->GetSpriteTransform()->SetTexPosX(hundred);
+        skillNumSprite->Render();
+    }
+    else if (who < 10000)
+    {
+        skillNumSprite->GetSpriteTransform()->SetPosX(fourthPosX);
+        skillNumSprite->GetSpriteTransform()->SetTexPosX(one);
+        skillNumSprite->Render();
+        skillNumSprite->GetSpriteTransform()->SetPosX(thirdPosX);
+        skillNumSprite->GetSpriteTransform()->SetTexPosX(ten);
+        skillNumSprite->Render();
+        skillNumSprite->GetSpriteTransform()->SetPosX(secondPosX);
+        skillNumSprite->GetSpriteTransform()->SetTexPosX(hundred);
+        skillNumSprite->Render();
+        skillNumSprite->GetSpriteTransform()->SetPosX(firstPosX);
+        skillNumSprite->GetSpriteTransform()->SetTexPosX(thousand);
+        skillNumSprite->Render();
+    }
+}
+
+void UserInterface::RenderSkillNum()
+{
+    skillNumSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(18, 30));
+    skillNumSprite->GetSpriteTransform()->SetTexSize(DirectX::XMFLOAT2(60, 100));
+    skillNumSprite->GetSpriteTransform()->SetColorA(1.0f);
+
+    int iconNum = 0;
+    std::vector<BaseSkill*> skillArray = PlayerManager::Instance().GetSkillArray();
+    for (auto& skill : skillArray)
+    {
+        // スキルを取ってなければ戻る
+        if (skill->GetOverlapNum() <= 0) continue;
+
+        skillNumSprite->GetSpriteTransform()->SetPosY(skillNumPos[iconNum].y);
+        float posX = skillNumPos[iconNum].x;
+        RenderNum(skill->GetOverlapNum(), posX, posX + 15.0f, posX + 30.0f, posX + 45.0f);
+
+        ++iconNum;
+    }
+}
+
+void UserInterface::RenderSkillX()
+{
+    skillxSprite->GetSpriteTransform()->SetSize(DirectX::XMFLOAT2(15, 15));
+    skillxSprite->GetSpriteTransform()->SetColorA(1.0f);
+
+    int iconNum = 0;
+    std::vector<BaseSkill*> skillArray = PlayerManager::Instance().GetSkillArray();
+    for (auto& skill : skillArray)
+    {
+        // スキルを取ってなければ戻る
+        if (skill->GetOverlapNum() <= 0) continue;
+
+        skillxSprite->GetSpriteTransform()->SetPos(skillXPos[iconNum]);
+        skillxSprite->Render();
+
+        ++iconNum;
+    }
 }

@@ -513,6 +513,8 @@ void SceneGame::Update(const float& elapsedTime)
     // item
     ItemManager::Instance().Update(slowMotionElapsedTime);
 
+    return;
+
     // enemy
     {
         EnemyManager& enemyManager = EnemyManager::Instance();

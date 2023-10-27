@@ -17,50 +17,59 @@ void PlayerManager::Initialize()
     static bool CallOnce = [&]() {
         //ドレイン
         drainSkill = std::make_unique<PlayerSkill::Drain>(player.get());
-        skillArray.emplace_back(drainSkill.get());
         //移動速度アップ
         moveSpeedUpSkill = std::make_unique<PlayerSkill::MoveSpeedUp>(player.get());
-        skillArray.emplace_back(moveSpeedUpSkill.get());
         //攻撃力アップ
         attackPowerUpSkill = std::make_unique<PlayerSkill::AttackPowerUp>(player.get());
-        skillArray.emplace_back(attackPowerUpSkill.get());
         //攻撃速度アップ
         attackSpeedUpSkill = std::make_unique<PlayerSkill::AttackSpeedUp>(player.get());
-        skillArray.emplace_back(attackSpeedUpSkill.get());
         //本の数増加
         bookIncreaseSkill = std::make_unique<PlayerSkill::BookIncrease>(player.get());
-        skillArray.emplace_back(bookIncreaseSkill.get());
         //体力上限アップ
         maxHitPointUpSkill = std::make_unique<PlayerSkill::MaxHitPointUp>(player.get());
-        skillArray.emplace_back(maxHitPointUpSkill.get());
         //防御力アップ
         defenseUpSkill = std::make_unique<PlayerSkill::DefenseUp>(player.get());
-        skillArray.emplace_back(defenseUpSkill.get());
         //ブラックホール自動生成
         blackHoleSkill = std::make_unique<PlayerSkill::BlackHoleSkill>(player.get());
-        skillArray.emplace_back(blackHoleSkill.get());
         //カウンター
         counterSkill = std::make_unique<PlayerSkill::CanCounterAttack>(player.get());
-        skillArray.emplace_back(counterSkill.get());
         //3段攻撃
         tripleAttackSkill = std::make_unique<PlayerSkill::CanTripleAttack>(player.get());
-        skillArray.emplace_back(tripleAttackSkill.get());
         //ホーミング
         homingSkill = std::make_unique<PlayerSkill::ChangeHomingSkill>(player.get());
-        skillArray.emplace_back(homingSkill.get());
         //ポイズン
         poisonSkill = std::make_unique<PlayerSkill::PoisonSkill>(player.get());
-        skillArray.emplace_back(poisonSkill.get());
         //魔導書の弾の連射速度アップ
         bulletRateUpSkill = std::make_unique<PlayerSkill::BulletRateUp>(player.get());
-        skillArray.emplace_back(bulletRateUpSkill.get());
         //弾のサイズ
         bulletSizeUpSkill = std::make_unique<PlayerSkill::BulletSizeUp>(player.get());
-        skillArray.emplace_back(bulletSizeUpSkill.get());
         //仕返し
         revengeSkill = std::make_unique<PlayerSkill::RevengeSkill>(player.get());
-        skillArray.emplace_back(revengeSkill.get());
 
+        // 黄
+        skillArray.emplace_back(blackHoleSkill.get());
+        skillArray.emplace_back(counterSkill.get());
+
+        // 赤
+        skillArray.emplace_back(drainSkill.get());
+        skillArray.emplace_back(tripleAttackSkill.get());
+        skillArray.emplace_back(homingSkill.get());
+
+        // 青
+        skillArray.emplace_back(revengeSkill.get());
+        skillArray.emplace_back(poisonSkill.get());
+        skillArray.emplace_back(bookIncreaseSkill.get());
+        
+        // 緑
+        skillArray.emplace_back(bulletRateUpSkill.get());
+        skillArray.emplace_back(bulletSizeUpSkill.get());
+        skillArray.emplace_back(defenseUpSkill.get());
+        skillArray.emplace_back(attackSpeedUpSkill.get());
+        
+        // 白
+        skillArray.emplace_back(maxHitPointUpSkill.get());
+        skillArray.emplace_back(moveSpeedUpSkill.get());
+        skillArray.emplace_back(attackPowerUpSkill.get());
 
         return true;
     }();
