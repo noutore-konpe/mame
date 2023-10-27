@@ -513,7 +513,8 @@ void SceneGame::Update(const float& elapsedTime)
     // item
     ItemManager::Instance().Update(slowMotionElapsedTime);
 
-    return;
+    // デバッグ用
+    //return;
 
     // enemy
     {
