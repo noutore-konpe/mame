@@ -64,6 +64,14 @@ void SceneLoading::Initialize()
     easingTimer = 0.0f;
     playerConstants.color = { 0.3f, 0.3f, 0.3f, 1.0f };
 
+    // Fogリセット
+    Graphics& graphics = Graphics::Instance();
+    Shader* shader = graphics.GetShader();
+    shader->fogConstants.fogDensity = 0.0005f;
+    shader->fogConstants.fogHeightFalloff = 10.0f;
+    shader->fogConstants.fogColor.x = 1.0f;
+    shader->fogConstants.fogColor.y = 1.0f;
+
     // スレッド開始
     // std::thread(LoadingThread, this);
     // 二個目の引数はLoadingThreadの引数になるu
