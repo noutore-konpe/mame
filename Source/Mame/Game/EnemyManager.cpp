@@ -186,17 +186,43 @@ void EnemyManager::Clear()
 void EnemyManager::DrawDebug()
 {
 #ifdef USE_IMGUI
+    using DirectX::XMFLOAT3;
+
+    Camera& camera = Camera::Instance();
+
+    // カメラ外にいるか
+    //if (ImGui::Begin("isInCamera"))
+    //{
+    //    for (Enemy*& enemy : enemies_)
+    //    {
+    //        const XMFLOAT3& enemyPos  = enemy->GetPosition();
+    //        const XMFLOAT3& cameraPos = camera.GetTransform()->GetPosition();
+    //        const XMFLOAT3  vecN_FromEnemyToCamera = ::XMFloat3Normalize(cameraPos - enemyPos);
+    //        const XMFLOAT3  cameraForwardN         = camera.GetForward();
+
+    //        // ベクトルに対してカメラの前方ベクトル(法線)の表裏の取得
+    //        float dot = ::XMFloat3Dot(vecN_FromEnemyToCamera, cameraForwardN);
+    //        ImGui::InputFloat("dot", &dot);
+
+    //        // カメラ外にいるか(ある程度オモテでもウラ扱いにする)
+    //        const float cameraRotationX = camera.GetTransform()->GetRotationX();
+    //        bool isBehindCamera = (dot > -0.8f) ? true : false;
+
+    //        ImGui::Checkbox("isBehindCamera", &isBehindCamera);
+    //    }
+    //    ImGui::End();
+    //}
+
     if (ImGui::BeginMenu("Enemies"))
     {
-
-        // 敵ひるませるボタン
-        if (ImGui::Button("FlinchEnemies"))
-        {
-            for (Enemy*& enemy : enemies_)
-            {
-                enemy->Flinch();
-            }
-        }
+        //// 敵ひるませるボタン
+        //if (ImGui::Button("FlinchEnemies"))
+        //{
+        //    for (Enemy*& enemy : enemies_)
+        //    {
+        //        enemy->Flinch();
+        //    }
+        //}
 
         for (Enemy*& enemy : enemies_)
         {
