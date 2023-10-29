@@ -1139,24 +1139,12 @@ void Player::LockOnInitialize()
         // 死んでいたらcontinue
         if (true == enemy->GetIsDead()) { continue; }
 
-        const XMFLOAT3& ePos = enemy->GetTransform()->GetPosition();
-
-
-#if 1   // カメラ外判定
-        {
-            const XMFLOAT3& cameraPos              = camera.GetTransform()->GetPosition();
-            const XMFLOAT3  vecN_FromEnemyToCamera = ::XMFloat3Normalize(cameraPos - ePos);
-            const XMFLOAT3  cameraForwardN         = camera.GetForward();
-
-            // [エネミー→カメラ]ベクトルに対してカメラの前方ベクトル(法線)の表裏の取得
-            float dot = ::XMFloat3Dot(vecN_FromEnemyToCamera, cameraForwardN);
-
-            // カメラ外にいたらロックオンしない（ある程度オモテでもウラ扱いにする）
-            // ※カメラが俯瞰になっていくと少しカメラ外でもロックオンできてしまうやり方
-            if (dot > -0.8f) { continue; }
-        }
+#if 1   // 画面内外判定
+        // 画面外にいたらロックオン候補から外す
+        if (false == enemy->IsInScreenJudgment()) { continue; }
 #endif
 
+        const XMFLOAT3& ePos = enemy->GetTransform()->GetPosition();
         float length1 = Length(ePos - GetTransform()->GetPosition());
         if (length0 > length1)
         {
