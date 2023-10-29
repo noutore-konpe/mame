@@ -559,10 +559,12 @@ void SceneGame::Render(const float& /*elapsedTime*/)
 
     Graphics& graphics = Graphics::Instance();
     Shader* shader = graphics.GetShader();
+    Camera& camera = Camera::Instance();
+    NumeralManager& numeralManager = NumeralManager::Instance();
+    EnemyManager& enemyManager = EnemyManager::Instance();
+    ExperiencePointManager& expManager = ExperiencePointManager::Instance();
 
     Shader::SceneConstants sceneConstants{};
-
-
 
     float playerScaleFactor = 0.01f;
     float enemyScaleFactor = 0.01f;
@@ -633,7 +635,6 @@ void SceneGame::Render(const float& /*elapsedTime*/)
         }
     }
 
-    Camera& camera = Camera::Instance();
 
     shader->SetDepthStencileState(static_cast<UINT>(Shader::DEPTH_STATE::ZT_ON_ZW_ON));
     shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::NONE));
@@ -676,7 +677,6 @@ void SceneGame::Render(const float& /*elapsedTime*/)
     framebuffers[0]->Clear(graphics.GetDeviceContext());
     framebuffers[0]->Activate(graphics.GetDeviceContext());
 
-
     // モデル描画
     {
         // stage
@@ -697,12 +697,10 @@ void SceneGame::Render(const float& /*elapsedTime*/)
 
         // enemy
         {
-            EnemyManager& enemyManager = EnemyManager::Instance();
             enemyManager.Render(enemyScaleFactor);
         }
 
         // Exp
-        ExperiencePointManager& expManager = ExperiencePointManager::Instance();
         expManager.Render(1.0f);
 
     }
@@ -755,8 +753,10 @@ void SceneGame::Render(const float& /*elapsedTime*/)
     //ブルームあり２D
     {
         // Numeral
-        NumeralManager& numeralManager = NumeralManager::Instance();
         numeralManager.Render();
+
+        // 方向マーカー描画
+        enemyManager.RenderDirectionMarker();
 
         // スキル選択中
         auto* player = PlayerManager::Instance().GetPlayer().get();
@@ -836,8 +836,10 @@ void SceneGame::Render(const float& /*elapsedTime*/)
     //ブルーム無し
     {
         // Numeral
-        NumeralManager& numeralManager = NumeralManager::Instance();
         numeralManager.Render();
+
+        // 方向マーカー描画
+        enemyManager.RenderDirectionMarker();
 
         UserInterface::Instance().Render();
         PlayerManager::Instance().SkillImagesRender();

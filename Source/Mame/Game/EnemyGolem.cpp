@@ -121,7 +121,7 @@ EnemyGolem::~EnemyGolem()
     }
 
     PlayerManager::Instance().isChange = true;
-    
+
     //PlayerManager::Instance().SetFogTimer(0.0f);
 }
 
@@ -184,9 +184,6 @@ void EnemyGolem::Begin()
 // 更新処理
 void EnemyGolem::Update(const float& elapsedTime)
 {
-
-
-
     PlayerManager::Instance().isChange = true;
 
     // ステートマシン更新
@@ -330,7 +327,7 @@ void EnemyGolem::DrawDebug()
         }
 
         ImGui::Begin("Collider");
-        
+
         ImGui::SliderFloat("hip", &hitCollider[static_cast<float>(ColliderName::HIP)].radius, 0.0f, 2.0f);
         ImGui::SliderFloat("R_leg", &hitCollider[static_cast<float>(ColliderName::R_LEG)].radius, 0.0f, 2.0f);
         ImGui::SliderFloat("L_leg", &hitCollider[static_cast<float>(ColliderName::L_LEG)].radius, 0.0f, 2.0f);
@@ -342,7 +339,7 @@ void EnemyGolem::DrawDebug()
         ImGui::SliderFloat("L_hand", &hitCollider[static_cast<float>(ColliderName::L_HAND)].radius, 0.0f, 2.0f);
 
         ImGui::End();
-        
+
 
         ImGui::EndMenu();
     }
@@ -368,7 +365,7 @@ void EnemyGolem::UpdateConstants()
     };
     graphics.GetDeviceContext()->PSSetShaderResources(16, _countof(shaderResourceViews), shaderResourceViews);
     graphics.GetDeviceContext()->PSSetShaderResources(14, 1, golemNormal.GetAddressOf());
-    
+
     graphics.GetDeviceContext()->UpdateSubresource(eyeConstantBuffer.Get(), 0, 0, &eyeConstants, 0, 0);
     graphics.GetDeviceContext()->PSSetConstantBuffers(7, 1, eyeConstantBuffer.GetAddressOf());
 
@@ -399,7 +396,7 @@ void EnemyGolem::SubRender()
         }
         break;
     }
-    
+
     if (magicCircleGolemAttack2->isAttack2)
     {
         // 攻撃２
@@ -503,7 +500,7 @@ void EnemyGolem::UpdateAttack2MagicCircle(const float& lengthX, const float& len
     DirectX::XMFLOAT3 ownerFrontVec = GetTransform()->CalcForward();
     // ゴーレムの右ベクトル
     DirectX::XMFLOAT3 ownerRightVec = GetTransform()->CalcRight();
-    
+
 
     // 真ん中の魔法陣
     DirectX::XMFLOAT3 centerPos =
@@ -513,7 +510,7 @@ void EnemyGolem::UpdateAttack2MagicCircle(const float& lengthX, const float& len
         ownerPosition.z + ownerFrontVec.z * 2.0f
     };
 
-    DirectX::XMFLOAT3 centerRightVec = 
+    DirectX::XMFLOAT3 centerRightVec =
         magicCircleGolemAttack2->baseMagicCircle[static_cast<UINT>(MagicCircleGolemAttack2::MAGIC_CIRCLE::Center)]->GetTransform()->CalcRight();
 
     float direction = 2.0f;
@@ -534,7 +531,7 @@ void EnemyGolem::UpdateAttack2MagicCircle(const float& lengthX, const float& len
     magicCircleGolemAttack2->baseMagicCircle[static_cast<UINT>(MagicCircleGolemAttack2::MAGIC_CIRCLE::Center)]->GetTransform()->SetPosition(centerPos);
     magicCircleGolemAttack2->baseMagicCircle[static_cast<UINT>(MagicCircleGolemAttack2::MAGIC_CIRCLE::Right)]->GetTransform()->SetPosition(sidePos[0]);
     magicCircleGolemAttack2->baseMagicCircle[static_cast<UINT>(MagicCircleGolemAttack2::MAGIC_CIRCLE::Left)]->GetTransform()->SetPosition(sidePos[1]);
-    
+
     for (int i = 0; i < static_cast<UINT>(MagicCircleGolemAttack2::MAGIC_CIRCLE::Max); ++i)
     {
         magicCircleGolemAttack2->baseMagicCircle[i]->GetTransform()->

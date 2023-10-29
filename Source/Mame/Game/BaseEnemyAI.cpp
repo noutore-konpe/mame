@@ -13,7 +13,7 @@ BaseEnemyAI::BaseEnemyAI()
 
 void BaseEnemyAI::Initialize()
 {
-    Character::Initialize();
+    Enemy::Initialize();
 
     //ジョイント位置取得するために適当なアニメーション再生
     //※アニメーションを流しとかないとkeyframeに情報が入らないからジョイント位置がとれない
@@ -24,7 +24,7 @@ void BaseEnemyAI::Initialize()
 
 void BaseEnemyAI::Update(const float& elapsedTime)
 {
-    Character::Update(elapsedTime);
+    Enemy::Update(elapsedTime);
 
     // ノード更新
     UpdateNode(elapsedTime);
@@ -44,7 +44,7 @@ void BaseEnemyAI::Update(const float& elapsedTime)
 
 void BaseEnemyAI::Render(const float& scale, ID3D11PixelShader* psShader)
 {
-    Character::Render(scale, psShader);
+    Enemy::Render(scale, psShader);
 
 #if _DEBUG
     if (SceneGame::isDispCollision_)

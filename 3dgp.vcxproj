@@ -305,6 +305,7 @@
     <ClCompile Include="Source\Taki174\Common.cpp" />
     <ClCompile Include="Source\Taki174\DamageNumeral.cpp" />
     <ClCompile Include="Source\Taki174\DebugRenderer.cpp" />
+    <ClCompile Include="Source\Taki174\EnemyMarker.cpp" />
     <ClCompile Include="Source\Taki174\Numeral.cpp" />
     <ClCompile Include="Source\Taki174\NumeralManager.cpp" />
     <ClCompile Include="Source\Taki174\TextRenderer.cpp" />
@@ -434,6 +435,7 @@
     <ClInclude Include="Source\Taki174\Common.h" />
     <ClInclude Include="Source\Taki174\DamageNumeral.h" />
     <ClInclude Include="Source\Taki174\DebugRenderer.h" />
+    <ClInclude Include="Source\Taki174\EnemyMarker.h" />
     <ClInclude Include="Source\Taki174\FunctionXMFloat3.h" />
     <ClInclude Include="Source\Taki174\Numeral.h" />
     <ClInclude Include="Source\Taki174\NumeralManager.h" />

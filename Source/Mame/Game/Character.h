@@ -154,8 +154,6 @@ public: // ‚»‚Ì‘¼‚ÌŠÖ”
 
     void Turn(float elapsedTime, float vx, float vz, float rotSpeed);
 
-
-
     struct DamageResult
     {
         bool hit;
@@ -183,8 +181,10 @@ public: // ‚»‚Ì‘¼‚ÌŠÖ”
     //‚Ğ‚é‚Ü‚¹‚é
     virtual void Flinch() {}
 
-
     void PoisonUpdate(float elapsedTime);
+
+    // ‰æ–Ê“à‚É‚¢‚é‚©”»’è‚·‚é
+    [[nodiscard]] const bool IsInScreenJudgment();
 
 #pragma endregion
 
