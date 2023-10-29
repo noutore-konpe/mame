@@ -228,7 +228,7 @@ DirectX::XMFLOAT2 Sprite::ConvertToScreenPos(
     DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
 
     const float screenPositionZ = DirectX::XMVectorGetZ(ScreenPosition);
-    if (isDraw != nullptr) { (*isDraw) = (screenPositionZ >= 1.0f) ? false : true; }
+    if (isDraw != nullptr) { (*isDraw) = (screenPositionZ > 0.0f && screenPositionZ < 1.0f) ? true : false; }
 
     return screenPosition;
 }

@@ -378,8 +378,12 @@ void SceneTutorial::Render(const float& /*elapsedTime*/)
     //ブルームあり２D
     {
         shader->SetBlendState(static_cast<UINT>(Shader::BLEND_STATE::ALPHA));
+
         // 数字表示描画
         NumeralManager::Instance().Render();
+
+        // 方向マーカー描画
+        enemyManager.RenderDirectionMarker();
 
         UserInterface::Instance().BloomRender();
     }
@@ -439,6 +443,9 @@ void SceneTutorial::Render(const float& /*elapsedTime*/)
 
         // 数字表示描画
         NumeralManager::Instance().Render();
+
+        // 方向マーカー描画
+        enemyManager.RenderDirectionMarker();
 
         UserInterface::Instance().Render();
     }

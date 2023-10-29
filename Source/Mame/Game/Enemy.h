@@ -1,6 +1,8 @@
 #pragma once
 
+#include <memory>
 #include "../../Taki174/OperatorXMFloat3.h"
+#include "../Resource/sprite.h"
 #include "Character.h"
 #include "BehaviorTree.h"
 #include "BehaviorData.h"
@@ -16,21 +18,25 @@ public:
     };
 
 public:
-    Enemy() {}
+    Enemy();
     virtual ~Enemy();
 
-    virtual void Initialize();                                          // 初期化
-    virtual void Finalize() = 0;                                        // 終了化
-    virtual void Begin()    = 0;                                           // 毎フレーム一番最初に呼ばれる
-    virtual void Update(const float& elapsedTime);                      // 更新処理
-    virtual void End()      = 0;                                             // 毎フレーム一番最後に呼ばれる
-    //virtual void Render(const float& elapsedTime, const float& scale);  // 描画処理
-    virtual void Render(const float& scale, ID3D11PixelShader* psShader);  // 描画処理
-    virtual void DrawDebug() = 0;                                       // デバッグ描画
+    virtual void Initialize();                                              // 初期化
+    virtual void Finalize() = 0;                                            // 終了化
+    virtual void Begin()    = 0;                                            // 毎フレーム一番最初に呼ばれる
+    virtual void Update(const float& elapsedTime);                          // 更新処理
+    virtual void End()      = 0;                                            // 毎フレーム一番最後に呼ばれる
+    //virtual void Render(const float& elapsedTime, const float& scale);    // 描画処理
+    virtual void Render(const float& scale, ID3D11PixelShader* psShader);   // 描画処理
+    virtual void RenderDirectionMarker();                                   // 方向マーカー描画
+    virtual void DrawDebug() = 0;                                           // デバッグ描画
 
     virtual void Render(const float& scale, bool shadow, ID3D11PixelShader* psShader = nullptr) {}
 
     virtual int GetCurrentState() { return 0; }
+
+    void InitializeDirectionMarker();                       // 方向マーカー初期化
+    void UpdateDirectionMarker(const float elapsedTime);    // 方向マーカー更新
 
 public:
     const TYPE GetType() const { return type; }
@@ -122,7 +128,9 @@ public:
 protected:
     std::unique_ptr<BehaviorTree>   behaviorTree_;
     std::unique_ptr<BehaviorData>   behaviorData_;  // 主にシーケンスに使う
-    NodeBase*            activeNode_        = nullptr; // BehaviorTreeのノードを指すだけのポインタなのでdeleteしない
+    NodeBase* activeNode_ = nullptr; // BehaviorTreeのノードを指すだけのポインタなのでdeleteしない
+
+    std::unique_ptr<Sprite> directionMarker_; // 方向マーカースプライト
 
     BLOW_OFF_FORCE_LEVEL blowOffForceLevel_ = BLOW_OFF_FORCE_LEVEL::NONE; // 吹っ飛ぶ力の度合い
 

@@ -35,11 +35,7 @@ namespace EndlessSet
 
 #if _DEBUG
 WaveEnemySet waveEnemySetTest[] = {
-     WaveEnemySet(0.0f, "EnemyAI_3",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
-     WaveEnemySet(0.0f, "EnemyAI_3",  ::GetGatewayPosition(1), Set::HP, Set::ATK, 5),
-     WaveEnemySet(0.0f, "EnemyAI_3",  ::GetGatewayPosition(2), Set::HP, Set::ATK, 5),
-     WaveEnemySet(0.0f, "EnemyAI_3",  ::GetGatewayPosition(3), Set::HP, Set::ATK, 5),
-     WaveEnemySet(0.0f, "EnemyAI_3",  ::GetGatewayPosition(4), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.0f, "EnemyAI_1",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
 };
 #endif
 WaveEnemySet waveEnemySet0[] = {

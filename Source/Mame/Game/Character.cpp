@@ -1,16 +1,15 @@
 #include "Character.h"
+
 #include "../../Taki174/NumeralManager.h"
 #include "../Graphics/Graphics.h"
+#include "../Resource/AudioManager.h"
+#include "../Other/MathHelper.h"
+#include "../framework.h"
+#include "PlayerManager.h"
 
 #ifdef _DEBUG
 #include "../Scene/SceneGame.h"
 #endif
-
-#include "../Other/MathHelper.h"
-
-#include "PlayerManager.h"
-
-#include "../Resource/AudioManager.h"
 
 // コンストラクタ
 Character::Character()
@@ -336,6 +335,30 @@ void Character::PoisonUpdate(float elapsedTime)
 
     poisonTimer += elapsedTime;
     poisonLoopTimer += elapsedTime;
+}
+
+// 画面内にいるか判定する
+const bool Character::IsInScreenJudgment()
+{
+    using DirectX::XMFLOAT2;
+    using DirectX::XMFLOAT3;
+
+    XMFLOAT3 pos = this->GetTransform()->GetPosition();
+             pos.y += height_ * 0.5f; // キャラの中心になるように高さ調整
+    const XMFLOAT2 screenPos = Sprite::ConvertToScreenPos(pos);
+
+    // 中心位置でそのまま判定するとキャラが少しはみ出ていても画面外判定になるので修正値を入れる
+    const float modifyWidth  = 50.0f;
+    const float modifyHeight = 50.0f;
+
+    const float posX_minLimit = 0.0f + (-modifyWidth);
+    const float posX_maxLimit = static_cast<float>(SCREEN_WIDTH) + modifyWidth;
+    const float posY_minLimit = 0.0f + (-modifyHeight);
+    const float posY_maxLimit = static_cast<float>(SCREEN_HEIGHT) + modifyHeight;
+    if (screenPos.x < posX_minLimit || screenPos.x > posX_maxLimit) { return false; }
+    if (screenPos.y < posY_minLimit || screenPos.y > posY_maxLimit) { return false; }
+
+    return true;
 }
 
 void Character::SphereCollider::DebugRender(const DirectX::XMFLOAT4 color)
