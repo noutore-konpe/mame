@@ -126,7 +126,7 @@ void Player::Initialize()
     hardAtkMuls = 2.4f;
     counterMuls = 1.0f;
 
-    poisonSlipDamage = 3.0f;
+    poisonSlipDamage = 50.0f;
     poisonEffectTime = 30.0f;
 
     health = 400.0f;

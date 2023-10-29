@@ -123,7 +123,7 @@ namespace PlayerSkill
         void Overlaping()override;
 
     private:
-        const float damageIncreasing = 3.0f;
+        const float damageIncreasing = 30.0f;
         const float effectTimeIncreasing = 5.0f;
 
         std::unique_ptr<Sprite> card2;
