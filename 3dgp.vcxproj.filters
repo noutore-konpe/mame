@@ -553,9 +553,6 @@
     <ClCompile Include="Source\Mame\Game\EnemyAI_Tutorial.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Taki174\EnemyMarker.cpp">
-      <Filter>mamelib\Taki174\EnemyMarker</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -956,9 +953,6 @@
     <ClInclude Include="Source\Mame\Game\EnemyAI_Tutorial.h">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Taki174\EnemyMarker.h">
-      <Filter>mamelib\Taki174\EnemyMarker</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">
@@ -1190,9 +1184,6 @@
     </Filter>
     <Filter Include="mamelib\Shader\Fbx\tama">
       <UniqueIdentifier>{5c6905b6-72d2-4c55-b844-0d827cbcb3f6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="mamelib\Taki174\EnemyMarker">
-      <UniqueIdentifier>{e221cda6-22aa-4cdc-835e-8e4da399c04b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

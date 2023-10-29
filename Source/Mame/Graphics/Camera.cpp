@@ -36,7 +36,7 @@ void Camera::TitleUpdate(const float& elapsedTime)
 
         break;
     case static_cast<UINT>(STATE::Move0):
-    {
+    { // å„ÇÎÇ…à¯Ç≠
         float moveSpeed = 6.0f;
         float place = 27.0f;
 
@@ -53,6 +53,7 @@ void Camera::TitleUpdate(const float& elapsedTime)
     }
         break;
     case static_cast<UINT>(STATE::Move1):
+        // èôÅXÇ…ìÆÇ≠
         easingTimer += elapsedTime;
 
         if (easingTimer >= 0.5f)
@@ -60,12 +61,27 @@ void Camera::TitleUpdate(const float& elapsedTime)
             easingTimer = 0.0f;
             angle = 0.0f;
             titleState = static_cast<UINT>(STATE::Move2);
+
+            isWhite = false;
         }
 
         break;
     case static_cast<UINT>(STATE::Move2):
-    {
+    { // âÒì]ÇµÇ»Ç™ÇÁìÆÇ≠
         isFocusCenter = true;
+
+        constexpr float maxAngle = DirectX::XMConvertToRadians(-720);
+
+        if (angle <= maxAngle * 0.4f)
+        {
+            if (!isWhite && !GetIsFogWhite())
+            {
+                SetIsFogWhite(true);
+                SetFogTimer(0.0f);
+                
+                isWhite = true;
+            }
+        }
 
         float maxTime = 1.0f;
         float angleValue;
@@ -92,15 +108,14 @@ void Camera::TitleUpdate(const float& elapsedTime)
 
         GetTransform()->SetPosition(vec);
 
-        //if (angle <= DirectX::XMConvertToRadians(-360))
-        if (angle <= DirectX::XMConvertToRadians(-720))
+        if (angle <= maxAngle)
         {
             titleState = static_cast<UINT>(STATE::Move3);
         }
     }
         break;
     case static_cast<UINT>(STATE::Move3):
-    {
+    { // ê^ÇÒíÜÇ…à⁄ìÆ
         isFocusCenter = false;
 
         float moveSpeed = 6.0f;
@@ -122,7 +137,7 @@ void Camera::TitleUpdate(const float& elapsedTime)
 
         break;
     case static_cast<UINT>(STATE::Move4):
-    {
+    { // è„Ç…à⁄ìÆ
         isFocusCenter = true;
 
         float moveSpeed = 12.0f;
@@ -148,7 +163,7 @@ void Camera::TitleUpdate(const float& elapsedTime)
     }
         break;
     case static_cast<UINT>(STATE::Move5):
-    {
+    { // â∫Ç…à⁄ìÆ
         isFocusCenter = true;
 
         float moveSpeed = 12.0f;
@@ -164,6 +179,10 @@ void Camera::TitleUpdate(const float& elapsedTime)
             GetTransform()->SetPosition(DirectX::XMFLOAT3(pos.x, place, pos.z));
 
             titleState = static_cast<UINT>(STATE::Move0);
+
+            // fogÇÃêFÇïœÇ¶ÇÈ
+            SetIsFogWhite(false);
+            SetFogTimer(0.0f);
         }
 
     }

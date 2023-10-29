@@ -414,6 +414,7 @@ void SceneGame::Update(const float& elapsedTime)
         }
     }
 
+    // Fog
     if (PlayerManager::Instance().isChange)
     {
         if (PlayerManager::Instance().GetFog())
