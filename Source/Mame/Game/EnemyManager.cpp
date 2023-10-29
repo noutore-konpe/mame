@@ -1,5 +1,6 @@
 #include "EnemyManager.h"
 
+#include "../../Mame/framework.h"
 #include "../../Taki174/Common.h"
 #include "../../Taki174/FunctionXMFloat3.h"
 #include "../../Taki174/NumeralManager.h"
@@ -141,10 +142,9 @@ void EnemyManager::Render(const float scale, ID3D11PixelShader* psShader)
 {
     for (Enemy*& enemy : enemies_)
     {
-        // ƒJƒƒ‰ŠO‚È‚ç•`‰æ‚µ‚È‚¢
-        bool isInCamera = false;
-        Sprite::ConvertToScreenPos(enemy->GetTransform()->GetPosition(), &isInCamera);
-        if (false == isInCamera) { continue; }
+        // ƒS[ƒŒƒ€‚Ì•‚Ì‘å‚«‚³‚Ì“s‡ã‚Å‚â‚ç‚È‚¢•û‚ª‚¢‚¢‚Æ”»’f(¦•C³•Ï”‚Ì’Ç‰Á‚ª•K—v)
+        //// ‰æ–ÊŠO‚È‚ç•`‰æ‚µ‚È‚¢
+        //if (false == enemy->IsInScreenJudgment()) { continue; }
 
         enemy->Render(scale, psShader);
     }
@@ -153,6 +153,20 @@ void EnemyManager::Render(const float scale, ID3D11PixelShader* psShader)
 
 }
 
+void EnemyManager::RenderDirectionMarker()
+{
+    using DirectX::XMFLOAT2;
+
+    Graphics& graphics = Graphics::Instance();
+
+    for (Enemy*& enemy : enemies_)
+    {
+        // ¦‰æ–Ê"“à"‚È‚ç•`‰æ‚µ‚È‚¢
+        if (true == enemy->IsInScreenJudgment()) { continue; }
+
+        enemy->RenderDirectionMarker();
+    }
+}
 
 // ƒGƒlƒ~[“o˜^
 void EnemyManager::Register(Enemy* enemy)

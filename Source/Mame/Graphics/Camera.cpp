@@ -644,6 +644,8 @@ void Camera::CancelLockOn()
 
     GetTransform()->SetRotationY(rotY);
     GetTransform()->SetRotationX(rotX);
+
+    activeLockOn = false;
 }
 
 

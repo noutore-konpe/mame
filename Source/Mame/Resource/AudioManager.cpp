@@ -52,6 +52,17 @@ void AudioManager::LoadAudio()
             se_[static_cast<int>(SE::Hit_7)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Hit.wav");
             se_[static_cast<int>(SE::Hit_8)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Hit.wav");
             se_[static_cast<int>(SE::Hit_9)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Hit.wav");
+
+            se_[static_cast<int>(SE::Finishing_0)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Finishing.wav");
+            se_[static_cast<int>(SE::Finishing_1)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Finishing.wav");
+            se_[static_cast<int>(SE::Finishing_2)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Finishing.wav");
+            se_[static_cast<int>(SE::Finishing_3)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Finishing.wav");
+            se_[static_cast<int>(SE::Finishing_4)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Finishing.wav");
+            se_[static_cast<int>(SE::Finishing_5)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Finishing.wav");
+            se_[static_cast<int>(SE::Finishing_6)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Finishing.wav");
+            se_[static_cast<int>(SE::Finishing_7)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Finishing.wav");
+            se_[static_cast<int>(SE::Finishing_8)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Finishing.wav");
+            se_[static_cast<int>(SE::Finishing_9)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/Finishing.wav");
             
             se_[static_cast<int>(SE::SlowMotion_0)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SlowMotion.wav");
             se_[static_cast<int>(SE::SlowMotion_1)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/SlowMotion.wav");
@@ -68,6 +79,9 @@ void AudioManager::LoadAudio()
             se_[static_cast<int>(SE::Laser_0)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/laser.wav");
             se_[static_cast<int>(SE::Laser_1)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/laser.wav");
 
+            se_[static_cast<int>(SE::LaserRest_0)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/LaserRest.wav");
+            se_[static_cast<int>(SE::LaserRest_1)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/LaserRest.wav");
+
             se_[static_cast<int>(SE::PlayerDash)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/PlayerDash.wav");
             
             se_[static_cast<int>(SE::GolemPanchi_0)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemPanchi.wav");
@@ -79,6 +93,31 @@ void AudioManager::LoadAudio()
             se_[static_cast<int>(SE::GolemEntry_0)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemPanchi.wav");
             se_[static_cast<int>(SE::GolemEntry_1)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemPanchi.wav");
             se_[static_cast<int>(SE::GolemEntry_2)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemPanchi.wav");
+
+            se_[static_cast<int>(SE::GolemFinishing_0)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemFinishing.wav");
+            se_[static_cast<int>(SE::GolemFinishing_1)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemFinishing.wav");
+            se_[static_cast<int>(SE::GolemFinishing_2)] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GolemFinishing.wav");
+
+            for (int index = static_cast<int>(SE::GetExp_01); index < static_cast<int>(SE::GetExp_20)+1; index++)
+            {
+                se_[index] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GetExp.wav");
+            }
+            
+            for (int index = static_cast<int>(SE::BookShot_01); index < static_cast<int>(SE::BookShot_20)+1; index++)
+            {
+                se_[index] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/BookShot.wav");
+            }
+
+            for (int index = static_cast<int>(SE::LevelUp_0); index < static_cast<int>(SE::LevelUp_2) + 1; index++)
+            {
+                se_[index] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/LevelUp.wav");
+            }
+
+            for (int index = static_cast<int>(SE::GetSkillCard_0); index < static_cast<int>(SE::GetSkillCard_2) + 1; index++)
+            {
+                se_[index] = std::make_unique<Audio>(xAudio2.Get(), L"./resources/audio/SE/GetSkillCard.wav");
+            }
+
         }
     }
 
@@ -153,6 +192,36 @@ void AudioManager::LoadAudio()
             se_[static_cast<int>(SE::GolemEntry_0)]->Volume(1.0f);
             se_[static_cast<int>(SE::GolemEntry_1)]->Volume(1.0f);
             se_[static_cast<int>(SE::GolemEntry_2)]->Volume(1.0f);
+
+            for (int index = static_cast<int>(SE::GolemFinishing_0); index < static_cast<int>(SE::GolemFinishing_2) + 1; index++)
+            {
+                se_[index]->Volume(0.6f);
+            }
+
+            for (int index = static_cast<int>(SE::Finishing_0); index < static_cast<int>(SE::Finishing_2) + 1; index++)
+            {
+                se_[index]->Volume(0.3f);
+            }
+
+            for (int index = static_cast<int>(SE::GetExp_01); index < static_cast<int>(SE::GetExp_20) + 1; index++)
+            {
+                se_[index]->Volume(0.3f);
+            }
+
+            for (int index = static_cast<int>(SE::BookShot_01); index < static_cast<int>(SE::BookShot_20) + 1; index++)
+            {
+                se_[index]->Volume(0.5f);
+            }
+
+            for (int index = static_cast<int>(SE::LevelUp_0); index < static_cast<int>(SE::LevelUp_2) + 1; index++)
+            {
+                se_[index]->Volume(0.5f);
+            }
+
+            for (int index = static_cast<int>(SE::GetSkillCard_0); index < static_cast<int>(SE::GetSkillCard_2) + 1; index++)
+            {
+                se_[index]->Volume(1.0f);
+            }
         }
     }
 

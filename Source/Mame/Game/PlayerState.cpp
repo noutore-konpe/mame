@@ -13,6 +13,8 @@
 
 #include "../Resource/AudioManager.h"
 
+#include "../Other/Easing.h"
+
 namespace PlayerState
 {
     void NormalState::Initialize()
@@ -513,6 +515,19 @@ namespace PlayerState
             }
             break;
         case 1:
+            //起き上がりの際にアニメーションに合して移動させる
+            const int frameIndex = owner->model->GetCurrentKeyframeIndex();
+            if (frameIndex > getUpStartframe && frameIndex < getUpEndframe)
+            {
+                const int maxFrameTime = getUpEndframe - getUpStartframe;
+                float speed = Easing::OutCubic(
+                    static_cast<float>(frameIndex), static_cast<float>(maxFrameTime),
+                    2.0f, 1.0f) * elapsedTime;
+
+                auto* transform = owner->GetTransform();
+                transform->SetPosition(owner->CollidedPosition(transform->GetPosition() - (transform->CalcForward() * speed)));
+            }
+
             if (!owner->IsPlayAnimation())
             {
                 owner->ChangeState(Player::STATE::NORMAL);
@@ -615,7 +630,7 @@ namespace PlayerState
                             ))
                             {
                                 enemy->SaveBlowOffInfo(owner->GetTransform()->CalcForward(), owner->GetInflictBlowOffForceLevel());
-                                enemy->ApplyDamage(owner->GetBasePower() * 1.5f + 2.0f * owner->counterDamage, collider.position, owner,0,true);
+                                enemy->ApplyDamage((owner->GetBasePower() * 1.5f + 2.0f * owner->counterDamage) * owner->counterMuls, collider.position, owner,0,true);
                                 break;
                             }
                         }

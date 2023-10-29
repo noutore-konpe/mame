@@ -119,8 +119,7 @@ namespace PlayerSkill
             L"./Resources/Image/Card/ThirdAttack.png",
             L"./Resources/Image/Icon/iconThirdAttack.png",
             "Can Triple Attack",
-            BaseSkill::COMMON,
-            true) 
+            BaseSkill::COMMON) 
     {
         card2 = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Card/ThirdAttack2.png", "./Resources/Shader/sprite_dissolve_ps.cso");
         card2->GetSpriteDissolve()->SetMaskTextureValue(2);
@@ -139,16 +138,17 @@ namespace PlayerSkill
     {
         overlap++;
         if (overlap <= 1)return;
+
+        player->jabMotionAtkMuls[3] += mulIncreasing;
     }
     CanCounterAttack::CanCounterAttack(Player* player) :
         BaseSkill(player,
             L"./Resources/Image/Card/Counter.png",
             L"./Resources/Image/Icon/iconCounter.png",
             "Can Counter Attack",
-            BaseSkill::COMMON,
-            true) 
+            BaseSkill::COMMON) 
     {
-        card2 = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Card/ThirdAttack2.png", "./Resources/Shader/sprite_dissolve_ps.cso");
+        card2 = std::make_unique<Sprite>(Graphics::Instance().GetDevice(), L"./Resources/Image/Card/Counter2.png", "./Resources/Shader/sprite_dissolve_ps.cso");
         card2->GetSpriteDissolve()->SetMaskTextureValue(2);
     }
 
@@ -165,6 +165,8 @@ namespace PlayerSkill
     {
         overlap++;
         if (overlap <= 1)return;
+
+        player->counterMuls += mulIncreasing;
     }
     void ChangeHomingSkill::Initialize()
     {

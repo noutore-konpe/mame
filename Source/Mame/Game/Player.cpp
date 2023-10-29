@@ -20,6 +20,7 @@
 #include "Collision.h"
 
 #include "../Resource/AudioManager.h"
+#include "SlowMotionManager.h"
 
 
 // コンストラクタ
@@ -123,8 +124,9 @@ void Player::Initialize()
     jabMotionAtkMuls[1] = 1.2f;
     jabMotionAtkMuls[2] = 3.5f;
     hardAtkMuls = 2.4f;
+    counterMuls = 1.0f;
 
-    poisonSlipDamage = 3.0f;
+    poisonSlipDamage = 50.0f;
     poisonEffectTime = 30.0f;
 
     health = 400.0f;
@@ -340,7 +342,6 @@ Character::DamageResult Player::ApplyDamage(float damage, const DirectX::XMFLOAT
         case HitReaction::HARD:
 
             Blow(result.hitVector);
-            ChangeState(STATE::STAGGER_HARD);
             break;
         }
     }
@@ -889,6 +890,8 @@ void Player::SelectSkillUpdate(float elapsedTime)
             buttonDown = true;
             // カード選択音
             AudioManager::Instance().PlaySE(SE_NAME::CardSelect, SE::CardSelect0, SE::CardSelect3);
+
+
         }
         else if (ax <= -0.5f && !buttonDown)
         {
@@ -916,6 +919,9 @@ void Player::SelectSkillUpdate(float elapsedTime)
 
             // 選択音を鳴らす
             AudioManager::Instance().PlaySE(SE::Enter);
+
+            // カードが消えていく音
+            AudioManager::Instance().PlaySE(SE_NAME::GetSkillCard, SE::GetSkillCard_0, SE::GetSkillCard_2);
         }
         break;
 
@@ -1098,7 +1104,7 @@ void Player::LockOnUpdate()
         EnemyManager::Instance().GetEnemyCount() <= 0)
     {
         LockOnInitialize();
-        Camera::Instance().activeLockOn = false;
+        Camera::Instance().CancelLockOn();
         return;
     }
 
@@ -1109,7 +1115,7 @@ void Player::LockOnUpdate()
         if (ChangeLockOnTarget(1))return;
         else if (ChangeLockOnTarget(-1))return;
 
-        Camera::Instance().activeLockOn = false;
+        Camera::Instance().CancelLockOn();
         return;
     }
 
@@ -1144,24 +1150,12 @@ void Player::LockOnInitialize()
         // 死んでいたらcontinue
         if (true == enemy->GetIsDead()) { continue; }
 
-        const XMFLOAT3& ePos = enemy->GetTransform()->GetPosition();
-
-
-#if 1   // カメラ外判定
-        {
-            const XMFLOAT3& cameraPos              = camera.GetTransform()->GetPosition();
-            const XMFLOAT3  vecN_FromEnemyToCamera = ::XMFloat3Normalize(cameraPos - ePos);
-            const XMFLOAT3  cameraForwardN         = camera.GetForward();
-
-            // [エネミー→カメラ]ベクトルに対してカメラの前方ベクトル(法線)の表裏の取得
-            float dot = ::XMFloat3Dot(vecN_FromEnemyToCamera, cameraForwardN);
-
-            // カメラ外にいたらロックオンしない（ある程度オモテでもウラ扱いにする）
-            // ※カメラが俯瞰になっていくと少しカメラ外でもロックオンできてしまうやり方
-            if (dot > -0.8f) { continue; }
-        }
+#if 1   // 画面内外判定
+        // 画面外にいたらロックオン候補から外す
+        if (false == enemy->IsInScreenJudgment()) { continue; }
 #endif
 
+        const XMFLOAT3& ePos = enemy->GetTransform()->GetPosition();
         float length1 = Length(ePos - GetTransform()->GetPosition());
         if (length0 > length1)
         {
@@ -1194,11 +1188,14 @@ const bool Player::BlownUpdate(float elapsedTime)
 
 void Player::Blow(DirectX::XMFLOAT3 blowVec)
 {
+    if (isDead)return;
     this->blowVec = Normalize(blowVec);
     float rot = acosf(Normalize(-blowVec).z);
     //今回の外積のY成分はhitVector.xなので左右判定はこれを使う
     GetTransform()->SetRotationY((blowVec.x > 0) ? -rot : rot);
     blowTimer = blowTime;
+
+    stateMachine->ChangeState(STATE::STAGGER_HARD);
 }
 
 void Player::ActiveCounter()
@@ -1262,15 +1259,19 @@ void Player::OnDamaged()
 
 void Player::OnDead(DamageResult result)
 {
-    stateMachine->ChangeState(DIE);
-
     Blow(result.hitVector);
+
+    stateMachine->ChangeState(DIE);
 
     PlayerManager::Instance().SetLifeTime(lifeTimer);
     PlayerManager::Instance().SetLevel(level);
 
     Input::Instance().GetGamePad().Vibration(0.6f, 2.0f);
     Camera::Instance().ScreenVibrate(0.4f, 2.0f);
+
+    SlowMotionManager::Instance().ExecuteSlowMotion();
+
+    AudioManager::Instance().PlaySE(SE_NAME::GolemFinishing, SE::GolemFinishing_0, SE::GolemFinishing_2);
 }
 
 void Player::ChangeState(int newState)
@@ -1300,6 +1301,8 @@ void Player::LevelUpdate()
         levelUpExp += 10;
 
         drawDirectionState = 0;
+
+        AudioManager::Instance().PlaySE(SE_NAME::LevelUp, SE::LevelUp_0, SE::LevelUp_2);
 
         //レベルが上がると能力を取得出来る
         isSelectingSkill = true;

@@ -64,6 +64,17 @@ enum class SE
     Hit_7, // ヒット音
     Hit_8, // ヒット音
     Hit_9, // ヒット音
+
+    Finishing_0, // とどめのヒット音
+    Finishing_1, // とどめのヒット音
+    Finishing_2, // とどめのヒット音
+    Finishing_3, // とどめのヒット音
+    Finishing_4, // とどめのヒット音
+    Finishing_5, // とどめのヒット音
+    Finishing_6, // とどめのヒット音
+    Finishing_7, // とどめのヒット音
+    Finishing_8, // とどめのヒット音
+    Finishing_9, // とどめのヒット音
     
     SlowMotion_0, // slowMotion
     SlowMotion_1, // slowMotion
@@ -79,6 +90,8 @@ enum class SE
 
     Laser_0,
     Laser_1,
+    LaserRest_0,
+    LaserRest_1,
 
     PlayerDash,
 
@@ -92,7 +105,60 @@ enum class SE
     GolemEntry_1, // 
     GolemEntry_2, // 
 
+    GolemFinishing_0,
+    GolemFinishing_1,
+    GolemFinishing_2,
 
+    GetExp_01,
+    GetExp_02,
+    GetExp_03,
+    GetExp_04,
+    GetExp_05,
+    GetExp_06,
+    GetExp_07,
+    GetExp_08,
+    GetExp_09,
+    GetExp_10,
+    GetExp_11,
+    GetExp_12,
+    GetExp_13,
+    GetExp_14,
+    GetExp_15,
+    GetExp_16,
+    GetExp_17,
+    GetExp_18,
+    GetExp_19,
+    GetExp_20,
+
+    BookShot_01,
+    BookShot_02,
+    BookShot_03,
+    BookShot_04,
+    BookShot_05,
+    BookShot_06,
+    BookShot_07,
+    BookShot_08,
+    BookShot_09,
+    BookShot_10,
+    BookShot_11,
+    BookShot_12,
+    BookShot_13,
+    BookShot_14,
+    BookShot_15,
+    BookShot_16,
+    BookShot_17,
+    BookShot_18,
+    BookShot_19,
+    BookShot_20,
+
+
+    LevelUp_0,
+    LevelUp_1,
+    LevelUp_2,
+
+    GetSkillCard_0,
+    GetSkillCard_1,
+    GetSkillCard_2,
 
     SE_Max,
 };
@@ -106,14 +172,25 @@ enum class SE_NAME
     SwordSlash3,
     SwordSlash4,
     Hit,
+    Finishing,//とどめをさした時のヒット音
     SlowMotion,
     CounterBegin,
     BlackHole,
     Laser,
+    LaserRest,//レーザーの発射後再生されるSE
     PlayerDash,
 
     GolemPanchi,
     GolemEntry,
+    GolemFinishing,//ゴーレムにとどめを刺した時のヒット音
+
+
+    GetExp,
+
+    BookShot,
+
+    LevelUp,
+    GetSkillCard,
 
     Max,
 };

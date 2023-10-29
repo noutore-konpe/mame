@@ -26,6 +26,7 @@ public:
     void Update(const float elapsedTime);
     void End();
     void Render(const float scale, ID3D11PixelShader* psShader = nullptr);
+    void RenderDirectionMarker();
     void DrawDebug();
 
     void RenderShadow(const float scale, ID3D11PixelShader* psShader = nullptr);

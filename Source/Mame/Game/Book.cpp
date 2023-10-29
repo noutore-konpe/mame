@@ -10,6 +10,8 @@
 #include "EnemyManager.h"
 #include "Collision.h"
 
+#include "../Resource/AudioManager.h"
+
 int Book::totalNum = 0;
 
 // コンストラクタ
@@ -279,6 +281,8 @@ bool Book::LaunchProjectile(const float elapsedTime, const DirectX::XMFLOAT3& ve
 
         // 発射までの時間を設定
         launchTimer = launchTime;
+
+        AudioManager::Instance().PlaySE(SE_NAME::BookShot, SE::BookShot_01, SE::BookShot_20);
 
         return true; // 発射した
     }

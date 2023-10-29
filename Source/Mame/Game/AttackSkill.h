@@ -75,6 +75,9 @@ namespace PlayerSkill
 
     private:
         std::unique_ptr<Sprite> card2;
+
+        //è„è∏çUåÇî{ó¶
+        const float mulIncreasing = 0.2f;
     };
 
     class CanCounterAttack : public BaseSkill
@@ -88,6 +91,9 @@ namespace PlayerSkill
 
     private:
         std::unique_ptr<Sprite> card2;
+
+        //è„è∏çUåÇî{ó¶
+        const float mulIncreasing = 0.2f;
     };
 
     class ChangeHomingSkill : public BaseSkill
@@ -117,7 +123,7 @@ namespace PlayerSkill
         void Overlaping()override;
 
     private:
-        const float damageIncreasing = 3.0f;
+        const float damageIncreasing = 30.0f;
         const float effectTimeIncreasing = 5.0f;
 
         std::unique_ptr<Sprite> card2;

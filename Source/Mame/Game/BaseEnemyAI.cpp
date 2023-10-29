@@ -5,6 +5,8 @@
 #include "../Scene/SceneGame.h"
 #include "EnemyManager.h"
 
+#include "../Resource/AudioManager.h"
+
 BaseEnemyAI::BaseEnemyAI()
 {
     // EnemyManagerのProjectileManagerにアクセスできるようにポインタを持っておく
@@ -13,7 +15,7 @@ BaseEnemyAI::BaseEnemyAI()
 
 void BaseEnemyAI::Initialize()
 {
-    Character::Initialize();
+    Enemy::Initialize();
 
     //ジョイント位置取得するために適当なアニメーション再生
     //※アニメーションを流しとかないとkeyframeに情報が入らないからジョイント位置がとれない
@@ -24,7 +26,7 @@ void BaseEnemyAI::Initialize()
 
 void BaseEnemyAI::Update(const float& elapsedTime)
 {
-    Character::Update(elapsedTime);
+    Enemy::Update(elapsedTime);
 
     // ノード更新
     UpdateNode(elapsedTime);
@@ -44,7 +46,7 @@ void BaseEnemyAI::Update(const float& elapsedTime)
 
 void BaseEnemyAI::Render(const float& scale, ID3D11PixelShader* psShader)
 {
-    Character::Render(scale, psShader);
+    Enemy::Render(scale, psShader);
 
 #if _DEBUG
     if (SceneGame::isDispCollision_)
@@ -94,6 +96,8 @@ void BaseEnemyAI::OnDead(DamageResult result)
 {
     // 吹っ飛ばす（事前にSaveBlowOffInfo関数などで吹っ飛び情報を保存しておく必要がある）
     BlowOff(blowOffVec_, blowOffForceLevel_);
+
+    AudioManager::Instance().PlaySE(SE_NAME::Finishing, SE::Finishing_0, SE::Finishing_2);
 }
 
 void BaseEnemyAI::ColliderInitialize()
