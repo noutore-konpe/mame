@@ -270,7 +270,6 @@ Character::DamageResult Character::ApplyDamage(float damage,const DirectX::XMFLO
         //エフェクト再生
         hitEffect->Play(hitPosition,DirectX::XMFLOAT3(2.0f,2.0f,2.0f),color);
 
-        AudioManager::Instance().PlaySE(SE_NAME::Hit, SE::Hit_0, SE::Hit_9);
     }
     //ダメージ通知
     else

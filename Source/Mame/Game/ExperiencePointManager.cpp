@@ -4,6 +4,7 @@
 #include "../Scene/SceneGame.h"
 #include "PlayerManager.h"
 #include "Collision.h"
+#include "../Resource/AudioManager.h"
 
 void ExperiencePointManager::Initialize()
 {
@@ -131,6 +132,8 @@ void ExperiencePointManager::CollisionExpVsPlayer(const float /*elapsedTime*/)
             Remove(exp);
 
             PlayerManager::Instance().GetPlayer()->ApplyExp(5);
+
+            AudioManager::Instance().PlaySE(SE_NAME::GetExp, SE::GetExp_01, SE::GetExp_20);
         }
 
     }

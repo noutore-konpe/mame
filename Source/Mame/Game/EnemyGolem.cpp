@@ -377,6 +377,9 @@ void EnemyGolem::UpdateConstants()
 void EnemyGolem::OnDead(DamageResult result)
 {
     GetStateMachine()->ChangeState(static_cast<UINT>(StateMachineState::DeathState));
+
+
+    AudioManager::Instance().PlaySE(SE_NAME::GolemFinishing, SE::GolemFinishing_0, SE::GolemFinishing_2);
 }
 
 void EnemyGolem::SubRender()

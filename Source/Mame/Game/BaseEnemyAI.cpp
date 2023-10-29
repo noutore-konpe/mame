@@ -5,6 +5,8 @@
 #include "../Scene/SceneGame.h"
 #include "EnemyManager.h"
 
+#include "../Resource/AudioManager.h"
+
 BaseEnemyAI::BaseEnemyAI()
 {
     // EnemyManagerのProjectileManagerにアクセスできるようにポインタを持っておく
@@ -94,6 +96,8 @@ void BaseEnemyAI::OnDead(DamageResult result)
 {
     // 吹っ飛ばす（事前にSaveBlowOffInfo関数などで吹っ飛び情報を保存しておく必要がある）
     BlowOff(blowOffVec_, blowOffForceLevel_);
+
+    AudioManager::Instance().PlaySE(SE_NAME::Finishing, SE::Finishing_0, SE::Finishing_2);
 }
 
 void BaseEnemyAI::ColliderInitialize()

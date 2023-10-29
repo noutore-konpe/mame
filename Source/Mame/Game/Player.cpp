@@ -20,6 +20,7 @@
 #include "Collision.h"
 
 #include "../Resource/AudioManager.h"
+#include "SlowMotionManager.h"
 
 
 // コンストラクタ
@@ -889,6 +890,8 @@ void Player::SelectSkillUpdate(float elapsedTime)
             buttonDown = true;
             // カード選択音
             AudioManager::Instance().PlaySE(SE_NAME::CardSelect, SE::CardSelect0, SE::CardSelect3);
+
+
         }
         else if (ax <= -0.5f && !buttonDown)
         {
@@ -916,6 +919,9 @@ void Player::SelectSkillUpdate(float elapsedTime)
 
             // 選択音を鳴らす
             AudioManager::Instance().PlaySE(SE::Enter);
+
+            // カードが消えていく音
+            AudioManager::Instance().PlaySE(SE_NAME::GetSkillCard, SE::GetSkillCard_0, SE::GetSkillCard_2);
         }
         break;
 
@@ -1274,6 +1280,10 @@ void Player::OnDead(DamageResult result)
 
     Input::Instance().GetGamePad().Vibration(0.6f, 2.0f);
     Camera::Instance().ScreenVibrate(0.4f, 2.0f);
+
+    SlowMotionManager::Instance().ExecuteSlowMotion();
+
+    AudioManager::Instance().PlaySE(SE_NAME::GolemFinishing, SE::GolemFinishing_0, SE::GolemFinishing_2);
 }
 
 void Player::ChangeState(int newState)
@@ -1303,6 +1313,8 @@ void Player::LevelUpdate()
         levelUpExp += 10;
 
         drawDirectionState = 0;
+
+        AudioManager::Instance().PlaySE(SE_NAME::LevelUp, SE::LevelUp_0, SE::LevelUp_2);
 
         //レベルが上がると能力を取得出来る
         isSelectingSkill = true;
