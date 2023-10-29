@@ -1271,9 +1271,9 @@ void Player::OnDamaged()
 
 void Player::OnDead(DamageResult result)
 {
-    stateMachine->ChangeState(DIE);
-
     Blow(result.hitVector);
+
+    stateMachine->ChangeState(DIE);
 
     PlayerManager::Instance().SetLifeTime(lifeTimer);
     PlayerManager::Instance().SetLevel(level);
