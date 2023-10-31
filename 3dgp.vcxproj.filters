@@ -496,9 +496,6 @@
     <ClCompile Include="Source\Mame\Game\MagicCircleGolemAttack2State.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Taki174\DebugRenderer.cpp">
-      <Filter>mamelib\Taki174</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Mame\Game\BlackHole.cpp">
       <Filter>mamelib\Mame\Game\Ability</Filter>
     </ClCompile>
@@ -553,6 +550,7 @@
     <ClCompile Include="Source\Mame\Game\EnemyAI_Tutorial.cpp">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Taki174\DebugRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Mame\Scene\BaseScene.h">
@@ -896,9 +894,6 @@
     <ClInclude Include="Source\Mame\Game\MagicCircleGolemAttack2State.h">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyGolem\Belongings</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Taki174\DebugRenderer.h">
-      <Filter>mamelib\Taki174</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Mame\Game\BlackHole.h">
       <Filter>mamelib\Mame\Game\Ability</Filter>
     </ClInclude>
@@ -953,6 +948,7 @@
     <ClInclude Include="Source\Mame\Game\EnemyAI_Tutorial.h">
       <Filter>mamelib\Mame\Game\Character\Enemy\EnemyAI</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Taki174\DebugRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\fullscreen_quad.hlsli">

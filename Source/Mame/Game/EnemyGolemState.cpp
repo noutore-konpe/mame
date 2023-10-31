@@ -19,6 +19,8 @@
 
 #include "Collision.h"
 
+#include "ExperiencePointManager.h"
+
 // DummyState
 namespace EnemyGolemState
 {
@@ -1027,7 +1029,12 @@ namespace EnemyGolemState
             }
             else
             {
-                owner->Destroy();
+                ExperiencePointManager& expManager = ExperiencePointManager::Instance();
+                const DirectX::XMFLOAT3& pos = owner->GetPosition();
+                const int		exp = owner->GetDropExpCount();
+                expManager.CreateExp(pos, exp);
+
+                owner->Destroy();                
             }
         }
     }
