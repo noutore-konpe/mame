@@ -4,8 +4,9 @@
 #include <memory>
 
 #include "../Mame/Other/misc.h"
-//#include "Misc.h"
-#include "Common.h"
+
+
+//#include "Common.h"
 
 DebugRenderer::DebugRenderer(ID3D11Device* device)
 {

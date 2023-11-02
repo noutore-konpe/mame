@@ -185,8 +185,8 @@ void WaveManager::InitWave(const int waveIndex)
         // ウェーブ超過分パラメータを強化する
         const int addParamCount = currentWaveIndex_ - waveIndexEnd;
         endlessWaveHp_  = EndlessSet::HP       + Set::ADD_HP  * static_cast<float>(addParamCount);
-        endlessGolemHp_ = EndlessSet::GOLEM_HP + Set::ADD_HP  * static_cast<float>(addParamCount);
         endlessWaveAtk_ = EndlessSet::ATK      + Set::ADD_ATK * static_cast<float>(addParamCount);
+        endlessGolemHp_ = EndlessSet::GOLEM_HP + Set::ADD_HP  * static_cast<float>(addParamCount);
     }
     else
     {
@@ -210,7 +210,9 @@ void WaveManager::InitWave(const int waveIndex)
     // ゴーレム生成位置の位置使用済みフラグをリセットする
     ResetSpawnGolemPositionIsUsedFlag();
 
-    endlessWaveExp_ = EndlessSet::EXP;
+
+    endlessWaveExp_  = EndlessSet::EXP;
+    endlessGolemExp_ = 30;
 }
 
 
