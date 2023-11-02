@@ -102,8 +102,9 @@ void EnemyAI_2::Update(const float& elapsedTime)
 {
     BaseEnemyAI::Update(elapsedTime);
 
-    // Œ•‚Ì‚‚³’²®
-    sword_->GetTransform()->AddPositionY(-0.1f);
+    // Œ•‚ÌˆÊ’u’²®
+    sword_->GetTransform()->AddPositionY(-0.175f);
+    sword_->GetTransform()->AddPosition(-this->GetTransform()->CalcForward() * 0.2f);
 }
 
 

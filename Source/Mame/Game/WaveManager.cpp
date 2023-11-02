@@ -35,7 +35,10 @@ namespace EndlessSet
 
 #if _DEBUG
 WaveEnemySet waveEnemySetTest[] = {
-     WaveEnemySet(0.0f, "EnemyAI_1",  ::GetGatewayPosition(0), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.01f, "EnemyGolem", WaveManager::Instance().GetSpawnGolemPosition(-1), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.01f, "EnemyGolem", WaveManager::Instance().GetSpawnGolemPosition(-1), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.01f, "EnemyGolem", WaveManager::Instance().GetSpawnGolemPosition(-1), Set::HP, Set::ATK, 5),
+     WaveEnemySet(0.01f, "EnemyGolem", WaveManager::Instance().GetSpawnGolemPosition(-1), Set::HP, Set::ATK, 5),
 };
 #endif
 WaveEnemySet waveEnemySet0[] = {
@@ -70,7 +73,7 @@ WaveEnemySet waveEnemySet4[] = {
     WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 4.0f), Set::ATK + (Set::ADD_ATK * 4.0f), 10),
 };
 WaveEnemySet waveEnemySet5[] = {
-    WaveEnemySet(1.0f, "EnemyGolem", SceneGame::stageCenter, Set::GolemHp + (Set::ADD_HP * 5.0f), Set::ATK + (Set::ADD_ATK * 5.0f), 30),
+    WaveEnemySet(1.0f, "EnemyGolem", WaveManager::Instance().GetSpawnGolemPosition(0)/*中心*/, Set::GolemHp + (Set::ADD_HP * 5.0f), Set::ATK + (Set::ADD_ATK * 5.0f), 30),
 };
 WaveEnemySet waveEnemySet6[] = {
     WaveEnemySet(0.5f, "EnemyAI_1", ::GetGatewayPosition(0), Set::HP + (Set::ADD_HP * 6.0f), Set::ATK + (Set::ADD_ATK * 6.0f), 10),
@@ -102,8 +105,8 @@ WaveEnemySet waveEnemySet9[] = {
     WaveEnemySet(1.0f, "EnemyAI_3", ::GetGatewayPosition(1), Set::HP + (Set::ADD_HP * 9.0f), Set::ATK + (Set::ADD_ATK * 9.0f), 13),
 };
 WaveEnemySet waveEnemySet10[] = {
-    WaveEnemySet(0.5f, "EnemyGolem", SceneGame::stageCenter, Set::GolemHp + (Set::ADD_HP * 10.0f), Set::ATK + (Set::ADD_ATK * 10.0f), 40),
-    WaveEnemySet(2.5f, "EnemyGolem", SceneGame::stageCenter, Set::GolemHp + (Set::ADD_HP * 10.0f), Set::ATK + (Set::ADD_ATK * 10.0f), 40),
+    WaveEnemySet(0.5f, "EnemyGolem", WaveManager::Instance().GetSpawnGolemPosition(1)/*左*/, Set::GolemHp + (Set::ADD_HP * 10.0f), Set::ATK + (Set::ADD_ATK * 10.0f), 40),
+    WaveEnemySet(2.5f, "EnemyGolem", WaveManager::Instance().GetSpawnGolemPosition(2)/*右*/, Set::GolemHp + (Set::ADD_HP * 10.0f), Set::ATK + (Set::ADD_ATK * 10.0f), 40),
 };
 #pragma endregion
 
@@ -114,17 +117,17 @@ WaveEnemySet waveEnemySet10[] = {
 #if _DEBUG
 Wave waveTest_ = { "WaveTest", "Test", std::size(waveEnemySetTest),  waveEnemySetTest };
 #endif
-Wave wave0_  = { "Wave0",  "None",    std::size(waveEnemySet0),  waveEnemySet0  };
-Wave wave1_  = { "Wave1",  "None",    std::size(waveEnemySet1),  waveEnemySet1  };
-Wave wave2_  = { "Wave2",  "None",    std::size(waveEnemySet2),  waveEnemySet2  };
-Wave wave3_  = { "Wave3",  "None",    std::size(waveEnemySet3),  waveEnemySet3  };
-Wave wave4_  = { "Wave4",  "None",    std::size(waveEnemySet4),  waveEnemySet4  };
-Wave wave5_  = { "Wave5",  "None",    std::size(waveEnemySet5),  waveEnemySet5  };
-Wave wave6_  = { "Wave6",  "None",    std::size(waveEnemySet6),  waveEnemySet6  };
-Wave wave7_  = { "Wave7",  "None",    std::size(waveEnemySet7),  waveEnemySet7  };
-Wave wave8_  = { "Wave8",  "None",    std::size(waveEnemySet8),  waveEnemySet8  };
-Wave wave9_  = { "Wave9",  "None",    std::size(waveEnemySet9),  waveEnemySet9  };
-Wave wave10_ = { "Wave10", "VsGolem", std::size(waveEnemySet10), waveEnemySet10 };
+Wave wave0_  = { "Wave0",  "None",      std::size(waveEnemySet0),  waveEnemySet0  };
+Wave wave1_  = { "Wave1",  "None",      std::size(waveEnemySet1),  waveEnemySet1  };
+Wave wave2_  = { "Wave2",  "None",      std::size(waveEnemySet2),  waveEnemySet2  };
+Wave wave3_  = { "Wave3",  "None",      std::size(waveEnemySet3),  waveEnemySet3  };
+Wave wave4_  = { "Wave4",  "None",      std::size(waveEnemySet4),  waveEnemySet4  };
+Wave wave5_  = { "Wave5",  "VsGolem",   std::size(waveEnemySet5),  waveEnemySet5  };
+Wave wave6_  = { "Wave6",  "None",      std::size(waveEnemySet6),  waveEnemySet6  };
+Wave wave7_  = { "Wave7",  "None",      std::size(waveEnemySet7),  waveEnemySet7  };
+Wave wave8_  = { "Wave8",  "None",      std::size(waveEnemySet8),  waveEnemySet8  };
+Wave wave9_  = { "Wave9",  "None",      std::size(waveEnemySet9),  waveEnemySet9  };
+Wave wave10_ = { "Wave10", "VsGolem*2", std::size(waveEnemySet10), waveEnemySet10 };
 #pragma endregion
 
 
@@ -165,23 +168,48 @@ void WaveManager::InitWave(const int waveIndex)
         // 現在のウェーブ番号をリセット
         currentWaveIndex_ = 0;
 #endif
-        // ウェーブ番号を超過している場合はエンドレスウェーブにする
-        const int waveIndexEnd = GetWaveIndexEnd();
-        if (currentWaveIndex_ > waveIndexEnd) endlessWaveFlag_ = true;
     }
 
-    // 現在のウェーブが出現させる敵の総数を残りの敵カウンターに代入
-    remainingEnemyCounter_ = waveParent_.children_[currentWaveIndex_].spawnEnemyCount_;
+    // ウェーブ番号を超過している場合はエンドレスウェーブにする
+    const int waveIndexEnd = GetWaveIndexEnd();
+    if (currentWaveIndex_ > waveIndexEnd)
+    {
+        // ウェーブシステムの都合上、一度ウェーブ番号がインクリメントされてから
+        // エンドレスウェーブに入るのでここでデクリメントしておく
+        --currentWaveIndex_;
+
+        endlessWaveFlag_       = true;
+
+        remainingEnemyCounter_ = 0;
+
+        // ウェーブ超過分パラメータを強化する
+        const int addParamCount = currentWaveIndex_ - waveIndexEnd;
+        endlessWaveHp_  = EndlessSet::HP       + Set::ADD_HP  * static_cast<float>(addParamCount);
+        endlessGolemHp_ = EndlessSet::GOLEM_HP + Set::ADD_HP  * static_cast<float>(addParamCount);
+        endlessWaveAtk_ = EndlessSet::ATK      + Set::ADD_ATK * static_cast<float>(addParamCount);
+    }
+    else
+    {
+        // 現在のウェーブが出現させる敵の総数を残りの敵カウンターに代入
+        remainingEnemyCounter_ = waveParent_.children_[currentWaveIndex_].spawnEnemyCount_;
+
+        // すべてのウェーブの敵の生成フラグをリセット
+        ResetWaveEnemySpawnFlag();
+
+        endlessWaveHp_  = EndlessSet::HP;
+        endlessGolemHp_ = EndlessSet::GOLEM_HP;
+        endlessWaveAtk_ = EndlessSet::ATK;
+    }
 
     // 休憩時間フラグリセット
     breakTimeFlag_ = false;
 
-    // すべてのウェーブの敵の生成フラグをリセット
-    ResetWaveEnemySpawnFlag();
+    endlessWaveCounter_     = 0;    // エンドレスウェーブを回した回数リセット
+    endlessWaveCreateCount_ = 0;    // エンドレスウェーブの敵を生成する数リセット
 
-    endlessWaveHp_  = EndlessSet::HP;
-    endlessGolemHp_ = EndlessSet::GOLEM_HP;
-    endlessWaveAtk_ = EndlessSet::ATK;
+    // ゴーレム生成位置の位置使用済みフラグをリセットする
+    ResetSpawnGolemPositionIsUsedFlag();
+
     endlessWaveExp_ = EndlessSet::EXP;
 }
 
@@ -223,8 +251,8 @@ void WaveManager::UpdateWave(const float elapsedTime)
             {
                 waveEnemy.name_ = "EnemyGolem";
 
-                // ステージの中心に生成位置を設定
-                waveEnemy.pos_ = SceneGame::stageCenter;
+                // ゴーレム生成位置取得(-1で位置配列の上から順番に取得する)
+                waveEnemy.pos_ = GetSpawnGolemPosition(-1);
 
                 waveEnemy.hp_ = endlessGolemHp_;
             }
@@ -312,6 +340,9 @@ void WaveManager::UpdateWave(const float elapsedTime)
             // エンドレスウェーブカウンターが５のときはゴーレムを生成するようにする
             if (endlessWaveCounter_ == 5)
             {
+                // ゴーレム生成位置の位置使用済みフラグをリセットする
+                ResetSpawnGolemPositionIsUsedFlag();
+
                 // ゴーレム1~3体生成するようにする
                 endlessWaveCreateCount_ = ::RandInt(1, 3);
             }
@@ -339,6 +370,52 @@ void WaveManager::UpdateWave(const float elapsedTime)
 
 }
 
+void WaveManager::DrawDebug()
+{
+#ifdef USE_IMGUI
+
+    if (true == endlessWaveFlag_)
+    {
+        if (ImGui::BeginMenu("EndlessWave"))
+        {
+            // エンドレスウェーブカウンター
+            int endlessWaveCounter = endlessWaveCounter_;
+            ImGui::InputInt("endlessWaveCounter", &endlessWaveCounter);
+
+            // エンドレスウェーブの生成する敵の数
+            int endlessWaveCreateCount = endlessWaveCreateCount_;
+            ImGui::InputInt("endlessWaveCreateCount", &endlessWaveCreateCount);
+
+            ImGui::EndMenu();
+        }
+    }
+    // 現在のウェーブ情報をデバッグ表示
+    else if (ImGui::BeginMenu("Wave"))
+    {
+        const Wave& currentWave = waveParent_.children_[currentWaveIndex_];
+
+        // 現在のウェーブの名前
+        std::string currentWaveName = currentWave.name_.c_str();
+        ImGui::InputText("CurrentWaveName", &currentWaveName.at(0), 1);
+
+        // 現在のウェーブについての備考
+        std::string currentWaveNote = currentWave.note_.c_str();
+        ImGui::InputText("CurrentWaveNote", &currentWaveNote.at(0), 1);
+
+        // 現在のウェーブ番号
+        int currentWaveindex = currentWaveIndex_;
+        ImGui::InputInt("CurrentWaveIndex", &currentWaveindex);
+
+        // 残りの敵の数
+        int remainingEnemyCount = remainingEnemyCounter_;
+        ImGui::InputInt("RemainingEnemyCount", &remainingEnemyCount);
+
+        ImGui::EndMenu();
+    }
+    ImGui::Separator();
+
+#endif
+}
 
 // 敵生成
 void WaveManager::SpawnEnemy(WaveEnemySet* waveEnemy)
@@ -399,49 +476,54 @@ void WaveManager::ResetWaveEnemySpawnFlag()
     }
 }
 
-void WaveManager::DrawDebug()
+
+// ゴーレム生成位置取得(-1で位置配列の上から順番に取得する)
+// ※Initializeとウェーブエンドレスのときしか
+// 　位置使用済みフラグのリセット処理を呼んでいないので
+// 　ウェーブエンドレスのとき以外での-1は非推奨
+const DirectX::XMFLOAT3 WaveManager::GetSpawnGolemPosition(int index)
 {
-#ifdef USE_IMGUI
+    using DirectX::XMFLOAT3;
 
-    if (true == endlessWaveFlag_)
+    // 番号超過修正
+    if (index > SPAWN_GOLEM_POSITION_COUNT_ - 1)
     {
-        if (ImGui::BeginMenu("EndlessWave"))
+        index = SPAWN_GOLEM_POSITION_COUNT_ - 1;
+    }
+
+    // 生成位置の指定があればその位置を返す
+    // ※指定生成の場合は位置使用済みフラグを立てないので
+    // 　同じ場所に生成できてしまうことに注意
+    if (index > -1)
+    {
+        return spawnGolemPositions_[index].position_;
+    }
+    // -1以下なら使われていない位置を上から順番に探す
+    else
+    {
+        for (SpawnGolemPosition& spawnGolemPosition : spawnGolemPositions_)
         {
-            // エンドレスウェーブカウンター
-            int endlessWaveCounter = endlessWaveCounter_;
-            ImGui::InputInt("endlessWaveCounter", &endlessWaveCounter);
+            // 使用済みの位置ならcontinue
+            if (true == spawnGolemPosition.isUsed_) { continue; }
 
-            // エンドレスウェーブの生成する敵の数
-            int endlessWaveCreateCount = endlessWaveCreateCount_;
-            ImGui::InputInt("endlessWaveCreateCount", &endlessWaveCreateCount);
+            // この位置を使用した
+            spawnGolemPosition.isUsed_ = true;
 
-            ImGui::EndMenu();
+            // この位置を返す
+            return spawnGolemPosition.position_;
         }
     }
-    // 現在のウェーブ情報をデバッグ表示
-    else if (ImGui::BeginMenu("Wave"))
+
+    // 空いている生成位置がなければ末尾の生成位置を返す
+    const int lastIndex = SPAWN_GOLEM_POSITION_COUNT_ - 1;
+    return spawnGolemPositions_[lastIndex].position_;
+}
+
+// ゴーレム生成位置の位置使用済みフラグをリセットする
+void WaveManager::ResetSpawnGolemPositionIsUsedFlag()
+{
+    for (SpawnGolemPosition& spawnGolemPosition : spawnGolemPositions_)
     {
-        const Wave& currentWave = waveParent_.children_[currentWaveIndex_];
-
-        // 現在のウェーブの名前
-        std::string currentWaveName = currentWave.name_.c_str();
-        ImGui::InputText("CurrentWaveName", &currentWaveName.at(0), 1);
-
-        // 現在のウェーブについての備考
-        std::string currentWaveNote = currentWave.note_.c_str();
-        ImGui::InputText("CurrentWaveNote", &currentWaveNote.at(0), 1);
-
-        // 現在のウェーブ番号
-        int currentWaveindex = currentWaveIndex_;
-        ImGui::InputInt("CurrentWaveIndex", &currentWaveindex);
-
-        // 残りの敵の数
-        int remainingEnemyCount = remainingEnemyCounter_;
-        ImGui::InputInt("RemainingEnemyCount", &remainingEnemyCount);
-
-        ImGui::EndMenu();
+        spawnGolemPosition.isUsed_ = false;
     }
-    ImGui::Separator();
-
-#endif
 }

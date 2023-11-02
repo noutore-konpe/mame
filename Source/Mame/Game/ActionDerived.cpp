@@ -133,7 +133,7 @@ const ActionBase::State IdleAction::Run(const float elapsedTime)
 			{
 				sword->PlayBlendAnimation(
 					Animation::Idle, Animation::Dash,
-					true, owner_->GetAnimationSpeed()
+					true, owner_->GetAnimationSpeed() * 0.5f
 				);
 			}
 		}
@@ -281,7 +281,7 @@ const ActionBase::State PursuitAction::Run(const float elapsedTime)
 			{
 				sword->PlayBlendAnimation(
 					Animation::Idle, Animation::Dash,
-					true, owner_->GetAnimationSpeed()
+					true, owner_->GetAnimationSpeed() * 0.5f
 				);
 			}
 		}
@@ -601,7 +601,9 @@ const ActionBase::State FlinchAction::Run(const float /*elapsedTime*/)
 			if (sword != nullptr)
 			{
 				// 待機アニメーションにしておく
-				sword->PlayAnimation(Animation::Idle, false, owner_->GetAnimationSpeed());
+				// 毎回リセットするために適当なアニメーションを入力しておく
+				sword->PlayAnimation(0, false, owner_->GetAnimationSpeed());
+				sword->PlayAnimation(Animation::SoftStagger, false, owner_->GetAnimationSpeed());
 			}
 		}
 
@@ -692,7 +694,7 @@ const ActionBase::State BlowOffAction::Run(const float elapsedTime)
 			if (sword != nullptr)
 			{
 				// 待機アニメーションにしておく
-				sword->PlayAnimation(Animation::Idle, false, owner_->GetAnimationSpeed());
+				sword->PlayAnimation(Animation::HardStagger, false, owner_->GetAnimationSpeed());
 			}
 		}
 
@@ -708,7 +710,13 @@ const ActionBase::State BlowOffAction::Run(const float elapsedTime)
 			// 死んでいなければ立ち上がりアニメーションを行う
 			if (false == owner_->GetIsDead())
 			{
-				owner_->PlayAnimation(Animation::StandUp, false);
+				owner_->PlayAnimation(Animation::StandUp, false, owner_->GetAnimationSpeed());
+
+				Model* sword = owner_->GetSword();
+				if (sword != nullptr)
+				{
+					sword->PlayAnimation(Animation::StandUp, false, owner_->GetAnimationSpeed());
+				}
 
 				// ステップ３に移動
 				owner_->SetStep(3);

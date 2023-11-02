@@ -818,6 +818,8 @@ void skinned_mesh::fetch_scene(const char* fbx_filename, bool triangulate, float
 // JOINT_POSITION
 DirectX::XMFLOAT3 skinned_mesh::JointPosition(const std::string& meshName, const std::string& boneName, const animation::keyframe* keyframe, const DirectX::XMFLOAT4X4& transform)
 {
+    if (keyframe->nodes.size() <= 0) return DirectX::XMFLOAT3(0, 0, 0);
+
     DirectX::XMFLOAT3 position = {}; // worldÀ•W
 
     for (const skinned_mesh::mesh& mesh : meshes)
@@ -849,6 +851,8 @@ DirectX::XMFLOAT3 skinned_mesh::JointPosition(const std::string& meshName, const
 // JOINT_POSITION
 DirectX::XMFLOAT3 skinned_mesh::JointPosition(size_t meshIndex, size_t boneIndex, const animation::keyframe* keyframe, const DirectX::XMFLOAT4X4& transform)
 {
+    if (keyframe->nodes.size() <= 0) return DirectX::XMFLOAT3(0, 0, 0);
+
     DirectX::XMFLOAT3 position = { 0,0,0 };
     const mesh& mesh = meshes.at(meshIndex);
     const skeleton::bone& bone = mesh.bind_pose.bones.at(boneIndex);

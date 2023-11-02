@@ -11,7 +11,10 @@
 inline DirectX::XMFLOAT3 GetGatewayPosition(/*NoConst*/ int gatewayIndex)
 {
     // ゲート番号超過修正
-    if (gatewayIndex > SceneGame::GATEWAY_COUNT_) gatewayIndex = SceneGame::GATEWAY_COUNT_;
+    if (gatewayIndex > SceneGame::GATEWAY_COUNT_ - 1)
+    {
+        gatewayIndex = SceneGame::GATEWAY_COUNT_ - 1;
+    }
 
     // 360度をゲート数分に等分したときの角度
     static constexpr float angle = 360.0f / static_cast<float>(SceneGame::GATEWAY_COUNT_);
@@ -117,6 +120,13 @@ extern Wave waves_[];
 
 class WaveManager
 {
+public:
+    struct SpawnGolemPosition
+    {
+        DirectX::XMFLOAT3 position_;
+        bool              isUsed_;
+    };
+
 private:
     WaveManager()  = default;
     ~WaveManager() = default;
@@ -139,6 +149,9 @@ public:
     // 残りの敵カウンターを１減らす
     void ReduceRemainingEnemyCounter() { --remainingEnemyCounter_; }
 
+    // ゴーレム生成位置の位置使用済みフラグをリセットする
+    void ResetSpawnGolemPositionIsUsedFlag();
+
 public: // Get・Set Function
 
     // 現在のウェーブ番号を取得
@@ -152,9 +165,18 @@ public: // Get・Set Function
     // 現在のウェーブが出現させる敵の総数を取得
     const size_t GetCurrentWaveEnemyCount() const { return waveParent_.children_->spawnEnemyCount_; }
 
+    // ゴーレム生成位置取得(-1で位置配列の上から順番に取得する)
+    // ※Initializeとウェーブエンドレスのときしか
+    // 　位置使用済みフラグのリセット処理を呼んでいないので
+    // 　ウェーブエンドレスのとき以外での-1は非推奨
+    const DirectX::XMFLOAT3 GetSpawnGolemPosition(const int index);
+
 public:
     static constexpr float BREAK_TIME_ = 2.5f;              // 現在のウェーブから次のウェーブに移るまでの休憩時間
     static constexpr float ENDLESS_WAVE_CREATE_TIME_ = 1.0f;
+
+    // ゴーレムを生成する位置の数
+    static constexpr int SPAWN_GOLEM_POSITION_COUNT_ = 3;
 
 private:
     WaveParent  waveParent_             = {};       // ウェーブの親(ウェーブを管理)
@@ -170,4 +192,10 @@ private:
     int         endlessWaveCounter_     = 0;        // エンドレスウェーブを回した回数
     int         endlessWaveCreateCount_ = 0;        // エンドレスウェーブの敵を生成する数
     bool        endlessWaveFlag_        = false;    // エンドレスウェーブフラグ
+
+    SpawnGolemPosition spawnGolemPositions_[SPAWN_GOLEM_POSITION_COUNT_] = {
+        { SceneGame::stageCenter, false }, // ステージの中心
+        { SceneGame::stageCenter + DirectX::XMFLOAT3(-5.0f, 0.0f, 0.0f), false }, // 左
+        { SceneGame::stageCenter + DirectX::XMFLOAT3(+5.0f, 0.0f, 0.0f), false }, // 右
+    };
 };
